@@ -6,7 +6,7 @@ from sqlalchemy_media.helpers import open_stream
 
 class Store(object):
 
-    def migrate(self, filename: str, target_store: 'Store'):
+    def migrate(self, filename: str, target_store: 'Store') -> int:
         raise NotImplementedError()
 
     def put(self, filename: str, f: Union[str, BinaryIO]):
@@ -16,7 +16,7 @@ class Store(object):
             stream = f
 
         try:
-            self.put_stream(filename, stream)
+            return self.put_stream(filename, stream)
         finally:
             if stream is not f:
                 # This stream is opened by this method and should be closed, before leaving from.
