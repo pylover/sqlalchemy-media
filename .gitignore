@@ -67,3 +67,4 @@ target/
 # Project specific
 test_data
 test_codecs
+sqlalchemy_media/tests/temp

@@ -2,7 +2,8 @@
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy import event
 
-from sqlalchemy_media.helpers import is_uri
+from sqlalchemy_media.stores.base import Store
+from sqlalchemy_media.stores.context import current_store
 
 
 class AttachmentView(MutableDict):
@@ -42,9 +43,10 @@ class AttachmentView(MutableDict):
     def import_filename(self, filename, content_type=None):
         return NotImplemented
 
-    def import_stream(self, stream, content_type=None):
+    def import_stream(self, stream, content_type=None, store: Store=current_store):
         parent = self._parents
         attr_name = self
+
 
 
 class NullAttachmentView(AttachmentView):

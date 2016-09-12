@@ -1,4 +1,5 @@
 
+from typing import Any, Union, BinaryIO
 import re
 
 
@@ -11,3 +12,11 @@ URI_REGEX_PATTERN = re.compile(
 
 def is_uri(x):
     return URI_REGEX_PATTERN.match(x) is not None
+
+
+def open_stream(file_identifier: str) -> BinaryIO:
+    raise NotImplementedError
+
+
+def copy_stream(source: BinaryIO, target: BinaryIO, chunk_size: int) -> int:
+    raise NotImplementedError
