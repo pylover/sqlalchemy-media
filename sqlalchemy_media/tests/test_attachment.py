@@ -1,27 +1,32 @@
 
 import unittest
 from io import StringIO
+import json
 
-from sqlalchemy_media.helpers import is_uri
-from sqlalchemy_media.views import AttachmentView, NullAttachmentView
-from sqlalchemy_media.types import Attachment
+from sqlalchemy import Column, Integer, create_engine, Unicode, TypeDecorator
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+
+from sqlalchemy_media.models import Attachment, NullAttachment
+
+
+# noinspection PyAbstractClass
+class Json(TypeDecorator):
+    impl = Unicode
+
+    def process_bind_param(self, value, engine):
+        return json.dumps(value)
+
+    def process_result_value(self, value, engine):
+        if value is None:
+            return None
+
+        return json.loads(value)
 
 
 class AttachmentTestCase(unittest.TestCase):
 
-    def test_regex_patterns(self):
-        self.assertTrue(is_uri('http://path/to?342=324322&param'))
-        self.assertTrue(is_uri('ftp://path/to?342=324322&param'))
-        self.assertTrue(is_uri('tcp://path/to?342=324322&param'))
-        self.assertTrue(is_uri('protocol://path/to?342=324322&param'))
-        self.assertFalse(is_uri('http:/path/to?342=324322&param'))
-        self.assertFalse(is_uri('path/to?342=324322&param'))
-        self.assertFalse(is_uri('/path/to?342=324322&param'))
-
-    def test_crud(self):
-        from sqlalchemy import Column, Integer, create_engine, Unicode
-        from sqlalchemy.orm import sessionmaker
-        from sqlalchemy.ext.declarative import declarative_base
+    def test_attachment(self):
 
         Base = declarative_base()
 
@@ -32,7 +37,7 @@ class AttachmentTestCase(unittest.TestCase):
             __tablename__ = 'person'
             id = Column(Integer, primary_key=True)
             name = Column(Unicode(50), nullable=False, default='person1')
-            image = Column(AttachmentView.as_mutable(Attachment), default={'d': 'a'})
+            image = Column(Attachment.as_mutable(Json), default={'d': 'a'})
 
             def __repr__(self):
                 return "%s %s %s" % (self.id, self.name, self.image)
@@ -50,13 +55,12 @@ class AttachmentTestCase(unittest.TestCase):
         # person1 = Person(name='person1')
         person1 = Person()
         self.assertFalse(bool(person1.image))
-        self.assertIsInstance(person1.image, NullAttachmentView)
+        self.assertIsInstance(person1.image, NullAttachment)
         self.assertFalse(True if person1.image else False)
 
-        text_file = StringIO('Simple text.')
-        person1.image.import_(text_file, content_type='text/plain')
+        person1.image.attach(StringIO('Simple text.'), content_type='text/plain')
 
-        self.assertIsInstance(person1.image, AttachmentView)
+        self.assertIsInstance(person1.image, Attachment)
         # self.assertNotIsInstance(person1.image, NullAttachmentView)
         # self.assertTrue(bool(person1.image))
         # self.assertTrue(True if person1.image else False)

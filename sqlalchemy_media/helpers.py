@@ -1,8 +1,6 @@
 
-from typing import Any, Union, BinaryIO
+from typing import BinaryIO
 from urllib.request import urlopen
-from select import select
-import shutil
 import re
 
 
