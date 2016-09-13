@@ -1,8 +1,7 @@
-from typing import BinaryIO
 from os.path import abspath, join, dirname, exists
-from os import makedirs
+from os import makedirs, remove
 
-from sqlalchemy_media.stores.base import Store
+from sqlalchemy_media.stores.base import Store, Stream
 from sqlalchemy_media.helpers import copy_stream, open_stream
 
 
@@ -15,7 +14,7 @@ class FileSystemStore(Store):
     def _get_physical_path(self, filename: str) -> str:
         return join(self.root_path, filename)
 
-    def put_stream(self, filename: str, stream: BinaryIO):
+    def put_stream(self, filename: str, stream: Stream):
         physical_path = self._get_physical_path(filename)
         physical_directory = dirname(physical_path)
 
@@ -24,3 +23,9 @@ class FileSystemStore(Store):
 
         with open_stream(physical_path, mode='wb') as target_file:
             return copy_stream(stream, target_file, self.chunk_size)
+
+    def delete(self, filename: str):
+        remove(self._get_physical_path(filename))
+
+    def open(self, filename: str, mode: str='rb') -> Stream:
+        return open(self._get_physical_path(filename), mode=mode)

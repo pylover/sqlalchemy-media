@@ -19,7 +19,6 @@ class FileSystemStoreTestCase(unittest.TestCase):
 
     def test_put_from_file(self):
         store = FileSystemStore(self.root_path)
-
         target_filename = 'test_put_from_file/sample_text_file1.txt'
         length = store.put(target_filename, self.sample_text_file1)
         self.assertEqual(length, getsize(self.sample_text_file1))
@@ -44,6 +43,37 @@ class FileSystemStoreTestCase(unittest.TestCase):
         length = store.put(target_filename, stream)
         self.assertEqual(length, len(content))
         self.assertTrue(exists(join(self.root_path, target_filename)))
+
+    def test_delete(self):
+
+        store = FileSystemStore(self.root_path)
+        target_filename = 'test_delete/sample_text_file1.txt'
+        length = store.put(target_filename, self.sample_text_file1)
+        self.assertEqual(length, getsize(self.sample_text_file1))
+        self.assertTrue(exists(join(self.root_path, target_filename)))
+
+        store.delete(target_filename)
+        self.assertFalse(exists(join(self.root_path, target_filename)))
+
+    def test_open(self):
+        store = FileSystemStore(self.root_path)
+        target_filename = 'test_delete/sample_text_file1.txt'
+        length = store.put(target_filename, self.sample_text_file1)
+        self.assertEqual(length, getsize(self.sample_text_file1))
+        self.assertTrue(exists(join(self.root_path, target_filename)))
+
+        # Reading
+        with store.open(target_filename, mode='rb') as stored_file, \
+                open(self.sample_text_file1, mode='rb') as original_file:
+            self.assertEqual(stored_file.read(), original_file.read())
+
+        # Writing
+        new_content = b'Some Binary Data'
+        with store.open(target_filename, mode='wb') as stored_file:
+            stored_file.write(new_content)
+
+        with store.open(target_filename, mode='rb') as stored_file:
+            self.assertEqual(stored_file.read(), new_content)
 
 
 if __name__ == '__main__':

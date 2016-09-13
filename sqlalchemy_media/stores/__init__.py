@@ -4,4 +4,4 @@ from .filesystem import FileSystemStore
 from .proxy import LocalProxyStore
 
 
-current_store = LocalProxyStore(Store.get_current_store)
+current_store = LocalProxyStore()

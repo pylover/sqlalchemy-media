@@ -14,9 +14,6 @@ context_stacks = {}
 
 class Store(object):
 
-    def migrate(self, filename: str, target_store: 'Store') -> int:
-        raise NotImplementedError()
-
     def put(self, filename: str, f: Union[str, Stream]):
         if isinstance(f, str):
             stream = open_stream(f)
@@ -43,11 +40,12 @@ class Store(object):
     def delete(self, filename: str):
         raise NotImplementedError()
 
-    def open(self, filename: str, mode: str='r'):
+    def open(self, filename: str, mode: str='r') -> Stream:
         raise NotImplementedError()
 
     def __enter__(self):
         context_stacks.setdefault(get_context_id(), []).append(self)
+        return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         context_stacks.setdefault(get_context_id(), []).pop()
