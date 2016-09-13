@@ -1,2 +1,2 @@
 # sqlalchemy-media
-Attaching media(file, image, video &amp; etc) to the sqlalchemy models.
+Attaching files(Image, VIdeo &amp; etc ) into sqlalchemy models.
