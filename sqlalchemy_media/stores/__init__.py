@@ -1,4 +1,7 @@
 
 from .base import Store
-from .context import store_context, current_store
 from .filesystem import FileSystemStore
+from .proxy import LocalProxyStore
+
+
+current_store = LocalProxyStore(Store.get_current_store)

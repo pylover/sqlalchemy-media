@@ -1,8 +1,6 @@
 import unittest
 import threading
 
-from sqlalchemy_media.stores.context import store_context
-
 
 class StoreContextTestCase(unittest.TestCase):
 

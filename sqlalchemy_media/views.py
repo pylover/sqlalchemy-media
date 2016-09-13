@@ -1,9 +1,8 @@
-
-from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy import event
+from sqlalchemy.ext.mutable import MutableDict
 
+from sqlalchemy_media.context import current_store
 from sqlalchemy_media.stores.base import Store
-from sqlalchemy_media.stores.context import current_store
 
 
 class AttachmentView(MutableDict):

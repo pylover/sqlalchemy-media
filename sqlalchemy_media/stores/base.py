@@ -1,12 +1,15 @@
-
-from typing import Union, IO
 from io import BytesIO
+from typing import Union, IO
 
-
+from sqlalchemy_media.context import get_id as get_context_id
 from sqlalchemy_media.helpers import open_stream
-
+from sqlalchemy_media.stores.exceptions import ContextError
 
 Stream = Union[IO[BytesIO], BytesIO]
+
+
+# Global variable to store contexts
+context_stacks = {}
 
 
 class Store(object):
@@ -27,6 +30,7 @@ class Store(object):
                 # This stream is opened by this method and should be closed, before leaving from.
                 stream.close()
 
+    # noinspection PyMethodMayBeStatic
     def cleanup(self):
         """
         Just do nothing here.
@@ -41,3 +45,17 @@ class Store(object):
 
     def open(self, filename: str, mode: str='r'):
         raise NotImplementedError()
+
+    def __enter__(self):
+        context_stacks.setdefault(get_context_id(), []).append(self)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        context_stacks.setdefault(get_context_id(), []).pop()
+        self.cleanup()
+
+    @classmethod
+    def get_current_store(cls) -> 'Store':
+        try:
+            return context_stacks.setdefault(get_context_id(), [])[-1]
+        except IndexError:
+            raise ContextError('not in store context.')

@@ -41,4 +41,3 @@ class LocalProxyStore(Store):
         except ContextError:
             return '<Unbound {0}.{1}>'.format(self.__module__, self.__name__)
         return 'Proxied: %s' % repr(_current_store)
-
