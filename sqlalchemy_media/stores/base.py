@@ -1,7 +1,12 @@
 
-from typing import Union, BinaryIO
+from typing import Union, IO
+from io import BytesIO
+
 
 from sqlalchemy_media.helpers import open_stream
+
+
+Stream = Union[IO[BytesIO], BytesIO]
 
 
 class Store(object):
@@ -9,7 +14,7 @@ class Store(object):
     def migrate(self, filename: str, target_store: 'Store') -> int:
         raise NotImplementedError()
 
-    def put(self, filename: str, f: Union[str, BinaryIO]):
+    def put(self, filename: str, f: Union[str, Stream]):
         if isinstance(f, str):
             stream = open_stream(f)
         else:
@@ -28,7 +33,7 @@ class Store(object):
         """
         pass
 
-    def put_stream(self, filename: str, stream: BinaryIO):
+    def put_stream(self, filename: str, stream: Stream):
         raise NotImplementedError()
 
     def delete(self, filename: str):

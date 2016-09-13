@@ -1,9 +1,10 @@
 import unittest
+import io
 from os import makedirs
 from os.path import join, dirname, abspath, exists, getsize
 
-
 from sqlalchemy_media.stores.filesystem import FileSystemStore
+from sqlalchemy_media.tests.helpers import simple_http_server
 
 
 class FileSystemStoreTestCase(unittest.TestCase):
@@ -16,20 +17,33 @@ class FileSystemStoreTestCase(unittest.TestCase):
         if not exists(self.root_path):
             makedirs(self.root_path, exist_ok=True)
 
-    def test_put_delete(self):
+    def test_put_from_file(self):
         store = FileSystemStore(self.root_path)
 
-        # put with filename
-        target_filename = 'test_put_delete/sample_text_file1.txt'
+        target_filename = 'test_put_from_file/sample_text_file1.txt'
         length = store.put(target_filename, self.sample_text_file1)
         self.assertEqual(length, getsize(self.sample_text_file1))
         self.assertTrue(exists(join(self.root_path, target_filename)))
 
-        # put with stream
+    def test_put_from_url(self):
+        store = FileSystemStore(self.root_path)
+        target_filename = 'test_put_from_url/downloaded_text_file1.txt'
+        content = b'Lorem ipsum dolor sit amet'
 
-        # put with cgi storage
+        with simple_http_server(content) as http_server:
+            url = 'http://%s:%s' % http_server.server_address
+            length = store.put(target_filename, url)
+            self.assertEqual(length, len(content))
+            self.assertTrue(exists(join(self.root_path, target_filename)))
 
-        # put with url
+    def test_put_from_stream(self):
+        store = FileSystemStore(self.root_path)
+        target_filename = 'test_put_from_stream/file_from_stream1.txt'
+        content = b'Lorem ipsum dolor sit amet'
+        stream = io.BytesIO(content)
+        length = store.put(target_filename, stream)
+        self.assertEqual(length, len(content))
+        self.assertTrue(exists(join(self.root_path, target_filename)))
 
 
 if __name__ == '__main__':
