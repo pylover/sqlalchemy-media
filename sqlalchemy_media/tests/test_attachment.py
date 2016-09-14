@@ -82,16 +82,32 @@ class AttachmentTestCase(unittest.TestCase):
             'extension': '.txt',
             'length': len(sample_content)
         })
-
-        self.assertTrue(exists(join(self.temp_path, person1.image.path)))
+        first_filename = join(self.temp_path, person1.image.path)
+        self.assertTrue(exists(first_filename))
 
         session.add(person1)
         session.commit()
-        id = person1.id
 
-        loaded_person = session.query(Person).filter(Person.id == id).one()
-        self.assertIsInstance(loaded_person.image, Attachment)
+        # Loading again
+        sample_content = b'Lorem ipsum dolor sit amet'
+        person1 = session.query(Person).filter(Person.id == person1.id).one()
+        self.assertIsInstance(person1.image, Attachment)
+        with StoreManager():
+            person1.image.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
+        self.assertIsInstance(person1.image, Attachment)
+        self.assertDictEqual(person1.image, {
+            'contentType': 'text/plain',
+            'key': person1.image.key,
+            'extension': '.txt',
+            'length': len(sample_content)
+        })
+        second_filename = join(self.temp_path, person1.image.path)
+        self.assertTrue(exists(first_filename))
+        self.assertTrue(exists(second_filename))
 
+        session.commit()
+        self.assertFalse(exists(first_filename))
+        self.assertTrue(exists(second_filename))
         # self.assertNotIsInstance(person1.image, NullAttachmentView)
         # self.assertTrue(bool(person1.image))
         # self.assertTrue(True if person1.image else False)
