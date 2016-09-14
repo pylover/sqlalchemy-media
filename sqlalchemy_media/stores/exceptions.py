@@ -1,9 +1,9 @@
 
 
 class ContextError(Exception):
-    """
-    The exception which rises when the :data:`current_store` is required
-    but there's no currently set store context.
-
-    """
     pass
+
+
+class DefaultStoreError(Exception):
+    def __init__(self):
+        super(DefaultStoreError, self).__init__("Default store is not defined.")

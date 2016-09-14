@@ -1,7 +1,5 @@
 
 from .base import Store
 from .filesystem import FileSystemStore
-from .proxy import LocalProxyStore
+from .manager import StoreManager
 
-
-current_store = LocalProxyStore()

@@ -1,62 +1,67 @@
-from typing import TypeVar, Generic
+from typing import Hashable
 import mimetypes
 import uuid
 from os.path import splitext
 
-from sqlalchemy.ext.mutable import MutableDict, Mutable
+from sqlalchemy.ext.mutable import MutableDict
 
-from sqlalchemy_media.stores import Store, current_store
-from sqlalchemy_media.typing import Attachable, AttachmentKey
-
-
-T = TypeVar('T')
+from sqlalchemy_media.stores import StoreManager
+from sqlalchemy_media.typing import Attachable
 
 
-class Attachment(MutableDict, Generic[T]):
-
+class Attachment(MutableDict):
     __directory__ = 'attachments'
     __prefix__ = 'attachment'
 
-    @classmethod
-    def coerce(cls, key, value):
-        """Convert plain dictionary to instance of this class."""
-        if not isinstance(value, cls):
-            if isinstance(value, dict):
-                return cls(value)
-            return Mutable.coerce(key, value)
-        else:
-            return value
+    _files_to_remove = []
+
+    @property
+    def store_manager(self):
+        return StoreManager.get_current_store_manager()
+
+    @property
+    def store_id(self):
+        return self.get('store_id')
+
+    @property
+    def store(self):
+        return self.store_manager.get(self.store_id)
+
+    def commit(self):
+        if self._files_to_remove:
+            for f in self._files_to_remove:
+                f.delete()
 
     @property
     def path(self):
         return '%s/%s' % (self.__directory__, self.filename)
 
     @property
-    def key(self):
+    def key(self) -> Hashable:
         return self.get('key')
 
     @property
-    def filename(self):
+    def filename(self) -> str:
         return '%s-%s%s' % (self.__prefix__, self.key, self.extension)
 
     @property
-    def extension(self):
+    def extension(self) -> str:
         return self.get('extension', '')
 
     @property
-    def content_type(self):
+    def content_type(self) -> str:
         return self.get('contentType')
 
     @content_type.setter
-    def content_type(self, v):
+    def content_type(self, v) -> str:
         self['contentType'] = v
 
     @property
-    def original_filename(self):
+    def original_filename(self) -> str:
         return self.get('originalFilename')
 
     def attach(self, f: Attachable, content_type: str=None, original_filename: str=None, extension: str=None,
-               store: Store=current_store) -> T:
+               store_id: str=None) -> None:
         # Backup the old key and filename if exists
         old_path = self.path if self.key is not None else None
 
@@ -86,8 +91,8 @@ class Attachment(MutableDict, Generic[T]):
 
         self['key'] = str(uuid.uuid4())
 
-        length = store.put(self.path, f)
+        if store_id is not None:
+            self['storeId'] = store_id
+
+        length = self.store.put(self.path, f)
         self['length'] = length
-
-        return self
-

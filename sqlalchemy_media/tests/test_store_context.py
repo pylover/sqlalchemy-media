@@ -2,7 +2,7 @@ import unittest
 import time
 import threading
 
-from sqlalchemy_media.stores import Store, current_store
+from sqlalchemy_media.stores import StoreManager, Store
 
 
 # noinspection PyAbstractClass
@@ -10,20 +10,21 @@ class DummyStore(Store):
     pass
 
 
+StoreManager.register('dummy', DummyStore, default=True)
+
+
 class StoreContextTestCase(unittest.TestCase):
 
     def test_context_stack(self):
-        with DummyStore() as store1:
-            self.assertIs(store1, current_store.get_current_store())
-            self.assertIs(store1, Store.get_current_store())
+        with StoreManager() as manager1:
+            store1 = manager1.get()
+            self.assertIs(store1, manager1.default_store)
 
-            with DummyStore() as store2:
-                self.assertIs(store2, current_store.get_current_store())
-                self.assertIs(store2, Store.get_current_store())
-                self.assertIsNot(store2, store1)
-
-            self.assertIs(store1, current_store.get_current_store())
-            self.assertIs(store1, Store.get_current_store())
+            with StoreManager() as manager2:
+                store2 = manager2.get()
+                self.assertIs(store2, manager2.default_store)
+                self.assertIsNot(manager1, manager2)
+                self.assertIsNot(store1, store2)
 
     def test_multithread(self):
 
@@ -41,15 +42,17 @@ class StoreContextTestCase(unittest.TestCase):
                 super().__init__(daemon=True)
 
             def run(self):
-                with DummyStore() as store1:
-                    self.test_case.assertIs(store1, Store.get_current_store())
-                    self.stat.store1 = Store.get_current_store()
+                with StoreManager() as manager1:
+                    store1 = manager1.get()
+                    self.test_case.assertIs(store1, manager1.default_store)
+                    self.stat.store1 = store1
 
-                    with DummyStore() as store2:
-                        self.test_case.assertIs(store2, Store.get_current_store())
-                        self.stat.store2 = Store.get_current_store()
-
+                    with StoreManager() as manager2:
+                        store2 = manager2.get()
+                        self.test_case.assertIs(store2, manager2.default_store)
+                        self.stat.store2 = store2
                         self.stat.ready = True
+
                         while self.stat.wait:
                             time.sleep(.7)
 

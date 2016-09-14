@@ -1,5 +1,6 @@
 
 import unittest
+import functools
 from io import BytesIO
 import json
 from os import makedirs
@@ -9,7 +10,7 @@ from sqlalchemy import Column, Integer, create_engine, Unicode, TypeDecorator
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-from sqlalchemy_media import Attachment, FileSystemStore
+from sqlalchemy_media import Attachment, StoreManager, FileSystemStore
 
 
 # noinspection PyAbstractClass
@@ -35,6 +36,8 @@ class AttachmentTestCase(unittest.TestCase):
         self.temp_path = join(self.this_dir, 'temp', 'test_attachment')
         if not exists(self.temp_path):
             makedirs(self.temp_path, exist_ok=True)
+
+        StoreManager.register('fs', functools.partial(FileSystemStore, self.temp_path), default=True)
 
     def test_attachment(self):
 
@@ -69,7 +72,7 @@ class AttachmentTestCase(unittest.TestCase):
         self.assertIsNone(person1.image)
         sample_content = b'Simple text.'
         person1.image = Attachment()
-        with FileSystemStore(self.temp_path):
+        with StoreManager():
             person1.image.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
 
         self.assertIsInstance(person1.image, Attachment)
@@ -84,6 +87,10 @@ class AttachmentTestCase(unittest.TestCase):
 
         session.add(person1)
         session.commit()
+        id = person1.id
+
+        loaded_person = session.query(Person).filter(Person.id == id).one()
+        self.assertIsInstance(loaded_person.image, Attachment)
 
         # self.assertNotIsInstance(person1.image, NullAttachmentView)
         # self.assertTrue(bool(person1.image))
