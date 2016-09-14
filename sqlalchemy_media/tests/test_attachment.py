@@ -1,13 +1,15 @@
 
 import unittest
-from io import StringIO
+from io import BytesIO
 import json
+from os import makedirs
+from os.path import join, dirname, abspath, exists
 
 from sqlalchemy import Column, Integer, create_engine, Unicode, TypeDecorator
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-from sqlalchemy_media.models import Attachment, NullAttachment
+from sqlalchemy_media import Attachment, FileSystemStore
 
 
 # noinspection PyAbstractClass
@@ -25,6 +27,14 @@ class Json(TypeDecorator):
 
 
 class AttachmentTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.this_dir = abspath(dirname(__file__))
+        self.stuff_path = join(self.this_dir, 'stuff')
+        self.sample_text_file1 = join(self.stuff_path, 'sample_text_file1.txt')
+        self.temp_path = join(self.this_dir, 'temp', 'test_attachment')
+        if not exists(self.temp_path):
+            makedirs(self.temp_path, exist_ok=True)
 
     def test_attachment(self):
 
@@ -52,21 +62,38 @@ class AttachmentTestCase(unittest.TestCase):
             twophase=False
         )
 
+        session = session_factory()
+
         # person1 = Person(name='person1')
         person1 = Person()
-        self.assertFalse(bool(person1.image))
-        self.assertIsInstance(person1.image, NullAttachment)
-        self.assertFalse(True if person1.image else False)
-
-        person1.image.attach(StringIO('Simple text.'), content_type='text/plain')
+        self.assertIsNone(person1.image)
+        sample_content = b'Simple text.'
+        person1.image = Attachment()
+        with FileSystemStore(self.temp_path):
+            person1.image.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
 
         self.assertIsInstance(person1.image, Attachment)
+        self.assertDictEqual(person1.image, {
+            'contentType': 'text/plain',
+            'key': person1.image.key,
+            'extension': '.txt',
+            'length': len(sample_content)
+        })
+
+        self.assertTrue(exists(join(self.temp_path, person1.image.path)))
+
+        session.add(person1)
+        session.commit()
+
         # self.assertNotIsInstance(person1.image, NullAttachmentView)
         # self.assertTrue(bool(person1.image))
         # self.assertTrue(True if person1.image else False)
 
         # events to create default value in model creation
 
+
+# Empty content type
+# mime & ext from url
 
 if __name__ == '__main__':
     unittest.main()

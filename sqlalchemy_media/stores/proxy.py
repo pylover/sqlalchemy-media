@@ -6,7 +6,7 @@ from sqlalchemy_media.stores.exceptions import ContextError
 # noinspection PyAbstractClass
 class LocalProxyStore(Store):
 
-    def __getattr__(self, key):
+    def __getattribute__(self, key):
         return getattr(object.__getattribute__(self, 'get_current_store')(), key)
 
     def __setattr__(self, key, value):

@@ -1,11 +1,9 @@
-from io import BytesIO
-from typing import Union, IO
+from typing import Union
 
 from sqlalchemy_media.context import get_id as get_context_id
 from sqlalchemy_media.helpers import open_stream
 from sqlalchemy_media.stores.exceptions import ContextError
-
-Stream = Union[IO[BytesIO], BytesIO]
+from sqlalchemy_media.typing import Stream
 
 
 # Global variable to store contexts

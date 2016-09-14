@@ -1,15 +1,21 @@
-from sqlalchemy import event
+from typing import TypeVar, Generic
+import mimetypes
+import uuid
+from os.path import splitext
+
 from sqlalchemy.ext.mutable import MutableDict, Mutable
 
 from sqlalchemy_media.stores import Store, current_store
+from sqlalchemy_media.typing import Attachable, AttachmentKey
 
 
-class Attachment(MutableDict):
+T = TypeVar('T')
 
-    def __init__(self, instance_state, *args, **kwargs):
 
-        self.instance_state = instance_state
-        super().__init__(*args, **kwargs)
+class Attachment(MutableDict, Generic[T]):
+
+    __directory__ = 'attachments'
+    __prefix__ = 'attachment'
 
     @classmethod
     def coerce(cls, key, value):
@@ -21,24 +27,67 @@ class Attachment(MutableDict):
         else:
             return value
 
-    @classmethod
-    def _listen_on_attribute(cls, attribute, coerce, parent_cls):
-        super()._listen_on_attribute(attribute, coerce, parent_cls)
+    @property
+    def path(self):
+        return '%s/%s' % (self.__directory__, self.filename)
 
-        def init_scalar(target, value, dict_):
-            if value is None:
-                return NullAttachment(target)
+    @property
+    def key(self):
+        return self.get('key')
 
-            if isinstance(value, cls):
-                return value
-            else:
-                return cls(target, value)
+    @property
+    def filename(self):
+        return '%s-%s%s' % (self.__prefix__, self.key, self.extension)
 
-        event.listen(attribute, 'init_scalar', init_scalar, raw=True, propagate=True, retval=True)
+    @property
+    def extension(self):
+        return self.get('extension', '')
 
-    def attach(self, stream, content_type=None, store: Store=current_store):
-        print(self.instance_state)
+    @property
+    def content_type(self):
+        return self.get('contentType')
 
+    @content_type.setter
+    def content_type(self, v):
+        self['contentType'] = v
 
-class NullAttachment(Attachment):
-    pass
+    @property
+    def original_filename(self):
+        return self.get('originalFilename')
+
+    def attach(self, f: Attachable, content_type: str=None, original_filename: str=None, extension: str=None,
+               store: Store=current_store) -> T:
+        # Backup the old key and filename if exists
+        old_path = self.path if self.key is not None else None
+
+        # Determining original filename
+        if original_filename is not None:
+            self['originalFilename'] = original_filename
+        elif isinstance(f, str):
+            self['originalFilename'] = f
+
+        # Determining the extension
+        if extension is not None:
+            self['extension'] = extension
+        elif isinstance(f, str):
+            self['extension'] = splitext(f)[1]
+        elif original_filename is not None:
+            self['extension'] = splitext(self.original_filename)[1]
+
+        # Determining the mimetype
+        if content_type is not None:
+            self['contentType'] = content_type
+        elif isinstance(f, str):
+            self['contentType'] = mimetypes.guess_type(f)
+        elif original_filename is not None:
+            self['contentType'] = mimetypes.guess_type(self.original_filename)
+        elif extension is not None:
+            self['contentType'] = mimetypes.guess_type('x%s' % extension)
+
+        self['key'] = str(uuid.uuid4())
+
+        length = store.put(self.path, f)
+        self['length'] = length
+
+        return self
+
