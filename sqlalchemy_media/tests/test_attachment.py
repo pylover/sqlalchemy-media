@@ -10,7 +10,7 @@ from sqlalchemy import Column, Integer, create_engine, Unicode, TypeDecorator
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-from sqlalchemy_media import MutableDictAttachment, StoreManager, FileSystemStore, UnboundAttachmentError
+from sqlalchemy_media import MutableDictAttachment, StoreManager, FileSystemStore
 
 
 # noinspection PyAbstractClass
@@ -50,7 +50,7 @@ class AttachmentTestCase(unittest.TestCase):
             __tablename__ = 'person'
             id = Column(Integer, primary_key=True)
             name = Column(Unicode(50), nullable=False, default='person1')
-            image = Column(MutableDictAttachment.as_mutable(Json), default={'d': 'a'})
+            image = Column(MutableDictAttachment.as_mutable(Json), nullable=True)
 
             def __repr__(self):
                 return "<Person id=%s name=%s image=%s />" % (self.id, self.name, self.image)
@@ -72,13 +72,7 @@ class AttachmentTestCase(unittest.TestCase):
         self.assertIsNone(person1.image)
         sample_content = b'Simple text.'
         person1.image = MutableDictAttachment()
-        with StoreManager():
-            self.assertRaises(
-                UnboundAttachmentError,
-                person1.image.attach,
-                BytesIO(sample_content), content_type='text/plain', extension='.txt')
-
-            session.add(person1)
+        with StoreManager(session):
 
             # First file before commit
             person1.image.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
@@ -97,6 +91,7 @@ class AttachmentTestCase(unittest.TestCase):
             second_filename = join(self.temp_path, person1.image.path)
             self.assertTrue(exists(second_filename))
 
+            session.add(person1)
             session.commit()
             self.assertFalse(exists(first_filename))
             self.assertTrue(exists(second_filename))
@@ -122,15 +117,34 @@ class AttachmentTestCase(unittest.TestCase):
 
             # Rollback
             person1.image.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
-            forth_filename = person1.image.filename
-            self.assertFalse(exists(forth_filename))
+            forth_filename = join(self.temp_path, person1.image.path)
+            self.assertTrue(exists(forth_filename))
             session.rollback()
             self.assertTrue(exists(third_filename))
             self.assertFalse(exists(forth_filename))
 
+            # Delete file after object deletion
+            person1 = session.query(Person).filter(Person.id == person1.id).one()
+            session.delete(person1)
+            session.commit()
+            self.assertFalse(exists(third_filename))
+
+            # Delete file on set to null
+            person1 = Person()
+            self.assertIsNone(person1.image)
+            person1.image = MutableDictAttachment()
+            person1.image.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
+            fifth_filename = join(self.temp_path, person1.image.path)
+            person1.image = None
+            session.add(person1)
+            self.assertTrue(exists(fifth_filename))
+            session.commit()
+            self.assertFalse(exists(fifth_filename))
+
+
 # Empty content type
 # mime & ext from url
-# delete file after object deletion.
+
 
 if __name__ == '__main__':
     unittest.main()

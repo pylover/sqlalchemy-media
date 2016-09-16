@@ -1,6 +1,9 @@
+from typing import Iterable
+
+from sqlalchemy import event
+
 from sqlalchemy_media.context import get_id as get_context_id
 from sqlalchemy_media.stores.exceptions import ContextError, DefaultStoreError
-
 
 # Global variable to store contexts
 _context_stacks = {}
@@ -8,18 +11,29 @@ _context_stacks = {}
 # global variable to store store factories
 _factories = {}
 
+# global variable to store observing attributes
+_observing_attributes = set()
+
 
 class StoreManager(object):
 
     _stores = None
     _default = None
+    _files_to_delete_after_commit = None
+    _files_to_delete_after_rollback = None
+
+    def __init__(self, session):
+        self.session = session
+        self.reset_files_state()
 
     def __enter__(self):
+        self.bind_events()
         _context_stacks.setdefault(get_context_id(), []).append(self)
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         _context_stacks.setdefault(get_context_id(), []).pop()
+        self.unbind_events()
         self.cleanup()
 
     @property
@@ -72,3 +86,43 @@ class StoreManager(object):
     @property
     def default_store(self):
         return self.get()
+
+    def bind_events(self):
+        event.listen(self.session, 'after_commit', self.on_commit)
+        event.listen(self.session, 'after_soft_rollback', self.on_rollback)
+        event.listen(self.session, 'persistent_to_deleted', self.on_delete)
+
+    def unbind_events(self):
+        event.remove(self.session, 'after_commit', self.on_commit)
+        event.remove(self.session, 'after_soft_rollback', self.on_rollback)
+        event.remove(self.session, 'persistent_to_deleted', self.on_delete)
+
+    def register_to_delete_after_commit(self, *files: Iterable['Attachment']):
+        self._files_to_delete_after_commit.extend(files)
+
+    def register_to_delete_after_rollback(self, *files: Iterable['Attachment']):
+        self._files_to_delete_after_rollback.extend(files)
+
+    def reset_files_state(self):
+        self._files_to_delete_after_commit = []
+        self._files_to_delete_after_rollback = []
+
+    def on_commit(self, session):
+        for f in self._files_to_delete_after_commit:
+            f.delete()
+        self.reset_files_state()
+
+    def on_rollback(self, session, transaction):
+        for f in self._files_to_delete_after_rollback:
+            f.delete()
+        self.reset_files_state()
+
+    def on_delete(self, session, instance):
+        for attribute in _observing_attributes:
+            if isinstance(instance, attribute.class_):
+                self.register_to_delete_after_commit(getattr(instance, attribute.key).copy())
+
+    @staticmethod
+    def observe_attribute(attr):
+        if attr not in _observing_attributes:
+            _observing_attributes.add(attr)

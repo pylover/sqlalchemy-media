@@ -1,12 +1,8 @@
-from typing import Hashable, Iterable
+from typing import Hashable
 from os.path import splitext
 import mimetypes
 import uuid
 
-from sqlalchemy import event
-from sqlalchemy.orm import object_session
-
-from sqlalchemy_media.exceptions import UnboundAttachmentError
 from sqlalchemy_media.stores import StoreManager
 from sqlalchemy_media.typing import Attachable
 
@@ -46,26 +42,11 @@ class Attachment(object):
         store = self.store_manager.get(self.store_id)
         store.delete(self.path)
 
-    def _get_session(self):
-        return object_session(self.parent)
-
-    def _ensure_session(self):
-        session = self._get_session()
-        if session is None:
-            raise UnboundAttachmentError(self.parent)
-        return session
-
     def attach(self, f: Attachable, content_type: str=None, original_filename: str=None, extension: str=None,
                store_id: str=None) -> None:
 
-        # Ensuring the object was attached to a session before storing file.
-        self._ensure_session()
-
-        files_to_remove = []
-
         # Backup the old key and filename if exists
-        if not self.empty:
-            files_to_remove.append(self.copy())
+        old_attachment = None if self.empty else self.copy()
 
         # Determining original filename
         if original_filename is not None:
@@ -97,23 +78,9 @@ class Attachment(object):
             self.store_id = store_id
 
         self.store(f)
-        self.register_events(files_to_remove ,[self])
-
-    def register_events(self, old_files: Iterable['Attachment'], new_files: Iterable['Attachment']):
-
-        def commit(session):
-            for f in old_files:
-                f.delete()
-            event.remove(session, 'after_soft_rollback', rollback)
-
-        def rollback(session, previous_transaction):
-            for f in new_files:
-                f.delete()
-            event.remove(session, 'after_commit', commit)
-
-        _session = self._ensure_session()
-        event.listen(_session, 'after_commit', commit, once=True)
-        event.listen(_session, 'after_soft_rollback', rollback, once=True)
+        self.store_manager.register_to_delete_after_rollback(self)
+        if old_attachment:
+            self.store_manager.register_to_delete_after_commit(old_attachment)
 
     @property
     def store_id(self):
