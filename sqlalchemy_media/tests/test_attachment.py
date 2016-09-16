@@ -142,10 +142,6 @@ class AttachmentTestCase(unittest.TestCase):
             self.assertFalse(exists(fifth_filename))
 
 
-# Empty content type
-# mime & ext from url
-
-
 if __name__ == '__main__':
     unittest.main()
 
