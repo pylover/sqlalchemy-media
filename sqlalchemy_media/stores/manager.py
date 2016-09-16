@@ -97,9 +97,11 @@ class StoreManager(object):
         event.remove(self.session, 'after_soft_rollback', self.on_rollback)
         event.remove(self.session, 'persistent_to_deleted', self.on_delete)
 
+    # noinspection PyUnresolvedReferences
     def register_to_delete_after_commit(self, *files: Iterable['Attachment']):
         self._files_to_delete_after_commit.extend(files)
 
+    # noinspection PyUnresolvedReferences
     def register_to_delete_after_rollback(self, *files: Iterable['Attachment']):
         self._files_to_delete_after_rollback.extend(files)
 
@@ -107,16 +109,19 @@ class StoreManager(object):
         self._files_to_delete_after_commit = []
         self._files_to_delete_after_rollback = []
 
+    # noinspection PyUnusedLocal
     def on_commit(self, session):
         for f in self._files_to_delete_after_commit:
             f.delete()
         self.reset_files_state()
 
+    # noinspection PyUnusedLocal
     def on_rollback(self, session, transaction):
         for f in self._files_to_delete_after_rollback:
             f.delete()
         self.reset_files_state()
 
+    # noinspection PyUnusedLocal
     def on_delete(self, session, instance):
         for attribute in _observing_attributes:
             if isinstance(instance, attribute.class_):
@@ -127,6 +132,7 @@ class StoreManager(object):
         if attr not in _observing_attributes:
             _observing_attributes.add(attr)
 
+            # noinspection PyUnusedLocal
             def on_set_attr(target, value, old_value, initiator):
                 if old_value is None:
                     return
