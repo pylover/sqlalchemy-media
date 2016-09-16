@@ -68,16 +68,4 @@ class MutableDictAttachment(Attachment, MutableDict):
     @classmethod
     def _listen_on_attribute(cls, attribute, coerce, parent_cls):
         StoreManager.observe_attribute(attribute)
-
-        key = attribute.key
-
-        def set(target, value, old_value, initiator):
-            if old_value is None:
-                return
-
-            if value is None:
-                store_manager = StoreManager.get_current_store_manager()
-                store_manager.register_to_delete_after_commit(getattr(target, key).copy())
-
-        event.listen(attribute, 'set', set, propagate=True)
         super()._listen_on_attribute(attribute, coerce, parent_cls)

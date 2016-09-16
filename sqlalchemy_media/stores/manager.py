@@ -126,3 +126,13 @@ class StoreManager(object):
     def observe_attribute(attr):
         if attr not in _observing_attributes:
             _observing_attributes.add(attr)
+
+            def set(target, value, old_value, initiator):
+                if old_value is None:
+                    return
+
+                if value is None:
+                    store_manager = StoreManager.get_current_store_manager()
+                    store_manager.register_to_delete_after_commit(getattr(target, attr.key).copy())
+
+            event.listen(attr, 'set', set, propagate=True)
