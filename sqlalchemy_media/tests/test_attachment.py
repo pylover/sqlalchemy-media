@@ -10,7 +10,7 @@ from sqlalchemy import Column, Integer, create_engine, Unicode, TypeDecorator
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-from sqlalchemy_media import Attachment, StoreManager, FileSystemStore
+from sqlalchemy_media import MutableDictAttachment, StoreManager, FileSystemStore, UnboundAttachmentError
 
 
 # noinspection PyAbstractClass
@@ -50,10 +50,10 @@ class AttachmentTestCase(unittest.TestCase):
             __tablename__ = 'person'
             id = Column(Integer, primary_key=True)
             name = Column(Unicode(50), nullable=False, default='person1')
-            image = Column(Attachment.as_mutable(Json), default={'d': 'a'})
+            image = Column(MutableDictAttachment.as_mutable(Json), default={'d': 'a'})
 
             def __repr__(self):
-                return "%s %s %s" % (self.id, self.name, self.image)
+                return "<Person id=%s name=%s image=%s />" % (self.id, self.name, self.image)
 
         Base.metadata.create_all(engine, checkfirst=True)
 
@@ -71,48 +71,63 @@ class AttachmentTestCase(unittest.TestCase):
         person1 = Person()
         self.assertIsNone(person1.image)
         sample_content = b'Simple text.'
-        person1.image = Attachment()
+        person1.image = MutableDictAttachment()
         with StoreManager():
+            self.assertRaises(
+                UnboundAttachmentError,
+                person1.image.attach,
+                BytesIO(sample_content), content_type='text/plain', extension='.txt')
+
+            session.add(person1)
+
+            # First file before commit
             person1.image.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
+            self.assertIsInstance(person1.image, MutableDictAttachment)
+            self.assertDictEqual(person1.image, {
+                'contentType': 'text/plain',
+                'key': person1.image.key,
+                'extension': '.txt',
+                'length': len(sample_content)
+            })
+            first_filename = join(self.temp_path, person1.image.path)
+            self.assertTrue(exists(first_filename))
 
-        self.assertIsInstance(person1.image, Attachment)
-        self.assertDictEqual(person1.image, {
-            'contentType': 'text/plain',
-            'key': person1.image.key,
-            'extension': '.txt',
-            'length': len(sample_content)
-        })
-        first_filename = join(self.temp_path, person1.image.path)
-        self.assertTrue(exists(first_filename))
-
-        session.add(person1)
-        session.commit()
-
-        # Loading again
-        sample_content = b'Lorem ipsum dolor sit amet'
-        person1 = session.query(Person).filter(Person.id == person1.id).one()
-        self.assertIsInstance(person1.image, Attachment)
-        with StoreManager():
+            # Second file before commit
             person1.image.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
-        self.assertIsInstance(person1.image, Attachment)
-        self.assertDictEqual(person1.image, {
-            'contentType': 'text/plain',
-            'key': person1.image.key,
-            'extension': '.txt',
-            'length': len(sample_content)
-        })
-        second_filename = join(self.temp_path, person1.image.path)
-        self.assertTrue(exists(first_filename))
-        self.assertTrue(exists(second_filename))
+            self.assertIsInstance(person1.image, MutableDictAttachment)
+            self.assertDictEqual(person1.image, {
+                'contentType': 'text/plain',
+                'key': person1.image.key,
+                'extension': '.txt',
+                'length': len(sample_content)
+            })
+            second_filename = join(self.temp_path, person1.image.path)
+            self.assertTrue(exists(second_filename))
 
-        session.commit()
-        self.assertFalse(exists(first_filename))
-        self.assertTrue(exists(second_filename))
-        # self.assertNotIsInstance(person1.image, NullAttachmentView)
-        # self.assertTrue(bool(person1.image))
-        # self.assertTrue(True if person1.image else False)
+            session.commit()
+            self.assertFalse(exists(first_filename))
+            self.assertTrue(exists(second_filename))
 
-        # events to create default value in model creation
+            # Loading again
+            sample_content = b'Lorem ipsum dolor sit amet'
+            person1 = session.query(Person).filter(Person.id == person1.id).one()
+            self.assertIsInstance(person1.image, MutableDictAttachment)
+            with StoreManager():
+                person1.image.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
+            self.assertIsInstance(person1.image, MutableDictAttachment)
+            self.assertDictEqual(person1.image, {
+                'contentType': 'text/plain',
+                'key': person1.image.key,
+                'extension': '.txt',
+                'length': len(sample_content)
+            })
+            third_filename = join(self.temp_path, person1.image.path)
+            self.assertTrue(exists(second_filename))
+            self.assertTrue(exists(third_filename))
+
+            session.commit()
+            self.assertFalse(exists(second_filename))
+            self.assertTrue(exists(third_filename))
 
 
 # Empty content type
