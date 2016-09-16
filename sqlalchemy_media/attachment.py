@@ -59,7 +59,7 @@ class Attachment(object):
                store_id: str=None) -> None:
 
         # Ensuring the object was attached to a session before storing file.
-        session = self._ensure_session()
+        self._ensure_session()
 
         files_to_remove = []
 
@@ -97,30 +97,23 @@ class Attachment(object):
             self.store_id = store_id
 
         self.store(f)
-        self.register_to_delete_after_rollback(session, [self])
+        self.register_events(files_to_remove ,[self])
 
-        if files_to_remove:
-            self.register_to_delete_after_commit(session, files_to_remove)
+    def register_events(self, old_files: Iterable['Attachment'], new_files: Iterable['Attachment']):
 
-    @classmethod
-    def register_to_delete_after_commit(cls, session, files: Iterable['Attachment']):
-        if not files:
-            return
-
-        @event.listens_for(session, 'after_commit', once=True)
-        def receive_after_commit(session):
-            for f in files:
+        def commit(session):
+            for f in old_files:
                 f.delete()
+            event.remove(session, 'after_soft_rollback', rollback)
 
-    @classmethod
-    def register_to_delete_after_rollback(cls, session, files: Iterable['Attachment']):
-        if not files:
-            return
-
-        @event.listens_for(session, 'after_rollback', once=True)
-        def receive_after_rollback(session):
-            for f in files:
+        def rollback(session, previous_transaction):
+            for f in new_files:
                 f.delete()
+            event.remove(session, 'after_commit', commit)
+
+        _session = self._ensure_session()
+        event.listen(_session, 'after_commit', commit, once=True)
+        event.listen(_session, 'after_soft_rollback', rollback, once=True)
 
     @property
     def store_id(self):

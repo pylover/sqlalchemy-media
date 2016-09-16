@@ -94,13 +94,6 @@ class AttachmentTestCase(unittest.TestCase):
 
             # Second file before commit
             person1.image.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
-            self.assertIsInstance(person1.image, MutableDictAttachment)
-            self.assertDictEqual(person1.image, {
-                'contentType': 'text/plain',
-                'key': person1.image.key,
-                'extension': '.txt',
-                'length': len(sample_content)
-            })
             second_filename = join(self.temp_path, person1.image.path)
             self.assertTrue(exists(second_filename))
 
@@ -111,9 +104,7 @@ class AttachmentTestCase(unittest.TestCase):
             # Loading again
             sample_content = b'Lorem ipsum dolor sit amet'
             person1 = session.query(Person).filter(Person.id == person1.id).one()
-            self.assertIsInstance(person1.image, MutableDictAttachment)
-            with StoreManager():
-                person1.image.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
+            person1.image.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
             self.assertIsInstance(person1.image, MutableDictAttachment)
             self.assertDictEqual(person1.image, {
                 'contentType': 'text/plain',
@@ -129,9 +120,17 @@ class AttachmentTestCase(unittest.TestCase):
             self.assertFalse(exists(second_filename))
             self.assertTrue(exists(third_filename))
 
+            # Rollback
+            person1.image.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
+            forth_filename = person1.image.filename
+            self.assertFalse(exists(forth_filename))
+            session.rollback()
+            self.assertTrue(exists(third_filename))
+            self.assertFalse(exists(forth_filename))
 
 # Empty content type
 # mime & ext from url
+# delete file after object deletion.
 
 if __name__ == '__main__':
     unittest.main()
