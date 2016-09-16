@@ -33,14 +33,15 @@ class Attachment(object):
     def empty(self):
         return self.key is None
 
+    def get_store(self):
+        return self.store_manager.get(self.store_id)
+
     def store(self, f):
-        store = self.store_manager.get(self.store_id)
-        length = store.put(self.path, f)
+        length = self.get_store().put(self.path, f)
         self['length'] = length
 
     def delete(self):
-        store = self.store_manager.get(self.store_id)
-        store.delete(self.path)
+        self.get_store().delete(self.path)
 
     def attach(self, f: Attachable, content_type: str=None, original_filename: str=None, extension: str=None,
                store_id: str=None) -> None:
