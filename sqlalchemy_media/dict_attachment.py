@@ -61,10 +61,6 @@ class MutableDictAttachment(Attachment, MutableDict):
     def copy(self):
         return self.__class__(copy.deepcopy(self))
 
-    @property
-    def parent(self):
-        return next(self._parents.keys())
-
     @classmethod
     def _listen_on_attribute(cls, attribute, coerce, parent_cls):
         StoreManager.observe_attribute(attribute)

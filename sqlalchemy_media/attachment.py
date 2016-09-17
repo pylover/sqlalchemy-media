@@ -133,7 +133,3 @@ class Attachment(object):
 
     def copy(self) -> 'Attachment':
         raise NotImplementedError
-
-    @property
-    def parent(self):
-        raise NotImplementedError
