@@ -1,7 +1,6 @@
 from typing import Hashable
 import copy
 
-from sqlalchemy import event
 from sqlalchemy.ext.mutable import MutableDict
 
 from sqlalchemy_media.attachment import Attachment

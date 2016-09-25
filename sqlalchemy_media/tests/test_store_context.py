@@ -2,6 +2,8 @@ import unittest
 import time
 import threading
 
+from sqlalchemy.orm.session import Session
+
 from sqlalchemy_media.stores import StoreManager, Store
 
 
@@ -16,11 +18,11 @@ StoreManager.register('dummy', DummyStore, default=True)
 class StoreContextTestCase(unittest.TestCase):
 
     def test_context_stack(self):
-        with StoreManager() as manager1:
+        with StoreManager(Session) as manager1:
             store1 = manager1.get()
             self.assertIs(store1, manager1.default_store)
 
-            with StoreManager() as manager2:
+            with StoreManager(Session) as manager2:
                 store2 = manager2.get()
                 self.assertIs(store2, manager2.default_store)
                 self.assertIsNot(manager1, manager2)
@@ -42,12 +44,12 @@ class StoreContextTestCase(unittest.TestCase):
                 super().__init__(daemon=True)
 
             def run(self):
-                with StoreManager() as manager1:
+                with StoreManager(Session) as manager1:
                     store1 = manager1.get()
                     self.test_case.assertIs(store1, manager1.default_store)
                     self.stat.store1 = store1
 
-                    with StoreManager() as manager2:
+                    with StoreManager(Session) as manager2:
                         store2 = manager2.get()
                         self.test_case.assertIs(store2, manager2.default_store)
                         self.stat.store2 = store2
