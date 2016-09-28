@@ -1,63 +1,37 @@
 
 import unittest
-import functools
 from io import BytesIO
-from os import makedirs
-from os.path import join, dirname, abspath, exists
+from os.path import join, exists
 
-from sqlalchemy import Column, Integer, create_engine, Unicode
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, Unicode
 
-from sqlalchemy_media import File, StoreManager, FileSystemStore
-from sqlalchemy_media.tests.helpers import Json
+from sqlalchemy_media import File, StoreManager
+from sqlalchemy_media.tests.helpers import Json, TempStoreTestCase
+from sqlalchemy_media.exceptions import MaximumLengthIsReached, MinimumLengthIsNotReached
 
 
-class AttachmentTestCase(unittest.TestCase):
+class FileTestCase(TempStoreTestCase):
 
     def setUp(self):
-        self.this_dir = abspath(dirname(__file__))
-        self.stuff_path = join(self.this_dir, 'stuff')
+        super().setUp()
         self.sample_text_file1 = join(self.stuff_path, 'sample_text_file1.txt')
-        self.temp_path = join(self.this_dir, 'temp', 'test_attachment')
-        if not exists(self.temp_path):
-            makedirs(self.temp_path, exist_ok=True)
-
-        StoreManager.register('fs', functools.partial(FileSystemStore, self.temp_path), default=True)
 
     def test_attachment(self):
 
-        Base = declarative_base()
-
-        engine = create_engine('sqlite:///:memory:', echo=True)
-        # engine = create_engine('postgresql://postgres:postgres@localhost/deleteme_jsonb', echo=True)
-
-        class Person(Base):
+        class Person(self.Base):
             __tablename__ = 'person'
             id = Column(Integer, primary_key=True)
             name = Column(Unicode(50), nullable=False, default='person1')
             image = Column(File.as_mutable(Json), nullable=True)
 
-            def __repr__(self):
-                return "<Person id=%s name=%s image=%s />" % (self.id, self.name, self.image)
-
-        Base.metadata.create_all(engine, checkfirst=True)
-
-        session_factory = sessionmaker(
-            bind=engine,
-            autoflush=False,
-            autocommit=False,
-            expire_on_commit=True,
-            twophase=False
-        )
-
-        session = session_factory()
+        session = self.create_all_and_get_session()
 
         # person1 = Person(name='person1')
         person1 = Person()
         self.assertIsNone(person1.image)
         sample_content = b'Simple text.'
         person1.image = File()
+
         with StoreManager(session):
 
             # First file before commit
@@ -77,6 +51,7 @@ class AttachmentTestCase(unittest.TestCase):
             second_filename = join(self.temp_path, person1.image.path)
             self.assertTrue(exists(second_filename))
 
+            # Adding object to session, the new life-cycle of the person1 just began.
             session.add(person1)
             session.commit()
             self.assertFalse(exists(first_filename))
@@ -97,6 +72,7 @@ class AttachmentTestCase(unittest.TestCase):
             self.assertTrue(exists(second_filename))
             self.assertTrue(exists(third_filename))
 
+            # Committing the session, so the store must done the scheduled jobs
             session.commit()
             self.assertFalse(exists(second_filename))
             self.assertTrue(exists(third_filename))
@@ -126,6 +102,29 @@ class AttachmentTestCase(unittest.TestCase):
             self.assertTrue(exists(fifth_filename))
             session.commit()
             self.assertFalse(exists(fifth_filename))
+
+    def test_file_size_limit(self):
+
+        class LimitedFile(File):
+            min_length = 20
+            max_length = 30
+
+        class Person(self.Base):
+            __tablename__ = 'person'
+            id = Column(Integer, primary_key=True)
+            name = Column(Unicode(50), nullable=False, default='person1')
+            cv = Column(LimitedFile.as_mutable(Json), nullable=True)
+
+        session = self.create_all_and_get_session()
+
+        person1 = Person()
+        person1.image = LimitedFile()
+
+        with StoreManager(session):
+
+            # MaximumLengthIsReached, MinimumLengthIsNotReached
+            self.assertRaises(MinimumLengthIsNotReached, person1.image.attach, BytesIO(b'less than 20 chars!'))
+            self.assertRaises(MaximumLengthIsReached, person1.image.attach, BytesIO(b'more than 30 chars!............'))
 
 
 if __name__ == '__main__':

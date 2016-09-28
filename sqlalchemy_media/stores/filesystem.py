@@ -14,7 +14,7 @@ class FileSystemStore(Store):
     def _get_physical_path(self, filename: str) -> str:
         return join(self.root_path, filename)
 
-    def put_stream(self, filename: str, stream: Stream):
+    def put_stream(self, filename: str, stream: Stream, *, min_length: int=None, max_length: int=None):
         physical_path = self._get_physical_path(filename)
         physical_directory = dirname(physical_path)
 
@@ -22,7 +22,7 @@ class FileSystemStore(Store):
             makedirs(physical_directory, exist_ok=True)
 
         with open_stream(physical_path, mode='wb') as target_file:
-            return copy_stream(stream, target_file, self.chunk_size)
+            return copy_stream(stream, target_file, chunk_size=self.chunk_size, min_length=min_length, max_length=max_length)
 
     def delete(self, filename: str):
         remove(self._get_physical_path(filename))

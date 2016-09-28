@@ -1,11 +1,19 @@
 from typing import Tuple
+import unittest
 import threading
 import time
-from http.server import HTTPServer, BaseHTTPRequestHandler, HTTPStatus
+import functools
 import contextlib
 import json
+from os import makedirs
+from os.path import join, dirname, abspath, exists
+from http.server import HTTPServer, BaseHTTPRequestHandler, HTTPStatus
 
-from sqlalchemy import Unicode, TypeDecorator
+from sqlalchemy import Unicode, TypeDecorator, create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+
+from sqlalchemy_media import StoreManager, FileSystemStore
 
 
 Address = Tuple[str, int]
@@ -44,6 +52,44 @@ class Json(TypeDecorator):
             return None
 
         return json.loads(value)
+
+
+class SqlAlchemyTestCase(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.db_uri = 'sqlite:///:memory:'
+
+    def setUp(self):
+        self.Base = declarative_base()
+        self.engine = create_engine(self.db_uri, echo=False)
+
+    def create_all_and_get_session(self):
+        self.Base.metadata.create_all(self.engine, checkfirst=True)
+        self.session_factory = sessionmaker(
+            bind=self.engine,
+            autoflush=False,
+            autocommit=False,
+            expire_on_commit=True,
+            twophase=False
+        )
+        return self.session_factory()
+
+
+class TempStoreTestCase(SqlAlchemyTestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.this_dir = abspath(dirname(__file__))
+        cls.stuff_path = join(cls.this_dir, 'stuff')
+        cls.temp_path = join(cls.this_dir, 'temp', 'test_attachment')
+
+        if not exists(cls.temp_path):
+            makedirs(cls.temp_path, exist_ok=True)
+
+        StoreManager.register('fs', functools.partial(FileSystemStore, cls.temp_path), default=True)
+
+        super().setUpClass()
 
 
 if __name__ == '__main__':

@@ -8,11 +8,15 @@ from sqlalchemy.ext.mutable import MutableDict
 
 from sqlalchemy_media.stores import StoreManager
 from sqlalchemy_media.typing import Attachable
+from sqlalchemy_media.constants import MB
 
 
 class File(MutableDict):
     __directory__ = 'attachments'
     __prefix__ = 'attachment'
+
+    max_length = 2*MB
+    min_length = 0
 
     @property
     def store_manager(self):
@@ -40,7 +44,7 @@ class File(MutableDict):
         return self.store_manager.get(self.store_id)
 
     def store(self, f):
-        length = self.get_store().put(self.path, f)
+        length = self.get_store().put(self.path, f, max_length=self.max_length, min_length=self.min_length)
         self['length'] = length
 
     def delete(self):
