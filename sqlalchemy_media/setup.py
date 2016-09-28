@@ -7,7 +7,7 @@ with open(os.path.join(os.path.dirname(__file__), 'sqlalchemy_media', '__init__.
     package_version = re.compile(r".*__version__ = '(.*?)'", re.S).match(v_file.read()).group(1)
 
 dependencies = [
-    'sqlalchemy >= 1.1.0'
+    'sqlalchemy >= 1.1.0b3'
 ]
 
 
