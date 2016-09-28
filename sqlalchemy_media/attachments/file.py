@@ -4,19 +4,33 @@ import mimetypes
 import uuid
 import copy
 
-from sqlalchemy.ext.mutable import MutableDict
-
-from sqlalchemy_media.stores import StoreManager
 from sqlalchemy_media.typing import Attachable
+from sqlalchemy_media.attachments.attachment import Attachment
+from sqlalchemy_media.stores import StoreManager
 from sqlalchemy_media.constants import MB
 
 
-class File(MutableDict):
+class File(Attachment):
     __directory__ = 'attachments'
     __prefix__ = 'attachment'
 
     max_length = 2*MB
     min_length = 0
+
+    @classmethod
+    def _assert_type(cls, value):
+        """
+        Checking attachment type, ignoring any type that not derived from :py:class:`Attachment`.
+        :param value:
+        :return:
+        """
+        if isinstance(value, Attachment) and not isinstance(value, cls):
+            raise TypeError('Value type must be subclass of %s' % cls)
+
+    @classmethod
+    def coerce(cls, key, value):
+        cls._assert_type(value)
+        return super().coerce(key, value)
 
     @property
     def store_manager(self):

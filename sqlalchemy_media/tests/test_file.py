@@ -7,7 +7,7 @@ from sqlalchemy import Column, Integer, Unicode
 
 from sqlalchemy_media import File, StoreManager
 from sqlalchemy_media.tests.helpers import Json, TempStoreTestCase
-from sqlalchemy_media.exceptions import MaximumLengthIsReached, MinimumLengthIsNotReached
+from sqlalchemy_media.exceptions import MaximumLengthIsReachedError, MinimumLengthIsNotReachedError
 
 
 class FileTestCase(TempStoreTestCase):
@@ -112,19 +112,35 @@ class FileTestCase(TempStoreTestCase):
         class Person(self.Base):
             __tablename__ = 'person'
             id = Column(Integer, primary_key=True)
-            name = Column(Unicode(50), nullable=False, default='person1')
             cv = Column(LimitedFile.as_mutable(Json), nullable=True)
 
         session = self.create_all_and_get_session()
 
         person1 = Person()
-        person1.image = LimitedFile()
+        person1.cv = LimitedFile()
 
         with StoreManager(session):
 
-            # MaximumLengthIsReached, MinimumLengthIsNotReached
-            self.assertRaises(MinimumLengthIsNotReached, person1.image.attach, BytesIO(b'less than 20 chars!'))
-            self.assertRaises(MaximumLengthIsReached, person1.image.attach, BytesIO(b'more than 30 chars!............'))
+            # MaximumLengthIsReachedError, MinimumLengthIsNotReachedError
+            self.assertRaises(MinimumLengthIsNotReachedError, person1.cv.attach, BytesIO(b'less than 20 chars!'))
+            self.assertRaises(MaximumLengthIsReachedError, person1.cv.attach,
+                              BytesIO(b'more than 30 chars!............'))
+
+    def test_attribute_type_assertion(self):
+        class MyAttachmentType(File):
+            pass
+
+        class Person(self.Base):
+            __tablename__ = 'person'
+            id = Column(Integer, primary_key=True)
+            cv = Column(MyAttachmentType.as_mutable(Json), nullable=True)
+
+        person1 = Person()
+
+        def set_invalid_type():
+            person1.cv = File()
+
+        self.assertRaises(TypeError, set_invalid_type)
 
 
 if __name__ == '__main__':

@@ -4,7 +4,7 @@ from urllib.request import urlopen
 import re
 
 from sqlalchemy_media.typing import Stream
-from sqlalchemy_media.exceptions import MaximumLengthIsReached, MinimumLengthIsNotReached
+from sqlalchemy_media.exceptions import MaximumLengthIsReachedError, MinimumLengthIsNotReachedError
 
 
 URI_REGEX_PATTERN = re.compile(
@@ -35,10 +35,10 @@ def copy_stream(source: Stream, target: Stream, *, chunk_size: int=16*1024, min_
         length += len(buf)
 
         if max_length is not None and length > max_length:
-            raise MaximumLengthIsReached(max_length)
+            raise MaximumLengthIsReachedError(max_length)
         target.write(buf)
 
     if min_length is not None and length < min_length:
-        raise MinimumLengthIsNotReached(min_length)
+        raise MinimumLengthIsNotReachedError(min_length)
 
     return length
