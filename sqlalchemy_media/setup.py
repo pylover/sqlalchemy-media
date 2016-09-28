@@ -20,7 +20,7 @@ setup(
     version=package_version,
     author="Vahid Mardani",
     author_email="vahid.mardani@gmail.com",
-    #url="http://github.com/pylover/pymlconf",
+    url="http://sqlalchemy-media.dobisel.com",
     description="Sqlalchemy asset manager",
     maintainer="Vahid Mardani",
     maintainer_email="vahid.mardani@gmail.com",

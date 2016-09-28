@@ -1,4 +1,4 @@
 sqlalchemy-media
 ================
 
-Attaching files(Image, VIdeo &amp; etc ) into sqlalchemy models.
+Attaching files(Image, Video & etc ) into sqlalchemy models.
