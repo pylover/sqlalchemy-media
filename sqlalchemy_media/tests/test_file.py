@@ -142,6 +142,21 @@ class FileTestCase(TempStoreTestCase):
 
         self.assertRaises(TypeError, set_invalid_type)
 
+    def test_model_constructor(self):
+
+        class Person(self.Base):
+            __tablename__ = 'person'
+            id = Column(Integer, primary_key=True)
+            cv = Column(File.as_mutable(Json), nullable=True)
+
+        session = self.create_all_and_get_session()
+        person1 = Person(cv=File())
+        self.assertIsInstance(person1.cv, File)
+        with StoreManager(session):
+            person1.cv.attach(BytesIO(b'Simple text'))
+            session.add(person1)
+            session.commit()
+
 
 if __name__ == '__main__':
     unittest.main()
