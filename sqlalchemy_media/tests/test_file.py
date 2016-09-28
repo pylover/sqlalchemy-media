@@ -30,12 +30,11 @@ class FileTestCase(TempStoreTestCase):
         person1 = Person()
         self.assertIsNone(person1.image)
         sample_content = b'Simple text.'
-        person1.image = File()
 
         with StoreManager(session):
 
             # First file before commit
-            person1.image.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
+            person1.image = File.create_from(BytesIO(sample_content), content_type='text/plain', extension='.txt')
             self.assertIsInstance(person1.image, File)
             self.assertDictEqual(person1.image, {
                 'contentType': 'text/plain',
@@ -140,7 +139,11 @@ class FileTestCase(TempStoreTestCase):
         def set_invalid_type():
             person1.cv = File()
 
+        def set_invalid_type_via_constructor():
+            Person(cv=File())
+
         self.assertRaises(TypeError, set_invalid_type)
+        self.assertRaises(TypeError, set_invalid_type_via_constructor)
 
     def test_model_constructor(self):
 

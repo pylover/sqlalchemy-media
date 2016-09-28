@@ -159,3 +159,9 @@ class Attachment(MutableDict):
         self.store_manager.register_to_delete_after_rollback(self)
         if old_attachment:
             self.store_manager.register_to_delete_after_commit(old_attachment)
+
+    @classmethod
+    def create_from(cls, *args, **kwargs):
+        instance = cls()
+        instance.attach(*args, **kwargs)
+        return instance
