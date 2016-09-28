@@ -1,5 +1,4 @@
-from .attachment import Attachment
-from .dict_attachment import MutableDictAttachment
+from .attachments import File
 from .stores import FileSystemStore, StoreManager
 
 

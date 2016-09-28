@@ -3,6 +3,9 @@ import threading
 import time
 from http.server import HTTPServer, BaseHTTPRequestHandler, HTTPStatus
 import contextlib
+import json
+
+from sqlalchemy import Unicode, TypeDecorator
 
 
 Address = Tuple[str, int]
@@ -27,6 +30,20 @@ def simple_http_server(content: bytes= b'Simple file content.', bind: Address=('
     yield http_server
     http_server.shutdown()
     thread.join()
+
+
+# noinspection PyAbstractClass
+class Json(TypeDecorator):
+    impl = Unicode
+
+    def process_bind_param(self, value, engine):
+        return json.dumps(value)
+
+    def process_result_value(self, value, engine):
+        if value is None:
+            return None
+
+        return json.loads(value)
 
 
 if __name__ == '__main__':

@@ -2,29 +2,15 @@
 import unittest
 import functools
 from io import BytesIO
-import json
 from os import makedirs
 from os.path import join, dirname, abspath, exists
 
-from sqlalchemy import Column, Integer, create_engine, Unicode, TypeDecorator
+from sqlalchemy import Column, Integer, create_engine, Unicode
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-from sqlalchemy_media import MutableDictAttachment, StoreManager, FileSystemStore
-
-
-# noinspection PyAbstractClass
-class Json(TypeDecorator):
-    impl = Unicode
-
-    def process_bind_param(self, value, engine):
-        return json.dumps(value)
-
-    def process_result_value(self, value, engine):
-        if value is None:
-            return None
-
-        return json.loads(value)
+from sqlalchemy_media import File, StoreManager, FileSystemStore
+from sqlalchemy_media.tests.helpers import Json
 
 
 class AttachmentTestCase(unittest.TestCase):
@@ -50,7 +36,7 @@ class AttachmentTestCase(unittest.TestCase):
             __tablename__ = 'person'
             id = Column(Integer, primary_key=True)
             name = Column(Unicode(50), nullable=False, default='person1')
-            image = Column(MutableDictAttachment.as_mutable(Json), nullable=True)
+            image = Column(File.as_mutable(Json), nullable=True)
 
             def __repr__(self):
                 return "<Person id=%s name=%s image=%s />" % (self.id, self.name, self.image)
@@ -71,12 +57,12 @@ class AttachmentTestCase(unittest.TestCase):
         person1 = Person()
         self.assertIsNone(person1.image)
         sample_content = b'Simple text.'
-        person1.image = MutableDictAttachment()
+        person1.image = File()
         with StoreManager(session):
 
             # First file before commit
             person1.image.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
-            self.assertIsInstance(person1.image, MutableDictAttachment)
+            self.assertIsInstance(person1.image, File)
             self.assertDictEqual(person1.image, {
                 'contentType': 'text/plain',
                 'key': person1.image.key,
@@ -100,7 +86,7 @@ class AttachmentTestCase(unittest.TestCase):
             sample_content = b'Lorem ipsum dolor sit amet'
             person1 = session.query(Person).filter(Person.id == person1.id).one()
             person1.image.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
-            self.assertIsInstance(person1.image, MutableDictAttachment)
+            self.assertIsInstance(person1.image, File)
             self.assertDictEqual(person1.image, {
                 'contentType': 'text/plain',
                 'key': person1.image.key,
@@ -132,7 +118,7 @@ class AttachmentTestCase(unittest.TestCase):
             # Delete file on set to null
             person1 = Person()
             self.assertIsNone(person1.image)
-            person1.image = MutableDictAttachment()
+            person1.image = File()
             person1.image.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
             fifth_filename = join(self.temp_path, person1.image.path)
             person1.image = None
