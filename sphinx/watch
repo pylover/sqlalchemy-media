@@ -1,0 +1,12 @@
+#!/bin/bash
+
+make sqlalchemy-media.io
+
+while true
+do
+  inotifywait -r -e modify -e move -e create -e delete . ../sqlalchemy-media | while read line
+    do
+     make sqlalchemy-media.io
+    done
+done
+

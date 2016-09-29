@@ -1,3 +1,8 @@
+.. sqlalchemy-media documentation master file, created by
+   sphinx-quickstart on Mon Jul 20 22:05:40 2015.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
 sqlalchemy-media
 ================
 
@@ -18,15 +23,23 @@ sqlalchemy-media
 .. image:: https://img.shields.io/badge/license-GPLv3-brightgreen.svg
      :target: https://github.com/pylover/sqlalchemy-media/blob/master/LICENSE
 
+.. image:: https://img.shields.io/github/stars/pylover/sqlalchemy-media.svg?style=social&label=Star
+     :target: https://github.com/pylover/sqlalchemy-media
 
-Attaching any files(Image, Video & etc ) into sqlalchemy models using configurable stores including FileSystemStore.
+
+Contents:
+---------
+
+.. toctree::
+   :maxdepth: 2
+
+   api
 
 
-Overview
---------
+Indices and tables
+------------------
 
- - Store and locate any file.
- - Using json backend type. but supporting all dialects using VARCHAR as json string.
- - Using SqlAlchemy mutables, it's so fun!
- - Offering delete_orphan flag, to automatically delete files which orphaned via attribute set or delete from 
-    collections.
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+

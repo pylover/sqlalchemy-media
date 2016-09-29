@@ -1,0 +1,37 @@
+env:
+  global:
+    - ENCRYPTION_LABEL: 5d394e7a0b2a
+    - COMMIT_AUTHOR_EMAIL: vahid@dobisel.com
+
+language: python
+
+python:
+  - 3.5
+  - 3.5-dev
+  - nightly
+
+before_install:
+  - if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then pip install -U pip setuptools wheel sphinx coverage coveralls; fi
+
+install:
+  - pip install -ve .
+
+script:
+  - if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then coverage run --source sqlalchemy_media $(which nosetests);
+    else nosetests; fi
+
+after_success:
+  - if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then coveralls ; fi
+
+after_deploy:
+  - if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then ./travis-gh-pages.sh ; fi
+
+deploy:
+  provider: pypi
+  user: Vahid.Mardani
+  password:
+    secure: 4UQV8WfYYXLsIkEg5DuzqSMLgEHrrTIIg7Vckx5DQwAMwZEXBGDP89iPPoG0b1WIqdmohzDPtVYqI1jindl2D+9OoZjpHJChAegsRB4RpG4k85vcDZ2zIVApD1NcXpJa/TkekeUE0QfhaBwWT9ubQiXVSlDkptGshdd4ndvGcgfVaLPUik9JTW7jDwpCMeF9C9oqPAqnfe9GciN8PDLkbnYsuJlyBGEymDuZQ6mLEEPGmgX9XpjlPBBoEm+NcGuXsADEAsbUxba6qZ+PRdS9DdglpM53gEXfvrxarh1ftYOH0B2Mvd7ffzexFg7rIMAMGeXLyyChfc13hJKnofws69gUWPO+q8U4j9P53s8fC35cglau+xX7/l6TUcvsy9YcxRvdGsuWGt4kA/z9LnjobKhaUOwp626Yu9eeLdJgeQ0ZeZ7CwMRRWvLzRblNazbypKH4ziD/v2GKt9aU2hpQe6qW2+y5dJPEc6/g6/5eaZXNX1BybRw/pDXNIxe5tBPwhBvsJk9ju0ioh8goeOmyiAHCaBXLvUqiZ3nP4McfwSAjB9ZCgOBMZQ5qDBelccsOHuDfzV2SlFD53zZbOEIPEFh3JBTWZNImFLlgHsP84j9SMn9ihNvR9zTVEmf0NpYEst2jBXN2sKW6SJNi2HbOmuBbtAuwGE2133okIz2eGrQ=
+  on:
+    tags: true
+    distributions: sdist bdist_wheel
+    repo: pylover/sqlalchemy-media

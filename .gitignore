@@ -68,3 +68,11 @@ target/
 test_data
 test_codecs
 sqlalchemy_media/tests/temp
+
+sphinx/_build
+sphinx/_inv-cache
+sphinx/_site
+docs/doctest
+docs/doctrees
+docs/html
+htmlcov
