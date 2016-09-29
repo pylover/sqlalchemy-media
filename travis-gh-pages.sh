@@ -26,7 +26,7 @@ git pull origin gh-pages
 cd ..
 
 # Build in-project documents: docs/html
-cd sqlalchemy-media/doc
+cd sqlalchemy-media/sphinx
 make html
 
 # Build sqlalchemy-media.io documents: ../../sqlalchemy-media.io
