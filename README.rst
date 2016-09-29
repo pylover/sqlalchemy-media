@@ -19,6 +19,7 @@ sqlalchemy-media
      :target: https://github.com/pylover/sqlalchemy-media/blob/master/LICENSE
 
 
+
 Attaching any files(Image, Video & etc ) into sqlalchemy models using configurable stores including FileSystemStore.
 
 
