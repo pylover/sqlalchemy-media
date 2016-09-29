@@ -1,10 +1,9 @@
 
-
 import unittest
 from io import BytesIO
 from os.path import join, exists
 
-from sqlalchemy import Column, Integer, Unicode
+from sqlalchemy import Column, Integer
 
 from sqlalchemy_media.attachments.file import File
 from sqlalchemy_media.stores.manager import StoreManager
@@ -23,7 +22,6 @@ class CollectionsTestCase(TempStoreTestCase):
         class Person(self.Base):
             __tablename__ = 'person'
             id = Column(Integer, primary_key=True)
-            name = Column(Unicode(50), nullable=False, default='person1')
             files = Column(FileList.as_mutable(Json))
 
         session = self.create_all_and_get_session()
@@ -57,7 +55,6 @@ class CollectionsTestCase(TempStoreTestCase):
         class Person(self.Base):
             __tablename__ = 'person'
             id = Column(Integer, primary_key=True)
-            name = Column(Unicode(50), nullable=False, default='person1')
             files = Column(FileDict.as_mutable(Json))
 
         session = self.create_all_and_get_session()

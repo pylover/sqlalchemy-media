@@ -1,6 +1,7 @@
 from typing import Iterable
 
 from sqlalchemy import event
+from sqlalchemy.util.langhelpers import symbol
 
 from sqlalchemy_media.context import get_id as get_context_id
 from sqlalchemy_media.stores.exceptions import ContextError, DefaultStoreError
@@ -21,9 +22,11 @@ class StoreManager(object):
     _default = None
     _files_to_delete_after_commit = None
     _files_to_delete_after_rollback = None
+    _files_orphaned = None
 
-    def __init__(self, session):
+    def __init__(self, session, delete_orphan=False):
         self.session = session
+        self.delete_orphan = delete_orphan
         self.reset_files_state()
 
     def __enter__(self):
@@ -101,6 +104,23 @@ class StoreManager(object):
     def register_to_delete_after_commit(self, *files: Iterable['Attachment']):
         self._files_to_delete_after_commit.extend(files)
 
+    def orphaned(self, *files: Iterable['Attachment']):
+        if self.delete_orphan:
+            self._files_orphaned.extend(files)
+
+    def adopted(self, *files: Iterable['Attachment']):
+        """
+        Opposite of orphaned
+        :param files:
+        :return:
+        """
+        if not self.delete_orphan:
+            return
+
+        for f in files:
+            if f in self._files_orphaned:
+                self._files_orphaned.remove(f)
+
     # noinspection PyUnresolvedReferences
     def register_to_delete_after_rollback(self, *files: Iterable['Attachment']):
         self._files_to_delete_after_rollback.extend(files)
@@ -108,11 +128,17 @@ class StoreManager(object):
     def reset_files_state(self):
         self._files_to_delete_after_commit = []
         self._files_to_delete_after_rollback = []
+        self._files_orphaned = []
 
     # noinspection PyUnusedLocal
     def on_commit(self, session):
         for f in self._files_to_delete_after_commit:
             f.delete()
+
+        if self.delete_orphan:
+            for f in self._files_orphaned:
+                f.delete()
+
         self.reset_files_state()
 
     # noinspection PyUnusedLocal
@@ -127,18 +153,26 @@ class StoreManager(object):
             if isinstance(instance, attribute.class_):
                 self.register_to_delete_after_commit(getattr(instance, attribute.key).copy())
 
-    @staticmethod
-    def observe_attribute(attr):
+    @classmethod
+    def observe_attribute(cls, attr, collection=False):
+
         if attr not in _observing_attributes:
             _observing_attributes.add(attr)
 
             # noinspection PyUnusedLocal
             def on_set_attr(target, value, old_value, initiator):
-                if old_value is None:
+                if old_value is None or old_value in (symbol('NEVER_SET'), symbol('NO_VALUE')):
                     return
 
-                if value is None:
-                    store_manager = StoreManager.get_current_store_manager()
-                    store_manager.register_to_delete_after_commit(getattr(target, attr.key).copy())
+                store_manager = StoreManager.get_current_store_manager()
+                if store_manager.delete_orphan:
+                    if value is not old_value:
+                        if collection:
+                            if isinstance(old_value, dict):
+                                store_manager.orphaned(*(set(old_value.values()) - set(value.values())))
+                            else:
+                                store_manager.orphaned(*(set(old_value) - set(value)))
+                        else:
+                            store_manager.orphaned(old_value)
 
             event.listen(attr, 'set', on_set_attr, propagate=True)

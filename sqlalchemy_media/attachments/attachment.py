@@ -18,6 +18,11 @@ class Attachment(MutableDict):
     min_length = None
 
     @classmethod
+    def _listen_on_attribute(cls, attribute, coerce, parent_cls):
+        StoreManager.observe_attribute(attribute)
+        super()._listen_on_attribute(attribute, coerce, parent_cls)
+
+    @classmethod
     def _assert_type(cls, value):
         """
         Checking attachment type, ignoring any type that not derived from :py:class:`Attachment`.
@@ -33,13 +38,13 @@ class Attachment(MutableDict):
         return super().coerce(key, value)
 
     @classmethod
-    def _listen_on_attribute(cls, attribute, coerce, parent_cls):
-        StoreManager.observe_attribute(attribute)
-        super()._listen_on_attribute(attribute, coerce, parent_cls)
+    def create_from(cls, *args, **kwargs):
+        instance = cls()
+        instance.attach(*args, **kwargs)
+        return instance
 
-    @property
-    def store_manager(self):
-        return StoreManager.get_current_store_manager()
+    def __hash__(self):
+        return hash(self.key)
 
     @property
     def store_id(self):
@@ -111,7 +116,8 @@ class Attachment(MutableDict):
         return self.__class__(copy.deepcopy(self))
 
     def get_store(self):
-        return self.store_manager.get(self.store_id)
+        store_manager = StoreManager.get_current_store_manager()
+        return store_manager.get(self.store_id)
 
     def store(self, f):
         length = self.get_store().put(self.path, f, max_length=self.max_length, min_length=self.min_length)
@@ -156,12 +162,7 @@ class Attachment(MutableDict):
             self.store_id = store_id
 
         self.store(f)
-        self.store_manager.register_to_delete_after_rollback(self)
+        store_manager = StoreManager.get_current_store_manager()
+        store_manager.register_to_delete_after_rollback(self)
         if old_attachment:
-            self.store_manager.register_to_delete_after_commit(old_attachment)
-
-    @classmethod
-    def create_from(cls, *args, **kwargs):
-        instance = cls()
-        instance.attach(*args, **kwargs)
-        return instance
+            store_manager.register_to_delete_after_commit(old_attachment)

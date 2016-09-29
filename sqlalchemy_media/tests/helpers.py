@@ -5,6 +5,7 @@ import time
 import functools
 import contextlib
 import json
+import shutil
 from os import makedirs
 from os.path import join, dirname, abspath, exists
 from http.server import HTTPServer, BaseHTTPRequestHandler, HTTPStatus
@@ -82,14 +83,19 @@ class TempStoreTestCase(SqlAlchemyTestCase):
     def setUpClass(cls):
         cls.this_dir = abspath(dirname(__file__))
         cls.stuff_path = join(cls.this_dir, 'stuff')
-        cls.temp_path = join(cls.this_dir, 'temp', cls.__name__)
-
-        if not exists(cls.temp_path):
-            makedirs(cls.temp_path, exist_ok=True)
-
-        StoreManager.register('fs', functools.partial(FileSystemStore, cls.temp_path), default=True)
-
         super().setUpClass()
+
+    def setUp(self):
+        self.temp_path = join(self.this_dir, 'temp', self.__class__.__name__, self._testMethodName)
+
+        # Remove previous files, if any! to make a clean temp directory:
+        if exists(self.temp_path):
+            shutil.rmtree(self.temp_path)
+
+        makedirs(self.temp_path)
+
+        StoreManager.register('fs', functools.partial(FileSystemStore, self.temp_path), default=True)
+        super().setUp()
 
 
 if __name__ == '__main__':

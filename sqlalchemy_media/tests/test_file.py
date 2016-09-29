@@ -3,7 +3,7 @@ import unittest
 from io import BytesIO
 from os.path import join, exists
 
-from sqlalchemy import Column, Integer, Unicode
+from sqlalchemy import Column, Integer
 
 from sqlalchemy_media import File, StoreManager
 from sqlalchemy_media.tests.helpers import Json, TempStoreTestCase
@@ -21,7 +21,6 @@ class FileTestCase(TempStoreTestCase):
         class Person(self.Base):
             __tablename__ = 'person'
             id = Column(Integer, primary_key=True)
-            name = Column(Unicode(50), nullable=False, default='person1')
             image = Column(File.as_mutable(Json), nullable=True)
 
         session = self.create_all_and_get_session()
@@ -100,7 +99,8 @@ class FileTestCase(TempStoreTestCase):
             session.add(person1)
             self.assertTrue(exists(fifth_filename))
             session.commit()
-            self.assertFalse(exists(fifth_filename))
+            # Because delete_orphan is not set.
+            self.assertTrue(exists(fifth_filename))
 
     def test_file_size_limit(self):
 
