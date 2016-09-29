@@ -8,7 +8,6 @@ language: python
 python:
   - 3.5
   - 3.5-dev
-  - nightly
 
 before_install:
   - if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then pip install -U pip setuptools wheel sphinx coverage coveralls; fi
