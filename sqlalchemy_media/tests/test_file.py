@@ -16,7 +16,7 @@ class FileTestCase(TempStoreTestCase):
         super().setUp()
         self.sample_text_file1 = join(self.stuff_path, 'sample_text_file1.txt')
 
-    def test_attachment(self):
+    def test_file(self):
 
         class Person(self.Base):
             __tablename__ = 'person'
