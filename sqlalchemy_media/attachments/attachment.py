@@ -72,7 +72,7 @@ class Attachment(MutableDict):
 
     @property
     def filename(self) -> str:
-        return '%s-%s%s%s' % (self.__prefix__, self.key, self.suffix, self.extension)
+        return '%s-%s%s%s' % (self.__prefix__, self.key, self.suffix, self.extension if self.extension else '')
 
     @property
     def suffix(self):
@@ -166,3 +166,7 @@ class Attachment(MutableDict):
         store_manager.register_to_delete_after_rollback(self)
         if old_attachment:
             store_manager.register_to_delete_after_commit(old_attachment)
+
+    def locate(self):
+        store = self.get_store()
+        return store.locate(self)

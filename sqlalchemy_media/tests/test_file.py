@@ -21,32 +21,33 @@ class FileTestCase(TempStoreTestCase):
         class Person(self.Base):
             __tablename__ = 'person'
             id = Column(Integer, primary_key=True)
-            image = Column(File.as_mutable(Json), nullable=True)
+            cv = Column(File.as_mutable(Json), nullable=True)
 
         session = self.create_all_and_get_session()
 
         # person1 = Person(name='person1')
         person1 = Person()
-        self.assertIsNone(person1.image)
+        self.assertIsNone(person1.cv)
         sample_content = b'Simple text.'
 
         with StoreManager(session):
 
             # First file before commit
-            person1.image = File.create_from(BytesIO(sample_content), content_type='text/plain', extension='.txt')
-            self.assertIsInstance(person1.image, File)
-            self.assertDictEqual(person1.image, {
+            person1.cv = File.create_from(BytesIO(sample_content), content_type='text/plain', extension='.txt')
+            self.assertIsInstance(person1.cv, File)
+            self.assertEqual(person1.cv.locate(), '%s/%s' % (self.base_url, person1.cv.path))
+            self.assertDictEqual(person1.cv, {
                 'contentType': 'text/plain',
-                'key': person1.image.key,
+                'key': person1.cv.key,
                 'extension': '.txt',
                 'length': len(sample_content)
             })
-            first_filename = join(self.temp_path, person1.image.path)
+            first_filename = join(self.temp_path, person1.cv.path)
             self.assertTrue(exists(first_filename))
 
             # Second file before commit
-            person1.image.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
-            second_filename = join(self.temp_path, person1.image.path)
+            person1.cv.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
+            second_filename = join(self.temp_path, person1.cv.path)
             self.assertTrue(exists(second_filename))
 
             # Adding object to session, the new life-cycle of the person1 just began.
@@ -58,15 +59,15 @@ class FileTestCase(TempStoreTestCase):
             # Loading again
             sample_content = b'Lorem ipsum dolor sit amet'
             person1 = session.query(Person).filter(Person.id == person1.id).one()
-            person1.image.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
-            self.assertIsInstance(person1.image, File)
-            self.assertDictEqual(person1.image, {
+            person1.cv.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
+            self.assertIsInstance(person1.cv, File)
+            self.assertDictEqual(person1.cv, {
                 'contentType': 'text/plain',
-                'key': person1.image.key,
+                'key': person1.cv.key,
                 'extension': '.txt',
                 'length': len(sample_content)
             })
-            third_filename = join(self.temp_path, person1.image.path)
+            third_filename = join(self.temp_path, person1.cv.path)
             self.assertTrue(exists(second_filename))
             self.assertTrue(exists(third_filename))
 
@@ -76,8 +77,8 @@ class FileTestCase(TempStoreTestCase):
             self.assertTrue(exists(third_filename))
 
             # Rollback
-            person1.image.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
-            forth_filename = join(self.temp_path, person1.image.path)
+            person1.cv.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
+            forth_filename = join(self.temp_path, person1.cv.path)
             self.assertTrue(exists(forth_filename))
             session.rollback()
             self.assertTrue(exists(third_filename))
@@ -91,11 +92,11 @@ class FileTestCase(TempStoreTestCase):
 
             # Delete file on set to null
             person1 = Person()
-            self.assertIsNone(person1.image)
-            person1.image = File()
-            person1.image.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
-            fifth_filename = join(self.temp_path, person1.image.path)
-            person1.image = None
+            self.assertIsNone(person1.cv)
+            person1.cv = File()
+            person1.cv.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
+            fifth_filename = join(self.temp_path, person1.cv.path)
+            person1.cv = None
             session.add(person1)
             self.assertTrue(exists(fifth_filename))
             session.commit()

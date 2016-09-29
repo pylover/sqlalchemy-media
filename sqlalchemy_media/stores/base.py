@@ -34,3 +34,6 @@ class Store(object):
 
     def open(self, filename: str, mode: str='r') -> Stream:
         raise NotImplementedError()
+
+    def locate(self, attachment: 'Attachment') -> str:
+        raise NotImplementedError()

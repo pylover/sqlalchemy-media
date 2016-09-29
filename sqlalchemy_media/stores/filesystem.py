@@ -7,8 +7,9 @@ from sqlalchemy_media.helpers import copy_stream, open_stream
 
 class FileSystemStore(Store):
 
-    def __init__(self, root_path: str, chunk_size: int=32768):
+    def __init__(self, root_path: str, base_url: str, chunk_size: int=32768):
         self.root_path = abspath(root_path)
+        self.base_url = base_url.rstrip('/')
         self.chunk_size = chunk_size
 
     def _get_physical_path(self, filename: str) -> str:
@@ -29,3 +30,6 @@ class FileSystemStore(Store):
 
     def open(self, filename: str, mode: str='rb') -> Stream:
         return open(self._get_physical_path(filename), mode=mode)
+
+    def locate(self, attachment: 'Attachment') -> str:
+        return '%s/%s' % (self.base_url, attachment.path)
