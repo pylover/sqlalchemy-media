@@ -82,7 +82,7 @@ class TempStoreTestCase(SqlAlchemyTestCase):
     def setUpClass(cls):
         cls.this_dir = abspath(dirname(__file__))
         cls.stuff_path = join(cls.this_dir, 'stuff')
-        cls.temp_path = join(cls.this_dir, 'temp', 'test_attachment')
+        cls.temp_path = join(cls.this_dir, 'temp', cls.__name__)
 
         if not exists(cls.temp_path):
             makedirs(cls.temp_path, exist_ok=True)

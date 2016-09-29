@@ -9,7 +9,6 @@ from sqlalchemy import Column, Integer, Unicode
 from sqlalchemy_media import File, StoreManager
 from sqlalchemy_media.attachments.collections import FileList
 from sqlalchemy_media.tests.helpers import Json, TempStoreTestCase
-from sqlalchemy_media.exceptions import MaximumLengthIsReachedError, MinimumLengthIsNotReachedError
 
 
 class CollectionsTestCase(TempStoreTestCase):
@@ -30,7 +29,26 @@ class CollectionsTestCase(TempStoreTestCase):
 
         with StoreManager(session):
             person1 = Person()
-            pass
+            person1.files = FileList()
+            person1.files.append(File.create_from(BytesIO(b'simple text 1')))
+            person1.files.append(File.create_from(BytesIO(b'simple text 2')))
+            person1.files.append(File.create_from(BytesIO(b'simple text 3')))
+            session.add(person1)
+            session.commit()
+
+            person1 = session.query(Person).one()
+            for f in person1.files:
+                self.assertIsInstance(f, File)
+                filename = join(self.temp_path, f.path)
+                self.assertTrue(exists(filename))
+
+            # Overwriting the first file
+            first_filename = join(self.temp_path, person1.files[0].path)
+            person1.files[0].attach(BytesIO(b'Another simple text.'))
+            first_new_filename = join(self.temp_path, person1.files[0].path)
+            session.commit()
+            self.assertFalse(exists(first_filename))
+            self.assertTrue(exists(first_new_filename))
 
 
 if __name__ == '__main__':
