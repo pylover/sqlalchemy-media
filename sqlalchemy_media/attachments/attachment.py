@@ -1,6 +1,5 @@
 from typing import Hashable
 import copy
-import mimetypes
 import uuid
 from os.path import splitext
 
@@ -8,6 +7,7 @@ from sqlalchemy.ext.mutable import MutableDict
 
 from sqlalchemy_media.stores import StoreManager
 from sqlalchemy_media.typing import Attachable
+from sqlalchemy_media.descriptors import AttachableDescriptor
 
 
 class Attachment(MutableDict):
@@ -119,53 +119,54 @@ class Attachment(MutableDict):
         store_manager = StoreManager.get_current_store_manager()
         return store_manager.get(self.store_id)
 
-    def store(self, f):
-        length = self.get_store().put(self.path, f, max_length=self.max_length, min_length=self.min_length)
-        self['length'] = length
-
     def delete(self):
         self.get_store().delete(self.path)
 
-    def attach(self, f: Attachable, content_type: str=None, original_filename: str=None, extension: str=None,
-               store_id: str=None) -> None:
+    def attach(self, f: Attachable, content_type: str = None, original_filename: str = None, extension: str = None,
+               store_id: str = None) -> None:
 
         # Backup the old key and filename if exists
         old_attachment = None if self.empty else self.copy()
 
-        # Determining original filename
-        if original_filename is not None:
-            self.original_filename = original_filename
-        elif isinstance(f, str):
-            self.original_filename = f
+        # Wrap in AttachableDescriptor
+        with AttachableDescriptor(
+                f,
+                content_type=content_type,
+                original_filename=original_filename,
+                extension=extension
+        ) as descriptor:
 
-        # Determining the extension
-        if extension is not None:
-            self.extension = extension
-        elif isinstance(f, str):
-            self.extension = splitext(f)[1]
-        elif original_filename is not None:
-            self.extension = splitext(self.original_filename)[1]
+            # Analyze
 
-        # Determining the mimetype
-        if content_type is not None:
-            self.content_type = content_type
-        elif isinstance(f, str):
-            self.content_type = mimetypes.guess_type(f)
-        elif original_filename is not None:
-            self.content_type = mimetypes.guess_type(self.original_filename)
-        elif extension is not None:
-            self.content_type = mimetypes.guess_type('x%s' % extension)
+            # Validate
 
-        self.key = str(uuid.uuid4())
+            # Store
 
-        if store_id is not None:
-            self.store_id = store_id
+            # Determining the extension
+            if descriptor.original_filename:
+                self.original_filename = original_filename
 
-        self.store(f)
-        store_manager = StoreManager.get_current_store_manager()
-        store_manager.register_to_delete_after_rollback(self)
-        if old_attachment:
-            store_manager.register_to_delete_after_commit(old_attachment)
+            if descriptor.extension:
+                self.extension = descriptor.extension
+
+            if descriptor.content_type:
+                self.content_type = descriptor.content_type
+            self.key = str(uuid.uuid4())
+
+            if store_id is not None:
+                self.store_id = store_id
+
+            self['length'] = self.get_store().put(
+                self.path,
+                descriptor,
+                max_length=self.max_length,
+                min_length=self.min_length
+            )
+
+            store_manager = StoreManager.get_current_store_manager()
+            store_manager.register_to_delete_after_rollback(self)
+            if old_attachment:
+                store_manager.register_to_delete_after_commit(old_attachment)
 
     def locate(self):
         store = self.get_store()

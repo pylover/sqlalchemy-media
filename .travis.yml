@@ -10,17 +10,17 @@ python:
   - 3.5-dev
 
 before_install:
-  - if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then pip install -U pip setuptools wheel sphinx coverage coveralls; fi
+  - pip install -U pip setuptools wheel
+  - pip install -r requirements-dev.txt
 
 install:
   - pip install -ve .
 
 script:
-  - if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then coverage run --source sqlalchemy_media $(which nosetests);
-    else nosetests; fi
+  - then coverage run --source sqlalchemy_media $(which nosetests)
 
 after_success:
-  - if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then coveralls ; fi
+  - coveralls
 
 after_deploy:
   - if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then ./travis-gh-pages.sh ; fi

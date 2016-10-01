@@ -1,13 +1,15 @@
 from typing import Tuple
 import unittest
 import threading
-import time
 import functools
 import contextlib
 import json
 import shutil
-from os import makedirs
-from os.path import join, dirname, abspath, exists
+import mimetypes
+import io
+import base64
+from os import makedirs, urandom
+from os.path import join, dirname, abspath, exists, split
 from http.server import HTTPServer, BaseHTTPRequestHandler, HTTPStatus
 
 from sqlalchemy import Unicode, TypeDecorator, create_engine
@@ -15,23 +17,46 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 from sqlalchemy_media import StoreManager, FileSystemStore
+from sqlalchemy_media.typing import Stream
+from sqlalchemy_media.helpers import copy_stream
 
 
 Address = Tuple[str, int]
 
 
 @contextlib.contextmanager
-def simple_http_server(content: bytes= b'Simple file content.', bind: Address=('', 0)):
+def simple_http_server(content: bytes= b'Simple file content.', bind: Address=('', 0), content_type: str=None):
 
     class SimpleHandler(BaseHTTPRequestHandler):
 
-        def do_GET(self):
-            self.send_response(HTTPStatus.OK)
-            self.send_header('Content-type', "text/plain")
+        def serve_text(self):
+            self.send_header('Content-Type', "text/plain")
             self.send_header('Content-Length', str(len(content)))
             self.send_header('Last-Modified', self.date_time_string())
             self.end_headers()
             self.wfile.write(content)
+
+        def serve_static_file(self, filename: str):
+            self.send_header('Content-Type', mimetypes.guess_type(filename)[0])
+            with open(filename, 'rb') as f:
+                self.serve_stream(f)
+
+        def serve_stream(self, stream: Stream):
+            buffer = io.BytesIO()
+            self.send_header('Content-Length', str(copy_stream(stream, buffer)))
+            self.end_headers()
+            buffer.seek(0)
+            copy_stream(buffer, self.wfile)
+
+        def do_GET(self):
+            self.send_response(HTTPStatus.OK)
+            if isinstance(content, bytes):
+                self.serve_text()
+            elif isinstance(content, str):
+                self.serve_static_file(content)
+            else:
+                self.send_header('Content-Type', content_type)
+                self.serve_stream(content)
 
     http_server = HTTPServer(bind, SimpleHandler)
     thread = threading.Thread(target=http_server.serve_forever, name='sa-media test server.', daemon=True)
@@ -99,8 +124,53 @@ class TempStoreTestCase(SqlAlchemyTestCase):
         super().setUp()
 
 
+def encode_multipart_data(fields: dict=None, files: dict=None):
+    BOUNDARY = ''.join(['-----', base64.urlsafe_b64encode(urandom(27)).decode()])
+    CRLF = b'\r\n'
+    lines = []
+
+    if fields:
+        for key, value in fields.items():
+            lines.append('--' + BOUNDARY)
+            lines.append('Content-Disposition: form-data; name="%s"' % key)
+            lines.append('')
+            lines.append(value)
+
+    if files:
+        for key, filepath in files.items():
+            filename = split(filepath)[1]
+            lines.append('--' + BOUNDARY)
+            lines.append(
+                'Content-Disposition: form-data; name="%s"; filename="%s"' %
+                (key, filename))
+            lines.append(
+                'Content-Type: %s' %
+                (mimetypes.guess_type(filename)[0] or 'application/octet-stream'))
+            lines.append('')
+            lines.append(open(filepath, 'rb').read())
+
+    lines.append('--' + BOUNDARY + '--')
+    lines.append('')
+
+    body = io.BytesIO()
+    length = 0
+    for l in lines:
+        line = (l if isinstance(l, bytes) else l.encode()) + CRLF
+        length += len(line)
+        body.write(line)
+    body.seek(0)
+    content_type = 'multipart/form-data; boundary=%s' % BOUNDARY
+    return content_type, body, length
+
+
 if __name__ == '__main__':
-    with simple_http_server(bind=('', 8080), content=b'simple text') as httpd:
-        target_url = 'http://%s:%s' % httpd.server_address
-        print(target_url)
-        time.sleep(1)
+    ct, b, l = encode_multipart_data(dict(test1='TEST1VALUE'), files=dict(cat='stuff/cat.jpg'))
+    print(ct)
+    print(l)
+    print(b.read())
+
+#    with simple_http_server(bind=('', 8080), content=b'simple text') as httpd:
+#     with simple_http_server(bind=('', 8080), content='stuff/cat.jpg') as httpd:
+#         target_url = 'http://%s:%s' % httpd.server_address
+#         print(target_url)
+#         time.sleep(1000)

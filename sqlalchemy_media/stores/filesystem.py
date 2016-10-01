@@ -15,7 +15,7 @@ class FileSystemStore(Store):
     def _get_physical_path(self, filename: str) -> str:
         return join(self.root_path, filename)
 
-    def put_stream(self, filename: str, stream: Stream, *, min_length: int=None, max_length: int=None):
+    def put(self, filename: str, stream: Stream, *, min_length: int=None, max_length: int=None):
         physical_path = self._get_physical_path(filename)
         physical_directory = dirname(physical_path)
 

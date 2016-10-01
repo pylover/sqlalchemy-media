@@ -1,7 +1,8 @@
 
+import re
+from hashlib import md5
 from typing import BinaryIO
 from urllib.request import urlopen
-import re
 
 from sqlalchemy_media.typing import Stream
 from sqlalchemy_media.exceptions import MaximumLengthIsReachedError, MinimumLengthIsNotReachedError
@@ -25,7 +26,7 @@ def open_stream(file_identifier: str, mode: str='rb') -> BinaryIO:
         return open(file_identifier, mode=mode)
 
 
-def copy_stream(source: Stream, target: Stream, *, chunk_size: int=16*1024, min_length: int=None,
+def copy_stream(source: [Stream, 'BaseDescriptor'], target: Stream, *, chunk_size: int=16*1024, min_length: int=None,
                 max_length: int=None) -> int:
     length = 0
     while 1:
@@ -42,3 +43,22 @@ def copy_stream(source: Stream, target: Stream, *, chunk_size: int=16*1024, min_
         raise MinimumLengthIsNotReachedError(min_length)
 
     return length
+
+
+def md5sum(f):
+    if isinstance(f, str):
+        file_obj = open(f, 'rb')
+    else:
+        file_obj = f
+
+    try:
+        checksum = md5()
+        while True:
+            d = file_obj.read(1024)
+            if not d:
+                break
+            checksum.update(d)
+        return checksum.digest()
+    finally:
+        if file_obj is not f:
+            file_obj.close()
