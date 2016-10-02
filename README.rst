@@ -105,6 +105,7 @@ Here a simple example to how to use this library:
         with StoreManager(session):
             person1 = Person()
             person1.image = Image.create_from('https://www.python.org/static/img/python-logo@2x.png')
+            session.add(person1)
             session.commit()
             print(person1.image)
             path = join(TEMP_PATH, person1.image.path)

@@ -5,7 +5,6 @@ import functools
 import contextlib
 import json
 import shutil
-import mimetypes
 import io
 import base64
 from os import makedirs, urandom
@@ -19,6 +18,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_media import StoreManager, FileSystemStore
 from sqlalchemy_media.typing import Stream
 from sqlalchemy_media.helpers import copy_stream
+from sqlalchemy_media.mimetypes_ import guess_type
 
 
 Address = Tuple[str, int]
@@ -37,7 +37,7 @@ def simple_http_server(content: bytes= b'Simple file content.', bind: Address=('
             self.wfile.write(content)
 
         def serve_static_file(self, filename: str):
-            self.send_header('Content-Type', mimetypes.guess_type(filename)[0])
+            self.send_header('Content-Type', guess_type(filename))
             with open(filename, 'rb') as f:
                 self.serve_stream(f)
 
@@ -145,7 +145,7 @@ def encode_multipart_data(fields: dict=None, files: dict=None):
                 (key, filename))
             lines.append(
                 'Content-Type: %s' %
-                (mimetypes.guess_type(filename)[0] or 'application/octet-stream'))
+                (guess_type(filename) or 'application/octet-stream'))
             lines.append('')
             lines.append(open(filepath, 'rb').read())
 

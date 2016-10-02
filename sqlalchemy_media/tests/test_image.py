@@ -35,7 +35,7 @@ class ImageTestCase(TempStoreTestCase):
         with StoreManager(session):
             person1.image = Image.create_from(self.dog_jpeg)
             self.assertEqual(person1.image.content_type, 'image/jpeg')
-            self.assertEqual(person1.image.extension, '.jpg')
+            self.assertEqual(person1.image.extension, '.jpe')
             self.assertTrue(exists(join(self.temp_path, person1.image.path)))
 
             person1.image = Image.create_from(self.dog_png)
