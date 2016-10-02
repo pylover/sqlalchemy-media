@@ -123,10 +123,7 @@ class Attachment(MutableDict):
         self.get_store().delete(self.path)
 
     def attach(self, f: Attachable, content_type: str = None, original_filename: str = None, extension: str = None,
-               store_id: str = None) -> None:
-
-        # Backup the old key and filename if exists
-        old_attachment = None if self.empty else self.copy()
+               store_id: str = None, overwrite: bool=False) -> None:
 
         # Wrap in AttachableDescriptor
         with AttachableDescriptor(
@@ -136,13 +133,16 @@ class Attachment(MutableDict):
                 extension=extension
         ) as descriptor:
 
+            # Backup the old key and filename if exists
+            if overwrite:
+                old_attachment = None
+            else:
+                old_attachment = None if self.empty else self.copy()
+                self.key = str(uuid.uuid4())
+
             # Analyze
-
             # Validate
-
             # Store
-
-            # Determining the extension
             if descriptor.original_filename:
                 self.original_filename = original_filename
 
@@ -151,7 +151,6 @@ class Attachment(MutableDict):
 
             if descriptor.content_type:
                 self.content_type = descriptor.content_type
-            self.key = str(uuid.uuid4())
 
             if store_id is not None:
                 self.store_id = store_id
@@ -165,6 +164,7 @@ class Attachment(MutableDict):
 
             store_manager = StoreManager.get_current_store_manager()
             store_manager.register_to_delete_after_rollback(self)
+
             if old_attachment:
                 store_manager.register_to_delete_after_commit(old_attachment)
 

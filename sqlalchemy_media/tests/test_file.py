@@ -161,6 +161,29 @@ class FileTestCase(TempStoreTestCase):
             session.add(person1)
             session.commit()
 
+    def test_overwrite(self):
+        class Person(self.Base):
+            __tablename__ = 'person'
+            id = Column(Integer, primary_key=True)
+            cv = Column(File.as_mutable(Json), nullable=True)
+
+        session = self.create_all_and_get_session()
+        person1 = Person(cv=File())
+        self.assertIsInstance(person1.cv, File)
+        with StoreManager(session):
+            person1.cv.attach(BytesIO(b'Simple text'))
+            cv_filename = join(self.temp_path, person1.cv.path)
+            self.assertTrue(exists(cv_filename))
+            session.add(person1)
+            session.commit()
+
+            # Now overwriting the file
+            person1 = session.query(Person).filter(Person.id == person1.id).one()
+            person1.cv.attach(BytesIO(b'Another simple text'), overwrite=True)
+            self.assertTrue(exists(cv_filename))
+            session.commit()
+            self.assertTrue(exists(cv_filename))
+
 
 if __name__ == '__main__':
     unittest.main()
