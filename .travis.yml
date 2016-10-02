@@ -17,7 +17,7 @@ install:
   - pip install -ve .
 
 script:
-  - then coverage run --source sqlalchemy_media $(which nosetests)
+  - coverage run --source sqlalchemy_media $(which nosetests)
 
 after_success:
   - coveralls
