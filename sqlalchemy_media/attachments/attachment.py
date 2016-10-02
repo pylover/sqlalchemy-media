@@ -1,6 +1,7 @@
 from typing import Hashable
 import copy
 import uuid
+import time
 from os.path import splitext
 
 from sqlalchemy.ext.mutable import MutableDict
@@ -112,6 +113,14 @@ class Attachment(MutableDict):
     def length(self, value) -> None:
         self['length'] = value
 
+    @property
+    def timestamp(self):
+        return self.get('timestamp')
+
+    @timestamp.setter
+    def timestamp(self, v):
+        self['timestamp'] = v
+
     def copy(self):
         return self.__class__(copy.deepcopy(self))
 
@@ -162,6 +171,8 @@ class Attachment(MutableDict):
                 min_length=self.min_length
             )
 
+            self.timestamp = time.time()
+
             store_manager = StoreManager.get_current_store_manager()
             store_manager.register_to_delete_after_rollback(self)
 
@@ -170,4 +181,4 @@ class Attachment(MutableDict):
 
     def locate(self):
         store = self.get_store()
-        return store.locate(self)
+        return '%s?_ts=%s' % (store.locate(self), self.timestamp)

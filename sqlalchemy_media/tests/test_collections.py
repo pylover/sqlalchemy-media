@@ -41,7 +41,7 @@ class CollectionsTestCase(TempStoreTestCase):
                 self.assertIsInstance(f, File)
                 filename = join(self.temp_path, f.path)
                 self.assertTrue(exists(filename))
-                self.assertEqual(f.locate(), '%s/%s' % (self.base_url, f.path))
+                self.assertEqual(f.locate(), '%s/%s?_ts=%s' % (self.base_url, f.path, f.timestamp))
 
             # Overwriting the first file
             first_filename = join(self.temp_path, person1.files[0].path)

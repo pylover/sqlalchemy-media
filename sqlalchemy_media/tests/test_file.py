@@ -35,12 +35,14 @@ class FileTestCase(TempStoreTestCase):
             # First file before commit
             person1.cv = File.create_from(BytesIO(sample_content), content_type='text/plain', extension='.txt')
             self.assertIsInstance(person1.cv, File)
-            self.assertEqual(person1.cv.locate(), '%s/%s' % (self.base_url, person1.cv.path))
+            self.assertEqual(person1.cv.locate(), '%s/%s?_ts=%s' % (
+                self.base_url, person1.cv.path, person1.cv.timestamp))
             self.assertDictEqual(person1.cv, {
                 'contentType': 'text/plain',
                 'key': person1.cv.key,
                 'extension': '.txt',
-                'length': len(sample_content)
+                'length': len(sample_content),
+                'timestamp': person1.cv.timestamp
             })
             first_filename = join(self.temp_path, person1.cv.path)
             self.assertTrue(exists(first_filename))
@@ -65,7 +67,8 @@ class FileTestCase(TempStoreTestCase):
                 'contentType': 'text/plain',
                 'key': person1.cv.key,
                 'extension': '.txt',
-                'length': len(sample_content)
+                'length': len(sample_content),
+                'timestamp': person1.cv.timestamp
             })
             third_filename = join(self.temp_path, person1.cv.path)
             self.assertTrue(exists(second_filename))
