@@ -19,6 +19,9 @@ class StreamDescriptor(BaseDescriptor):
     def seek(self, position: int):
         self._file.seek(position)
 
+    def seekable(self):
+        return self._file.seekable()
+
     def close(self) -> None:
         """
         Do not closing the stream here, because we'r not upened it.

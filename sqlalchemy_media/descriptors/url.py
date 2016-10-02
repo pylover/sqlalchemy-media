@@ -15,5 +15,5 @@ class UrlDescriptor(CloserStreamDescriptor):
         if 'Content-Length' in response.headers:
             kwargs['content_length'] = int(response.headers.get('Content-Length'))
 
-        super().__init__(response, content_type = content_type, ** kwargs)
+        super().__init__(response, content_type=content_type, ** kwargs)
 
