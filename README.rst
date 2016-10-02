@@ -116,7 +116,13 @@ Here a simple example to how to use this library:
 
 Will produces::
 
-    {'key': '48728684-498f-414b-a316-55ff479de4fa', 'contentType': 'image/png', 'length': 15770, 'extension': '.png'}
-    /tmp/sqlalchemy-media/images/image-48728684-498f-414b-a316-55ff479de4fa.png
-    http://static.example.org/images/image-48728684-498f-414b-a316-55ff479de4fa.png
-
+    {
+        'contentType': 'image/png',
+        'extension': '.png',
+        'key': 'e898b235-d843-4daf-8957-fe463e3a3450',
+        'length': 15770,
+        'originalFilename': None,
+        'timestamp': 1475425931.621913
+    }
+    '/tmp/sqlalchemy-media/images/image-e898b235-d843-4daf-8957-fe463e3a3450.png'
+    'http://static.example.org/images/image-e898b235-d843-4daf-8957-fe463e3a3450.png?_ts=1475425931.621913'

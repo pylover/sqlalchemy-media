@@ -1,6 +1,7 @@
 
 import json
 import functools
+from pprint import pprint
 from os.path import join, exists
 
 from sqlalchemy import Column, Integer, create_engine, Unicode, TypeDecorator
@@ -51,8 +52,8 @@ if __name__ == '__main__':
         person1.image = Image.create_from('https://www.python.org/static/img/python-logo@2x.png')
         session.add(person1)
         session.commit()
-        print(person1.image)
-        path = join(TEMP_PATH, person1.image.path)
-        print(path)
-        print(person1.image.locate())
-        assert exists(path)
+        pprint(person1.image)
+        file_path = join(TEMP_PATH, person1.image.path)
+        pprint(file_path)
+        pprint(person1.image.locate())
+        assert exists(file_path)

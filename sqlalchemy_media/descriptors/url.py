@@ -5,7 +5,7 @@ from sqlalchemy_media.descriptors.stream import CloserStreamDescriptor
 
 
 class UrlDescriptor(CloserStreamDescriptor):
-    def __init__(self, uri: str, content_type: str=None, **kwargs):
+    def __init__(self, uri: str, content_type: str=None, original_filename: str=None, **kwargs):
         response = urlopen(uri)
 
         if content_type is None and 'Content-Type' in response.headers:
@@ -14,5 +14,8 @@ class UrlDescriptor(CloserStreamDescriptor):
         if 'Content-Length' in response.headers:
             kwargs['content_length'] = int(response.headers.get('Content-Length'))
 
-        super().__init__(response, content_type=content_type, original_filename=uri, **kwargs)
+        if original_filename is None:
+            original_filename = uri
+
+        super().__init__(response, content_type=content_type, original_filename=original_filename, **kwargs)
 
