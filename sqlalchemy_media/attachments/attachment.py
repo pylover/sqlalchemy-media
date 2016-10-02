@@ -12,10 +12,29 @@ from sqlalchemy_media.descriptors import AttachableDescriptor
 
 
 class Attachment(MutableDict):
+    """
+    The base model for an attached file.
+    All attachment types will be inherited from this class.
+
+    Actually this is an instance of :py:class:`sqlalchemy.ext.mutable.MutableDict` which inherited from python dict.
+
+    .. doctest::
+
+        >>> from sqlalchemy_media import Attachment
+        >>> print(Attachment(key1='Value1'))
+        {'key1': 'Value1'}
+
+    This object is should be used inside a :py:class:`sqlalchemy_media.stores.manager.StoreManager` context.
+
+    """
+
     __directory__ = 'attachments'
     __prefix__ = 'attachment'
 
+    #: Limit the file's maximum size.
     max_length = None
+
+    #: Limit the file's minimum size.
     min_length = None
 
     @classmethod
@@ -26,7 +45,7 @@ class Attachment(MutableDict):
     @classmethod
     def _assert_type(cls, value):
         """
-        Checking attachment type, ignoring any type that not derived from :py:class:`Attachment`.
+        Checking attachment type, ignoring any type that not derived from :py:class:`sqlalchemy_media.attachments.Attachment`.
         :param value:
         :return:
         """
@@ -35,11 +54,24 @@ class Attachment(MutableDict):
 
     @classmethod
     def coerce(cls, key, value):
+        """
+        Converts plain dictionary to instance of this class.
+        :param key: Attribute key in sa model
+        :param value: The plain dictionary instance or something like that!
+        :return: An instance of this class.
+        """
         cls._assert_type(value)
         return super().coerce(key, value)
 
     @classmethod
     def create_from(cls, *args, **kwargs):
+        """
+        Factory method to create and attach file with the same action.
+
+        :param args: The same as the :py:meth:`sqlalchemy_media.attachments.Attachment.attach`
+        :param kwargs: The same as the :py:meth:`sqlalchemy_media.attachments.Attachment.attach`
+        :return: The loaded instance of this class.
+        """
         instance = cls()
         instance.attach(*args, **kwargs)
         return instance
@@ -48,7 +80,13 @@ class Attachment(MutableDict):
         return hash(self.key)
 
     @property
-    def store_id(self):
+    def store_id(self) -> str:
+        """
+        Returns the id of store used to put this file on.
+
+        The store must be registered with appropriate id via :py:meth:`sqlalchemy_media.stores.manager.register`.
+        :type: str
+        """
         return self.get('storeId')
 
     @store_id.setter
@@ -57,6 +95,12 @@ class Attachment(MutableDict):
 
     @property
     def key(self) -> Hashable:
+        """
+        Unique key for tracking this attachment. it will be generated during attachment process in
+        :py:meth:`sqlalchemy_media.attachments.Attachment.attach` method.
+
+        :type: Hashable
+        """
         return self.get('key')
 
     @key.setter
@@ -65,24 +109,45 @@ class Attachment(MutableDict):
 
     @property
     def empty(self):
+        """
+        Check if file is attached to this object or not.
+        Returns `True` when a file is loaded on this object via
+        :py:meth:`sqlalchemy_media.attachments.Attachment.attach` method. or SqlAlchemy db load mechanism. else `False.`
+        """
         return self.key is None
 
     @property
     def path(self):
+        """
+        Path of the file used to store and locate the file.
+
+        :return: Relative path of attachment.
+        """
         return '%s/%s' % (self.__directory__, self.filename)
 
     @property
     def filename(self) -> str:
+        """
+        The filename used to store the attachment in storage. with this format:
+        '{self.__prefix__}-{self.key}{self.suffix}{if self.extension else ''}'
+        """
         return '%s-%s%s%s' % (self.__prefix__, self.key, self.suffix, self.extension if self.extension else '')
 
     @property
     def suffix(self):
+        """
+        The same as the :py:meth:`sqlalchemy_media.attachments.Attachment.original_filename` plus a leading minus(-)
+        If available, else empty string ('') will be returned
+        """
         if self.original_filename:
             return '-%s' % splitext(self.original_filename)[0]
         return ''
 
     @property
     def extension(self) -> str:
+        """
+        File extension.
+        """
         return self.get('extension')
 
     @extension.setter
@@ -91,6 +156,9 @@ class Attachment(MutableDict):
 
     @property
     def content_type(self) -> str:
+        """
+        file Content-Type
+        """
         return self.get('contentType')
 
     @content_type.setter
@@ -99,6 +167,9 @@ class Attachment(MutableDict):
 
     @property
     def original_filename(self) -> str:
+        """
+        Original file name, may provided by user within :py:attr:`cgi.FieldStorage.filename`, url or Physical filename.
+        """
         return self.get('originalFilename')
 
     @original_filename.setter
@@ -153,7 +224,7 @@ class Attachment(MutableDict):
             # Validate
             # Store
             if descriptor.original_filename:
-                self.original_filename = original_filename
+                self.original_filename = descriptor.original_filename
 
             if descriptor.extension:
                 self.extension = descriptor.extension

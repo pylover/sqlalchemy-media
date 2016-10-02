@@ -1,3 +1,4 @@
+from .attachments.attachment import Attachment
 from .attachments.file import File
 from .attachments.images import Image
 from .stores import FileSystemStore, StoreManager

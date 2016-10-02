@@ -116,13 +116,11 @@ Here a simple example to how to use this library:
 
 Will produces::
 
-    {
-        'contentType': 'image/png',
-        'extension': '.png',
-        'key': 'e898b235-d843-4daf-8957-fe463e3a3450',
-        'length': 15770,
-        'originalFilename': None,
-        'timestamp': 1475425931.621913
-    }
-    '/tmp/sqlalchemy-media/images/image-e898b235-d843-4daf-8957-fe463e3a3450.png'
-    'http://static.example.org/images/image-e898b235-d843-4daf-8957-fe463e3a3450.png?_ts=1475425931.621913'
+    {'contentType': 'image/png',
+     'extension': '.png',
+     'key': '289bfb54-f90d-4a8a-b2c5-a4dd0fe7b647',
+     'length': 15770,
+     'originalFilename': 'https://www.python.org/static/img/python-logo@2x.png',
+     'timestamp': 1475445477.7994764}
+    '/tmp/sqlalchemy-media/images/image-289bfb54-f90d-4a8a-b2c5-a4dd0fe7b647-https://www.python.org/static/img/python-logo@2x.png'
+    'http://static.example.org/images/image-289bfb54-f90d-4a8a-b2c5-a4dd0fe7b647-https://www.python.org/static/img/python-logo@2x.png?_ts=1475445477.7994764'

@@ -4,13 +4,15 @@ API Reference
 Types
 -----
 
-.. autoclass:: sqlalchemy_media.attachments.attachment.Attachment
+.. autoclass:: sqlalchemy_media.attachments.Attachment
+    :show-inheritance:
     :members:
-    :special-members:
+    :undoc-members:
+
 
 .. Commented
+    :special-members:
     :private-members:
-    :show-inheritance:
-    :undoc-members:
+
     :special-members:
     :exclude-members: __dict__
