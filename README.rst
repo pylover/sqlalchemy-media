@@ -48,6 +48,7 @@ Overview
  - Extracting the file's mimetype from the backend stream if possible, using python's built-in
    `mimetypes <https://docs.python.org/3.5/library/mimetypes.html>`_ module
  - Limiting file size(min, max), to prevent DOS attacks.
+ - Adding timestamp in url to help caching.
 
 Quick Start
 -----------
