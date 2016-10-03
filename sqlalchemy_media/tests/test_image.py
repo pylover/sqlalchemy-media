@@ -35,12 +35,13 @@ class ImageTestCase(TempStoreTestCase):
         with StoreManager(session):
             person1.image = Image.create_from(self.dog_jpeg)
             self.assertEqual(person1.image.content_type, 'image/jpeg')
-            self.assertEqual(person1.image.extension, '.jpe')
+            self.assertEqual(person1.image.extension, '.jpg')
             self.assertTrue(exists(join(self.temp_path, person1.image.path)))
 
             person1.image = Image.create_from(self.dog_png)
             self.assertEqual(person1.image.content_type, 'image/png')
             self.assertTrue(exists(join(self.temp_path, person1.image.path)))
 
-if __name__ == '__main__':
+
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

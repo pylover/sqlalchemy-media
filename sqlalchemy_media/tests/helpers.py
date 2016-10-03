@@ -1,3 +1,4 @@
+
 from typing import Tuple
 import unittest
 import threading
@@ -27,7 +28,7 @@ Address = Tuple[str, int]
 @contextlib.contextmanager
 def simple_http_server(content: bytes= b'Simple file content.', bind: Address=('', 0), content_type: str=None):
 
-    class SimpleHandler(BaseHTTPRequestHandler):
+    class SimpleHandler(BaseHTTPRequestHandler):  # pragma: no cover
 
         def serve_text(self):
             self.send_header('Content-Type', "text/plain")
@@ -67,7 +68,7 @@ def simple_http_server(content: bytes= b'Simple file content.', bind: Address=('
 
 
 # noinspection PyAbstractClass
-class Json(TypeDecorator):
+class Json(TypeDecorator):  # pragma: no cover
     impl = Unicode
 
     def process_bind_param(self, value, engine):
@@ -129,7 +130,7 @@ class TempStoreTestCase(SqlAlchemyTestCase):
         super().setUp()
 
 
-def encode_multipart_data(fields: dict=None, files: dict=None):
+def encode_multipart_data(fields: dict=None, files: dict=None):  # pragma: no cover
     BOUNDARY = ''.join(['-----', base64.urlsafe_b64encode(urandom(27)).decode()])
     CRLF = b'\r\n'
     lines = []
@@ -168,7 +169,7 @@ def encode_multipart_data(fields: dict=None, files: dict=None):
     return content_type, body, length
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     ct, b, l = encode_multipart_data(dict(test1='TEST1VALUE'), files=dict(cat='stuff/cat.jpg'))
     print(ct)
     print(l)

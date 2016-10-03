@@ -195,5 +195,5 @@ class FileTestCase(TempStoreTestCase):
             self.assertTrue(exists(cv_filename))
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

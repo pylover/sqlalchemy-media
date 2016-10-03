@@ -123,6 +123,13 @@ class DeleteOrphanTestCase(TempStoreTestCase):
             person1 = session.query(Person).one()
             # Preserving the first file's path
             first_filename = join(self.temp_path, person1.files[0].path)
+
+            # remove from orphan list
+            f = person1.files[1]
+            person1.files.remove(f)
+            person1.files.insert(1,f)
+            self.assertEqual(len(person1.files), 2)
+
             # Removing the first file
             del person1.files[0]
             session.commit()
@@ -187,12 +194,14 @@ class DeleteOrphanTestCase(TempStoreTestCase):
             person1 = session.query(Person).one()
             # Preserving the first file's path
             first_filename = join(self.temp_path, person1.files['1'].path)
-            # Removing the first file
+
+            # Clearing
             person1.files.clear()
             session.commit()
             self.assertFalse(exists(first_filename))
             self.assertEqual(len(person1.files), 0)
 
 
-if __name__ == '__main__':
+
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

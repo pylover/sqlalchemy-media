@@ -14,7 +14,7 @@ class FileSystemStoreTestCase(unittest.TestCase):
         self.stuff_path = join(self.this_dir, 'stuff')
         self.sample_text_file1 = join(self.stuff_path, 'sample_text_file1.txt')
         self.temp_path = join(self.this_dir, 'temp', 'test_filesystem_store')
-        if not exists(self.temp_path):
+        if not exists(self.temp_path):  # pragma: no cover
             makedirs(self.temp_path, exist_ok=True)
 
     def test_put_from_stream(self):
@@ -60,5 +60,5 @@ class FileSystemStoreTestCase(unittest.TestCase):
             self.assertEqual(stored_file.read(), new_content)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

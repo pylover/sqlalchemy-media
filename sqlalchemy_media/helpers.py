@@ -19,13 +19,6 @@ def is_uri(x):
     return URI_REGEX_PATTERN.match(x) is not None
 
 
-def open_stream(file_identifier: str, mode: str='rb') -> BinaryIO:
-    if is_uri(file_identifier):
-        return urlopen(file_identifier)
-    else:
-        return open(file_identifier, mode=mode)
-
-
 def copy_stream(source: [Stream, 'BaseDescriptor'], target: Stream, *, chunk_size: int=16*1024, min_length: int=None,
                 max_length: int=None) -> int:
     length = 0

@@ -15,5 +15,5 @@ class HelpersTestCase(unittest.TestCase):
         self.assertFalse(is_uri('/path/to?342=324322&param'))
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

@@ -5,6 +5,7 @@ import threading
 from sqlalchemy.orm.session import Session
 
 from sqlalchemy_media.stores import StoreManager, Store
+from sqlalchemy_media.exceptions import DefaultStoreError, ContextError
 
 
 # noinspection PyAbstractClass
@@ -12,12 +13,30 @@ class DummyStore(Store):
     pass
 
 
-StoreManager.register('dummy', DummyStore, default=True)
-
-
 class StoreContextTestCase(unittest.TestCase):
 
+    def setUp(self):
+        StoreManager.register('dummy', DummyStore, default=True)
+
+    def test_default_store(self):
+
+        with StoreManager(Session) as manager1:
+
+            # Hacking StoreManager to raise error
+            StoreManager._default = None
+            self.assertRaises(DefaultStoreError, manager1.get)
+
+            # making it default again
+            StoreManager.make_default('dummy')
+            self.assertIsNotNone(manager1.get())
+
+        # unregister
+        StoreManager.unregister('dummy')
+
     def test_context_stack(self):
+
+        self.assertRaises(ContextError, StoreManager.get_current_store_manager)
+
         with StoreManager(Session) as manager1:
             store1 = manager1.get()
             self.assertIs(store1, manager1.default_store)
@@ -67,7 +86,7 @@ class StoreContextTestCase(unittest.TestCase):
         thread1.start()
         thread2.start()
 
-        while not (thread1_stat.ready and thread2_stat.ready):
+        while not (thread1_stat.ready and thread2_stat.ready):  # pragma: no cover
             time.sleep(.7)
 
         self.assertIsNot(thread1_stat.store1, thread1_stat.store2)
@@ -86,6 +105,6 @@ class StoreContextTestCase(unittest.TestCase):
         thread2.join()
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()
 

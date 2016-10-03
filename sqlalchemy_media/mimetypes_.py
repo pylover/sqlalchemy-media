@@ -19,7 +19,7 @@ def guess_type(url: str, strict: bool=True):
     return mimetypes.guess_type(url, strict=strict)[0]
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
 
     print(guess_extension('image/jpeg'))
     print(guess_type('a' + guess_extension('image/jpeg')))

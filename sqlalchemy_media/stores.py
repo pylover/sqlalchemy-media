@@ -9,7 +9,7 @@ from sqlalchemy.util.langhelpers import symbol
 from sqlalchemy_media.typing_ import Stream
 from sqlalchemy_media.context import get_id as get_context_id
 from sqlalchemy_media.exceptions import ContextError, DefaultStoreError
-from sqlalchemy_media.helpers import copy_stream, open_stream
+from sqlalchemy_media.helpers import copy_stream
 
 
 # Global variable to store contexts
@@ -48,16 +48,16 @@ class Store(object):
         :param max_length:
         :return:
         """
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: no cover
 
     def delete(self, filename: str):
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: no cover
 
     def open(self, filename: str, mode: str='r') -> Stream:
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: no cover
 
     def locate(self, attachment: 'Attachment') -> str:
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: no cover
 
 
 class FileSystemStore(Store):
@@ -77,7 +77,7 @@ class FileSystemStore(Store):
         if not exists(physical_directory):
             makedirs(physical_directory, exist_ok=True)
 
-        with open_stream(physical_path, mode='wb') as target_file:
+        with open(physical_path, mode='wb') as target_file:
             return copy_stream(stream, target_file, chunk_size=self.chunk_size, min_length=min_length, max_length=max_length)
 
     def delete(self, filename: str):

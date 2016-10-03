@@ -23,24 +23,26 @@ class BaseDescriptor(object):
     :param extension: The file's extension to suppress guessing it.
     :param original_filename: Original filename, useful to detect `content_type` and or `extension`.
     :param kwargs: Additional keyword arguments to set as attribute on descriptor instance.
+    :param header_buffer_size: Amount of bytes to read and buffer from stream for analysis purpose if stream is not
+                               seekable.
 
     """
 
-    __header_buffer_size__ = 1024
     header = None
     original_filename = None
     extension = None
     content_type = None
 
     def __init__(self, max_length: int=None, content_type: str=None, content_length: int=None, extension: str=None,
-                 original_filename: str=None, **kwargs):
+                 original_filename: str=None, header_buffer_size=1024, **kwargs):
 
         self.max_length = max_length
+        self.header_buffer_size = header_buffer_size
         self.content_length = content_length
         self.original_filename = original_filename
         self._source_pos = 0
         if not self.seekable():
-            self.header = io.BytesIO(self.read_source(self.__header_buffer_size__))
+            self.header = io.BytesIO(self.read_source(self.header_buffer_size))
 
         for k, v in kwargs.items():
             setattr(self, k, v)
@@ -54,10 +56,10 @@ class BaseDescriptor(object):
 
         if extension:
             self.extension = extension
-        elif self.content_type:
-            self.extension = guess_extension(self.content_type)
         elif self.original_filename:
             self.extension = splitext(self.original_filename)[1]
+        elif self.content_type:
+            self.extension = guess_extension(self.content_type)
 
     def __enter__(self):
         return self
@@ -81,28 +83,36 @@ class BaseDescriptor(object):
         if self.max_length is not None and source_cursor > self.max_length:
             raise MaximumLengthIsReachedError(self.max_length)
 
-        if source_cursor > self.__header_buffer_size__ or current_cursor == self.__header_buffer_size__:
-            return self.read_source(size)
+        elif source_cursor > self.header_buffer_size or current_cursor == self.header_buffer_size:
+            result = self.read_source(size)
 
-        if cursor_after_read > self.__header_buffer_size__:
+        elif cursor_after_read > self.header_buffer_size:
             # split the read, half from header & half from source
             part1 = self.header.read()
             part2 = self.read_source(size - len(part1))
-            return part1 + part2
-        return self.header.read(size)
+            result = part1 + part2
+        else:
+            result = self.header.read(size)
+
+        if self.max_length is not None and source_cursor + len(result) > self.max_length:
+            raise MaximumLengthIsReachedError(self.max_length)
+
+        return result
 
     def tell(self) -> int:
         """
         Get the current position of the stream. Even if the underlying stream is not :meth:`.seekable`, this method
         should return the current position which counted internally.
         """
-        source_cursor = self._tell_source()
+        source_cursor = self.tell_source()
         if not self.header:
             return source_cursor
 
-        if source_cursor > self.header.tell():
+        elif self.header.tell() < self.header_buffer_size:
             return self.header.tell()
-        return source_cursor
+
+        else:
+            return source_cursor
 
     def tell_source(self):
         """
@@ -132,7 +142,7 @@ class BaseDescriptor(object):
         Should be overridden in inherited class and return :data:`True` if the underlying stream is seekable.
 
         """
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: no cover
 
     def _tell_source(self) -> int:
         """
@@ -140,7 +150,7 @@ class BaseDescriptor(object):
 
         Should be overridden in inherited class and return the underlying stream's current position.
         """
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: no cover
 
     def _read_source(self, size: int) -> bytes:
         """
@@ -151,7 +161,7 @@ class BaseDescriptor(object):
         :param size: Amount of bytes to read.
 
         """
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: no cover
 
     def seek(self, position: int) -> None:
         """
@@ -161,13 +171,13 @@ class BaseDescriptor(object):
 
         :param position: the position to seek on.
         """
-        raise NotImplementedError('Seek operation is not supported by this object: %r' % self)
+        raise NotImplementedError('Seek operation is not supported by this object: %r' % self)  # pragma: no cover
 
     def close(self) -> None:
         """
         Closes the underlying stream.
         """
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: no cover
 
 
 class StreamDescriptor(BaseDescriptor):
