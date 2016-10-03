@@ -104,3 +104,10 @@ exceptions
 .. autoexception:: ContextError
 
 .. autoexception:: DefaultStoreError
+
+constants
+---------
+
+.. automodule:: sqlalchemy_media.constants
+
+
