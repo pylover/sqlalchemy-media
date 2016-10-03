@@ -8,6 +8,10 @@ from sqlalchemy_media.stores import StoreManager
 
 
 class AttachmentCollection(object):
+    """
+
+    """
+
     __item_type__ = Attachment
 
     @classmethod

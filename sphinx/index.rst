@@ -37,10 +37,10 @@ Contents:
 
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 4
 
    tutorials/index
-   api/index
+   api
 
 
 

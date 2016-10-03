@@ -260,7 +260,7 @@ class Attachment(MutableDict):
                           Currently, when using this option, Rollback function is not available, because the old file
                           will overwritten by the given new one.
 
-        .. note:: 
+        .. note:: :exc:`.MaximumLengthIsReachedError` and or :exc:`.MinimumLengthIsNotReachedError` may raised.
         """
 
         # Wrap in AttachableDescriptor
