@@ -5,5 +5,5 @@ from sqlalchemy_media.constants import MB
 
 class File(Attachment):
 
-    max_length = 2*MB
-    min_length = 0
+    __max_length__ = 2 * MB
+    __min_length__ = 0

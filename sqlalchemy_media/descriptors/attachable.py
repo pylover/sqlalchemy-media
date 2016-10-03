@@ -31,4 +31,3 @@ class AttachableDescriptor(BaseDescriptor):
             return_type = StreamDescriptor
 
         return return_type(attachable, *args, **kwargs)
-

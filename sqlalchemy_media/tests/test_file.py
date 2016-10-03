@@ -109,8 +109,8 @@ class FileTestCase(TempStoreTestCase):
     def test_file_size_limit(self):
 
         class LimitedFile(File):
-            min_length = 20
-            max_length = 30
+            __min_length__ = 20
+            __max_length__ = 30
 
         class Person(self.Base):
             __tablename__ = 'person'

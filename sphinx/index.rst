@@ -1,10 +1,11 @@
+
 .. sqlalchemy-media documentation master file, created by
    sphinx-quickstart on Mon Jul 20 22:05:40 2015.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
 .. DOC TODO:
-   - Document abount customizing the attachment by inheriting
+   - Document about customizing the attachment by inheriting
 
 
 sqlalchemy-media
@@ -34,10 +35,13 @@ sqlalchemy-media
 Contents:
 ---------
 
-.. toctree::
-   :maxdepth: 2
 
-   api
+.. toctree::
+   :maxdepth: 3
+
+   tutorials/index
+   api/index
+
 
 
 Indices and tables

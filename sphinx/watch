@@ -1,12 +1,13 @@
 #!/bin/bash
 
-make sqlalchemy-media.io
+make html
 
 while true
 do
-  inotifywait -r -e modify -e move -e create -e delete . ../sqlalchemy-media | while read line
+  inotifywait -r -e modify -e move -e create -e delete -- ../sqlalchemy_media ./ | while read line
     do
-     make sqlalchemy-media.io
+     echo "Making html"
+     make html
     done
 done
 

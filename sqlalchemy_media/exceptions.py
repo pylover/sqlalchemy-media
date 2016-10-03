@@ -1,6 +1,9 @@
 
 
 class SqlAlchemyMediaException(Exception):
+    """
+    The base class for all exceptions
+    """
     pass
 
 

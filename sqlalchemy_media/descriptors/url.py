@@ -18,4 +18,3 @@ class UrlDescriptor(CloserStreamDescriptor):
             original_filename = uri
 
         super().__init__(response, content_type=content_type, original_filename=original_filename, **kwargs)
-

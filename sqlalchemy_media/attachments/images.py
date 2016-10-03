@@ -8,5 +8,5 @@ class Image(File):
     __directory__ = 'images'
     __prefix__ = 'image'
 
-    max_length = 2*MB
-    min_length = 4*KB
+    __max_length__ = 2 * MB
+    __min_length__ = 4 * KB
