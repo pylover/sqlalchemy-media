@@ -134,6 +134,9 @@ StoreManager
 
 .. autoclass:: StoreManager
 
+   .. automethod:: __enter__
+   .. automethod:: __exit__
+
 exceptions
 ----------
 
