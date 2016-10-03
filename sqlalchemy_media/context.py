@@ -1,7 +1,7 @@
 
 try:
     import _thread
-except ImportError:
+except ImportError: # pragma: no cover
     import _dummy_thread as _thread
 
 try:
@@ -14,7 +14,7 @@ try:
 except ImportError:
     stackless = None
 
-if greenlet is not None:
+if greenlet is not None:  # pragma: no cover
     if stackless is None:
         get_id = greenlet.getcurrent
     else:
@@ -22,7 +22,7 @@ if greenlet is not None:
         def get_id():
             return greenlet.getcurrent(), stackless.getcurrent()
 
-elif stackless is not None:
+elif stackless is not None: # pragma: no cover
     get_id = stackless.getcurrent
 else:
     get_id = _thread.get_ident

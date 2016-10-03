@@ -295,7 +295,7 @@ class Attachment(MutableDict):
             if store_id is not None:
                 self.store_id = store_id
 
-            self['length'] = self.get_store().put(
+            self.length = self.get_store().put(
                 self.path,
                 descriptor,
                 max_length=self.__max_length__,
@@ -357,13 +357,18 @@ class AttachmentList(AttachmentCollection, MutableList):
     @classmethod
     def coerce(cls, index, value):
 
-        if isinstance(value, Iterable):
-            result = cls()
-            for i in value:
-                result.append(cls.__item_type__.coerce(index, i))
-            return result
+        if not isinstance(value, cls):
 
-        return super().coerce(index, value)
+            if isinstance(value, Iterable):
+                result = cls()
+                for i in value:
+                    result.append(cls.__item_type__.coerce(index, i))
+                return result
+
+            return super().coerce(index, value)
+
+        else:
+            return value
 
     def append(self, x):
         super().append(x)
@@ -403,16 +408,6 @@ class AttachmentList(AttachmentCollection, MutableList):
         store_manager.adopted(value)
         super().__setitem__(index, value)
 
-    def __setslice__(self, start, end, value):
-        store_manager = StoreManager.get_current_store_manager()
-        store_manager.orphaned(*[i for i in self[start:end] if i])
-        store_manager.adopted(*value)
-        super().__setslice__(start, end, value)
-
-    def __delslice__(self, start, end):
-        StoreManager.get_current_store_manager().orphaned(*[i for i in self[start:end] if i])
-        super().__delslice__(start, end)
-
 
 class AttachmentDict(AttachmentCollection, MutableDict):
     """
@@ -436,13 +431,18 @@ class AttachmentDict(AttachmentCollection, MutableDict):
     @classmethod
     def coerce(cls, index, value):
 
-        if isinstance(value, dict) and not isinstance(value, (AttachmentDict, Attachment)):
-            result = cls()
-            for k, v in value.items():
-                result[k] = cls.__item_type__.coerce(k, v)
-            return result
+        if not isinstance(value, cls):
 
-        return super().coerce(index, value)
+            if isinstance(value, dict) and not isinstance(value, Attachment):
+                result = cls()
+                for k, v in value.items():
+                    result[k] = cls.__item_type__.coerce(k, v)
+                return result
+
+            return super().coerce(index, value)
+
+        else:
+            return value
 
     def setdefault(self, key, value):
         StoreManager.get_current_store_manager().adopted(value)

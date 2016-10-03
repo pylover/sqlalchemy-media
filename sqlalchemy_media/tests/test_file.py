@@ -46,6 +46,7 @@ class FileTestCase(TempStoreTestCase):
             })
             first_filename = join(self.temp_path, person1.cv.path)
             self.assertTrue(exists(first_filename))
+            self.assertEqual(person1.cv.length, len(sample_content))
 
             # Second file before commit
             person1.cv.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
@@ -104,6 +105,12 @@ class FileTestCase(TempStoreTestCase):
             self.assertTrue(exists(fifth_filename))
             session.commit()
             # Because delete_orphan is not set.
+            self.assertTrue(exists(fifth_filename))
+
+            # storing a file on separate store:
+            person1.cv = File.create_from(BytesIO(sample_content), store_id='temp_fs')
+            fifth_filename = join(self.sys_temp_path, person1.cv.path)
+            session.commit()
             self.assertTrue(exists(fifth_filename))
 
     def test_file_size_limit(self):
