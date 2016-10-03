@@ -6,4 +6,5 @@ from .stores import Store, FileSystemStore, StoreManager
 from .descriptors import BaseDescriptor, StreamDescriptor, StreamCloserDescriptor, LocalFileSystemDescriptor, \
     UrlDescriptor, CgiFieldStorageDescriptor, AttachableDescriptor
 
-__version__ = '0.1.0-dev8'
+__version__ = '0.1.0'
+
