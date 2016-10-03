@@ -6,10 +6,8 @@ from os.path import dirname, abspath, join, split
 
 from sqlalchemy_media.helpers import copy_stream, md5sum
 from sqlalchemy_media.tests.helpers import simple_http_server, encode_multipart_data
-from sqlalchemy_media.descriptors.attachable import AttachableDescriptor
-from sqlalchemy_media.descriptors.localfs import LocalFileSystemDescriptor
-from sqlalchemy_media.descriptors.url import UrlDescriptor
-from sqlalchemy_media.descriptors.cgi_fieldstorage import CgiFieldStorageDescriptor
+from sqlalchemy_media.descriptors import AttachableDescriptor, LocalFileSystemDescriptor, CgiFieldStorageDescriptor, \
+    UrlDescriptor
 
 
 class AttachableDescriptorsTestCase(unittest.TestCase):

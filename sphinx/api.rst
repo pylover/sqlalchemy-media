@@ -1,105 +1,107 @@
 API Reference
 =============
 
-Attachments
+
+attachments
 -----------
 
 .. currentmodule:: sqlalchemy_media.attachments
 
-.. autosummary::
-   :toctree: ../docs/doctrees
+Attachment
+^^^^^^^^^^
 
-   Attachment
-   AttachmentCollection
-   Image
+.. autoclass:: Attachment
+    :members: __directory__, __prefix__, __max_length__, __min_length__
+    :show-inheritance:
 
+AttachmentCollection
+^^^^^^^^^^^^^^^^^^^^
 
-.. autoclass:: sqlalchemy_media.attachments.Attachment
-   :show-inheritance:
-   :members:
-   :undoc-members:
-   :private-members:
-   :special-members:
-   :exclude-members: __dict__, __module__
+.. autoclass:: AttachmentCollection
+    :members:
+    :show-inheritance:
 
+AttachmentList
+^^^^^^^^^^^^^^
 
-.. autoclass:: sqlalchemy_media.attachments.AttachmentCollection
-   :show-inheritance:
-   :members:
-   :undoc-members:
-   :private-members:
+.. autoclass:: AttachmentList
+    :members:
+    :show-inheritance:
 
 
-.. autoclass:: sqlalchemy_media.attachments.Image
-   :show-inheritance:
-   :members:
-   :undoc-members:
-   :private-members:
+AttachmentDict
+^^^^^^^^^^^^^^
+
+.. autoclass:: AttachmentDict
+    :members:
+    :show-inheritance:
+
+FileList
+^^^^^^^^
+
+.. autoclass:: FileList
+    :members:
+    :show-inheritance:
+
+FileDict
+^^^^^^^^
+
+.. autoclass:: FileDict
+    :members:
+    :show-inheritance:
+
+Image
+^^^^^
+
+.. autoclass:: Image
+    :members:
+    :show-inheritance:
 
 
-.. Commented
-    :special-members:
-    :private-members:
-    :special-members:
-    :exclude-members: __dict__, __module__
-
-
-Stores
+stores
 ------
 
 .. currentmodule:: sqlalchemy_media.stores
 
-.. autosummary::
-   :toctree: ../docs/doctrees
+Store
+^^^^^
 
-   Store
-   FileSystemStore
-   StoreManager
-
-
-.. autoclass:: sqlalchemy_media.stores.Store
-    :show-inheritance:
+.. autoclass:: Store
     :members:
-    :undoc-members:
-
-
-.. autoclass:: sqlalchemy_media.stores.FileSystemStore
     :show-inheritance:
+
+FileSystemStore
+^^^^^^^^^^^^^^^
+
+.. autoclass:: FileSystemStore
     :members:
-    :undoc-members:
-
-
-.. autoclass:: sqlalchemy_media.stores.StoreManager
     :show-inheritance:
+
+StoreManager
+^^^^^^^^^^^^
+
+.. autoclass:: StoreManager
     :members:
-    :undoc-members:
+    :show-inheritance:
 
 
-Exceptions
+exceptions
 ----------
 
 .. currentmodule:: sqlalchemy_media.exceptions
 
-.. autosummary::
-   :toctree: ../docs/doctrees
 
-   SqlAlchemyMediaException
-   MaximumLengthIsReachedError
-   MinimumLengthIsNotReachedError
+.. autoexception:: SqlAlchemyMediaException
+   :show-inheritance:
+   :members:
+   :undoc-members:
 
-.. autoclass:: sqlalchemy_media.exceptions.SqlAlchemyMediaException
-    :show-inheritance:
-    :members:
-    :undoc-members:
+.. autoexception:: MaximumLengthIsReachedError
+   :show-inheritance:
+   :members:
+   :undoc-members:
 
-
-.. autoclass:: sqlalchemy_media.exceptions.MaximumLengthIsReachedError
-    :show-inheritance:
-    :members:
-    :undoc-members:
-
-
-.. autoclass:: sqlalchemy_media.exceptions.MinimumLengthIsNotReachedError
-    :show-inheritance:
-    :members:
-    :undoc-members:
+.. autoexception:: MinimumLengthIsNotReachedError
+   :show-inheritance:
+   :members:
+   :undoc-members:

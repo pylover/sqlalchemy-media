@@ -1,10 +1,16 @@
+
 from typing import Iterable
+from os import makedirs, remove
+from os.path import abspath, join, dirname, exists
 
 from sqlalchemy import event
 from sqlalchemy.util.langhelpers import symbol
 
+from sqlalchemy_media.typing import Stream
 from sqlalchemy_media.context import get_id as get_context_id
-from sqlalchemy_media.stores.exceptions import ContextError, DefaultStoreError
+from sqlalchemy_media.exceptions import ContextError, DefaultStoreError
+from sqlalchemy_media.helpers import copy_stream, open_stream
+
 
 # Global variable to store contexts
 _context_stacks = {}
@@ -14,6 +20,74 @@ _factories = {}
 
 # global variable to store observing attributes
 _observing_attributes = set()
+
+
+class Store(object):
+    """
+    The abstract base class for all stores.
+    """
+
+    # noinspection PyMethodMayBeStatic
+    def cleanup(self):
+        """
+        In derived class should cleanup all dirty stuff created while storing and deleting file.
+        If not overridden, no error will be raised.
+
+        .. seealso:: :py:meth:`sqlalchemy_media.stores.StoreManager.cleanup`
+
+        """
+        pass
+
+    def put(self, filename: str, stream: Stream, *, min_length=None, max_length=None):
+        """
+        In driven class, should put the stream as the given filename in the store.
+
+        :param filename:
+        :param stream:
+        :param min_length:
+        :param max_length:
+        :return:
+        """
+        raise NotImplementedError()
+
+    def delete(self, filename: str):
+        raise NotImplementedError()
+
+    def open(self, filename: str, mode: str='r') -> Stream:
+        raise NotImplementedError()
+
+    def locate(self, attachment: 'Attachment') -> str:
+        raise NotImplementedError()
+
+
+class FileSystemStore(Store):
+
+    def __init__(self, root_path: str, base_url: str, chunk_size: int=32768):
+        self.root_path = abspath(root_path)
+        self.base_url = base_url.rstrip('/')
+        self.chunk_size = chunk_size
+
+    def _get_physical_path(self, filename: str) -> str:
+        return join(self.root_path, filename)
+
+    def put(self, filename: str, stream: Stream, *, min_length: int=None, max_length: int=None):
+        physical_path = self._get_physical_path(filename)
+        physical_directory = dirname(physical_path)
+
+        if not exists(physical_directory):
+            makedirs(physical_directory, exist_ok=True)
+
+        with open_stream(physical_path, mode='wb') as target_file:
+            return copy_stream(stream, target_file, chunk_size=self.chunk_size, min_length=min_length, max_length=max_length)
+
+    def delete(self, filename: str):
+        remove(self._get_physical_path(filename))
+
+    def open(self, filename: str, mode: str='rb') -> Stream:
+        return open(self._get_physical_path(filename), mode=mode)
+
+    def locate(self, attachment: 'Attachment') -> str:
+        return '%s/%s' % (self.base_url, attachment.path)
 
 
 class StoreManager(object):

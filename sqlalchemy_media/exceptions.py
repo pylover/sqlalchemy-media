@@ -23,3 +23,20 @@ class MinimumLengthIsNotReachedError(SqlAlchemyMediaException):
 
     def __init__(self, min_length):
         super().__init__('Cannot store files larger than: %d bytes' % min_length)
+
+
+class ContextError(SqlAlchemyMediaException):
+    """
+    Exception related to :class:`.StoreManager`.
+    """
+
+
+class DefaultStoreError(SqlAlchemyMediaException):
+    """
+    Raised when no default store is registered.
+
+    .. seealso:: :meth:`.StoreManager.register`.
+    """
+    
+    def __init__(self):
+        super(DefaultStoreError, self).__init__("Default store is not defined.")

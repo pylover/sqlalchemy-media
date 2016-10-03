@@ -4,8 +4,8 @@ from os.path import join, exists
 
 from sqlalchemy import Column, Integer
 
-from sqlalchemy_media.attachments.images import Image
-from sqlalchemy_media.stores.manager import StoreManager
+from sqlalchemy_media.attachments import Image
+from sqlalchemy_media.stores import StoreManager
 from sqlalchemy_media.tests.helpers import Json, TempStoreTestCase
 
 

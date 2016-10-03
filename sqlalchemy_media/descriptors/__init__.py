@@ -1,1 +1,0 @@
-from .attachable import AttachableDescriptor

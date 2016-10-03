@@ -2,7 +2,11 @@
 import io
 from sqlalchemy_media.mimetypes_ import guess_extension, guess_type
 from os.path import splitext
+from urllib.request import urlopen
+from cgi import FieldStorage
 
+from sqlalchemy_media.typing import Stream, Attachable
+from sqlalchemy_media.helpers import is_uri
 from sqlalchemy_media.exceptions import MaximumLengthIsReachedError
 
 
@@ -101,3 +105,91 @@ class BaseDescriptor(object):
 
     def close(self):
         raise NotImplementedError()
+
+
+class StreamDescriptor(BaseDescriptor):
+
+    def __init__(self, stream: Stream, **kwargs):
+        self._file = stream
+        super().__init__(**kwargs)
+
+    def _tell_source(self) -> int:
+        return self._file.tell()
+
+    def _read_source(self, size: int) -> bytes:
+        return self._file.read(size)
+
+    def seek(self, position: int):
+        self._file.seek(position)
+
+    def seekable(self):
+        return self._file.seekable()
+
+    def close(self) -> None:
+        """
+        Do not closing the stream here, because we'r not upened it.
+        :return:
+        """
+        pass
+
+
+class CloserStreamDescriptor(StreamDescriptor):
+
+    def close(self) -> None:
+        self._file.close()
+
+
+class LocalFileSystemDescriptor(CloserStreamDescriptor):
+
+    def __init__(self, filename: str, original_filename: str=None, **kwargs):
+        if original_filename is None:
+            original_filename = filename
+        super().__init__(open(filename, 'rb'), original_filename=original_filename, **kwargs)
+
+
+class UrlDescriptor(CloserStreamDescriptor):
+    def __init__(self, uri: str, content_type: str=None, original_filename: str=None, **kwargs):
+        response = urlopen(uri)
+
+        if content_type is None and 'Content-Type' in response.headers:
+            content_type = response.headers.get('Content-Type')
+
+        if 'Content-Length' in response.headers:
+            kwargs['content_length'] = int(response.headers.get('Content-Length'))
+
+        if original_filename is None:
+            original_filename = uri
+
+        super().__init__(response, content_type=content_type, original_filename=original_filename, **kwargs)
+
+
+class CgiFieldStorageDescriptor(CloserStreamDescriptor):
+
+    def __init__(self, storage: FieldStorage, content_type: str=None, **kwargs):
+        if content_type is None:
+            content_type = storage.headers['Content-Type']
+
+        super().__init__(storage.file, content_type=content_type, original_filename=storage.filename, **kwargs)
+
+
+# noinspection PyAbstractClass
+class AttachableDescriptor(BaseDescriptor):
+
+    # noinspection PyInitNewSignature
+    def __new__(cls, attachable: Attachable, *args, **kwargs):
+        """
+        Should determine the appropriate descriptor and return an instance of it.
+        :param attachable:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+
+        if isinstance(attachable, FieldStorage):
+            return_type = CgiFieldStorageDescriptor
+        elif isinstance(attachable, str):
+            return_type = UrlDescriptor if is_uri(attachable) else LocalFileSystemDescriptor
+        else:
+            return_type = StreamDescriptor
+
+        return return_type(attachable, *args, **kwargs)

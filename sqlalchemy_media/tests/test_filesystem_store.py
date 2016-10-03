@@ -3,7 +3,7 @@ import io
 from os import makedirs
 from os.path import join, dirname, abspath, exists, getsize
 
-from sqlalchemy_media.stores.filesystem import FileSystemStore
+from sqlalchemy_media.stores import FileSystemStore
 
 
 class FileSystemStoreTestCase(unittest.TestCase):
