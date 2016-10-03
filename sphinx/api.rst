@@ -70,6 +70,50 @@ Image
    .. autoattribute:: __max_length__
    .. autoattribute:: __min_length__
 
+descriptors
+-----------
+
+.. module:: sqlalchemy_media.descriptors
+
+BaseDescriptor
+^^^^^^^^^^^^^^
+
+.. autoclass:: BaseDescriptor
+
+   .. automethod:: _tell_source
+   .. automethod:: _read_source
+
+
+StreamDescriptor
+^^^^^^^^^^^^^^^^
+
+.. autoclass:: StreamDescriptor
+
+StreamCloserDescriptor
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. autoclass:: StreamCloserDescriptor
+
+LocalFileSystemDescriptor
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autoclass:: LocalFileSystemDescriptor
+
+UrlDescriptor
+^^^^^^^^^^^^^
+
+.. autoclass:: UrlDescriptor
+
+CgiFieldStorageDescriptor
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autoclass:: CgiFieldStorageDescriptor
+
+AttachableDescriptor
+^^^^^^^^^^^^^^^^^^^^
+
+.. autoclass:: AttachableDescriptor
+
 stores
 ------
 

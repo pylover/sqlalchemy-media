@@ -4,7 +4,7 @@ from hashlib import md5
 from typing import BinaryIO
 from urllib.request import urlopen
 
-from sqlalchemy_media.typing import Stream
+from sqlalchemy_media.typing_ import Stream
 from sqlalchemy_media.exceptions import MaximumLengthIsReachedError, MinimumLengthIsNotReachedError
 
 

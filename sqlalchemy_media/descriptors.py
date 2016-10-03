@@ -5,12 +5,27 @@ from os.path import splitext
 from urllib.request import urlopen
 from cgi import FieldStorage
 
-from sqlalchemy_media.typing import Stream, Attachable
+from sqlalchemy_media.typing_ import Stream, Attachable
 from sqlalchemy_media.helpers import is_uri
 from sqlalchemy_media.exceptions import MaximumLengthIsReachedError
 
 
 class BaseDescriptor(object):
+    """
+    Abstract base class for all descriptors. Instance of this class is a file-like object.
+
+    Descriptors are used to get some primitive information from an attachable(stream, filename or URI). users may not using this class directly. see :class:`.AttachableDescriptor` to see usage.
+
+    :param max_length: Maximum allowed file size.
+    :param content_type: The file's mimetype to suppress the mimetype detection.
+    :param content_length: The length of file in bytes, if available. Some descriptors like :class:`.UrlDescriptor`
+                           are providing this keyword argument.
+    :param extension: The file's extension to suppress guessing it.
+    :param original_filename: Original filename, useful to detect `content_type` and or `extension`.
+    :param kwargs: Additional keyword arguments to set as attribute on descriptor instance.
+
+    """
+
     __header_buffer_size__ = 1024
     header = None
     original_filename = None
@@ -19,6 +34,7 @@ class BaseDescriptor(object):
 
     def __init__(self, max_length: int=None, content_type: str=None, content_length: int=None, extension: str=None,
                  original_filename: str=None, **kwargs):
+
         self.max_length = max_length
         self.content_length = content_length
         self.original_filename = original_filename
@@ -49,7 +65,12 @@ class BaseDescriptor(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
 
-    def read(self, size):
+    def read(self, size: int) -> bytes:
+        """
+        Read from the underlying file.
+
+        :param size: Amount of bytes ro read.
+        """
         if not self.header:
             return self.read_source(size)
 
@@ -70,7 +91,11 @@ class BaseDescriptor(object):
             return part1 + part2
         return self.header.read(size)
 
-    def tell(self):
+    def tell(self) -> int:
+        """
+        Get the current position of the stream. Even if the underlying stream is not :meth:`.seekable`, this method
+        should return the current position which counted internally.
+        """
         source_cursor = self._tell_source()
         if not self.header:
             return source_cursor
@@ -79,35 +104,80 @@ class BaseDescriptor(object):
             return self.header.tell()
         return source_cursor
 
-    def seekable(self):
-        raise NotImplementedError()
-
     def tell_source(self):
+        """
+        Returns the underlying stream's current position. even if the underlying stream is not :meth:`.seekable`.
+
+        """
         if self.seekable():
             return self._tell_source()
         else:
             return self._source_pos
 
-    def read_source(self, size):
+    def read_source(self, size: int) -> bytes:
+        """
+        Used to read from underlying stream.
+
+        :param size: Amount of bytes to read.
+        """
         result = self._read_source(size)
         if not self.seekable():
             self._source_pos += len(result)
         return result
 
-    def _tell_source(self):
+    def seekable(self) -> bool:
+        """
+        **[Abstract]**
+
+        Should be overridden in inherited class and return :data:`True` if the underlying stream is seekable.
+
+        """
         raise NotImplementedError()
 
-    def _read_source(self, size):
+    def _tell_source(self) -> int:
+        """
+        **[Abstract]**
+
+        Should be overridden in inherited class and return the underlying stream's current position.
+        """
         raise NotImplementedError()
 
-    def seek(self, position):
+    def _read_source(self, size: int) -> bytes:
+        """
+        **[Abstract]**
+
+        Should be overridden in inherited class and read from underlying stream.
+
+        :param size: Amount of bytes to read.
+
+        """
+        raise NotImplementedError()
+
+    def seek(self, position: int) -> None:
+        """
+        Seek the file at the given position.
+
+        .. note:: The :exc:`io.UnsupportedOperation` will be raised if the underlying stream is not :meth:`.seekable`.
+
+        :param position: the position to seek on.
+        """
         raise NotImplementedError('Seek operation is not supported by this object: %r' % self)
 
-    def close(self):
+    def close(self) -> None:
+        """
+        Closes the underlying stream.
+        """
         raise NotImplementedError()
 
 
 class StreamDescriptor(BaseDescriptor):
+    """
+    This class is used for describing a stream. so it just a proxy for streams.
+    The underlying stream will not to be closed after calling the :meth:`.close` method.
+
+    :param stream: File-like object to wrap.
+    :param kwargs: the same as the :class:`.BaseDescriptor`
+    """
 
     def __init__(self, stream: Stream, **kwargs):
         self._file = stream
@@ -127,19 +197,35 @@ class StreamDescriptor(BaseDescriptor):
 
     def close(self) -> None:
         """
-        Do not closing the stream here, because we'r not upened it.
-        :return:
+        Do not closing the stream here, because we'r not opened it.
+
         """
         pass
 
 
-class CloserStreamDescriptor(StreamDescriptor):
+class StreamCloserDescriptor(StreamDescriptor):
+    """
+    The same as the :class:`.StreamDescriptor`, the only difference is this class trying to close the stream after
+    calling the :meth:`.close` method.
+    """
 
     def close(self) -> None:
+        """
+        Overridden to close the underlying stream.
+        """
         self._file.close()
 
 
-class LocalFileSystemDescriptor(CloserStreamDescriptor):
+class LocalFileSystemDescriptor(StreamCloserDescriptor):
+    """
+    Representing a file on the local file system.
+
+    :param filename: The filename on the local storage to open for reading.
+    :param kwargs: the same as the :class:`.BaseDescriptor`
+
+    .. note:: the `filename` will be passed as `original_filename` to the parent class.
+
+    """
 
     def __init__(self, filename: str, original_filename: str=None, **kwargs):
         if original_filename is None:
@@ -147,7 +233,18 @@ class LocalFileSystemDescriptor(CloserStreamDescriptor):
         super().__init__(open(filename, 'rb'), original_filename=original_filename, **kwargs)
 
 
-class UrlDescriptor(CloserStreamDescriptor):
+class UrlDescriptor(StreamCloserDescriptor):
+    """
+    Open a remote resource with :mod:`urllib` and pass the `content_type` and `content_length` to the parent class.
+
+    :param uri: The uri to open.
+    :param kwargs: the same as the :class:`.BaseDescriptor`
+
+    .. note:: the `uri` will be passed as `original_filename` to the parent class, if the `original_filename` is
+              :data:`None`.
+
+    """
+
     def __init__(self, uri: str, content_type: str=None, original_filename: str=None, **kwargs):
         response = urlopen(uri)
 
@@ -163,7 +260,14 @@ class UrlDescriptor(CloserStreamDescriptor):
         super().__init__(response, content_type=content_type, original_filename=original_filename, **kwargs)
 
 
-class CgiFieldStorageDescriptor(CloserStreamDescriptor):
+class CgiFieldStorageDescriptor(StreamCloserDescriptor):
+    """
+    Describes a :class:`cgi.FieldStorage`.
+
+    :param storage: The :class:`cgi.FieldStorage` instance to describe.
+    :param kwargs: the same as the :class:`.BaseDescriptor`
+
+    """
 
     def __init__(self, storage: FieldStorage, content_type: str=None, **kwargs):
         if content_type is None:
@@ -174,14 +278,28 @@ class CgiFieldStorageDescriptor(CloserStreamDescriptor):
 
 # noinspection PyAbstractClass
 class AttachableDescriptor(BaseDescriptor):
+    """
+
+    This is an abstract factory for descriptors based on the first argument
+
+    .. doctest::
+
+        >>> from sqlalchemy_media import AttachableDescriptor
+        >>> with AttachableDescriptor('index.rst') as descriptor:
+        ...     print(type(descriptor))
+        <class 'sqlalchemy_media.descriptors.LocalFileSystemDescriptor'>
+
+    So this callable, should determine the appropriate descriptor and return an instance of it.
+
+    :param attachable: filename, uri or file-like object
+    :param kwargs: the same as the :class:`.BaseDescriptor`
+
+    """
 
     # noinspection PyInitNewSignature
-    def __new__(cls, attachable: Attachable, *args, **kwargs):
+    def __new__(cls, attachable: Attachable, **kwargs):
         """
-        Should determine the appropriate descriptor and return an instance of it.
-        :param attachable:
-        :param args:
-        :param kwargs:
+
         :return:
         """
 
@@ -192,4 +310,4 @@ class AttachableDescriptor(BaseDescriptor):
         else:
             return_type = StreamDescriptor
 
-        return return_type(attachable, *args, **kwargs)
+        return return_type(attachable, **kwargs)

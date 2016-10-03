@@ -8,7 +8,7 @@ from collections import Iterable
 from sqlalchemy.ext.mutable import MutableList, MutableDict
 
 from sqlalchemy_media.stores import StoreManager, Store
-from sqlalchemy_media.typing import Attachable
+from sqlalchemy_media.typing_ import Attachable
 from sqlalchemy_media.descriptors import AttachableDescriptor
 from sqlalchemy_media.constants import MB, KB
 

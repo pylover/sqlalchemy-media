@@ -16,7 +16,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 from sqlalchemy_media import StoreManager, FileSystemStore
-from sqlalchemy_media.typing import Stream
+from sqlalchemy_media.typing_ import Stream
 from sqlalchemy_media.helpers import copy_stream
 from sqlalchemy_media.mimetypes_ import guess_type
 

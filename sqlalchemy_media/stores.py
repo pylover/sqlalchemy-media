@@ -6,7 +6,7 @@ from os.path import abspath, join, dirname, exists
 from sqlalchemy import event
 from sqlalchemy.util.langhelpers import symbol
 
-from sqlalchemy_media.typing import Stream
+from sqlalchemy_media.typing_ import Stream
 from sqlalchemy_media.context import get_id as get_context_id
 from sqlalchemy_media.exceptions import ContextError, DefaultStoreError
 from sqlalchemy_media.helpers import copy_stream, open_stream
@@ -33,7 +33,7 @@ class Store(object):
         In derived class should cleanup all dirty stuff created while storing and deleting file.
         If not overridden, no error will be raised.
 
-        .. seealso:: :py:meth:`sqlalchemy_media.stores.StoreManager.cleanup`
+        .. seealso:: :meth:`.StoreManager.cleanup`
 
         """
         pass
@@ -114,7 +114,12 @@ class StoreManager(object):
         self.cleanup()
 
     @property
-    def stores(self):
+    def stores(self) -> dict:
+        """
+        The mapping `str -> store factory`.
+
+        :type: dict[str] -> callable
+        """
         if self._stores is None:
             self._stores = {}
         return self._stores
@@ -127,6 +132,10 @@ class StoreManager(object):
             raise ContextError('Not in store manager context.')
 
     def cleanup(self):
+        """
+        Calls the :meth:`.Store.cleanup` for each store is :attr:`.stores` and clears the :attr:`.stores` also.
+
+        """
         for store in self.stores.values():
             store.cleanup()
         self.stores.clear()
