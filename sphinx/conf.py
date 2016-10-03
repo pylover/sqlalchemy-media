@@ -311,5 +311,7 @@ intersphinx_mapping = {
 
 }
 
-
-autosummary_generate = True
+autodoc_default_flags = [
+    'members',
+    'show-inheritance',
+]

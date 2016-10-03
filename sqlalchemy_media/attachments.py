@@ -336,6 +336,23 @@ class AttachmentCollection(object):
 
 
 class AttachmentList(AttachmentCollection, MutableList):
+    """
+    Used to create a collection of :class:`.Attachment`
+    ::
+
+        class MyList(AttachmentList):
+            __item_type__ = MyAttachment
+
+        class Person(BaseModel):
+            __tablename__ = 'person'
+            id = Column(Integer, primary_key=True)
+            files = Column(MyList.as_mutable(Json))
+
+        me = Person()
+        me.files = MyList()
+        me.files.append(MyAttachment.create_from(any_file))
+
+    """
 
     @classmethod
     def coerce(cls, index, value):
@@ -398,6 +415,23 @@ class AttachmentList(AttachmentCollection, MutableList):
 
 
 class AttachmentDict(AttachmentCollection, MutableDict):
+    """
+    Used to create a dictionary of :class:`.Attachment`
+
+    ::
+
+        class MyDict(AttachmentDict):
+            __item_type__ = MyAttachment
+
+        class Person(BaseModel):
+            __tablename__ = 'person'
+            id = Column(Integer, primary_key=True)
+            files = Column(MyDict.as_mutable(Json))
+
+        me = Person()
+        me.files = MyDict()
+        me.files['original'] = MyAttachment.create_from(any_file)
+    """
 
     @classmethod
     def coerce(cls, index, value):
@@ -442,20 +476,53 @@ class AttachmentDict(AttachmentCollection, MutableDict):
 
 
 class File(Attachment):
+    """
+    Representing an attached file. Normally if you want to store any file, this class is the best choice.
+    """
 
+    __directory__ = 'files'
+    __prefix__ = 'file'
     __max_length__ = 2 * MB
     __min_length__ = 0
 
 
 class FileList(AttachmentList):
+    """
+    Equivalent to
+    ::
+
+        class FileList(AttachmentList):
+            __item_type__ = File
+
+    """
     __item_type__ = File
 
 
 class FileDict(AttachmentDict):
+    """
+    Equivalent to
+    ::
+
+        class FileDict(AttachmentDict):
+            __item_type__ = File
+
+    """
     __item_type__ = File
 
 
 class Image(File):
+    """
+    Equivalent to
+    ::
+
+        class Image(Attachment):
+            __directory__ = 'images'
+            __prefix__ = 'image'
+            __max_length__ = 2 * MB
+            __min_length__ = 4 * KB
+
+    """
+
     __directory__ = 'images'
     __prefix__ = 'image'
 
