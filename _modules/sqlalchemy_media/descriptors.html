@@ -1,0 +1,509 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sqlalchemy_media.descriptors &mdash; sqlalchemy-media 0.1.0-dev8 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="sqlalchemy-media 0.1.0-dev8 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> sqlalchemy-media
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">sqlalchemy-media</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>sqlalchemy_media.descriptors</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for sqlalchemy_media.descriptors</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.mimetypes_</span> <span class="k">import</span> <span class="n">guess_extension</span><span class="p">,</span> <span class="n">guess_type</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">splitext</span>
+<span class="kn">from</span> <span class="nn">urllib.request</span> <span class="k">import</span> <span class="n">urlopen</span>
+<span class="kn">from</span> <span class="nn">cgi</span> <span class="k">import</span> <span class="n">FieldStorage</span>
+
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.typing_</span> <span class="k">import</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">Attachable</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.helpers</span> <span class="k">import</span> <span class="n">is_uri</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.exceptions</span> <span class="k">import</span> <span class="n">MaximumLengthIsReachedError</span>
+
+
+<div class="viewcode-block" id="BaseDescriptor"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.BaseDescriptor">[docs]</a><span class="k">class</span> <span class="nc">BaseDescriptor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base class for all descriptors. Instance of this class is a file-like object.</span>
+
+<span class="sd">    Descriptors are used to get some primitive information from an attachable(stream, filename or URI). users may not using this class directly. see :class:`.AttachableDescriptor` to see usage.</span>
+
+<span class="sd">    :param max_length: Maximum allowed file size.</span>
+<span class="sd">    :param content_type: The file&#39;s mimetype to suppress the mimetype detection.</span>
+<span class="sd">    :param content_length: The length of file in bytes, if available. Some descriptors like :class:`.UrlDescriptor`</span>
+<span class="sd">                           are providing this keyword argument.</span>
+<span class="sd">    :param extension: The file&#39;s extension to suppress guessing it.</span>
+<span class="sd">    :param original_filename: Original filename, useful to detect `content_type` and or `extension`.</span>
+<span class="sd">    :param kwargs: Additional keyword arguments to set as attribute on descriptor instance.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">__header_buffer_size__</span> <span class="o">=</span> <span class="mi">1024</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">original_filename</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">extension</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">content_type</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_length</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">content_type</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">content_length</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">original_filename</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span> <span class="o">=</span> <span class="n">max_length</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content_length</span> <span class="o">=</span> <span class="n">content_length</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">original_filename</span> <span class="o">=</span> <span class="n">original_filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_pos</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">seekable</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_source</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__header_buffer_size__</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">content_type</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">content_type</span> <span class="o">=</span> <span class="n">content_type</span>
+        <span class="k">elif</span> <span class="n">original_filename</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">content_type</span> <span class="o">=</span> <span class="n">guess_type</span><span class="p">(</span><span class="n">original_filename</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">extension</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">content_type</span> <span class="o">=</span> <span class="n">guess_type</span><span class="p">(</span><span class="s1">&#39;a&#39;</span> <span class="o">+</span> <span class="n">extension</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">extension</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">extension</span> <span class="o">=</span> <span class="n">extension</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">content_type</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">extension</span> <span class="o">=</span> <span class="n">guess_extension</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content_type</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_filename</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">extension</span> <span class="o">=</span> <span class="n">splitext</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_filename</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<div class="viewcode-block" id="BaseDescriptor.read"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.BaseDescriptor.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read from the underlying file.</span>
+
+<span class="sd">        :param size: Amount of bytes ro read.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_source</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+
+        <span class="n">current_cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+        <span class="n">cursor_after_read</span> <span class="o">=</span> <span class="n">current_cursor</span> <span class="o">+</span> <span class="n">size</span>
+        <span class="n">source_cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell_source</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">source_cursor</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MaximumLengthIsReachedError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_length</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">source_cursor</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">__header_buffer_size__</span> <span class="ow">or</span> <span class="n">current_cursor</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">__header_buffer_size__</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_source</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">cursor_after_read</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">__header_buffer_size__</span><span class="p">:</span>
+            <span class="c1"># split the read, half from header &amp; half from source</span>
+            <span class="n">part1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="n">part2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_source</span><span class="p">(</span><span class="n">size</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">part1</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">part1</span> <span class="o">+</span> <span class="n">part2</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">size</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseDescriptor.tell"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.BaseDescriptor.tell">[docs]</a>    <span class="k">def</span> <span class="nf">tell</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current position of the stream. Even if the underlying stream is not :meth:`.seekable`, this method</span>
+<span class="sd">        should return the current position which counted internally.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">source_cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tell_source</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">source_cursor</span>
+
+        <span class="k">if</span> <span class="n">source_cursor</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">tell</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">source_cursor</span></div>
+
+<div class="viewcode-block" id="BaseDescriptor.tell_source"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.BaseDescriptor.tell_source">[docs]</a>    <span class="k">def</span> <span class="nf">tell_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the underlying stream&#39;s current position. even if the underlying stream is not :meth:`.seekable`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">seekable</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tell_source</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_pos</span></div>
+
+<div class="viewcode-block" id="BaseDescriptor.read_source"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.BaseDescriptor.read_source">[docs]</a>    <span class="k">def</span> <span class="nf">read_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Used to read from underlying stream.</span>
+
+<span class="sd">        :param size: Amount of bytes to read.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_source</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">seekable</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_source_pos</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="BaseDescriptor.seekable"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.BaseDescriptor.seekable">[docs]</a>    <span class="k">def</span> <span class="nf">seekable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        **[Abstract]**</span>
+
+<span class="sd">        Should be overridden in inherited class and return :data:`True` if the underlying stream is seekable.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BaseDescriptor._tell_source"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.BaseDescriptor._tell_source">[docs]</a>    <span class="k">def</span> <span class="nf">_tell_source</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        **[Abstract]**</span>
+
+<span class="sd">        Should be overridden in inherited class and return the underlying stream&#39;s current position.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BaseDescriptor._read_source"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.BaseDescriptor._read_source">[docs]</a>    <span class="k">def</span> <span class="nf">_read_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        **[Abstract]**</span>
+
+<span class="sd">        Should be overridden in inherited class and read from underlying stream.</span>
+
+<span class="sd">        :param size: Amount of bytes to read.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BaseDescriptor.seek"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.BaseDescriptor.seek">[docs]</a>    <span class="k">def</span> <span class="nf">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Seek the file at the given position.</span>
+
+<span class="sd">        .. note:: The :exc:`io.UnsupportedOperation` will be raised if the underlying stream is not :meth:`.seekable`.</span>
+
+<span class="sd">        :param position: the position to seek on.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Seek operation is not supported by this object: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseDescriptor.close"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.BaseDescriptor.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Closes the underlying stream.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="StreamDescriptor"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.StreamDescriptor">[docs]</a><span class="k">class</span> <span class="nc">StreamDescriptor</span><span class="p">(</span><span class="n">BaseDescriptor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class is used for describing a stream. so it just a proxy for streams.</span>
+<span class="sd">    The underlying stream will not to be closed after calling the :meth:`.close` method.</span>
+
+<span class="sd">    :param stream: File-like object to wrap.</span>
+<span class="sd">    :param kwargs: the same as the :class:`.BaseDescriptor`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_file</span> <span class="o">=</span> <span class="n">stream</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_tell_source</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_read_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">seekable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="o">.</span><span class="n">seekable</span><span class="p">()</span>
+
+<div class="viewcode-block" id="StreamDescriptor.close"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.StreamDescriptor.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Do not closing the stream here, because we&#39;r not opened it.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div></div>
+
+
+<div class="viewcode-block" id="StreamCloserDescriptor"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.StreamCloserDescriptor">[docs]</a><span class="k">class</span> <span class="nc">StreamCloserDescriptor</span><span class="p">(</span><span class="n">StreamDescriptor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The same as the :class:`.StreamDescriptor`, the only difference is this class trying to close the stream after</span>
+<span class="sd">    calling the :meth:`.close` method.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="StreamCloserDescriptor.close"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.StreamCloserDescriptor.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Overridden to close the underlying stream.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="LocalFileSystemDescriptor"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.LocalFileSystemDescriptor">[docs]</a><span class="k">class</span> <span class="nc">LocalFileSystemDescriptor</span><span class="p">(</span><span class="n">StreamCloserDescriptor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Representing a file on the local file system.</span>
+
+<span class="sd">    :param filename: The filename on the local storage to open for reading.</span>
+<span class="sd">    :param kwargs: the same as the :class:`.BaseDescriptor`</span>
+
+<span class="sd">    .. note:: the `filename` will be passed as `original_filename` to the parent class.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">original_filename</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">original_filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">original_filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">),</span> <span class="n">original_filename</span><span class="o">=</span><span class="n">original_filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="UrlDescriptor"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.UrlDescriptor">[docs]</a><span class="k">class</span> <span class="nc">UrlDescriptor</span><span class="p">(</span><span class="n">StreamCloserDescriptor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Open a remote resource with :mod:`urllib` and pass the `content_type` and `content_length` to the parent class.</span>
+
+<span class="sd">    :param uri: The uri to open.</span>
+<span class="sd">    :param kwargs: the same as the :class:`.BaseDescriptor`</span>
+
+<span class="sd">    .. note:: the `uri` will be passed as `original_filename` to the parent class, if the `original_filename` is</span>
+<span class="sd">              :data:`None`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content_type</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">original_filename</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">content_type</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s1">&#39;Content-Type&#39;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">:</span>
+            <span class="n">content_type</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;Content-Length&#39;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;content_length&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Content-Length&#39;</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">original_filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">original_filename</span> <span class="o">=</span> <span class="n">uri</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="n">content_type</span><span class="p">,</span> <span class="n">original_filename</span><span class="o">=</span><span class="n">original_filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CgiFieldStorageDescriptor"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.CgiFieldStorageDescriptor">[docs]</a><span class="k">class</span> <span class="nc">CgiFieldStorageDescriptor</span><span class="p">(</span><span class="n">StreamCloserDescriptor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Describes a :class:`cgi.FieldStorage`.</span>
+
+<span class="sd">    :param storage: The :class:`cgi.FieldStorage` instance to describe.</span>
+<span class="sd">    :param kwargs: the same as the :class:`.BaseDescriptor`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">storage</span><span class="p">:</span> <span class="n">FieldStorage</span><span class="p">,</span> <span class="n">content_type</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">content_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">content_type</span> <span class="o">=</span> <span class="n">storage</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">]</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">storage</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="n">content_type</span><span class="p">,</span> <span class="n">original_filename</span><span class="o">=</span><span class="n">storage</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<span class="c1"># noinspection PyAbstractClass</span>
+<div class="viewcode-block" id="AttachableDescriptor"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.AttachableDescriptor">[docs]</a><span class="k">class</span> <span class="nc">AttachableDescriptor</span><span class="p">(</span><span class="n">BaseDescriptor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    This is an abstract factory for descriptors based on the first argument</span>
+
+<span class="sd">    .. doctest::</span>
+
+<span class="sd">        &gt;&gt;&gt; from sqlalchemy_media import AttachableDescriptor</span>
+<span class="sd">        &gt;&gt;&gt; with AttachableDescriptor(&#39;index.rst&#39;) as descriptor:</span>
+<span class="sd">        ...     print(type(descriptor))</span>
+<span class="sd">        &lt;class &#39;sqlalchemy_media.descriptors.LocalFileSystemDescriptor&#39;&gt;</span>
+
+<span class="sd">    So this callable, should determine the appropriate descriptor and return an instance of it.</span>
+
+<span class="sd">    :param attachable: filename, uri or file-like object</span>
+<span class="sd">    :param kwargs: the same as the :class:`.BaseDescriptor`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># noinspection PyInitNewSignature</span>
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">attachable</span><span class="p">:</span> <span class="n">Attachable</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attachable</span><span class="p">,</span> <span class="n">FieldStorage</span><span class="p">):</span>
+            <span class="n">return_type</span> <span class="o">=</span> <span class="n">CgiFieldStorageDescriptor</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attachable</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">return_type</span> <span class="o">=</span> <span class="n">UrlDescriptor</span> <span class="k">if</span> <span class="n">is_uri</span><span class="p">(</span><span class="n">attachable</span><span class="p">)</span> <span class="k">else</span> <span class="n">LocalFileSystemDescriptor</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">return_type</span> <span class="o">=</span> <span class="n">StreamDescriptor</span>
+
+        <span class="k">return</span> <span class="n">return_type</span><span class="p">(</span><span class="n">attachable</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Vahid Mardani.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1.0-dev8',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

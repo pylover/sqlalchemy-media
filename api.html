@@ -1,116 +1,1123 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>API Reference &#8212; sqlalchemy-media 0.1.0-dev6 documentation</title>
-    
-    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '0.1.0-dev6',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>API Reference &mdash; sqlalchemy-media 0.1.0-dev8 documentation</title>
+  
+
+  
+  
     <link rel="shortcut icon" href="_static/favicon.ico"/>
-    <link rel="top" title="sqlalchemy-media 0.1.0-dev6 documentation" href="index.html" />
-    <link rel="prev" title="sqlalchemy-media" href="index.html" /> 
-  </head>
-  <body role="document">
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="index.html" title="sqlalchemy-media"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">sqlalchemy-media 0.1.0-dev6 documentation</a> &#187;</li> 
-      </ul>
-    </div>  
+  
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="sqlalchemy-media 0.1.0-dev8 documentation" href="index.html"/>
+        <link rel="prev" title="Attaching Images" href="tutorials/image.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> sqlalchemy-media
+          
+
+          
+          </a>
+
+          
             
-  <div class="section" id="api-reference">
-<h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="types">
-<h2>Types<a class="headerlink" href="#types" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="sqlalchemy_media.attachments.attachment.Attachment">
-<em class="property">class </em><code class="descclassname">sqlalchemy_media.attachments.attachment.</code><code class="descname">Attachment</code><a class="reference internal" href="_modules/sqlalchemy_media/attachments/attachment.html#Attachment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.attachment.Attachment" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
 
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
 </div>
-</div>
 
-
-          </div>
+          
         </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">API Reference</a><ul>
-<li><a class="reference internal" href="#types">Types</a></li>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.attachments">attachments</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#attachment">Attachment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#attachmentcollection">AttachmentCollection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#attachmentlist">AttachmentList</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#attachmentdict">AttachmentDict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#file">File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#filelist">FileList</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#filedict">FileDict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#image">Image</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.descriptors">descriptors</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basedescriptor">BaseDescriptor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#streamdescriptor">StreamDescriptor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#streamcloserdescriptor">StreamCloserDescriptor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#localfilesystemdescriptor">LocalFileSystemDescriptor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#urldescriptor">UrlDescriptor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cgifieldstoragedescriptor">CgiFieldStorageDescriptor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#attachabledescriptor">AttachableDescriptor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.stores">stores</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#store">Store</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#filesystemstore">FileSystemStore</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#storemanager">StoreManager</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.exceptions">exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.constants">constants</a></li>
 </ul>
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">sqlalchemy-media</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/api.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+            
+          
         </div>
       </div>
-      <div class="clearer"></div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">sqlalchemy-media</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>API Reference</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/api.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-sqlalchemy_media.attachments">
+<span id="attachments"></span><h2>attachments<a class="headerlink" href="#module-sqlalchemy_media.attachments" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="attachment">
+<h3>Attachment<a class="headerlink" href="#attachment" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.attachments.Attachment">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.attachments.</code><code class="descname">Attachment</code><a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Attachment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.MutableDict" title="(in SQLAlchemy v1.1)"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy.ext.mutable.MutableDict</span></code></a></p>
+<p>The base model for an attached file.
+All attachment types will be inherited from this class.</p>
+<p>Actually this is an instance of <a class="reference external" href="http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.MutableDict" title="(in SQLAlchemy v1.1)"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy.ext.mutable.MutableDict</span></code></a> which inherited from <a class="reference external" href="https://docs.python.org/3.5/library/stdtypes.html#dict" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">dict</span></code></a>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sqlalchemy_media</span> <span class="k">import</span> <span class="n">Attachment</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">Attachment</span><span class="p">(</span><span class="n">key1</span><span class="o">=</span><span class="s1">&#39;Value1&#39;</span><span class="p">))</span>
+<span class="go">{&#39;key1&#39;: &#39;Value1&#39;}</span>
+</pre></div>
+</div>
+<p>This object is should be used inside a <a class="reference internal" href="#sqlalchemy_media.stores.StoreManager" title="sqlalchemy_media.stores.StoreManager"><code class="xref py py-class docutils literal"><span class="pre">StoreManager</span></code></a> context.</p>
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.Attachment.__directory__">
+<code class="descname">__directory__</code><em class="property"> = 'attachments'</em><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.__directory__" title="Permalink to this definition">¶</a></dt>
+<dd><p>The directory name of the file.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.Attachment.__prefix__">
+<code class="descname">__prefix__</code><em class="property"> = 'attachment'</em><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.__prefix__" title="Permalink to this definition">¶</a></dt>
+<dd><p>The prefix to be prepended an the name of the file.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.Attachment.__max_length__">
+<code class="descname">__max_length__</code><em class="property"> = None</em><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.__max_length__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Limit the file&#8217;s maximum size.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.Attachment.__min_length__">
+<code class="descname">__min_length__</code><em class="property"> = None</em><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.__min_length__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Limit the file&#8217;s minimum size.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy_media.attachments.Attachment.attach">
+<code class="descname">attach</code><span class="sig-paren">(</span><em>attachable: typing.Union[typing.IO[_io.BytesIO], typing.Iterable[typing.Iterable[typing.Any]]], content_type: str = None, original_filename: str = None, extension: str = None, store_id: str = None, overwrite: bool = False</em><span class="sig-paren">)</span> &rarr; None<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Attachment.attach"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.attach" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attach a file. if the session roll-backed, all operations will be rolled-back.
+The old file will be deleted after commit, if any.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>attachable</strong> &#8211; stream, filename or URL to attach.</li>
+<li><strong>content_type</strong> &#8211; If given, the content-detection is suppressed.</li>
+<li><strong>original_filename</strong> &#8211; Original name of the file, if available, to append on the filename, useful for SEO,
+and readability.</li>
+<li><strong>extension</strong> &#8211; The file&#8217;s extension, is available.else, trying to guess it by content_type</li>
+<li><strong>store_id</strong> &#8211; The store id to store this file on. Stores must be registered with appropriate id via
+<code class="xref py py-meth docutils literal"><span class="pre">sqlalchemy_media.stores.StoreManager.register()</span></code>.</li>
+<li><strong>overwrite</strong> &#8211; Overwrites the file without changing it&#8217;s unique-key and name, useful to prevent broken links.
+Currently, when using this option, Rollback function is not available, because the old file
+will overwritten by the given new one.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><a class="reference internal" href="#sqlalchemy_media.exceptions.MaximumLengthIsReachedError" title="sqlalchemy_media.exceptions.MaximumLengthIsReachedError"><code class="xref py py-exc docutils literal"><span class="pre">MaximumLengthIsReachedError</span></code></a> and or <a class="reference internal" href="#sqlalchemy_media.exceptions.MinimumLengthIsNotReachedError" title="sqlalchemy_media.exceptions.MinimumLengthIsNotReachedError"><code class="xref py py-exc docutils literal"><span class="pre">MinimumLengthIsNotReachedError</span></code></a> may raised.</p>
+</div>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="sqlalchemy_media.attachments.Attachment.coerce">
+<em class="property">classmethod </em><code class="descname">coerce</code><span class="sig-paren">(</span><em>key</em>, <em>value</em><span class="sig-paren">)</span> &rarr; sqlalchemy_media.attachments.Attachment<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Attachment.coerce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.coerce" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts plain dictionary to instance of this class.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.MutableDict.coerce" title="(in SQLAlchemy v1.1)"><code class="xref py py-meth docutils literal"><span class="pre">sqlalchemy.ext.mutable.MutableDict.coerce()</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.Attachment.content_type">
+<code class="descname">content_type</code><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.content_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>file Content-Type</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy_media.attachments.Attachment.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; sqlalchemy_media.attachments.Attachment<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Attachment.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy this object using deepcopy</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="sqlalchemy_media.attachments.Attachment.create_from">
+<em class="property">classmethod </em><code class="descname">create_from</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Attachment.create_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.create_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Factory method to create and attach file with the same action.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>args</strong> &#8211; The same as the <a class="reference internal" href="#sqlalchemy_media.attachments.Attachment.attach" title="sqlalchemy_media.attachments.Attachment.attach"><code class="xref py py-meth docutils literal"><span class="pre">attach()</span></code></a></li>
+<li><strong>kwargs</strong> &#8211; The same as the <a class="reference internal" href="#sqlalchemy_media.attachments.Attachment.attach" title="sqlalchemy_media.attachments.Attachment.attach"><code class="xref py py-meth docutils literal"><span class="pre">attach()</span></code></a></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The loaded instance of this class.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy_media.attachments.Attachment.delete">
+<code class="descname">delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; None<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Attachment.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes the file.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This operation is can not be roll-backed.So if you want to delete a file, just set it&#8217;s to
+<code class="xref py py-const docutils literal"><span class="pre">None</span></code>, set it by new <a class="reference internal" href="#sqlalchemy_media.attachments.Attachment" title="sqlalchemy_media.attachments.Attachment"><code class="xref py py-class docutils literal"><span class="pre">Attachment</span></code></a> instance.</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.Attachment.empty">
+<code class="descname">empty</code><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.empty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if file is attached to this object or not. Returns <code class="xref py py-const docutils literal"><span class="pre">True</span></code> when a file is loaded on this object via
+<a class="reference internal" href="#sqlalchemy_media.attachments.Attachment.attach" title="sqlalchemy_media.attachments.Attachment.attach"><code class="xref py py-meth docutils literal"><span class="pre">attach()</span></code></a> method. or SqlAlchemy db load mechanism. else <code class="xref py py-const docutils literal"><span class="pre">False.</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.Attachment.extension">
+<code class="descname">extension</code><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.extension" title="Permalink to this definition">¶</a></dt>
+<dd><p>File extension.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.Attachment.filename">
+<code class="descname">filename</code><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>The filename used to store the attachment in storage. with this format:
+&#8216;{self.__prefix__}-{self.key}{self.suffix}{if self.extension else &#8216;&#8217;}&#8217;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy_media.attachments.Attachment.get_store">
+<code class="descname">get_store</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; sqlalchemy_media.stores.Store<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Attachment.get_store"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.get_store" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the <a class="reference internal" href="#sqlalchemy_media.stores.Store" title="sqlalchemy_media.stores.Store"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.stores.Store</span></code></a> instance, which this file is stored on.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.Attachment.key">
+<code class="descname">key</code><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unique key for tracking this attachment. it will be generated during attachment process in
+<a class="reference internal" href="#sqlalchemy_media.attachments.Attachment.attach" title="sqlalchemy_media.attachments.Attachment.attach"><code class="xref py py-meth docutils literal"><span class="pre">attach()</span></code></a> method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">Hashable</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.Attachment.length">
+<code class="descname">length</code><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.length" title="Permalink to this definition">¶</a></dt>
+<dd><p>The length of the attached file in bytes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy_media.attachments.Attachment.locate">
+<code class="descname">locate</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; str<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Attachment.locate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.locate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Locates the file url.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.Attachment.original_filename">
+<code class="descname">original_filename</code><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.original_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Original file name, may provided by user within <code class="xref py py-attr docutils literal"><span class="pre">cgi.FieldStorage.filename</span></code>, url or Physical filename.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.Attachment.path">
+<code class="descname">path</code><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Relative Path of the file used to store and locate the file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.Attachment.store_id">
+<code class="descname">store_id</code><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.store_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the id of store used to put this file on.</p>
+<p>Stores must be registered with appropriate id via <code class="xref py py-meth docutils literal"><span class="pre">StoreManager.register()</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.Attachment.suffix">
+<code class="descname">suffix</code><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.suffix" title="Permalink to this definition">¶</a></dt>
+<dd><p>The same as the <a class="reference internal" href="#sqlalchemy_media.attachments.Attachment.original_filename" title="sqlalchemy_media.attachments.Attachment.original_filename"><code class="xref py py-meth docutils literal"><span class="pre">sqlalchemy_media.attachments.Attachment.original_filename()</span></code></a> plus a leading minus(-)
+If available, else empty string (&#8216;&#8217;) will be returned</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.Attachment.timestamp">
+<code class="descname">timestamp</code><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.timestamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>The unix-time of the attachment creation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="attachmentcollection">
+<h3>AttachmentCollection<a class="headerlink" href="#attachmentcollection" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.attachments.AttachmentCollection">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.attachments.</code><code class="descname">AttachmentCollection</code><a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#AttachmentCollection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.AttachmentCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.5/library/functions.html#object" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Mixin to make a collection of <a class="reference internal" href="#sqlalchemy_media.attachments.Attachment" title="sqlalchemy_media.attachments.Attachment"><code class="xref py py-class docutils literal"><span class="pre">Attachment</span></code></a></p>
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.AttachmentCollection.__item_type__">
+<code class="descname">__item_type__</code><em class="property"> = &lt;class 'sqlalchemy_media.attachments.Attachment'&gt;</em><a class="headerlink" href="#sqlalchemy_media.attachments.AttachmentCollection.__item_type__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type of items</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="attachmentlist">
+<h3>AttachmentList<a class="headerlink" href="#attachmentlist" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.attachments.AttachmentList">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.attachments.</code><code class="descname">AttachmentList</code><a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#AttachmentList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.AttachmentList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.attachments.AttachmentCollection" title="sqlalchemy_media.attachments.AttachmentCollection"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.attachments.AttachmentCollection</span></code></a>, <a class="reference external" href="http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.MutableList" title="(in SQLAlchemy v1.1)"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy.ext.mutable.MutableList</span></code></a></p>
+<p>Used to create a collection of <a class="reference internal" href="#sqlalchemy_media.attachments.Attachment" title="sqlalchemy_media.attachments.Attachment"><code class="xref py py-class docutils literal"><span class="pre">Attachment</span></code></a></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyList</span><span class="p">(</span><span class="n">AttachmentList</span><span class="p">):</span>
+    <span class="n">__item_type__</span> <span class="o">=</span> <span class="n">MyAttachment</span>
+
+<span class="k">class</span> <span class="nc">Person</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;person&#39;</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">MyList</span><span class="o">.</span><span class="n">as_mutable</span><span class="p">(</span><span class="n">Json</span><span class="p">))</span>
+
+<span class="n">me</span> <span class="o">=</span> <span class="n">Person</span><span class="p">()</span>
+<span class="n">me</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="n">MyList</span><span class="p">()</span>
+<span class="n">me</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">MyAttachment</span><span class="o">.</span><span class="n">create_from</span><span class="p">(</span><span class="n">any_file</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="attachmentdict">
+<h3>AttachmentDict<a class="headerlink" href="#attachmentdict" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.attachments.AttachmentDict">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.attachments.</code><code class="descname">AttachmentDict</code><a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#AttachmentDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.AttachmentDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.attachments.AttachmentCollection" title="sqlalchemy_media.attachments.AttachmentCollection"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.attachments.AttachmentCollection</span></code></a>, <a class="reference external" href="http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.MutableDict" title="(in SQLAlchemy v1.1)"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy.ext.mutable.MutableDict</span></code></a></p>
+<p>Used to create a dictionary of <a class="reference internal" href="#sqlalchemy_media.attachments.Attachment" title="sqlalchemy_media.attachments.Attachment"><code class="xref py py-class docutils literal"><span class="pre">Attachment</span></code></a></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyDict</span><span class="p">(</span><span class="n">AttachmentDict</span><span class="p">):</span>
+    <span class="n">__item_type__</span> <span class="o">=</span> <span class="n">MyAttachment</span>
+
+<span class="k">class</span> <span class="nc">Person</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;person&#39;</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">MyDict</span><span class="o">.</span><span class="n">as_mutable</span><span class="p">(</span><span class="n">Json</span><span class="p">))</span>
+
+<span class="n">me</span> <span class="o">=</span> <span class="n">Person</span><span class="p">()</span>
+<span class="n">me</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="n">MyDict</span><span class="p">()</span>
+<span class="n">me</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s1">&#39;original&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MyAttachment</span><span class="o">.</span><span class="n">create_from</span><span class="p">(</span><span class="n">any_file</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="file">
+<h3>File<a class="headerlink" href="#file" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.attachments.File">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.attachments.</code><code class="descname">File</code><a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#File"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.File" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.attachments.Attachment" title="sqlalchemy_media.attachments.Attachment"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.attachments.Attachment</span></code></a></p>
+<p>Representing an attached file. Normally if you want to store any file, this class is the best choice.</p>
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.File.__directory__">
+<code class="descname">__directory__</code><em class="property"> = 'files'</em><a class="headerlink" href="#sqlalchemy_media.attachments.File.__directory__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.File.__prefix__">
+<code class="descname">__prefix__</code><em class="property"> = 'file'</em><a class="headerlink" href="#sqlalchemy_media.attachments.File.__prefix__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.File.__max_length__">
+<code class="descname">__max_length__</code><em class="property"> = 2097152</em><a class="headerlink" href="#sqlalchemy_media.attachments.File.__max_length__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.File.__min_length__">
+<code class="descname">__min_length__</code><em class="property"> = 0</em><a class="headerlink" href="#sqlalchemy_media.attachments.File.__min_length__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="filelist">
+<h3>FileList<a class="headerlink" href="#filelist" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.attachments.FileList">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.attachments.</code><code class="descname">FileList</code><a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#FileList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.FileList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.attachments.AttachmentList" title="sqlalchemy_media.attachments.AttachmentList"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.attachments.AttachmentList</span></code></a></p>
+<p>Equivalent to</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">FileList</span><span class="p">(</span><span class="n">AttachmentList</span><span class="p">):</span>
+    <span class="n">__item_type__</span> <span class="o">=</span> <span class="n">File</span>
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.FileList.__item_type__">
+<code class="descname">__item_type__</code><em class="property"> = &lt;class 'sqlalchemy_media.attachments.File'&gt;</em><a class="headerlink" href="#sqlalchemy_media.attachments.FileList.__item_type__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="filedict">
+<h3>FileDict<a class="headerlink" href="#filedict" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.attachments.FileDict">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.attachments.</code><code class="descname">FileDict</code><a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#FileDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.FileDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.attachments.AttachmentDict" title="sqlalchemy_media.attachments.AttachmentDict"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.attachments.AttachmentDict</span></code></a></p>
+<p>Equivalent to</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">FileDict</span><span class="p">(</span><span class="n">AttachmentDict</span><span class="p">):</span>
+    <span class="n">__item_type__</span> <span class="o">=</span> <span class="n">File</span>
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.FileDict.__item_type__">
+<code class="descname">__item_type__</code><em class="property"> = &lt;class 'sqlalchemy_media.attachments.File'&gt;</em><a class="headerlink" href="#sqlalchemy_media.attachments.FileDict.__item_type__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="image">
+<h3>Image<a class="headerlink" href="#image" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.attachments.Image">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.attachments.</code><code class="descname">Image</code><a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.attachments.File" title="sqlalchemy_media.attachments.File"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.attachments.File</span></code></a></p>
+<p>Equivalent to</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Image</span><span class="p">(</span><span class="n">Attachment</span><span class="p">):</span>
+    <span class="n">__directory__</span> <span class="o">=</span> <span class="s1">&#39;images&#39;</span>
+    <span class="n">__prefix__</span> <span class="o">=</span> <span class="s1">&#39;image&#39;</span>
+    <span class="n">__max_length__</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">MB</span>
+    <span class="n">__min_length__</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">KB</span>
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.Image.__directory__">
+<code class="descname">__directory__</code><em class="property"> = 'images'</em><a class="headerlink" href="#sqlalchemy_media.attachments.Image.__directory__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.Image.__prefix__">
+<code class="descname">__prefix__</code><em class="property"> = 'image'</em><a class="headerlink" href="#sqlalchemy_media.attachments.Image.__prefix__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.Image.__max_length__">
+<code class="descname">__max_length__</code><em class="property"> = 2097152</em><a class="headerlink" href="#sqlalchemy_media.attachments.Image.__max_length__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.Image.__min_length__">
+<code class="descname">__min_length__</code><em class="property"> = 4096</em><a class="headerlink" href="#sqlalchemy_media.attachments.Image.__min_length__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-sqlalchemy_media.descriptors">
+<span id="descriptors"></span><h2>descriptors<a class="headerlink" href="#module-sqlalchemy_media.descriptors" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="basedescriptor">
+<h3>BaseDescriptor<a class="headerlink" href="#basedescriptor" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.descriptors.BaseDescriptor">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.descriptors.</code><code class="descname">BaseDescriptor</code><span class="sig-paren">(</span><em>max_length: int = None</em>, <em>content_type: str = None</em>, <em>content_length: int = None</em>, <em>extension: str = None</em>, <em>original_filename: str = None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#BaseDescriptor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.BaseDescriptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.5/library/functions.html#object" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Abstract base class for all descriptors. Instance of this class is a file-like object.</p>
+<p>Descriptors are used to get some primitive information from an attachable(stream, filename or URI). users may not using this class directly. see <a class="reference internal" href="#sqlalchemy_media.descriptors.AttachableDescriptor" title="sqlalchemy_media.descriptors.AttachableDescriptor"><code class="xref py py-class docutils literal"><span class="pre">AttachableDescriptor</span></code></a> to see usage.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>max_length</strong> &#8211; Maximum allowed file size.</li>
+<li><strong>content_type</strong> &#8211; The file&#8217;s mimetype to suppress the mimetype detection.</li>
+<li><strong>content_length</strong> &#8211; The length of file in bytes, if available. Some descriptors like <a class="reference internal" href="#sqlalchemy_media.descriptors.UrlDescriptor" title="sqlalchemy_media.descriptors.UrlDescriptor"><code class="xref py py-class docutils literal"><span class="pre">UrlDescriptor</span></code></a>
+are providing this keyword argument.</li>
+<li><strong>extension</strong> &#8211; The file&#8217;s extension to suppress guessing it.</li>
+<li><strong>original_filename</strong> &#8211; Original filename, useful to detect <cite>content_type</cite> and or <cite>extension</cite>.</li>
+<li><strong>kwargs</strong> &#8211; Additional keyword arguments to set as attribute on descriptor instance.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="sqlalchemy_media.descriptors.BaseDescriptor._tell_source">
+<code class="descname">_tell_source</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; int<a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#BaseDescriptor._tell_source"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.BaseDescriptor._tell_source" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>[Abstract]</strong></p>
+<p>Should be overridden in inherited class and return the underlying stream&#8217;s current position.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy_media.descriptors.BaseDescriptor._read_source">
+<code class="descname">_read_source</code><span class="sig-paren">(</span><em>size: int</em><span class="sig-paren">)</span> &rarr; bytes<a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#BaseDescriptor._read_source"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.BaseDescriptor._read_source" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>[Abstract]</strong></p>
+<p>Should be overridden in inherited class and read from underlying stream.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>size</strong> &#8211; Amount of bytes to read.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy_media.descriptors.BaseDescriptor.close">
+<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; None<a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#BaseDescriptor.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.BaseDescriptor.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Closes the underlying stream.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy_media.descriptors.BaseDescriptor.read">
+<code class="descname">read</code><span class="sig-paren">(</span><em>size: int</em><span class="sig-paren">)</span> &rarr; bytes<a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#BaseDescriptor.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.BaseDescriptor.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read from the underlying file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>size</strong> &#8211; Amount of bytes ro read.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy_media.descriptors.BaseDescriptor.read_source">
+<code class="descname">read_source</code><span class="sig-paren">(</span><em>size: int</em><span class="sig-paren">)</span> &rarr; bytes<a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#BaseDescriptor.read_source"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.BaseDescriptor.read_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to read from underlying stream.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>size</strong> &#8211; Amount of bytes to read.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy_media.descriptors.BaseDescriptor.seek">
+<code class="descname">seek</code><span class="sig-paren">(</span><em>position: int</em><span class="sig-paren">)</span> &rarr; None<a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#BaseDescriptor.seek"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.BaseDescriptor.seek" title="Permalink to this definition">¶</a></dt>
+<dd><p>Seek the file at the given position.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <a class="reference external" href="https://docs.python.org/3.5/library/io.html#io.UnsupportedOperation" title="(in Python v3.5)"><code class="xref py py-exc docutils literal"><span class="pre">io.UnsupportedOperation</span></code></a> will be raised if the underlying stream is not <a class="reference internal" href="#sqlalchemy_media.descriptors.BaseDescriptor.seekable" title="sqlalchemy_media.descriptors.BaseDescriptor.seekable"><code class="xref py py-meth docutils literal"><span class="pre">seekable()</span></code></a>.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>position</strong> &#8211; the position to seek on.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy_media.descriptors.BaseDescriptor.seekable">
+<code class="descname">seekable</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; bool<a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#BaseDescriptor.seekable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.BaseDescriptor.seekable" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>[Abstract]</strong></p>
+<p>Should be overridden in inherited class and return <a class="reference external" href="https://docs.python.org/3.5/library/constants.html#True" title="(in Python v3.5)"><code class="xref py py-data docutils literal"><span class="pre">True</span></code></a> if the underlying stream is seekable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy_media.descriptors.BaseDescriptor.tell">
+<code class="descname">tell</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; int<a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#BaseDescriptor.tell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.BaseDescriptor.tell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the current position of the stream. Even if the underlying stream is not <a class="reference internal" href="#sqlalchemy_media.descriptors.BaseDescriptor.seekable" title="sqlalchemy_media.descriptors.BaseDescriptor.seekable"><code class="xref py py-meth docutils literal"><span class="pre">seekable()</span></code></a>, this method
+should return the current position which counted internally.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy_media.descriptors.BaseDescriptor.tell_source">
+<code class="descname">tell_source</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#BaseDescriptor.tell_source"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.BaseDescriptor.tell_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the underlying stream&#8217;s current position. even if the underlying stream is not <a class="reference internal" href="#sqlalchemy_media.descriptors.BaseDescriptor.seekable" title="sqlalchemy_media.descriptors.BaseDescriptor.seekable"><code class="xref py py-meth docutils literal"><span class="pre">seekable()</span></code></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="streamdescriptor">
+<h3>StreamDescriptor<a class="headerlink" href="#streamdescriptor" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.descriptors.StreamDescriptor">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.descriptors.</code><code class="descname">StreamDescriptor</code><span class="sig-paren">(</span><em>stream: typing.Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO], **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#StreamDescriptor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.StreamDescriptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.descriptors.BaseDescriptor" title="sqlalchemy_media.descriptors.BaseDescriptor"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.descriptors.BaseDescriptor</span></code></a></p>
+<p>This class is used for describing a stream. so it just a proxy for streams.
+The underlying stream will not to be closed after calling the <a class="reference internal" href="#sqlalchemy_media.descriptors.StreamDescriptor.close" title="sqlalchemy_media.descriptors.StreamDescriptor.close"><code class="xref py py-meth docutils literal"><span class="pre">close()</span></code></a> method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>stream</strong> &#8211; File-like object to wrap.</li>
+<li><strong>kwargs</strong> &#8211; the same as the <a class="reference internal" href="#sqlalchemy_media.descriptors.BaseDescriptor" title="sqlalchemy_media.descriptors.BaseDescriptor"><code class="xref py py-class docutils literal"><span class="pre">BaseDescriptor</span></code></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="sqlalchemy_media.descriptors.StreamDescriptor.close">
+<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; None<a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#StreamDescriptor.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.StreamDescriptor.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do not closing the stream here, because we&#8217;r not opened it.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="streamcloserdescriptor">
+<h3>StreamCloserDescriptor<a class="headerlink" href="#streamcloserdescriptor" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.descriptors.StreamCloserDescriptor">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.descriptors.</code><code class="descname">StreamCloserDescriptor</code><span class="sig-paren">(</span><em>stream: typing.Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO], **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#StreamCloserDescriptor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.StreamCloserDescriptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.descriptors.StreamDescriptor" title="sqlalchemy_media.descriptors.StreamDescriptor"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.descriptors.StreamDescriptor</span></code></a></p>
+<p>The same as the <a class="reference internal" href="#sqlalchemy_media.descriptors.StreamDescriptor" title="sqlalchemy_media.descriptors.StreamDescriptor"><code class="xref py py-class docutils literal"><span class="pre">StreamDescriptor</span></code></a>, the only difference is this class trying to close the stream after
+calling the <a class="reference internal" href="#sqlalchemy_media.descriptors.StreamCloserDescriptor.close" title="sqlalchemy_media.descriptors.StreamCloserDescriptor.close"><code class="xref py py-meth docutils literal"><span class="pre">close()</span></code></a> method.</p>
+<dl class="method">
+<dt id="sqlalchemy_media.descriptors.StreamCloserDescriptor.close">
+<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; None<a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#StreamCloserDescriptor.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.StreamCloserDescriptor.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden to close the underlying stream.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="localfilesystemdescriptor">
+<h3>LocalFileSystemDescriptor<a class="headerlink" href="#localfilesystemdescriptor" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.descriptors.LocalFileSystemDescriptor">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.descriptors.</code><code class="descname">LocalFileSystemDescriptor</code><span class="sig-paren">(</span><em>filename: str</em>, <em>original_filename: str = None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#LocalFileSystemDescriptor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.LocalFileSystemDescriptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.descriptors.StreamCloserDescriptor" title="sqlalchemy_media.descriptors.StreamCloserDescriptor"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.descriptors.StreamCloserDescriptor</span></code></a></p>
+<p>Representing a file on the local file system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filename</strong> &#8211; The filename on the local storage to open for reading.</li>
+<li><strong>kwargs</strong> &#8211; the same as the <a class="reference internal" href="#sqlalchemy_media.descriptors.BaseDescriptor" title="sqlalchemy_media.descriptors.BaseDescriptor"><code class="xref py py-class docutils literal"><span class="pre">BaseDescriptor</span></code></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">the <cite>filename</cite> will be passed as <cite>original_filename</cite> to the parent class.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="urldescriptor">
+<h3>UrlDescriptor<a class="headerlink" href="#urldescriptor" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.descriptors.UrlDescriptor">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.descriptors.</code><code class="descname">UrlDescriptor</code><span class="sig-paren">(</span><em>uri: str</em>, <em>content_type: str = None</em>, <em>original_filename: str = None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#UrlDescriptor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.UrlDescriptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.descriptors.StreamCloserDescriptor" title="sqlalchemy_media.descriptors.StreamCloserDescriptor"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.descriptors.StreamCloserDescriptor</span></code></a></p>
+<p>Open a remote resource with <a class="reference external" href="https://docs.python.org/3.5/library/urllib.html#module-urllib" title="(in Python v3.5)"><code class="xref py py-mod docutils literal"><span class="pre">urllib</span></code></a> and pass the <cite>content_type</cite> and <cite>content_length</cite> to the parent class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>uri</strong> &#8211; The uri to open.</li>
+<li><strong>kwargs</strong> &#8211; the same as the <a class="reference internal" href="#sqlalchemy_media.descriptors.BaseDescriptor" title="sqlalchemy_media.descriptors.BaseDescriptor"><code class="xref py py-class docutils literal"><span class="pre">BaseDescriptor</span></code></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">the <cite>uri</cite> will be passed as <cite>original_filename</cite> to the parent class, if the <cite>original_filename</cite> is
+<a class="reference external" href="https://docs.python.org/3.5/library/constants.html#None" title="(in Python v3.5)"><code class="xref py py-data docutils literal"><span class="pre">None</span></code></a>.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="cgifieldstoragedescriptor">
+<h3>CgiFieldStorageDescriptor<a class="headerlink" href="#cgifieldstoragedescriptor" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.descriptors.CgiFieldStorageDescriptor">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.descriptors.</code><code class="descname">CgiFieldStorageDescriptor</code><span class="sig-paren">(</span><em>storage: cgi.FieldStorage</em>, <em>content_type: str = None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#CgiFieldStorageDescriptor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.CgiFieldStorageDescriptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.descriptors.StreamCloserDescriptor" title="sqlalchemy_media.descriptors.StreamCloserDescriptor"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.descriptors.StreamCloserDescriptor</span></code></a></p>
+<p>Describes a <code class="xref py py-class docutils literal"><span class="pre">cgi.FieldStorage</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>storage</strong> &#8211; The <code class="xref py py-class docutils literal"><span class="pre">cgi.FieldStorage</span></code> instance to describe.</li>
+<li><strong>kwargs</strong> &#8211; the same as the <a class="reference internal" href="#sqlalchemy_media.descriptors.BaseDescriptor" title="sqlalchemy_media.descriptors.BaseDescriptor"><code class="xref py py-class docutils literal"><span class="pre">BaseDescriptor</span></code></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="attachabledescriptor">
+<h3>AttachableDescriptor<a class="headerlink" href="#attachabledescriptor" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.descriptors.AttachableDescriptor">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.descriptors.</code><code class="descname">AttachableDescriptor</code><span class="sig-paren">(</span><em>max_length: int = None</em>, <em>content_type: str = None</em>, <em>content_length: int = None</em>, <em>extension: str = None</em>, <em>original_filename: str = None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#AttachableDescriptor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.AttachableDescriptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.descriptors.BaseDescriptor" title="sqlalchemy_media.descriptors.BaseDescriptor"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.descriptors.BaseDescriptor</span></code></a></p>
+<p>This is an abstract factory for descriptors based on the first argument</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sqlalchemy_media</span> <span class="k">import</span> <span class="n">AttachableDescriptor</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">AttachableDescriptor</span><span class="p">(</span><span class="s1">&#39;index.rst&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">descriptor</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">descriptor</span><span class="p">))</span>
+<span class="go">&lt;class &#39;sqlalchemy_media.descriptors.LocalFileSystemDescriptor&#39;&gt;</span>
+</pre></div>
+</div>
+<p>So this callable, should determine the appropriate descriptor and return an instance of it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>attachable</strong> &#8211; filename, uri or file-like object</li>
+<li><strong>kwargs</strong> &#8211; the same as the <a class="reference internal" href="#sqlalchemy_media.descriptors.BaseDescriptor" title="sqlalchemy_media.descriptors.BaseDescriptor"><code class="xref py py-class docutils literal"><span class="pre">BaseDescriptor</span></code></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-sqlalchemy_media.stores">
+<span id="stores"></span><h2>stores<a class="headerlink" href="#module-sqlalchemy_media.stores" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="store">
+<h3>Store<a class="headerlink" href="#store" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.stores.Store">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.stores.</code><code class="descname">Store</code><a class="reference internal" href="_modules/sqlalchemy_media/stores.html#Store"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.5/library/functions.html#object" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>The abstract base class for all stores.</p>
+<dl class="method">
+<dt id="sqlalchemy_media.stores.Store.cleanup">
+<code class="descname">cleanup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores.html#Store.cleanup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.cleanup" title="Permalink to this definition">¶</a></dt>
+<dd><p>In derived class should cleanup all dirty stuff created while storing and deleting file.
+If not overridden, no error will be raised.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#sqlalchemy_media.stores.StoreManager.cleanup" title="sqlalchemy_media.stores.StoreManager.cleanup"><code class="xref py py-meth docutils literal"><span class="pre">StoreManager.cleanup()</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy_media.stores.Store.put">
+<code class="descname">put</code><span class="sig-paren">(</span><em>filename: str, stream: typing.Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO], *, min_length=None, max_length=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores.html#Store.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>In driven class, should put the stream as the given filename in the store.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> &#8211; </li>
+<li><strong>stream</strong> &#8211; </li>
+<li><strong>min_length</strong> &#8211; </li>
+<li><strong>max_length</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="filesystemstore">
+<h3>FileSystemStore<a class="headerlink" href="#filesystemstore" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.stores.FileSystemStore">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.stores.</code><code class="descname">FileSystemStore</code><span class="sig-paren">(</span><em>root_path: str</em>, <em>base_url: str</em>, <em>chunk_size: int = 32768</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores.html#FileSystemStore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.FileSystemStore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.stores.Store" title="sqlalchemy_media.stores.Store"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.stores.Store</span></code></a></p>
+</dd></dl>
+
+</div>
+<div class="section" id="storemanager">
+<h3>StoreManager<a class="headerlink" href="#storemanager" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.stores.StoreManager">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.stores.</code><code class="descname">StoreManager</code><span class="sig-paren">(</span><em>session</em>, <em>delete_orphan=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores.html#StoreManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.StoreManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.5/library/functions.html#object" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<dl class="method">
+<dt id="sqlalchemy_media.stores.StoreManager.adopted">
+<code class="descname">adopted</code><span class="sig-paren">(</span><em>*files: typing.Iterable[typing.Attachment]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores.html#StoreManager.adopted"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.StoreManager.adopted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opposite of orphaned
+:param files:
+:return:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy_media.stores.StoreManager.cleanup">
+<code class="descname">cleanup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores.html#StoreManager.cleanup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.StoreManager.cleanup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls the <a class="reference internal" href="#sqlalchemy_media.stores.Store.cleanup" title="sqlalchemy_media.stores.Store.cleanup"><code class="xref py py-meth docutils literal"><span class="pre">Store.cleanup()</span></code></a> for each store is <a class="reference internal" href="#sqlalchemy_media.stores.StoreManager.stores" title="sqlalchemy_media.stores.StoreManager.stores"><code class="xref py py-attr docutils literal"><span class="pre">stores</span></code></a> and clears the <a class="reference internal" href="#sqlalchemy_media.stores.StoreManager.stores" title="sqlalchemy_media.stores.StoreManager.stores"><code class="xref py py-attr docutils literal"><span class="pre">stores</span></code></a> also.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.stores.StoreManager.stores">
+<code class="descname">stores</code><a class="headerlink" href="#sqlalchemy_media.stores.StoreManager.stores" title="Permalink to this definition">¶</a></dt>
+<dd><p>The mapping <cite>str -&gt; store factory</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">dict[str] -&gt; callable</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-sqlalchemy_media.exceptions">
+<span id="exceptions"></span><h2>exceptions<a class="headerlink" href="#module-sqlalchemy_media.exceptions" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="sqlalchemy_media.exceptions.SqlAlchemyMediaException">
+<em class="property">exception </em><code class="descclassname">sqlalchemy_media.exceptions.</code><code class="descname">SqlAlchemyMediaException</code><a class="reference internal" href="_modules/sqlalchemy_media/exceptions.html#SqlAlchemyMediaException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.exceptions.SqlAlchemyMediaException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.5/library/exceptions.html#Exception" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">Exception</span></code></a></p>
+<p>The base class for all exceptions</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy_media.exceptions.MaximumLengthIsReachedError">
+<em class="property">exception </em><code class="descclassname">sqlalchemy_media.exceptions.</code><code class="descname">MaximumLengthIsReachedError</code><span class="sig-paren">(</span><em>max_length: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/exceptions.html#MaximumLengthIsReachedError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.exceptions.MaximumLengthIsReachedError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.exceptions.SqlAlchemyMediaException" title="sqlalchemy_media.exceptions.SqlAlchemyMediaException"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.exceptions.SqlAlchemyMediaException</span></code></a></p>
+<p>Indicates the maximum allowed file limit is reached.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy_media.exceptions.MinimumLengthIsNotReachedError">
+<em class="property">exception </em><code class="descclassname">sqlalchemy_media.exceptions.</code><code class="descname">MinimumLengthIsNotReachedError</code><span class="sig-paren">(</span><em>min_length</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/exceptions.html#MinimumLengthIsNotReachedError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.exceptions.MinimumLengthIsNotReachedError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.exceptions.SqlAlchemyMediaException" title="sqlalchemy_media.exceptions.SqlAlchemyMediaException"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.exceptions.SqlAlchemyMediaException</span></code></a></p>
+<p>Indicates the minimum allowed length is not .</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy_media.exceptions.ContextError">
+<em class="property">exception </em><code class="descclassname">sqlalchemy_media.exceptions.</code><code class="descname">ContextError</code><a class="reference internal" href="_modules/sqlalchemy_media/exceptions.html#ContextError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.exceptions.ContextError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.exceptions.SqlAlchemyMediaException" title="sqlalchemy_media.exceptions.SqlAlchemyMediaException"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.exceptions.SqlAlchemyMediaException</span></code></a></p>
+<p>Exception related to <a class="reference internal" href="#sqlalchemy_media.stores.StoreManager" title="sqlalchemy_media.stores.StoreManager"><code class="xref py py-class docutils literal"><span class="pre">StoreManager</span></code></a>.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy_media.exceptions.DefaultStoreError">
+<em class="property">exception </em><code class="descclassname">sqlalchemy_media.exceptions.</code><code class="descname">DefaultStoreError</code><a class="reference internal" href="_modules/sqlalchemy_media/exceptions.html#DefaultStoreError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.exceptions.DefaultStoreError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.exceptions.SqlAlchemyMediaException" title="sqlalchemy_media.exceptions.SqlAlchemyMediaException"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.exceptions.SqlAlchemyMediaException</span></code></a></p>
+<p>Raised when no default store is registered.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-meth docutils literal"><span class="pre">StoreManager.register()</span></code>.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="module-sqlalchemy_media.constants">
+<span id="constants"></span><h2>constants<a class="headerlink" href="#module-sqlalchemy_media.constants" title="Permalink to this headline">¶</a></h2>
+<dl class="data">
+<dt id="sqlalchemy_media.constants.KB">
+<code class="descclassname">sqlalchemy_media.constants.</code><code class="descname">KB</code><em class="property"> = 1024</em><a class="headerlink" href="#sqlalchemy_media.constants.KB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents Kilo-Bytes</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="sqlalchemy_media.constants.MB">
+<code class="descclassname">sqlalchemy_media.constants.</code><code class="descname">MB</code><em class="property"> = 1048576</em><a class="headerlink" href="#sqlalchemy_media.constants.MB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents Mega-Bytes</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="tutorials/image.html" class="btn btn-neutral" title="Attaching Images" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="index.html" title="sqlalchemy-media"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">sqlalchemy-media 0.1.0-dev6 documentation</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2015, Vahid Mardani.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
-    </div>
-  </body>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Vahid Mardani.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.0-dev8',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
 </html>
