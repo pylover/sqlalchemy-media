@@ -1,5 +1,5 @@
 
-from typing import Iterable
+from typing import Iterable, Callable
 from os import makedirs, remove
 from os.path import abspath, join, dirname, exists
 
@@ -38,29 +38,61 @@ class Store(object):
         """
         pass
 
-    def put(self, filename: str, stream: Stream, *, min_length=None, max_length=None):
+    def put(self, filename: str, stream: Stream, *, min_length=None, max_length=None) -> int:
         """
-        In driven class, should put the stream as the given filename in the store.
+        **[Abstract]**
 
-        :param filename:
-        :param stream:
-        :param min_length:
-        :param max_length:
-        :return:
+        Should be overridden in inherited class and put the stream as the given filename in the store.
+
+        :param filename: the target filename.
+        :param stream: the source stream
+        :param min_length: Minimum allowed file length.
+        :param max_length: Maximum allowed file length.
+        :return: length of the stored file.
         """
         raise NotImplementedError()  # pragma: no cover
 
-    def delete(self, filename: str):
+    def delete(self, filename: str) -> None:
+        """
+        **[Abstract]**
+
+        Should be overridden in inherited class and delete the given file.
+
+        :param filename: The filename to delete
+
+        """
         raise NotImplementedError()  # pragma: no cover
 
     def open(self, filename: str, mode: str='r') -> Stream:
+        """
+        **[Abstract]**
+
+        If overridden in the inherited class, should return a file-like object representing the file in the store.
+
+        .. note:: Some stores are not supporting stream access, if yes, just leave it unimplemented.
+
+        :param filename: The filename to open.
+        :param mode: same as the `mode` in famous :func:`.open` function.
+
+        """
         raise NotImplementedError()  # pragma: no cover
 
     def locate(self, attachment: 'Attachment') -> str:
+        """
+        **[Abstract]**
+
+        If overridden in the inherited class, should locates the file's url to share in public space.
+
+        :param attachment: The :class:`.Attachment` object to
+        """
         raise NotImplementedError()  # pragma: no cover
 
 
 class FileSystemStore(Store):
+    """
+    Store for dealing with local file-system.
+
+    """
 
     def __init__(self, root_path: str, base_url: str, chunk_size: int=32768):
         self.root_path = abspath(root_path)
@@ -91,6 +123,41 @@ class FileSystemStore(Store):
 
 
 class StoreManager(object):
+    """
+
+    This is an context manager.
+
+    Before using you must register at least one store factory function as default with-in store registry with
+    :meth:`register` by passing `default=true` during registration.
+
+    This object will call the registered factory functions to instantiate one per
+    :func:`sqlalchemy_media.context.get_id`.
+
+    .. testcode::
+
+        import functools
+
+        from sqlalchemy.orm.session import Session
+
+        from sqlalchemy_media import StoreManager, FileSystemStore
+
+        StoreManager.register('fs', functools.partial(FileSystemStore, '/tmp/sa_temp_fs', 'http'), default=True)
+        StoreManager.register('fs2', functools.partial(FileSystemStore, '/tmp/sa_temp_fs2', 'http'))
+
+        with StoreManager(Session) as store_manager:
+            assert StoreManager.get_current_store_manager() == store_manager
+
+            print(store_manager.get().root_path)  # fs1 default store
+            print(store_manager.get('fs2').root_path)  # fs2 store
+
+    This would output:
+
+    .. testoutput::
+
+        /tmp/sa_temp_fs
+        /tmp/sa_temp_fs2
+
+    """
 
     _stores = None
     _default = None
@@ -98,17 +165,28 @@ class StoreManager(object):
     _files_to_delete_after_rollback = None
     _files_orphaned = None
 
+    #: If :data:`.True` the orphaned attachments will be gathered and deleted after session commit.
+    delete_orphan = False
+
     def __init__(self, session, delete_orphan=False):
         self.session = session
         self.delete_orphan = delete_orphan
         self.reset_files_state()
 
     def __enter__(self):
+        """
+        Enters the context: bind events and push itself into context stack.
+
+        :return: self
+        """
         self.bind_events()
         _context_stacks.setdefault(get_context_id(), []).append(self)
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        """
+        Destore the context, pop itself from context stack and unbind all events.
+        """
         _context_stacks.setdefault(get_context_id(), []).pop()
         self.unbind_events()
         self.cleanup()
@@ -126,6 +204,9 @@ class StoreManager(object):
 
     @classmethod
     def get_current_store_manager(cls) -> 'StoreManager':
+        """
+        Find the current :class:`StoreManager` in context stack if any. else :exc:`.ContextError` will be raised.
+        """
         try:
             return _context_stacks.setdefault(get_context_id(), [])[-1]
         except IndexError:
@@ -141,24 +222,54 @@ class StoreManager(object):
         self.stores.clear()
 
     @classmethod
-    def make_default(cls, key):
+    def make_default(cls, key) -> None:
+        """
+        Makes a pre-registered store as default.
+
+        :param key: the store id.
+        """
         cls._default = key
 
     @classmethod
-    def register(cls, key, store_factory, default=False):
+    def register(cls, key: str, store_factory: Callable, default: bool=False) -> None:
+        """
+        Registers the store factory into stores registry, use :meth:`unregister` to remove it.
+
+        :param key: The unique key for store.
+        :param store_factory: A callable that returns an instance of :class:`.Store`.
+        :param default: If :data:`True` the given store will be marked as default also. in addition you can use
+                        :meth:`.make_default` to mark a store as default.
+
+        """
         _factories[key] = store_factory
         if default:
             cls._default = key
 
     @classmethod
-    def unregister(cls, key):
+    def unregister(cls, key) -> Store:
+        """
+        Opposite of :meth:`.register`. :exc:`.KeyError` may raised if key not found in registry.
+
+        :param key: The store key to remove from stores registry.
+
+        """
         if key == cls._default:
             cls._default = None
 
         if key in _factories:
-            del _factories[key]
+            return _factories.pop(key)
+        else:
+            raise KeyError('Cannot find store: %s' % key)
 
-    def get(self, key=None):
+    def get(self, key=None) -> Store:
+        """
+        Lookup the store in available instance cache, and instantiate a new one using registered factory function,
+        if not found.
+
+        If the key is :data:`.None`, the default store will be instantiated(if required) and returned.
+
+        :param key: the store unique id to lookup.
+        """
         if key is None:
             if self._default is None:
                 raise DefaultStoreError()
@@ -170,51 +281,85 @@ class StoreManager(object):
         return self.stores[key]
 
     @property
-    def default_store(self):
+    def default_store(self) -> Store:
+        """
+        The same as the :meth:`.get` without parameter.
+
+        """
         return self.get()
 
-    def bind_events(self):
+    def bind_events(self) -> None:
+        """
+        Binds the required event on sqlalchemy session. to handle commit & rollback.
+
+        """
         event.listen(self.session, 'after_commit', self.on_commit)
         event.listen(self.session, 'after_soft_rollback', self.on_rollback)
         event.listen(self.session, 'persistent_to_deleted', self.on_delete)
 
-    def unbind_events(self):
+    def unbind_events(self) -> None:
+        """
+        Opposite of :meth:`bind_events`.
+
+        """
         event.remove(self.session, 'after_commit', self.on_commit)
         event.remove(self.session, 'after_soft_rollback', self.on_rollback)
         event.remove(self.session, 'persistent_to_deleted', self.on_delete)
 
-    # noinspection PyUnresolvedReferences
-    def register_to_delete_after_commit(self, *files: Iterable['Attachment']):
-        self._files_to_delete_after_commit.extend(files)
-
-    def orphaned(self, *files: Iterable['Attachment']):
-        if self.delete_orphan:
-            self._files_orphaned.extend(files)
-
-    def adopted(self, *files: Iterable['Attachment']):
+    def orphaned(self, *attachments: Iterable['Attachment']) -> None:
         """
-        Opposite of orphaned
-        :param files:
-        :return:
+        Mark one or more attachment(s) orphaned, So if :attr:`delete_orphan` is :data:`.True`, the attachment(s) will
+        be deleted from store after session commit.
+
+        """
+        if self.delete_orphan:
+            self._files_orphaned.extend(attachments)
+
+    def adopted(self, *attachments: Iterable['Attachment']) -> None:
+        """
+        Opposite of :meth:`.orphaned`
+
         """
         if not self.delete_orphan:
             return
 
-        for f in files:
+        for f in attachments:
             if f in self._files_orphaned:
                 self._files_orphaned.remove(f)
 
     # noinspection PyUnresolvedReferences
-    def register_to_delete_after_rollback(self, *files: Iterable['Attachment']):
+    def register_to_delete_after_commit(self, *attachments: Iterable['Attachment']) -> None:
+        """
+        Schedules one or more attachment(s) to be deleted from store just after sqlalchemy session commit.
+
+        """
+        self._files_to_delete_after_commit.extend(attachments)
+
+    # noinspection PyUnresolvedReferences
+    def register_to_delete_after_rollback(self, *files: Iterable['Attachment']) -> None:
+        """
+        Schedules one or more attachment(s) to be deleted from store just after sqlalchemy session rollback.
+
+        """
         self._files_to_delete_after_rollback.extend(files)
 
-    def reset_files_state(self):
+    def reset_files_state(self) -> None:
+        """
+        Reset the object's state and forget all scheduled tasks for commit and or rollback.
+
+        .. warning:: Calling this method without knowing what you are doing, will be caused bad result !
+
+        """
         self._files_to_delete_after_commit = []
         self._files_to_delete_after_rollback = []
         self._files_orphaned = []
 
     # noinspection PyUnusedLocal
-    def on_commit(self, session):
+    def on_commit(self, session) -> None:
+        """
+        Will be called when session commit occurred.
+
+        """
         for f in self._files_to_delete_after_commit:
             f.delete()
 
@@ -226,18 +371,29 @@ class StoreManager(object):
 
     # noinspection PyUnusedLocal
     def on_rollback(self, session, transaction):
+        """
+        Will be called when session rollback occurred.
+
+        """
         for f in self._files_to_delete_after_rollback:
             f.delete()
         self.reset_files_state()
 
     # noinspection PyUnusedLocal
     def on_delete(self, session, instance):
+        """
+        Will be called when an model instance deleted.
+        """
         for attribute in _observing_attributes:
             if isinstance(instance, attribute.class_):
                 self.register_to_delete_after_commit(getattr(instance, attribute.key).copy())
 
     @classmethod
     def observe_attribute(cls, attr, collection=False):
+        """
+        Attach some event handlers on sqlalchemy attribute to handle delete_orphan option.
+
+        """
 
         if attr not in _observing_attributes:
             _observing_attributes.add(attr)
