@@ -22,7 +22,7 @@ sqlalchemy-media
 
 Attaching any files(Image, Video & etc ) into sqlalchemy models using configurable stores including FileSystemStore.
 
-See the `documentation <sqlalchemy-media.dobisel.com>`_ for full description.
+See the `documentation <http://sqlalchemy-media.dobisel.com>`_ for full description.
 
 Why ?
 -----
