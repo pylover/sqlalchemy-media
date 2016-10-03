@@ -3,3 +3,4 @@ nose
 coverage
 sphinx
 coveralls
+sphinx_rtd_theme
