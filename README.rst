@@ -22,6 +22,8 @@ sqlalchemy-media
 
 Attaching any files(Image, Video & etc ) into sqlalchemy models using configurable stores including FileSystemStore.
 
+See the `documentation <sqlalchemy-media.dobisel.com>`_ for full description.
+
 Why ?
 -----
 Nowadays, most of database applications are requested to allow users to upload and attach files with various types to
