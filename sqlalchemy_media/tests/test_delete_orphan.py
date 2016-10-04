@@ -127,7 +127,7 @@ class DeleteOrphanTestCase(TempStoreTestCase):
             # remove from orphan list
             f = person1.files[1]
             person1.files.remove(f)
-            person1.files.insert(1,f)
+            person1.files.insert(1, f)
             self.assertEqual(len(person1.files), 2)
 
             # Removing the first file
@@ -135,6 +135,15 @@ class DeleteOrphanTestCase(TempStoreTestCase):
             session.commit()
             self.assertFalse(exists(first_filename))
             self.assertEqual(len(person1.files), 1)
+
+            old_attachment_filename = join(self.temp_path, person1.files[0].path)
+            attachment = person1.files[0].attach(BytesIO(b'Changed inside nested mutables!'))
+            attachment_filename = join(self.temp_path, attachment.path)
+            self.assertTrue(exists(old_attachment_filename))
+            self.assertTrue(exists(attachment_filename))
+            session.commit()
+            self.assertFalse(exists(old_attachment_filename))
+            self.assertTrue(exists(attachment_filename))
 
     def test_delete_orphan_dict(self):
         class Person(self.Base):

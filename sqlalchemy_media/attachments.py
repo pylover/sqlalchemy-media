@@ -79,8 +79,7 @@ class Attachment(MutableDict):
         :return: The loaded instance of this class.
         """
         instance = cls()
-        instance.attach(*args, **kwargs)
-        return instance
+        return instance.attach(*args, **kwargs)
 
     def __hash__(self) -> int:
         """
@@ -248,7 +247,7 @@ class Attachment(MutableDict):
         self.get_store().delete(self.path)
 
     def attach(self, attachable: Attachable, content_type: str = None, original_filename: str = None, extension: str = None,
-               store_id: str = None, overwrite: bool=False) -> None:
+               store_id: str = None, overwrite: bool=False) -> 'Attachment':
         """
         Attach a file. if the session roll-backed, all operations will be rolled-back.
         The old file will be deleted after commit, if any.
@@ -265,6 +264,10 @@ class Attachment(MutableDict):
                           will overwritten by the given new one.
 
         .. note:: :exc:`.MaximumLengthIsReachedError` and or :exc:`.MinimumLengthIsNotReachedError` may raised.
+
+        .. versionchanged:: 0.1.2
+            This method will returns the self. it's useful to chain method calls on object within single line.
+
         """
 
         # Wrap in AttachableDescriptor
@@ -311,6 +314,8 @@ class Attachment(MutableDict):
 
             if old_attachment:
                 store_manager.register_to_delete_after_commit(old_attachment)
+
+        return self
 
     def locate(self) -> str:
         """
