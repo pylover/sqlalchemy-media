@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.exceptions &mdash; sqlalchemy-media 0.1.1 documentation</title>
+  <title>sqlalchemy_media.exceptions &mdash; sqlalchemy-media 0.1.2 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.1.1 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.1.2 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -134,6 +134,36 @@
             
   <h1>Source code for sqlalchemy_media.exceptions</h1><div class="highlight"><pre>
 <span></span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">join</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">abspath</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+
+    <span class="s1">&#39;SqlAlchemyMediaException&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;MaximumLengthIsReachedError&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;MinimumLengthIsNotReachedError&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ContextError&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;DefaultStoreError&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;AnalyzeError&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ValidationError&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ContentTypeValidationError&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;DescriptorError&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;DescriptorOperationError&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;OptionalPackageRequirementError&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;SqlAlchemyMediaException&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;MaximumLengthIsReachedError&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;MinimumLengthIsNotReachedError&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ContextError&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;DefaultStoreError&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;AnalyzeError&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ValidationError&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ContentTypeValidationError&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;DescriptorError&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;DescriptorOperationError&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;OptionalPackageRequirementError&#39;</span>
+
+<span class="p">]</span>
+
 
 <div class="viewcode-block" id="SqlAlchemyMediaException"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.exceptions.SqlAlchemyMediaException">[docs]</a><span class="k">class</span> <span class="nc">SqlAlchemyMediaException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -148,7 +178,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_length</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="s1">&#39;Cannot store files smaller than: </span><span class="si">%d</span><span class="s1"> bytes&#39;</span> <span class="o">%</span> <span class="n">max_length</span> <span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="s1">&#39;Cannot store files larger than: </span><span class="si">%d</span><span class="s1"> bytes&#39;</span> <span class="o">%</span> <span class="n">max_length</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="MinimumLengthIsNotReachedError"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.exceptions.MinimumLengthIsNotReachedError">[docs]</a><span class="k">class</span> <span class="nc">MinimumLengthIsNotReachedError</span><span class="p">(</span><span class="n">SqlAlchemyMediaException</span><span class="p">):</span>
@@ -157,7 +187,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_length</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="s1">&#39;Cannot store files larger than: </span><span class="si">%d</span><span class="s1"> bytes&#39;</span> <span class="o">%</span> <span class="n">min_length</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="s1">&#39;Cannot store files smaller than: </span><span class="si">%d</span><span class="s1"> bytes&#39;</span> <span class="o">%</span> <span class="n">min_length</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ContextError"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.exceptions.ContextError">[docs]</a><span class="k">class</span> <span class="nc">ContextError</span><span class="p">(</span><span class="n">SqlAlchemyMediaException</span><span class="p">):</span>
@@ -172,9 +202,78 @@
 
 <span class="sd">    .. seealso:: :meth:`.StoreManager.register`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">DefaultStoreError</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="s2">&quot;Default store is not defined.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AnalyzeError"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.exceptions.AnalyzeError">[docs]</a><span class="k">class</span> <span class="nc">AnalyzeError</span><span class="p">(</span><span class="n">SqlAlchemyMediaException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Raised when :class:`.Analyzer` can not analyze the stream.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="ValidationError"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.exceptions.ValidationError">[docs]</a><span class="k">class</span> <span class="nc">ValidationError</span><span class="p">(</span><span class="n">SqlAlchemyMediaException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Raised when :class:`.Validator` can not validate the stream.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="ContentTypeValidationError"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.exceptions.ContentTypeValidationError">[docs]</a><span class="k">class</span> <span class="nc">ContentTypeValidationError</span><span class="p">(</span><span class="n">ValidationError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Raised by :meth:`.Validator.validate` when the content type is missing or invalid.</span>
+
+<span class="sd">    :param content_type: The invalid content type if any.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">content_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;Content type is not provided.&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;Content type is not supported </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">content_type</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DescriptorError"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.exceptions.DescriptorError">[docs]</a><span class="k">class</span> <span class="nc">DescriptorError</span><span class="p">(</span><span class="n">SqlAlchemyMediaException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A sub-class instance of this exception may raised when an error has occurred in :class:`.BaseDescriptor` and</span>
+<span class="sd">    it&#39;s subtypes.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="DescriptorOperationError"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.exceptions.DescriptorOperationError">[docs]</a><span class="k">class</span> <span class="nc">DescriptorOperationError</span><span class="p">(</span><span class="n">DescriptorError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Raised when a subclass of :class:`.BaseDescriptor` is abused.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="OptionalPackageRequirementError"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.exceptions.OptionalPackageRequirementError">[docs]</a><span class="k">class</span> <span class="nc">OptionalPackageRequirementError</span><span class="p">(</span><span class="n">SqlAlchemyMediaException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Raised when an optional package is missing.</span>
+<span class="sd">    The constructor is trying to search for package name in requirements-optional.txt and find the requirement and</span>
+<span class="sd">    it&#39;s version criteria to inform the user.</span>
+
+<span class="sd">    :param package_name: The name of the missing package.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">package_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+
+        <span class="c1"># Searching for package name in requirements-optional.txt</span>
+        <span class="n">this_dir</span> <span class="o">=</span> <span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">abspath</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">this_dir</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;requirements-optional.txt&#39;</span><span class="p">))</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">packages</span> <span class="o">=</span> <span class="p">[</span><span class="n">l</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span> <span class="k">if</span> <span class="n">package_name</span> <span class="ow">in</span> <span class="n">l</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">packages</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Cannot find the package: </span><span class="si">%s</span><span class="s1"> in file: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">package_name</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="s1">&#39;The following packages are missing. in order please install them: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">packages</span><span class="p">))</span></div>
 </pre></div>
 
            </div>
@@ -208,7 +307,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.1.1',
+            VERSION:'0.1.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

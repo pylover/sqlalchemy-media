@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.descriptors &mdash; sqlalchemy-media 0.1.1 documentation</title>
+  <title>sqlalchemy_media.descriptors &mdash; sqlalchemy-media 0.1.2 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.1.1 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.1.2 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -142,14 +142,16 @@
 
 <span class="kn">from</span> <span class="nn">sqlalchemy_media.typing_</span> <span class="k">import</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">Attachable</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy_media.helpers</span> <span class="k">import</span> <span class="n">is_uri</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.exceptions</span> <span class="k">import</span> <span class="n">MaximumLengthIsReachedError</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.exceptions</span> <span class="k">import</span> <span class="n">MaximumLengthIsReachedError</span><span class="p">,</span> <span class="n">DescriptorOperationError</span>
 
 
 <div class="viewcode-block" id="BaseDescriptor"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.BaseDescriptor">[docs]</a><span class="k">class</span> <span class="nc">BaseDescriptor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Abstract base class for all descriptors. Instance of this class is a file-like object.</span>
 
-<span class="sd">    Descriptors are used to get some primitive information from an attachable(stream, filename or URI). users may not using this class directly. see :class:`.AttachableDescriptor` to see usage.</span>
+<span class="sd">    Descriptors are used to get some primitive information from an attachable(stream, filename or URI) and also allows</span>
+<span class="sd">    seeking over underlying stream. users may not be using this class directly. see :class:`.AttachableDescriptor`</span>
+<span class="sd">    to see how to use it.</span>
 
 <span class="sd">    :param max_length: Maximum allowed file size.</span>
 <span class="sd">    :param content_type: The file&#39;s mimetype to suppress the mimetype detection.</span>
@@ -163,10 +165,20 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="c1">#: Buffer to store cached header on non-seekable streams.</span>
     <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1">#: Original filename of the underlying stream.</span>
     <span class="n">original_filename</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1">#: Extension of the underlying stream.</span>
     <span class="n">extension</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1">#: Content type of the underlying stream.</span>
     <span class="n">content_type</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1">#: Amount of bytes to cache from header on non-seekable streams.</span>
+    <span class="n">header_buffer_size</span> <span class="o">=</span> <span class="mi">1024</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_length</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">content_type</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">content_length</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">original_filename</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">header_buffer_size</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -174,10 +186,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span> <span class="o">=</span> <span class="n">max_length</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">header_buffer_size</span> <span class="o">=</span> <span class="n">header_buffer_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">content_length</span> <span class="o">=</span> <span class="n">content_length</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">original_filename</span> <span class="o">=</span> <span class="n">original_filename</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_source_pos</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">seekable</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_source</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header_buffer_size</span><span class="p">))</span>
 
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
@@ -208,26 +220,27 @@
 
 <span class="sd">        :param size: Amount of bytes ro read.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_source</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
 
-        <span class="n">current_cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
-        <span class="n">cursor_after_read</span> <span class="o">=</span> <span class="n">current_cursor</span> <span class="o">+</span> <span class="n">size</span>
         <span class="n">source_cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell_source</span><span class="p">()</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">source_cursor</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">MaximumLengthIsReachedError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_length</span><span class="p">)</span>
-
-        <span class="k">elif</span> <span class="n">source_cursor</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">header_buffer_size</span> <span class="ow">or</span> <span class="n">current_cursor</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">header_buffer_size</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">seekable</span><span class="p">()</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_source</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
-
-        <span class="k">elif</span> <span class="n">cursor_after_read</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">header_buffer_size</span><span class="p">:</span>
-            <span class="c1"># split the read, half from header &amp; half from source</span>
-            <span class="n">part1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-            <span class="n">part2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_source</span><span class="p">(</span><span class="n">size</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">part1</span><span class="p">))</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">part1</span> <span class="o">+</span> <span class="n">part2</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+            <span class="n">current_cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+            <span class="n">cursor_after_read</span> <span class="o">=</span> <span class="n">current_cursor</span> <span class="o">+</span> <span class="n">size</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">source_cursor</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">MaximumLengthIsReachedError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_length</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">source_cursor</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">header_buffer_size</span> <span class="ow">or</span> <span class="n">current_cursor</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">header_buffer_size</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_source</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">cursor_after_read</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">header_buffer_size</span><span class="p">:</span>
+                <span class="c1"># split the read, half from header &amp; half from source</span>
+                <span class="n">part1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+                <span class="n">part2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_source</span><span class="p">(</span><span class="n">size</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">part1</span><span class="p">))</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">part1</span> <span class="o">+</span> <span class="n">part2</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">source_cursor</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">MaximumLengthIsReachedError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_length</span><span class="p">)</span>
@@ -240,7 +253,7 @@
 <span class="sd">        should return the current position which counted internally.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">source_cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell_source</span><span class="p">()</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">seekable</span><span class="p">()</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">source_cursor</span>
 
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">header_buffer_size</span><span class="p">:</span>
@@ -269,6 +282,45 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">seekable</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_source_pos</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="BaseDescriptor.get_header_buffer"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.BaseDescriptor.get_header_buffer">[docs]</a>    <span class="k">def</span> <span class="nf">get_header_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the amount of :attr:`.header_buffer_size` from start of the underlying stream. this method should</span>
+<span class="sd">        called many times before the read method has been called on not seekable streams.</span>
+
+<span class="sd">        .. warning:: The :exc:`.DescriptorOperationError` will be raised if this method called after calling the</span>
+<span class="sd">                     :meth:`.read`. This situation is only happened on un-seekable streams.</span>
+
+<span class="sd">        .. seealso:: :meth:`.seekable`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">seekable</span><span class="p">():</span>
+            <span class="c1"># Preserve the current position:</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell_source</span><span class="p">()</span>
+
+            <span class="c1"># Moving to first byte</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="c1"># Reading from header</span>
+            <span class="n">buffer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_source</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header_buffer_size</span><span class="p">)</span>
+
+            <span class="c1"># Seeking back to preserved position</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell_source</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">pos</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DescriptorOperationError</span><span class="p">(</span>
+                    <span class="s2">&quot;it&#39;s too late to get header buffer from descriptor. the underlying stream is not seekable and &quot;</span>
+                    <span class="s2">&quot;</span><span class="si">%d</span><span class="s2"> bytes are already fetched from.&quot;</span> <span class="o">%</span> <span class="n">pos</span><span class="p">)</span>
+
+            <span class="n">buffer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_source</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header_buffer_size</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">buffer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">buffer</span></div>
 
 <div class="viewcode-block" id="BaseDescriptor.seekable"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.BaseDescriptor.seekable">[docs]</a>    <span class="k">def</span> <span class="nf">seekable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -318,7 +370,7 @@
 <div class="viewcode-block" id="StreamDescriptor"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.StreamDescriptor">[docs]</a><span class="k">class</span> <span class="nc">StreamDescriptor</span><span class="p">(</span><span class="n">BaseDescriptor</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This class is used for describing a stream. so it just a proxy for streams.</span>
-<span class="sd">    The underlying stream will not to be closed after calling the :meth:`.close` method.</span>
+<span class="sd">    The underlying stream is not meant to be closed after calling the :meth:`.close` method.</span>
 
 <span class="sd">    :param stream: File-like object to wrap.</span>
 <span class="sd">    :param kwargs: the same as the :class:`.BaseDescriptor`</span>
@@ -342,7 +394,7 @@
 
 <div class="viewcode-block" id="StreamDescriptor.close"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.StreamDescriptor.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Do not closing the stream here, because we&#39;r not opened it.</span>
+<span class="sd">        We are not closing the stream here, because we&#39;ve not opened it.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div></div>
@@ -489,7 +541,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.1.1',
+            VERSION:'0.1.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; sqlalchemy-media 0.1.1 documentation</title>
+  <title>API Reference &mdash; sqlalchemy-media 0.1.2 documentation</title>
   
 
   
@@ -35,8 +35,8 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.1.1 documentation" href="index.html"/>
-        <link rel="prev" title="Attaching Images" href="tutorials/quickstart.html"/> 
+    <link rel="top" title="sqlalchemy-media 0.1.2 documentation" href="index.html"/>
+        <link rel="prev" title="Playing with Analyzers and Validators" href="tutorials/content_type_restriction.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -88,7 +88,7 @@
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Tutorials</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.attachments">attachments</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.attachments">attachments Module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#attachment">Attachment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#attachmentcollection">AttachmentCollection</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#attachmentlist">AttachmentList</a></li>
@@ -99,7 +99,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#image">Image</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.descriptors">descriptors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.descriptors">descriptors Module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#basedescriptor">BaseDescriptor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#streamdescriptor">StreamDescriptor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#streamcloserdescriptor">StreamCloserDescriptor</a></li>
@@ -109,14 +109,24 @@
 <li class="toctree-l3"><a class="reference internal" href="#attachabledescriptor">AttachableDescriptor</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.stores">stores</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.stores">stores Module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#store">Store</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#filesystemstore">FileSystemStore</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#storemanager">StoreManager</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.exceptions">exceptions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.constants">constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.analyzers">analyzers Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#analyzer">Analyzer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#magicanalyzer">MagicAnalyzer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.validators">validators Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#validator">Validator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#contenttypevalidator">ContentTypeValidator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.exceptions">exceptions Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.constants">constants Module</a></li>
 </ul>
 </li>
 </ul>
@@ -166,7 +176,7 @@
   <div class="section" id="api-reference">
 <h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-sqlalchemy_media.attachments">
-<span id="attachments"></span><h2>attachments<a class="headerlink" href="#module-sqlalchemy_media.attachments" title="Permalink to this headline">¶</a></h2>
+<span id="attachments-module"></span><h2>attachments Module<a class="headerlink" href="#module-sqlalchemy_media.attachments" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="attachment">
 <h3>Attachment<a class="headerlink" href="#attachment" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
@@ -181,7 +191,7 @@ All attachment types will be inherited from this class.</p>
 <span class="go">{&#39;key1&#39;: &#39;Value1&#39;}</span>
 </pre></div>
 </div>
-<p>This object is should be used inside a <a class="reference internal" href="#sqlalchemy_media.stores.StoreManager" title="sqlalchemy_media.stores.StoreManager"><code class="xref py py-class docutils literal"><span class="pre">StoreManager</span></code></a> context.</p>
+<p>This object should be used inside a <a class="reference internal" href="#sqlalchemy_media.stores.StoreManager" title="sqlalchemy_media.stores.StoreManager"><code class="xref py py-class docutils literal"><span class="pre">StoreManager</span></code></a> context.</p>
 <dl class="attribute">
 <dt id="sqlalchemy_media.attachments.Attachment.__directory__">
 <code class="descname">__directory__</code><em class="property"> = 'attachments'</em><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.__directory__" title="Permalink to this definition">¶</a></dt>
@@ -208,7 +218,7 @@ All attachment types will be inherited from this class.</p>
 
 <dl class="method">
 <dt id="sqlalchemy_media.attachments.Attachment.attach">
-<code class="descname">attach</code><span class="sig-paren">(</span><em>attachable: typing.Union[typing.IO[_io.BytesIO], typing.Iterable[typing.Iterable[typing.Any]]], content_type: str = None, original_filename: str = None, extension: str = None, store_id: str = None, overwrite: bool = False</em><span class="sig-paren">)</span> &rarr; None<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Attachment.attach"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.attach" title="Permalink to this definition">¶</a></dt>
+<code class="descname">attach</code><span class="sig-paren">(</span><em>attachable: typing.Union[typing.IO[_io.BytesIO], typing.Iterable[typing.Iterable[typing.Any]]], content_type: str = None, original_filename: str = None, extension: str = None, store_id: str = None, overwrite: bool = False</em><span class="sig-paren">)</span> &rarr; sqlalchemy_media.attachments.Attachment<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Attachment.attach"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.attach" title="Permalink to this definition">¶</a></dt>
 <dd><p>Attach a file. if the session roll-backed, all operations will be rolled-back.
 The old file will be deleted after commit, if any.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -234,6 +244,9 @@ will overwritten by the given new one.</li>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><a class="reference internal" href="#sqlalchemy_media.exceptions.MaximumLengthIsReachedError" title="sqlalchemy_media.exceptions.MaximumLengthIsReachedError"><code class="xref py py-exc docutils literal"><span class="pre">MaximumLengthIsReachedError</span></code></a> and or <a class="reference internal" href="#sqlalchemy_media.exceptions.MinimumLengthIsNotReachedError" title="sqlalchemy_media.exceptions.MinimumLengthIsNotReachedError"><code class="xref py py-exc docutils literal"><span class="pre">MinimumLengthIsNotReachedError</span></code></a> may raised.</p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified">Changed in version 0.1.2: </span>This method will returns the self. it&#8217;s useful to chain method calls on object within single line.</p>
 </div>
 </dd></dl>
 
@@ -294,7 +307,7 @@ will overwritten by the given new one.</li>
 <dd><p>Deletes the file.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">This operation is can not be roll-backed.So if you want to delete a file, just set it&#8217;s to
+<p class="last">This operation can not be roll-backed.So if you want to delete a file, just set it&#8217;s to
 <code class="xref py py-const docutils literal"><span class="pre">None</span></code>, set it by new <a class="reference internal" href="#sqlalchemy_media.attachments.Attachment" title="sqlalchemy_media.attachments.Attachment"><code class="xref py py-class docutils literal"><span class="pre">Attachment</span></code></a> instance.</p>
 </div>
 </dd></dl>
@@ -628,7 +641,7 @@ If available, else empty string (&#8216;&#8217;) will be returned</p>
 </div>
 </div>
 <div class="section" id="module-sqlalchemy_media.descriptors">
-<span id="descriptors"></span><h2>descriptors<a class="headerlink" href="#module-sqlalchemy_media.descriptors" title="Permalink to this headline">¶</a></h2>
+<span id="descriptors-module"></span><h2>descriptors Module<a class="headerlink" href="#module-sqlalchemy_media.descriptors" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="basedescriptor">
 <h3>BaseDescriptor<a class="headerlink" href="#basedescriptor" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
@@ -636,7 +649,9 @@ If available, else empty string (&#8216;&#8217;) will be returned</p>
 <em class="property">class </em><code class="descclassname">sqlalchemy_media.descriptors.</code><code class="descname">BaseDescriptor</code><span class="sig-paren">(</span><em>max_length: int = None</em>, <em>content_type: str = None</em>, <em>content_length: int = None</em>, <em>extension: str = None</em>, <em>original_filename: str = None</em>, <em>header_buffer_size=1024</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#BaseDescriptor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.BaseDescriptor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.5/library/functions.html#object" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>Abstract base class for all descriptors. Instance of this class is a file-like object.</p>
-<p>Descriptors are used to get some primitive information from an attachable(stream, filename or URI). users may not using this class directly. see <a class="reference internal" href="#sqlalchemy_media.descriptors.AttachableDescriptor" title="sqlalchemy_media.descriptors.AttachableDescriptor"><code class="xref py py-class docutils literal"><span class="pre">AttachableDescriptor</span></code></a> to see usage.</p>
+<p>Descriptors are used to get some primitive information from an attachable(stream, filename or URI) and also allows
+seeking over underlying stream. users may not be using this class directly. see <a class="reference internal" href="#sqlalchemy_media.descriptors.AttachableDescriptor" title="sqlalchemy_media.descriptors.AttachableDescriptor"><code class="xref py py-class docutils literal"><span class="pre">AttachableDescriptor</span></code></a>
+to see how to use it.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -682,6 +697,52 @@ seekable.</li>
 <dt id="sqlalchemy_media.descriptors.BaseDescriptor.close">
 <code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; None<a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#BaseDescriptor.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.BaseDescriptor.close" title="Permalink to this definition">¶</a></dt>
 <dd><p>Closes the underlying stream.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.descriptors.BaseDescriptor.content_type">
+<code class="descname">content_type</code><em class="property"> = None</em><a class="headerlink" href="#sqlalchemy_media.descriptors.BaseDescriptor.content_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Content type of the underlying stream.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.descriptors.BaseDescriptor.extension">
+<code class="descname">extension</code><em class="property"> = None</em><a class="headerlink" href="#sqlalchemy_media.descriptors.BaseDescriptor.extension" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extension of the underlying stream.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy_media.descriptors.BaseDescriptor.get_header_buffer">
+<code class="descname">get_header_buffer</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; bytes<a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#BaseDescriptor.get_header_buffer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.BaseDescriptor.get_header_buffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the amount of <a class="reference internal" href="#sqlalchemy_media.descriptors.BaseDescriptor.header_buffer_size" title="sqlalchemy_media.descriptors.BaseDescriptor.header_buffer_size"><code class="xref py py-attr docutils literal"><span class="pre">header_buffer_size</span></code></a> from start of the underlying stream. this method should
+called many times before the read method has been called on not seekable streams.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The <a class="reference internal" href="#sqlalchemy_media.exceptions.DescriptorOperationError" title="sqlalchemy_media.exceptions.DescriptorOperationError"><code class="xref py py-exc docutils literal"><span class="pre">DescriptorOperationError</span></code></a> will be raised if this method called after calling the
+<a class="reference internal" href="#sqlalchemy_media.descriptors.BaseDescriptor.read" title="sqlalchemy_media.descriptors.BaseDescriptor.read"><code class="xref py py-meth docutils literal"><span class="pre">read()</span></code></a>. This situation is only happened on un-seekable streams.</p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#sqlalchemy_media.descriptors.BaseDescriptor.seekable" title="sqlalchemy_media.descriptors.BaseDescriptor.seekable"><code class="xref py py-meth docutils literal"><span class="pre">seekable()</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.descriptors.BaseDescriptor.header">
+<code class="descname">header</code><em class="property"> = None</em><a class="headerlink" href="#sqlalchemy_media.descriptors.BaseDescriptor.header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Buffer to store cached header on non-seekable streams.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.descriptors.BaseDescriptor.header_buffer_size">
+<code class="descname">header_buffer_size</code><em class="property"> = 1024</em><a class="headerlink" href="#sqlalchemy_media.descriptors.BaseDescriptor.header_buffer_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Amount of bytes to cache from header on non-seekable streams.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.descriptors.BaseDescriptor.original_filename">
+<code class="descname">original_filename</code><em class="property"> = None</em><a class="headerlink" href="#sqlalchemy_media.descriptors.BaseDescriptor.original_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Original filename of the underlying stream.</p>
 </dd></dl>
 
 <dl class="method">
@@ -760,7 +821,7 @@ should return the current position which counted internally.</p>
 <em class="property">class </em><code class="descclassname">sqlalchemy_media.descriptors.</code><code class="descname">StreamDescriptor</code><span class="sig-paren">(</span><em>stream: typing.Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO], **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#StreamDescriptor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.StreamDescriptor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.descriptors.BaseDescriptor" title="sqlalchemy_media.descriptors.BaseDescriptor"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.descriptors.BaseDescriptor</span></code></a></p>
 <p>This class is used for describing a stream. so it just a proxy for streams.
-The underlying stream will not to be closed after calling the <a class="reference internal" href="#sqlalchemy_media.descriptors.StreamDescriptor.close" title="sqlalchemy_media.descriptors.StreamDescriptor.close"><code class="xref py py-meth docutils literal"><span class="pre">close()</span></code></a> method.</p>
+The underlying stream is not meant to be closed after calling the <a class="reference internal" href="#sqlalchemy_media.descriptors.StreamDescriptor.close" title="sqlalchemy_media.descriptors.StreamDescriptor.close"><code class="xref py py-meth docutils literal"><span class="pre">close()</span></code></a> method.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -776,7 +837,7 @@ The underlying stream will not to be closed after calling the <a class="referenc
 <dl class="method">
 <dt id="sqlalchemy_media.descriptors.StreamDescriptor.close">
 <code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; None<a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#StreamDescriptor.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.StreamDescriptor.close" title="Permalink to this definition">¶</a></dt>
-<dd><p>Do not closing the stream here, because we&#8217;r not opened it.</p>
+<dd><p>We are not closing the stream here, because we&#8217;ve not opened it.</p>
 </dd></dl>
 
 </dd></dl>
@@ -905,7 +966,7 @@ calling the <a class="reference internal" href="#sqlalchemy_media.descriptors.St
 </div>
 </div>
 <div class="section" id="module-sqlalchemy_media.stores">
-<span id="stores"></span><h2>stores<a class="headerlink" href="#module-sqlalchemy_media.stores" title="Permalink to this headline">¶</a></h2>
+<span id="stores-module"></span><h2>stores Module<a class="headerlink" href="#module-sqlalchemy_media.stores" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="store">
 <h3>Store<a class="headerlink" href="#store" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
@@ -928,7 +989,7 @@ If not overridden, no error will be raised.</p>
 <dt id="sqlalchemy_media.stores.Store.delete">
 <code class="descname">delete</code><span class="sig-paren">(</span><em>filename: str</em><span class="sig-paren">)</span> &rarr; None<a class="reference internal" href="_modules/sqlalchemy_media/stores.html#Store.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.delete" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>[Abstract]</strong></p>
-<p>Should be overridden in inherited class and delete the given file.</p>
+<p>Should be overridden in inherited class and deletes the given file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -981,7 +1042,7 @@ If not overridden, no error will be raised.</p>
 <dt id="sqlalchemy_media.stores.Store.put">
 <code class="descname">put</code><span class="sig-paren">(</span><em>filename: str, stream: typing.Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO], *, min_length=None, max_length=None</em><span class="sig-paren">)</span> &rarr; int<a class="reference internal" href="_modules/sqlalchemy_media/stores.html#Store.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.put" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>[Abstract]</strong></p>
-<p>Should be overridden in inherited class and put the stream as the given filename in the store.</p>
+<p>Should be overridden in inherited class and puts the stream as the given filename in the store.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1243,8 +1304,102 @@ be deleted from store after session commit.</p>
 
 </div>
 </div>
+<div class="section" id="module-sqlalchemy_media.analyzers">
+<span id="analyzers-module"></span><h2>analyzers Module<a class="headerlink" href="#module-sqlalchemy_media.analyzers" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="analyzer">
+<h3>Analyzer<a class="headerlink" href="#analyzer" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.analyzers.Analyzer">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.analyzers.</code><code class="descname">Analyzer</code><a class="reference internal" href="_modules/sqlalchemy_media/analyzers.html#Analyzer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.analyzers.Analyzer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.5/library/functions.html#object" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>The abstract base class for all analyzers.</p>
+<dl class="method">
+<dt id="sqlalchemy_media.analyzers.Analyzer.analyze">
+<code class="descname">analyze</code><span class="sig-paren">(</span><em>descriptor: sqlalchemy_media.descriptors.BaseDescriptor</em><span class="sig-paren">)</span> &rarr; dict<a class="reference internal" href="_modules/sqlalchemy_media/analyzers.html#Analyzer.analyze"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.analyzers.Analyzer.analyze" title="Permalink to this definition">¶</a></dt>
+<dd><p>Should be overridden in inherited class and analyzes the <a class="reference internal" href="#sqlalchemy_media.descriptors.BaseDescriptor" title="sqlalchemy_media.descriptors.BaseDescriptor"><code class="xref py py-class docutils literal"><span class="pre">BaseDescriptor</span></code></a> instance given in constructor.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">An instance of <a class="reference internal" href="#sqlalchemy_media.exceptions.AnalyzeError" title="sqlalchemy_media.exceptions.AnalyzeError"><code class="xref py py-exc docutils literal"><span class="pre">AnalyzeError</span></code></a> or sub-types may raised</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>descriptor</strong> &#8211; An instance of <a class="reference internal" href="#sqlalchemy_media.descriptors.BaseDescriptor" title="sqlalchemy_media.descriptors.BaseDescriptor"><code class="xref py py-class docutils literal"><span class="pre">BaseDescriptor</span></code></a> to access the file while analyzing.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The analyze result.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="magicanalyzer">
+<h3>MagicAnalyzer<a class="headerlink" href="#magicanalyzer" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.analyzers.MagicAnalyzer">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.analyzers.</code><code class="descname">MagicAnalyzer</code><a class="reference internal" href="_modules/sqlalchemy_media/analyzers.html#MagicAnalyzer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.analyzers.MagicAnalyzer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.analyzers.Analyzer" title="sqlalchemy_media.analyzers.Analyzer"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.analyzers.Analyzer</span></code></a></p>
+<p>Analyze the file using the libmagic and it&#8217;s python-wrapper: python-magic.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">You should install the python-magic in order, to use this class. otherwise, an
+<a class="reference internal" href="#sqlalchemy_media.exceptions.OptionalPackageRequirementError" title="sqlalchemy_media.exceptions.OptionalPackageRequirementError"><code class="xref py py-exc docutils literal"><span class="pre">OptionalPackageRequirementError</span></code></a> will be raised.</p>
+</div>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-sqlalchemy_media.validators">
+<span id="validators-module"></span><h2>validators Module<a class="headerlink" href="#module-sqlalchemy_media.validators" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="validator">
+<h3>Validator<a class="headerlink" href="#validator" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.validators.Validator">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.validators.</code><code class="descname">Validator</code><a class="reference internal" href="_modules/sqlalchemy_media/validators.html#Validator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.validators.Validator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.5/library/functions.html#object" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>The abstract base class for all validators.</p>
+<dl class="method">
+<dt id="sqlalchemy_media.validators.Validator.validate">
+<code class="descname">validate</code><span class="sig-paren">(</span><em>analyze_result: dict</em><span class="sig-paren">)</span> &rarr; None<a class="reference internal" href="_modules/sqlalchemy_media/validators.html#Validator.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.validators.Validator.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>[Abstract]</strong></p>
+<p>Should be overridden in inherited class and validate the analyze info extracted by <a class="reference internal" href="#sqlalchemy_media.analyzers.Analyzer.analyze" title="sqlalchemy_media.analyzers.Analyzer.analyze"><code class="xref py py-meth docutils literal"><span class="pre">analyze()</span></code></a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It should be called after the <a class="reference internal" href="#sqlalchemy_media.analyzers.Analyzer.analyze" title="sqlalchemy_media.analyzers.Analyzer.analyze"><code class="xref py py-meth docutils literal"><span class="pre">analyze()</span></code></a> method has been called.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">An instance of <a class="reference internal" href="#sqlalchemy_media.exceptions.ValidationError" title="sqlalchemy_media.exceptions.ValidationError"><code class="xref py py-exc docutils literal"><span class="pre">ValidationError</span></code></a> or sub-types may raised</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>analyze_result</strong> &#8211; The analyzer result to validate.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="contenttypevalidator">
+<h3>ContentTypeValidator<a class="headerlink" href="#contenttypevalidator" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.validators.ContentTypeValidator">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.validators.</code><code class="descname">ContentTypeValidator</code><span class="sig-paren">(</span><em>content_types: typing.Iterable[str]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/validators.html#ContentTypeValidator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.validators.ContentTypeValidator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.validators.Validator" title="sqlalchemy_media.validators.Validator"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.validators.Validator</span></code></a></p>
+<p>Assert content types.</p>
+</dd></dl>
+
+</div>
+</div>
 <div class="section" id="module-sqlalchemy_media.exceptions">
-<span id="exceptions"></span><h2>exceptions<a class="headerlink" href="#module-sqlalchemy_media.exceptions" title="Permalink to this headline">¶</a></h2>
+<span id="exceptions-module"></span><h2>exceptions Module<a class="headerlink" href="#module-sqlalchemy_media.exceptions" title="Permalink to this headline">¶</a></h2>
 <dl class="exception">
 <dt id="sqlalchemy_media.exceptions.SqlAlchemyMediaException">
 <em class="property">exception </em><code class="descclassname">sqlalchemy_media.exceptions.</code><code class="descname">SqlAlchemyMediaException</code><a class="reference internal" href="_modules/sqlalchemy_media/exceptions.html#SqlAlchemyMediaException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.exceptions.SqlAlchemyMediaException" title="Permalink to this definition">¶</a></dt>
@@ -1284,9 +1439,70 @@ be deleted from store after session commit.</p>
 </div>
 </dd></dl>
 
+<dl class="exception">
+<dt id="sqlalchemy_media.exceptions.AnalyzeError">
+<em class="property">exception </em><code class="descclassname">sqlalchemy_media.exceptions.</code><code class="descname">AnalyzeError</code><a class="reference internal" href="_modules/sqlalchemy_media/exceptions.html#AnalyzeError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.exceptions.AnalyzeError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.exceptions.SqlAlchemyMediaException" title="sqlalchemy_media.exceptions.SqlAlchemyMediaException"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.exceptions.SqlAlchemyMediaException</span></code></a></p>
+<p>Raised when <a class="reference internal" href="#sqlalchemy_media.analyzers.Analyzer" title="sqlalchemy_media.analyzers.Analyzer"><code class="xref py py-class docutils literal"><span class="pre">Analyzer</span></code></a> can not analyze the stream.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy_media.exceptions.ValidationError">
+<em class="property">exception </em><code class="descclassname">sqlalchemy_media.exceptions.</code><code class="descname">ValidationError</code><a class="reference internal" href="_modules/sqlalchemy_media/exceptions.html#ValidationError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.exceptions.ValidationError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.exceptions.SqlAlchemyMediaException" title="sqlalchemy_media.exceptions.SqlAlchemyMediaException"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.exceptions.SqlAlchemyMediaException</span></code></a></p>
+<p>Raised when <a class="reference internal" href="#sqlalchemy_media.validators.Validator" title="sqlalchemy_media.validators.Validator"><code class="xref py py-class docutils literal"><span class="pre">Validator</span></code></a> can not validate the stream.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy_media.exceptions.DescriptorOperationError">
+<em class="property">exception </em><code class="descclassname">sqlalchemy_media.exceptions.</code><code class="descname">DescriptorOperationError</code><a class="reference internal" href="_modules/sqlalchemy_media/exceptions.html#DescriptorOperationError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.exceptions.DescriptorOperationError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.exceptions.DescriptorError" title="sqlalchemy_media.exceptions.DescriptorError"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.exceptions.DescriptorError</span></code></a></p>
+<p>Raised when a subclass of <a class="reference internal" href="#sqlalchemy_media.descriptors.BaseDescriptor" title="sqlalchemy_media.descriptors.BaseDescriptor"><code class="xref py py-class docutils literal"><span class="pre">BaseDescriptor</span></code></a> is abused.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy_media.exceptions.DescriptorError">
+<em class="property">exception </em><code class="descclassname">sqlalchemy_media.exceptions.</code><code class="descname">DescriptorError</code><a class="reference internal" href="_modules/sqlalchemy_media/exceptions.html#DescriptorError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.exceptions.DescriptorError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.exceptions.SqlAlchemyMediaException" title="sqlalchemy_media.exceptions.SqlAlchemyMediaException"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.exceptions.SqlAlchemyMediaException</span></code></a></p>
+<p>A sub-class instance of this exception may raised when an error has occurred in <a class="reference internal" href="#sqlalchemy_media.descriptors.BaseDescriptor" title="sqlalchemy_media.descriptors.BaseDescriptor"><code class="xref py py-class docutils literal"><span class="pre">BaseDescriptor</span></code></a> and
+it&#8217;s subtypes.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy_media.exceptions.OptionalPackageRequirementError">
+<em class="property">exception </em><code class="descclassname">sqlalchemy_media.exceptions.</code><code class="descname">OptionalPackageRequirementError</code><span class="sig-paren">(</span><em>package_name: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/exceptions.html#OptionalPackageRequirementError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.exceptions.OptionalPackageRequirementError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.exceptions.SqlAlchemyMediaException" title="sqlalchemy_media.exceptions.SqlAlchemyMediaException"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.exceptions.SqlAlchemyMediaException</span></code></a></p>
+<p>Raised when an optional package is missing.
+The constructor is trying to search for package name in requirements-optional.txt and find the requirement and
+it&#8217;s version criteria to inform the user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>package_name</strong> &#8211; The name of the missing package.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy_media.exceptions.ContentTypeValidationError">
+<em class="property">exception </em><code class="descclassname">sqlalchemy_media.exceptions.</code><code class="descname">ContentTypeValidationError</code><span class="sig-paren">(</span><em>content_type=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/exceptions.html#ContentTypeValidationError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.exceptions.ContentTypeValidationError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.exceptions.ValidationError" title="sqlalchemy_media.exceptions.ValidationError"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.exceptions.ValidationError</span></code></a></p>
+<p>Raised by <a class="reference internal" href="#sqlalchemy_media.validators.Validator.validate" title="sqlalchemy_media.validators.Validator.validate"><code class="xref py py-meth docutils literal"><span class="pre">Validator.validate()</span></code></a> when the content type is missing or invalid.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>content_type</strong> &#8211; The invalid content type if any.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="module-sqlalchemy_media.constants">
-<span id="constants"></span><h2>constants<a class="headerlink" href="#module-sqlalchemy_media.constants" title="Permalink to this headline">¶</a></h2>
+<span id="constants-module"></span><h2>constants Module<a class="headerlink" href="#module-sqlalchemy_media.constants" title="Permalink to this headline">¶</a></h2>
 <dl class="data">
 <dt id="sqlalchemy_media.constants.KB">
 <code class="descclassname">sqlalchemy_media.constants.</code><code class="descname">KB</code><em class="property"> = 1024</em><a class="headerlink" href="#sqlalchemy_media.constants.KB" title="Permalink to this definition">¶</a></dt>
@@ -1310,7 +1526,7 @@ be deleted from store after session commit.</p>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="tutorials/quickstart.html" class="btn btn-neutral" title="Attaching Images" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="tutorials/content_type_restriction.html" class="btn btn-neutral" title="Playing with Analyzers and Validators" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -1341,7 +1557,7 @@ be deleted from store after session commit.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1.1',
+            VERSION:'0.1.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Attaching Images &mdash; sqlalchemy-media 0.1.1 documentation</title>
+  <title>Attaching Files &mdash; sqlalchemy-media 0.1.2 documentation</title>
   
 
   
@@ -35,9 +35,9 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.1.1 documentation" href="../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.1.2 documentation" href="../index.html"/>
         <link rel="up" title="Tutorials" href="index.html"/>
-        <link rel="next" title="API Reference" href="../api.html"/>
+        <link rel="next" title="Playing with Analyzers and Validators" href="content_type_restriction.html"/>
         <link rel="prev" title="Tutorials" href="index.html"/> 
 
   
@@ -89,7 +89,16 @@
             
                 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorials</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Attaching Images</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Attaching Files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#creating-workbench">1. Creating workbench</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#storage">2. Storage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#backend-type">3. Backend Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#defining-the-model">4. Defining The Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#db-schema">5. DB Schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#action">6. Action !</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="content_type_restriction.html">Playing with Analyzers and Validators</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
@@ -125,7 +134,7 @@
       
           <li><a href="index.html">Tutorials</a> &raquo;</li>
       
-    <li>Attaching Images</li>
+    <li>Attaching Files</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -139,27 +148,47 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="attaching-images">
-<h1>Attaching Images<a class="headerlink" href="#attaching-images" title="Permalink to this headline">¶</a></h1>
-<p>This is how to attach image file to sqlalchemy model using the local file-system store.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">functools</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">join</span><span class="p">,</span> <span class="n">exists</span>
-<span class="kn">from</span> <span class="nn">pprint</span> <span class="k">import</span> <span class="n">pprint</span>
-
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="k">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">Unicode</span><span class="p">,</span> <span class="n">TypeDecorator</span>
+  <div class="section" id="attaching-files">
+<h1>Attaching Files<a class="headerlink" href="#attaching-files" title="Permalink to this headline">¶</a></h1>
+<p>This is how to attach image file to sqlalchemy model using the <a class="reference internal" href="../api.html#sqlalchemy_media.stores.FileSystemStore" title="sqlalchemy_media.stores.FileSystemStore"><code class="xref py py-class docutils literal"><span class="pre">FileSystemStore</span></code></a>.</p>
+<div class="section" id="creating-workbench">
+<h2>1. Creating workbench<a class="headerlink" href="#creating-workbench" title="Permalink to this headline">¶</a></h2>
+<p>Setting up and <code class="docutils literal"><span class="pre">engine</span></code> along-side the <code class="docutils literal"><span class="pre">session_factory</span></code>. And creating a constant for the directory to store files.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="k">import</span> <span class="n">create_engine</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="k">import</span> <span class="n">sessionmaker</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.ext.declarative</span> <span class="k">import</span> <span class="n">declarative_base</span>
-
-<span class="kn">from</span> <span class="nn">sqlalchemy_media</span> <span class="k">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">StoreManager</span><span class="p">,</span> <span class="n">FileSystemStore</span>
-
 
 <span class="n">TEMP_PATH</span> <span class="o">=</span> <span class="s1">&#39;/tmp/sqlalchemy-media&#39;</span>
 <span class="n">Base</span> <span class="o">=</span> <span class="n">declarative_base</span><span class="p">()</span>
 <span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="s1">&#39;sqlite:///:memory:&#39;</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">session_factory</span> <span class="o">=</span> <span class="n">sessionmaker</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="storage">
+<h2>2. Storage<a class="headerlink" href="#storage" title="Permalink to this headline">¶</a></h2>
+<p>Registering a default factory for <a class="reference internal" href="../api.html#sqlalchemy_media.stores.FileSystemStore" title="sqlalchemy_media.stores.FileSystemStore"><code class="xref py py-class docutils literal"><span class="pre">FileSystemStore</span></code></a> class. the <a class="reference internal" href="../api.html#sqlalchemy_media.stores.StoreManager" title="sqlalchemy_media.stores.StoreManager"><code class="xref py py-class docutils literal"><span class="pre">StoreManager</span></code></a> will call it when needed.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">functools</span>
 
+<span class="kn">from</span> <span class="nn">sqlalchemy_media</span> <span class="k">import</span> <span class="n">StoreManager</span><span class="p">,</span> <span class="n">FileSystemStore</span>
 
-<span class="c1"># Sqlite is not supporting JSON type, so emulating it:</span>
+<span class="n">StoreManager</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="s1">&#39;fs&#39;</span><span class="p">,</span>
+    <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">FileSystemStore</span><span class="p">,</span> <span class="n">TEMP_PATH</span><span class="p">,</span> <span class="s1">&#39;http://static.example.org/&#39;</span><span class="p">),</span>
+    <span class="n">default</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="backend-type">
+<h2>3. Backend Type<a class="headerlink" href="#backend-type" title="Permalink to this headline">¶</a></h2>
+<p>We are using the sqlite&#8217;s memory db in this tutorial, because it&#8217;s so handy. but it&#8217;s not supporting the JSON data type,
+So, this is how to emulate a type using the
+<a class="reference external" href="http://docs.sqlalchemy.org/en/latest/core/custom_types.html#typedecorator-recipes">SqlAlchemy Type Decorators</a>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="k">import</span> <span class="n">TypeDecorator</span><span class="p">,</span> <span class="n">Unicode</span>
+
 <span class="k">class</span> <span class="nc">Json</span><span class="p">(</span><span class="n">TypeDecorator</span><span class="p">):</span>
     <span class="n">impl</span> <span class="o">=</span> <span class="n">Unicode</span>
 
@@ -171,24 +200,47 @@
             <span class="k">return</span> <span class="kc">None</span>
 
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can use any type to store dictionary and list as described on top, but the postgreSql <code class="docutils literal"><span class="pre">HStore</span></code> and
+<code class="docutils literal"><span class="pre">JSON</span></code> are preferred.</p>
+</div>
+</div>
+<div class="section" id="defining-the-model">
+<h2>4. Defining The Model<a class="headerlink" href="#defining-the-model" title="Permalink to this headline">¶</a></h2>
+<p>As described in
+<a class="reference external" href="http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.Mutable.as_mutable">Sqlalchemy&#8217;s documentation</a>,
+the <code class="docutils literal"><span class="pre">as_mutable</span></code> method is used to make a type mutable.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="k">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Integer</span>
 
+<span class="kn">from</span> <span class="nn">sqlalchemy_media</span> <span class="k">import</span> <span class="n">Image</span>
 
 <span class="k">class</span> <span class="nc">Person</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
     <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;person&#39;</span>
+
     <span class="nb">id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Unicode</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span>
     <span class="n">image</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">as_mutable</span><span class="p">(</span><span class="n">Json</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;&lt;</span><span class="si">%s</span><span class="s2"> id=</span><span class="si">%s</span><span class="s2">&gt;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-
-
-<span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="n">checkfirst</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">session_factory</span> <span class="o">=</span> <span class="n">sessionmaker</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
-<span class="n">StoreManager</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">,</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">FileSystemStore</span><span class="p">,</span> <span class="n">TEMP_PATH</span><span class="p">,</span> <span class="s1">&#39;http://static.example.org/&#39;</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-
-<span class="c1"># Action</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="db-schema">
+<h2>5. DB Schema<a class="headerlink" href="#db-schema" title="Permalink to this headline">¶</a></h2>
+<p>Making database objects using the famous function <code class="docutils literal"><span class="pre">create_all</span></code>, and creating a session instance to interact with
+database.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="n">checkfirst</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">session_factory</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="action">
+<h2>6. Action !<a class="headerlink" href="#action" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">join</span><span class="p">,</span> <span class="n">exists</span>
 
 <span class="n">session</span> <span class="o">=</span> <span class="n">session_factory</span><span class="p">()</span>
 <span class="k">with</span> <span class="n">StoreManager</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
@@ -196,23 +248,20 @@
     <span class="n">person1</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">create_from</span><span class="p">(</span><span class="s1">&#39;https://www.python.org/static/img/python-logo@2x.png&#39;</span><span class="p">)</span>
     <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">person1</span><span class="p">)</span>
     <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-    <span class="n">pprint</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="p">)})</span>
-    <span class="n">path</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">TEMP_PATH</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">locate</span><span class="p">())</span>
-    <span class="k">assert</span> <span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Content type:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">content_type</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Extension:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">extension</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Length:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Original filename:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">original_filename</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Will produces:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;contentType&#39;</span><span class="p">:</span> <span class="s1">&#39;image/png&#39;</span><span class="p">,</span>
- <span class="s1">&#39;extension&#39;</span><span class="p">:</span> <span class="s1">&#39;.png&#39;</span><span class="p">,</span>
- <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;289bfb54-f90d-4a8a-b2c5-a4dd0fe7b647&#39;</span><span class="p">,</span>
- <span class="s1">&#39;length&#39;</span><span class="p">:</span> <span class="mi">15770</span><span class="p">,</span>
- <span class="s1">&#39;originalFilename&#39;</span><span class="p">:</span> <span class="s1">&#39;https://www.python.org/static/img/python-logo@2x.png&#39;</span><span class="p">,</span>
- <span class="s1">&#39;timestamp&#39;</span><span class="p">:</span> <span class="mf">1475445477.7994764</span><span class="p">}</span>
-<span class="s1">&#39;/tmp/sqlalchemy-media/images/image-289bfb54-f90d-4a8a-b2c5-a4dd0fe7b647-https://www.python.org/static/img/python-logo@2x.png&#39;</span>
-<span class="s1">&#39;http://static.example.org/images/image-289bfb54-f90d-4a8a-b2c5-a4dd0fe7b647-https://www.python.org/static/img/python-logo@2x.png?_ts=1475445477.7994764&#39;</span>
+<div class="highlight-none"><div class="highlight"><pre><span></span>Content type: image/png
+Extension: .png
+Length: 15770
+Original filename: https://www.python.org/static/img/python-logo@2x.png
 </pre></div>
+</div>
+<p>Call <code class="docutils literal"><span class="pre">person1.image.locate()</span></code> to get the files URL in store.</p>
 </div>
 </div>
 
@@ -223,7 +272,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../api.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="content_type_restriction.html" class="btn btn-neutral float-right" title="Playing with Analyzers and Validators" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral" title="Tutorials" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -257,7 +306,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.1.1',
+            VERSION:'0.1.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

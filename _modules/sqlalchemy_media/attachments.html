@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.attachments &mdash; sqlalchemy-media 0.1.1 documentation</title>
+  <title>sqlalchemy_media.attachments &mdash; sqlalchemy-media 0.1.2 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.1.1 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.1.2 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -137,6 +137,7 @@
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">uuid</span>
 <span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">splitext</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Iterable</span>
 
@@ -162,7 +163,7 @@
 <span class="sd">        {&#39;key1&#39;: &#39;Value1&#39;}</span>
 
 
-<span class="sd">    This object is should be used inside a :class:`.StoreManager` context.</span>
+<span class="sd">    This object should be used inside a :class:`.StoreManager` context.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -177,6 +178,12 @@
 
     <span class="c1">#: Limit the file&#39;s minimum size.</span>
     <span class="n">__min_length__</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1">#: Instance of any class driver from :class:`.Analyzer`.</span>
+    <span class="n">__analyzer__</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1">#: Instance of any class driver from :class:`.Validator`.</span>
+    <span class="n">__validate__</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_listen_on_attribute</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">coerce</span><span class="p">,</span> <span class="n">parent_cls</span><span class="p">):</span>
@@ -213,8 +220,7 @@
 <span class="sd">        :return: The loaded instance of this class.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">instance</span> <span class="o">=</span> <span class="n">cls</span><span class="p">()</span>
-        <span class="n">instance</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">instance</span></div>
+        <span class="k">return</span> <span class="n">instance</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -232,11 +238,7 @@
 
 <span class="sd">        :type: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;storeId&#39;</span><span class="p">)</span>
-
-    <span class="nd">@store_id</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">store_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;storeId&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;store_id&#39;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">key</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Hashable</span><span class="p">:</span>
@@ -290,7 +292,8 @@
 <span class="sd">        :type: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_filename</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;-</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">splitext</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="s1">&#39;-</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;[/:.?]+&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;\w+://&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">splitext</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">]))</span>
+
         <span class="k">return</span> <span class="s1">&#39;&#39;</span>
 
     <span class="nd">@property</span>
@@ -302,10 +305,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;extension&#39;</span><span class="p">)</span>
 
-    <span class="nd">@extension</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">extension</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;extension&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">content_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -313,11 +312,7 @@
 
 <span class="sd">        :type: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;contentType&#39;</span><span class="p">)</span>
-
-    <span class="nd">@content_type</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">content_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;contentType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;content_type&#39;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">original_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -326,11 +321,7 @@
 
 <span class="sd">        :type: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;originalFilename&#39;</span><span class="p">)</span>
-
-    <span class="nd">@original_filename</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">original_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;originalFilename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;original_filename&#39;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">length</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -375,13 +366,13 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Deletes the file.</span>
 
-<span class="sd">        .. warning:: This operation is can not be roll-backed.So if you want to delete a file, just set it&#39;s to</span>
+<span class="sd">        .. warning:: This operation can not be roll-backed.So if you want to delete a file, just set it&#39;s to</span>
 <span class="sd">                     :const:`None`, set it by new :class:`.Attachment` instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">get_store</span><span class="p">()</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Attachment.attach"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Attachment.attach">[docs]</a>    <span class="k">def</span> <span class="nf">attach</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attachable</span><span class="p">:</span> <span class="n">Attachable</span><span class="p">,</span> <span class="n">content_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">original_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="n">store_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+               <span class="n">store_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Attachment&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Attach a file. if the session roll-backed, all operations will be rolled-back.</span>
 <span class="sd">        The old file will be deleted after commit, if any.</span>
@@ -398,6 +389,10 @@
 <span class="sd">                          will overwritten by the given new one.</span>
 
 <span class="sd">        .. note:: :exc:`.MaximumLengthIsReachedError` and or :exc:`.MinimumLengthIsNotReachedError` may raised.</span>
+
+<span class="sd">        .. versionchanged:: 0.1.2</span>
+<span class="sd">            This method will returns the self. it&#39;s useful to chain method calls on object within single line.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Wrap in AttachableDescriptor</span>
@@ -415,21 +410,26 @@
                 <span class="n">old_attachment</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
 
+            <span class="c1"># Store information from descriptor</span>
+            <span class="n">attachment_info</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">original_filename</span><span class="o">=</span><span class="n">descriptor</span><span class="o">.</span><span class="n">original_filename</span><span class="p">,</span>
+                <span class="n">extension</span><span class="o">=</span><span class="n">descriptor</span><span class="o">.</span><span class="n">extension</span><span class="p">,</span>
+                <span class="n">content_type</span><span class="o">=</span><span class="n">descriptor</span><span class="o">.</span><span class="n">content_type</span><span class="p">,</span>
+                <span class="n">length</span><span class="o">=</span><span class="n">descriptor</span><span class="o">.</span><span class="n">content_length</span><span class="p">,</span>
+                <span class="n">store_id</span><span class="o">=</span><span class="n">store_id</span>
+            <span class="p">)</span>
+
             <span class="c1"># Analyze</span>
-            <span class="c1"># Validate</span>
-            <span class="c1"># Store</span>
-            <span class="k">if</span> <span class="n">descriptor</span><span class="o">.</span><span class="n">original_filename</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">original_filename</span> <span class="o">=</span> <span class="n">descriptor</span><span class="o">.</span><span class="n">original_filename</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__analyzer__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">attachment_info</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__analyzer__</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">descriptor</span><span class="p">))</span>
 
-            <span class="k">if</span> <span class="n">descriptor</span><span class="o">.</span><span class="n">extension</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">extension</span> <span class="o">=</span> <span class="n">descriptor</span><span class="o">.</span><span class="n">extension</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__validate__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__validate__</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">attachment_info</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">descriptor</span><span class="o">.</span><span class="n">content_type</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">content_type</span> <span class="o">=</span> <span class="n">descriptor</span><span class="o">.</span><span class="n">content_type</span>
+            <span class="c1"># Updating the mutable dictionary</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">attachment_info</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">})</span>
 
-            <span class="k">if</span> <span class="n">store_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">store_id</span> <span class="o">=</span> <span class="n">store_id</span>
-
+            <span class="c1"># Putting the file on the store.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_store</span><span class="p">()</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
                 <span class="n">descriptor</span><span class="p">,</span>
@@ -443,7 +443,9 @@
             <span class="n">store_manager</span><span class="o">.</span><span class="n">register_to_delete_after_rollback</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">old_attachment</span><span class="p">:</span>
-                <span class="n">store_manager</span><span class="o">.</span><span class="n">register_to_delete_after_commit</span><span class="p">(</span><span class="n">old_attachment</span><span class="p">)</span></div>
+                <span class="n">store_manager</span><span class="o">.</span><span class="n">register_to_delete_after_commit</span><span class="p">(</span><span class="n">old_attachment</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="Attachment.locate"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Attachment.locate">[docs]</a>    <span class="k">def</span> <span class="nf">locate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -696,7 +698,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.1.1',
+            VERSION:'0.1.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; sqlalchemy-media 0.1.1 documentation</title>
+  <title>Index &mdash; sqlalchemy-media 0.1.2 documentation</title>
   
 
   
@@ -36,7 +36,7 @@
         <link rel="index" title="Index"
               href="#"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.1.1 documentation" href="index.html"/> 
+    <link rel="top" title="sqlalchemy-media 0.1.2 documentation" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -142,6 +142,7 @@
  | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#K"><strong>K</strong></a>
  | <a href="#L"><strong>L</strong></a>
@@ -152,6 +153,7 @@
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
  | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
  
 </div>
 <h2 id="_">_</h2>
@@ -256,15 +258,27 @@
   </dt>
 
       
-  <dt><a href="api.html#sqlalchemy_media.attachments.Attachment.attach">attach() (sqlalchemy_media.attachments.Attachment method)</a>
+  <dt><a href="api.html#sqlalchemy_media.analyzers.Analyzer.analyze">analyze() (sqlalchemy_media.analyzers.Analyzer method)</a>
   </dt>
 
       
-  <dt><a href="api.html#sqlalchemy_media.descriptors.AttachableDescriptor">AttachableDescriptor (class in sqlalchemy_media.descriptors)</a>
+  <dt><a href="api.html#sqlalchemy_media.exceptions.AnalyzeError">AnalyzeError</a>
+  </dt>
+
+      
+  <dt><a href="api.html#sqlalchemy_media.analyzers.Analyzer">Analyzer (class in sqlalchemy_media.analyzers)</a>
+  </dt>
+
+      
+  <dt><a href="api.html#sqlalchemy_media.attachments.Attachment.attach">attach() (sqlalchemy_media.attachments.Attachment method)</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api.html#sqlalchemy_media.descriptors.AttachableDescriptor">AttachableDescriptor (class in sqlalchemy_media.descriptors)</a>
+  </dt>
+
       
   <dt><a href="api.html#sqlalchemy_media.attachments.Attachment">Attachment (class in sqlalchemy_media.attachments)</a>
   </dt>
@@ -331,14 +345,28 @@
   </dt>
 
       </dl></dd>
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api.html#sqlalchemy_media.attachments.Attachment.coerce">coerce() (sqlalchemy_media.attachments.Attachment class method)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api.html#sqlalchemy_media.attachments.Attachment.content_type">content_type (sqlalchemy_media.attachments.Attachment attribute)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="api.html#sqlalchemy_media.descriptors.BaseDescriptor.content_type">(sqlalchemy_media.descriptors.BaseDescriptor attribute)</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt><a href="api.html#sqlalchemy_media.exceptions.ContentTypeValidationError">ContentTypeValidationError</a>
+  </dt>
+
+      
+  <dt><a href="api.html#sqlalchemy_media.validators.ContentTypeValidator">ContentTypeValidator (class in sqlalchemy_media.validators)</a>
   </dt>
 
       
@@ -367,8 +395,6 @@
   <dt><a href="api.html#sqlalchemy_media.exceptions.DefaultStoreError">DefaultStoreError</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api.html#sqlalchemy_media.attachments.Attachment.delete">delete() (sqlalchemy_media.attachments.Attachment method)</a>
   </dt>
@@ -379,8 +405,18 @@
   </dt>
 
       </dl></dd>
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api.html#sqlalchemy_media.stores.StoreManager.delete_orphan">delete_orphan (sqlalchemy_media.stores.StoreManager attribute)</a>
+  </dt>
+
+      
+  <dt><a href="api.html#sqlalchemy_media.exceptions.DescriptorError">DescriptorError</a>
+  </dt>
+
+      
+  <dt><a href="api.html#sqlalchemy_media.exceptions.DescriptorOperationError">DescriptorOperationError</a>
   </dt>
 
   </dl></td>
@@ -399,6 +435,12 @@
   <dt><a href="api.html#sqlalchemy_media.attachments.Attachment.extension">extension (sqlalchemy_media.attachments.Attachment attribute)</a>
   </dt>
 
+      <dd><dl>
+        
+  <dt><a href="api.html#sqlalchemy_media.descriptors.BaseDescriptor.extension">(sqlalchemy_media.descriptors.BaseDescriptor attribute)</a>
+  </dt>
+
+      </dl></dd>
   </dl></td>
 </tr></table>
 
@@ -437,14 +479,34 @@
   <dt><a href="api.html#sqlalchemy_media.stores.StoreManager.get">get() (sqlalchemy_media.stores.StoreManager method)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api.html#sqlalchemy_media.stores.StoreManager.get_current_store_manager">get_current_store_manager() (sqlalchemy_media.stores.StoreManager class method)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api.html#sqlalchemy_media.descriptors.BaseDescriptor.get_header_buffer">get_header_buffer() (sqlalchemy_media.descriptors.BaseDescriptor method)</a>
+  </dt>
+
       
   <dt><a href="api.html#sqlalchemy_media.attachments.Attachment.get_store">get_store() (sqlalchemy_media.attachments.Attachment method)</a>
+  </dt>
+
+  </dl></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api.html#sqlalchemy_media.descriptors.BaseDescriptor.header">header (sqlalchemy_media.descriptors.BaseDescriptor attribute)</a>
+  </dt>
+
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api.html#sqlalchemy_media.descriptors.BaseDescriptor.header_buffer_size">header_buffer_size (sqlalchemy_media.descriptors.BaseDescriptor attribute)</a>
   </dt>
 
   </dl></td>
@@ -506,15 +568,19 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="api.html#sqlalchemy_media.stores.StoreManager.make_default">make_default() (sqlalchemy_media.stores.StoreManager class method)</a>
+  <dt><a href="api.html#sqlalchemy_media.analyzers.MagicAnalyzer">MagicAnalyzer (class in sqlalchemy_media.analyzers)</a>
   </dt>
 
       
-  <dt><a href="api.html#sqlalchemy_media.exceptions.MaximumLengthIsReachedError">MaximumLengthIsReachedError</a>
+  <dt><a href="api.html#sqlalchemy_media.stores.StoreManager.make_default">make_default() (sqlalchemy_media.stores.StoreManager class method)</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api.html#sqlalchemy_media.exceptions.MaximumLengthIsReachedError">MaximumLengthIsReachedError</a>
+  </dt>
+
       
   <dt><a href="api.html#sqlalchemy_media.constants.MB">MB (in module sqlalchemy_media.constants)</a>
   </dt>
@@ -541,20 +607,30 @@
   <dt><a href="api.html#sqlalchemy_media.stores.StoreManager.on_delete">on_delete() (sqlalchemy_media.stores.StoreManager method)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api.html#sqlalchemy_media.stores.StoreManager.on_rollback">on_rollback() (sqlalchemy_media.stores.StoreManager method)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api.html#sqlalchemy_media.stores.Store.open">open() (sqlalchemy_media.stores.Store method)</a>
+  </dt>
+
+      
+  <dt><a href="api.html#sqlalchemy_media.exceptions.OptionalPackageRequirementError">OptionalPackageRequirementError</a>
   </dt>
 
       
   <dt><a href="api.html#sqlalchemy_media.attachments.Attachment.original_filename">original_filename (sqlalchemy_media.attachments.Attachment attribute)</a>
   </dt>
 
+      <dd><dl>
+        
+  <dt><a href="api.html#sqlalchemy_media.descriptors.BaseDescriptor.original_filename">(sqlalchemy_media.descriptors.BaseDescriptor attribute)</a>
+  </dt>
+
+      </dl></dd>
       
   <dt><a href="api.html#sqlalchemy_media.stores.StoreManager.orphaned">orphaned() (sqlalchemy_media.stores.StoreManager method)</a>
   </dt>
@@ -622,6 +698,10 @@
   </dt>
 
       
+  <dt><a href="api.html#module-sqlalchemy_media.analyzers">sqlalchemy_media.analyzers (module)</a>
+  </dt>
+
+      
   <dt><a href="api.html#module-sqlalchemy_media.attachments">sqlalchemy_media.attachments (module)</a>
   </dt>
 
@@ -643,6 +723,10 @@
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api.html#module-sqlalchemy_media.validators">sqlalchemy_media.validators (module)</a>
+  </dt>
+
       
   <dt><a href="api.html#sqlalchemy_media.exceptions.SqlAlchemyMediaException">SqlAlchemyMediaException</a>
   </dt>
@@ -718,6 +802,26 @@
   </dl></td>
 </tr></table>
 
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api.html#sqlalchemy_media.validators.Validator.validate">validate() (sqlalchemy_media.validators.Validator method)</a>
+  </dt>
+
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api.html#sqlalchemy_media.exceptions.ValidationError">ValidationError</a>
+  </dt>
+
+      
+  <dt><a href="api.html#sqlalchemy_media.validators.Validator">Validator (class in sqlalchemy_media.validators)</a>
+  </dt>
+
+  </dl></td>
+</tr></table>
+
 
 
            </div>
@@ -751,7 +855,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1.1',
+            VERSION:'0.1.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
