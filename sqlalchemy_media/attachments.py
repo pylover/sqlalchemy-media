@@ -28,7 +28,7 @@ class Attachment(MutableDict):
         {'key1': 'Value1'}
 
 
-    This object is should be used inside a :class:`.StoreManager` context.
+    This object should be used inside a :class:`.StoreManager` context.
 
     """
 
@@ -242,7 +242,7 @@ class Attachment(MutableDict):
         """
         Deletes the file.
 
-        .. warning:: This operation is can not be roll-backed.So if you want to delete a file, just set it's to
+        .. warning:: This operation can not be roll-backed.So if you want to delete a file, just set it's to
                      :const:`None`, set it by new :class:`.Attachment` instance.
         """
         self.get_store().delete(self.path)

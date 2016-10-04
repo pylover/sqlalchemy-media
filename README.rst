@@ -30,9 +30,9 @@ Why ?
 Nowadays, most of database applications are requested to allow users to upload and attach files with various types to
 ORM models.
 
-Handling those jobs is not simple if you have to care about: Security, High-Availability, Scalability, CDN and more
-concerns you already taste those. Accepting a file from public space, analysing, validating, processing(Normalizing)
-and making it available to public space again. is the main goal of this project.
+Handling those jobs is not simple if you have to care about Security, High-Availability, Scalability, CDN and more
+things you may have already concerned. Accepting a file from public space, analysing, validating, processing(Normalizing)
+and making it available to public space again is the main goal of this project.
 
 Sql-Alchemy is the best platform to implement these stuff on. It has the mutable types to manipulate the objects with
 any type in-place. why not ?

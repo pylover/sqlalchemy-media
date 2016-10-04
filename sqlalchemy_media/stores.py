@@ -42,7 +42,7 @@ class Store(object):
         """
         **[Abstract]**
 
-        Should be overridden in inherited class and put the stream as the given filename in the store.
+        Should be overridden in inherited class and puts the stream as the given filename in the store.
 
         :param filename: the target filename.
         :param stream: the source stream
@@ -56,7 +56,7 @@ class Store(object):
         """
         **[Abstract]**
 
-        Should be overridden in inherited class and delete the given file.
+        Should be overridden in inherited class and deletes the given file.
 
         :param filename: The filename to delete
 
