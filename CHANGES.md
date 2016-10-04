@@ -4,11 +4,17 @@ Changelog
 Here you can see the full list of changes made on each sqlalchemy-media release.
 
 
-1.1.1-dev0 (----)
------------------
+0.1.2 (2016-10-05)
+------------------
 
-* Fixed: #42
-* Fixed: #41
+* Added two tutorials in documentation
+* Restricting Content-type: #28
+* Including all requirements*.txt in distribution: #49
+* Including test stuff in distribution: #36
+* Descriptive error message when an optional package is missing: #48
+* Analyser: #30
+* Validation: #31
+* Fixed two bugs: #42, #41
 
 
 0.1.1 (2016-10-03)
