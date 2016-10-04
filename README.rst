@@ -52,6 +52,7 @@ Overview
    `mimetypes <https://docs.python.org/3.5/library/mimetypes.html>`_ module
  - Limiting file size(min, max), to prevent DOS attacks.
  - Adding timestamp in url to help caching.
+ - Using python type hinting to annotate arguments. So currently python3.5 and higher is supported.
 
 Quick Start
 -----------
