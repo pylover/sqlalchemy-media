@@ -2,6 +2,7 @@ from typing import Hashable
 import copy
 import uuid
 import time
+import re
 from os.path import splitext
 from collections import Iterable
 
@@ -155,7 +156,8 @@ class Attachment(MutableDict):
         :type: str
         """
         if self.original_filename:
-            return '-%s' % splitext(self.original_filename)[0]
+            return '-%s' % re.sub('\w+://', '', splitext(self.original_filename)[0]).\
+                replace('/', '_').replace(':', '_').replace('.', '_')
         return ''
 
     @property

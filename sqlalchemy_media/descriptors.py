@@ -39,7 +39,9 @@ class BaseDescriptor(object):
         self.max_length = max_length
         self.header_buffer_size = header_buffer_size
         self.content_length = content_length
+
         self.original_filename = original_filename
+
         self._source_pos = 0
         if not self.seekable():
             self.header = io.BytesIO(self.read_source(self.header_buffer_size))

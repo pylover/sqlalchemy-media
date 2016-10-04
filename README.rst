@@ -121,12 +121,12 @@ Will produces::
 
     {'contentType': 'image/png',
      'extension': '.png',
-     'key': '289bfb54-f90d-4a8a-b2c5-a4dd0fe7b647',
+     'key': '91aea7c3-9b69-418a-9a19-efd6c5604bd2',
      'length': 15770,
      'originalFilename': 'https://www.python.org/static/img/python-logo@2x.png',
-     'timestamp': 1475445477.7994764}
-    '/tmp/sqlalchemy-media/images/image-289bfb54-f90d-4a8a-b2c5-a4dd0fe7b647-https://www.python.org/static/img/python-logo@2x.png'
-    'http://static.example.org/images/image-289bfb54-f90d-4a8a-b2c5-a4dd0fe7b647-https://www.python.org/static/img/python-logo@2x.png?_ts=1475445477.7994764'
+     'timestamp': '1475579170.3241525'}
+    /tmp/sqlalchemy-media/images/image-91aea7c3-9b69-418a-9a19-efd6c5604bd2-www_python_org_static_img_python-logo@2x.png
+    http://static.example.org/images/image-91aea7c3-9b69-418a-9a19-efd6c5604bd2-www_python_org_static_img_python-logo@2x.png?_ts=1475579170.3241525
 
 
 Change-Log
