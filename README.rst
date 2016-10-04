@@ -129,7 +129,3 @@ Will produces::
     http://static.example.org/images/image-91aea7c3-9b69-418a-9a19-efd6c5604bd2-www_python_org_static_img_python-logo@2x.png?_ts=1475579170.3241525
 
 
-Change-Log
-----------
-
-- 0.1.1: Improving coverage
