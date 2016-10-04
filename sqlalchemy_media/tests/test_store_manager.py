@@ -33,6 +33,10 @@ class StoreContextTestCase(unittest.TestCase):
         # unregister
         StoreManager.unregister('dummy')
 
+    def test_unregister(self):
+        # unregister
+        self.assertRaises(KeyError, StoreManager.unregister, 'invalid_Id')
+
     def test_context_stack(self):
 
         self.assertRaises(ContextError, StoreManager.get_current_store_manager)

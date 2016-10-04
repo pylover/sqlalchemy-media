@@ -117,7 +117,7 @@ class TempStoreTestCase(SqlAlchemyTestCase):
         self.base_url = 'http://static1.example.orm'
 
         # Remove previous files, if any! to make a clean temp directory:
-        if exists(self.temp_path):
+        if exists(self.temp_path):  # pragma: no cover
             shutil.rmtree(self.temp_path)
 
         makedirs(self.temp_path)
