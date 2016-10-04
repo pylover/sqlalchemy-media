@@ -109,6 +109,13 @@ class TempStoreTestCase(SqlAlchemyTestCase):
     def setUpClass(cls):
         cls.this_dir = abspath(dirname(__file__))
         cls.stuff_path = join(cls.this_dir, 'stuff')
+
+        # Pointing to some handy files.
+        cls.dog_jpeg = join(cls.stuff_path, 'dog.jpg')
+        cls.cat_jpeg = join(cls.stuff_path, 'cat.jpg')
+        cls.dog_png = join(cls.stuff_path, 'dog.png')
+        cls.cat_png = join(cls.stuff_path, 'cat.png')
+
         super().setUpClass()
 
     def setUp(self):

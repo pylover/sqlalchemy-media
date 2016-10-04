@@ -2,6 +2,34 @@
 from os.path import join, dirname, abspath
 
 
+__all__ = [
+
+    'SqlAlchemyMediaException',
+    'MaximumLengthIsReachedError',
+    'MinimumLengthIsNotReachedError',
+    'ContextError',
+    'DefaultStoreError',
+    'AnalyzeError',
+    'ValidationError',
+    'ContentTypeValidationError',
+    'DescriptorError',
+    'DescriptorOperationError',
+    'OptionalPackageRequirementError',
+    'SqlAlchemyMediaException',
+    'MaximumLengthIsReachedError',
+    'MinimumLengthIsNotReachedError',
+    'ContextError',
+    'DefaultStoreError',
+    'AnalyzeError',
+    'ValidationError',
+    'ContentTypeValidationError',
+    'DescriptorError',
+    'DescriptorOperationError',
+    'OptionalPackageRequirementError'
+
+]
+
+
 class SqlAlchemyMediaException(Exception):
     """
     The base class for all exceptions
@@ -39,7 +67,7 @@ class DefaultStoreError(SqlAlchemyMediaException):
 
     .. seealso:: :meth:`.StoreManager.register`.
     """
-    
+
     def __init__(self):
         super(DefaultStoreError, self).__init__("Default store is not defined.")
 

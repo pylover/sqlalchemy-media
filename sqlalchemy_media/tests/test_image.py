@@ -11,14 +11,6 @@ from sqlalchemy_media.tests.helpers import Json, TempStoreTestCase
 
 class ImageTestCase(TempStoreTestCase):
 
-    def setUp(self):
-        super().setUp()
-        self.dog_jpeg = join(self.stuff_path, 'dog.jpg')
-        self.cat_jpeg = join(self.stuff_path, 'cat.jpg')
-
-        self.dog_png = join(self.stuff_path, 'dog.png')
-        self.cat_png = join(self.stuff_path, 'cat.png')
-
     def test_image(self):
 
         class Person(self.Base):

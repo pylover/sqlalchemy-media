@@ -5,9 +5,10 @@ from os.path import join, exists
 
 from sqlalchemy import Column, Integer
 
-from sqlalchemy_media import File, StoreManager
+from sqlalchemy_media import File, StoreManager, ContentTypeValidator, MagicAnalyzer
 from sqlalchemy_media.tests.helpers import Json, TempStoreTestCase
-from sqlalchemy_media.exceptions import MaximumLengthIsReachedError, MinimumLengthIsNotReachedError
+from sqlalchemy_media.exceptions import MaximumLengthIsReachedError, MinimumLengthIsNotReachedError, \
+    ContentTypeValidationError
 
 
 class FileTestCase(TempStoreTestCase):
@@ -193,6 +194,23 @@ class FileTestCase(TempStoreTestCase):
             self.assertTrue(exists(cv_filename))
             session.commit()
             self.assertTrue(exists(cv_filename))
+
+    def test_content_type_validator(self):
+
+        class PDFFile(File):
+            __analyzer__ = MagicAnalyzer()
+            __validate__ = ContentTypeValidator(['application/pdf', 'image/jpeg'])
+
+        class Person(self.Base):
+            __tablename__ = 'person'
+            id = Column(Integer, primary_key=True)
+            cv = Column(PDFFile.as_mutable(Json), nullable=True)
+
+        session = self.create_all_and_get_session()
+        person1 = Person(cv=PDFFile())
+        with StoreManager(session):
+            self.assertIsNotNone(person1.cv.attach(self.cat_jpeg))
+            self.assertRaises(ContentTypeValidationError, person1.cv.attach, BytesIO(b'Simple text'))
 
 
 if __name__ == '__main__':  # pragma: no cover
