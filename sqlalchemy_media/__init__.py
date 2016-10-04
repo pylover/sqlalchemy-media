@@ -9,5 +9,5 @@ from .analyzers import Analyzer, MagicAnalyzer
 from .validators import Validator, ContentTypeValidator
 from .exceptions import *
 
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 
