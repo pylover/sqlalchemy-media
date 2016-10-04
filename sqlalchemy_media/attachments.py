@@ -157,7 +157,7 @@ class Attachment(MutableDict):
         """
         if self.original_filename:
             return '-%s' % re.sub('[/:.?]+', '_', re.sub('\w+://', '', splitext(self.original_filename)[0]))
-                
+
         return ''
 
     @property
