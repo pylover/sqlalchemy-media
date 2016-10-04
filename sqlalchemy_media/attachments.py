@@ -44,6 +44,12 @@ class Attachment(MutableDict):
     #: Limit the file's minimum size.
     __min_length__ = None
 
+    #: Instance of any class driver from :class:`.Analyzer`.
+    __analyzer__ = None
+
+    #: Instance of any class driver from :class:`.Validator`.
+    __validate__ = None
+
     @classmethod
     def _listen_on_attribute(cls, attribute, coerce, parent_cls):
         StoreManager.observe_attribute(attribute)
@@ -285,21 +291,26 @@ class Attachment(MutableDict):
                 old_attachment = None if self.empty else self.copy()
                 self.key = str(uuid.uuid4())
 
+            # Store information from descriptor
+            attachment_info = dict(
+                original_filename=descriptor.original_filename,
+                extension=descriptor.extension,
+                content_type=descriptor.content_type,
+                length=descriptor.content_length,
+                store_id=store_id
+            )
+
             # Analyze
-            # Validate
-            # Store
-            if descriptor.original_filename:
-                self.original_filename = descriptor.original_filename
+            if self.__analyzer__ is not None:
+                attachment_info.update(self.__analyzer__.analyze(descriptor))
 
-            if descriptor.extension:
-                self.extension = descriptor.extension
+                if self.__validate__ is not None:
+                    self.__validate__.validate(attachment_info)
 
-            if descriptor.content_type:
-                self.content_type = descriptor.content_type
+            # Updating the mutable dictionary
+            self.update({k: v for k, v in attachment_info.items() if v is not None})
 
-            if store_id is not None:
-                self.store_id = store_id
-
+            # Putting the file on the store.
             self.length = self.get_store().put(
                 self.path,
                 descriptor,

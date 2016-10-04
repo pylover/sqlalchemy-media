@@ -38,7 +38,7 @@ class FileTestCase(TempStoreTestCase):
             self.assertEqual(person1.cv.locate(), '%s/%s?_ts=%s' % (
                 self.base_url, person1.cv.path, person1.cv.timestamp))
             self.assertDictEqual(person1.cv, {
-                'contentType': 'text/plain',
+                'content_type': 'text/plain',
                 'key': person1.cv.key,
                 'extension': '.txt',
                 'length': len(sample_content),
@@ -65,7 +65,7 @@ class FileTestCase(TempStoreTestCase):
             person1.cv.attach(BytesIO(sample_content), content_type='text/plain', extension='.txt')
             self.assertIsInstance(person1.cv, File)
             self.assertDictEqual(person1.cv, {
-                'contentType': 'text/plain',
+                'content_type': 'text/plain',
                 'key': person1.cv.key,
                 'extension': '.txt',
                 'length': len(sample_content),
