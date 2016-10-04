@@ -1,28 +1,56 @@
-Attaching Images
-================
+Attaching Files
+===============
 
-This is how to attach image file to sqlalchemy model using the local file-system store.
+This is how to attach image file to sqlalchemy model using the :class:`.FileSystemStore`.
 
-::
 
-        import json
-        import functools
-        from os.path import join, exists
-        from pprint import pprint
+1. Creating workbench
+---------------------
 
-        from sqlalchemy import Column, Integer, create_engine, Unicode, TypeDecorator
+Setting up and ``engine`` along-side the ``session_factory``. And creating a constant for the directory to store files.
+
+..  testcode:: quickstart
+
+        from sqlalchemy import create_engine
         from sqlalchemy.orm import sessionmaker
         from sqlalchemy.ext.declarative import declarative_base
-
-        from sqlalchemy_media import Image, StoreManager, FileSystemStore
-
 
         TEMP_PATH = '/tmp/sqlalchemy-media'
         Base = declarative_base()
         engine = create_engine('sqlite:///:memory:', echo=False)
+        session_factory = sessionmaker(bind=engine)
 
 
-        # Sqlite is not supporting JSON type, so emulating it:
+2. Storage
+----------
+
+Registering a default factory for :class:`.FileSystemStore` class. the :class:`.StoreManager` will call it when needed.
+
+..  testcode:: quickstart
+
+        import functools
+
+        from sqlalchemy_media import StoreManager, FileSystemStore
+
+        StoreManager.register(
+            'fs',
+            functools.partial(FileSystemStore, TEMP_PATH, 'http://static.example.org/'),
+            default=True
+        )
+
+3. Backend Type
+---------------
+
+We are using the sqlite's memory db in this tutorial, because it's so handy. but it's not supporting the JSON data type,
+So, this is how to emulate a type using the
+`SqlAlchemy Type Decorators <http://docs.sqlalchemy.org/en/latest/core/custom_types.html#typedecorator-recipes>`_.
+
+..  testcode:: quickstart
+
+        import json
+
+        from sqlalchemy import TypeDecorator, Unicode
+
         class Json(TypeDecorator):
             impl = Unicode
 
@@ -36,8 +64,26 @@ This is how to attach image file to sqlalchemy model using the local file-system
                 return json.loads(value)
 
 
+.. note:: You can use any type to store dictionary and list as described on top, but the postgreSql ``HStore`` and
+          ``JSON`` are preferred.
+
+
+4. Defining The Model
+---------------------
+
+As described in
+`Sqlalchemy's documentation <http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.Mutable.as_mutable>`_,
+the ``as_mutable`` method is used to make a type mutable.
+
+..  testcode:: quickstart
+
+        from sqlalchemy import Column, Integer
+
+        from sqlalchemy_media import Image
+
         class Person(Base):
             __tablename__ = 'person'
+
             id = Column(Integer, primary_key=True)
             name = Column(Unicode(100))
             image = Column(Image.as_mutable(Json))
@@ -45,13 +91,25 @@ This is how to attach image file to sqlalchemy model using the local file-system
             def __repr__(self):
                 return "<%s id=%s>" % (self.name, self.id)
 
+5. DB Schema
+------------
+
+Making database objects using the famous function ``create_all``, and creating a session instance to interact with
+database.
+
+..  testcode:: quickstart
 
         Base.metadata.create_all(engine, checkfirst=True)
-        session_factory = sessionmaker(bind=engine)
-        StoreManager.register('fs', functools.partial(FileSystemStore, TEMP_PATH, 'http://static.example.org/'), default=True)
+        session = session_factory()
 
 
-        # Action
+6. Action !
+-----------
+
+
+..  testcode:: quickstart
+
+        from os.path import join, exists
 
         session = session_factory()
         with StoreManager(session):
@@ -59,20 +117,18 @@ This is how to attach image file to sqlalchemy model using the local file-system
             person1.image = Image.create_from('https://www.python.org/static/img/python-logo@2x.png')
             session.add(person1)
             session.commit()
-            pprint({k: person1.image[k] for k in sorted(person1.image)})
-            path = join(TEMP_PATH, person1.image.path)
-            print(path)
-            print(person1.image.locate())
-            assert exists(path)
 
-Will produces:
-::
+            print('Content type:', person1.image.content_type)
+            print('Extension:', person1.image.extension)
+            print('Length:', person1.image.length)
+            print('Original filename:', person1.image.original_filename)
 
-            {'contentType': 'image/png',
-             'extension': '.png',
-             'key': '289bfb54-f90d-4a8a-b2c5-a4dd0fe7b647',
-             'length': 15770,
-             'originalFilename': 'https://www.python.org/static/img/python-logo@2x.png',
-             'timestamp': 1475445477.7994764}
-            '/tmp/sqlalchemy-media/images/image-289bfb54-f90d-4a8a-b2c5-a4dd0fe7b647-https://www.python.org/static/img/python-logo@2x.png'
-            'http://static.example.org/images/image-289bfb54-f90d-4a8a-b2c5-a4dd0fe7b647-https://www.python.org/static/img/python-logo@2x.png?_ts=1475445477.7994764'
+..  testoutput:: quickstart
+
+        Content type: image/png
+        Extension: .png
+        Length: 15770
+        Original filename: https://www.python.org/static/img/python-logo@2x.png
+
+
+Call ``person1.image.locate()`` to get the files URL in store.
