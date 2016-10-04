@@ -21,7 +21,7 @@ sqlalchemy-media
 
 
 Attaching any files(Image, Video & etc ) into sqlalchemy models using configurable stores including FileSystemStore.
-The main idea comes from `dahlia's SQLAlchemy-ImageAttach <https://github.com/dahlia/awesome-sqlalchemy>`_.
+The main idea comes from `dahlia's SQLAlchemy-ImageAttach <https://github.com/dahlia/sqlalchemy-imageattach>`_.
 
 See the `documentation <http://sqlalchemy-media.dobisel.com>`_ for full description.
 
