@@ -4,7 +4,7 @@ Changelog
 Here you can see the full list of changes made on each sqlalchemy-media release.
 
 
-0.1.2 (2016-10-05)
+0.2.0 (2016-10-05)
 ------------------
 
 * Added two tutorials in documentation
