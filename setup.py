@@ -28,6 +28,9 @@ setup(
     platforms=["any"],
     long_description=read('README.rst'),
     install_requires=dependencies,
+    data_files=[
+        ('.', ['requirements-dev.txt', 'requirements-optionals.txt']),
+    ],
     classifiers=[
         'Programming Language :: Python :: 3.5',
         'Topic :: Software Development :: Libraries'
