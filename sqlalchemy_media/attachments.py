@@ -156,8 +156,8 @@ class Attachment(MutableDict):
         :type: str
         """
         if self.original_filename:
-            return '-%s' % re.sub('\w+://', '', splitext(self.original_filename)[0]).\
-                replace('/', '_').replace(':', '_').replace('.', '_')
+            return '-%s' % re.sub('[/:.?]+', '_', re.sub('\w+://', '', splitext(self.original_filename)[0]))
+                
         return ''
 
     @property
