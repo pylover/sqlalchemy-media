@@ -111,7 +111,6 @@ database.
 
         from os.path import join, exists
 
-        session = session_factory()
         with StoreManager(session):
             person1 = Person()
             person1.image = Image.create_from('https://www.python.org/static/img/python-logo@2x.png')
