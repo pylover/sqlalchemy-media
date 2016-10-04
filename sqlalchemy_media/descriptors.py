@@ -7,14 +7,16 @@ from cgi import FieldStorage
 
 from sqlalchemy_media.typing_ import Stream, Attachable
 from sqlalchemy_media.helpers import is_uri
-from sqlalchemy_media.exceptions import MaximumLengthIsReachedError
+from sqlalchemy_media.exceptions import MaximumLengthIsReachedError, DescriptorOperationError
 
 
 class BaseDescriptor(object):
     """
     Abstract base class for all descriptors. Instance of this class is a file-like object.
 
-    Descriptors are used to get some primitive information from an attachable(stream, filename or URI). users may not be using this class directly. see :class:`.AttachableDescriptor` to see usage.
+    Descriptors are used to get some primitive information from an attachable(stream, filename or URI) and also allows
+    seeking over underlying stream. users may not be using this class directly. see :class:`.AttachableDescriptor`
+    to see how to use it.
 
     :param max_length: Maximum allowed file size.
     :param content_type: The file's mimetype to suppress the mimetype detection.
@@ -28,10 +30,20 @@ class BaseDescriptor(object):
 
     """
 
+    #: Buffer to store cached header on non-seekable streams.
     header = None
+
+    #: Original filename of the underlying stream.
     original_filename = None
+
+    #: Extension of the underlying stream.
     extension = None
+
+    #: Content type of the underlying stream.
     content_type = None
+
+    #: Amount of bytes to cache from header on non-seekable streams.
+    header_buffer_size = 1024
 
     def __init__(self, max_length: int=None, content_type: str=None, content_length: int=None, extension: str=None,
                  original_filename: str=None, header_buffer_size=1024, **kwargs):
@@ -43,8 +55,6 @@ class BaseDescriptor(object):
         self.original_filename = original_filename
 
         self._source_pos = 0
-        if not self.seekable():
-            self.header = io.BytesIO(self.read_source(self.header_buffer_size))
 
         for k, v in kwargs.items():
             setattr(self, k, v)
@@ -75,26 +85,27 @@ class BaseDescriptor(object):
 
         :param size: Amount of bytes ro read.
         """
-        if not self.header:
-            return self.read_source(size)
 
-        current_cursor = self.header.tell()
-        cursor_after_read = current_cursor + size
         source_cursor = self.tell_source()
-
-        if self.max_length is not None and source_cursor > self.max_length:
-            raise MaximumLengthIsReachedError(self.max_length)
-
-        elif source_cursor > self.header_buffer_size or current_cursor == self.header_buffer_size:
+        if self.seekable() or self.header is None:
             result = self.read_source(size)
-
-        elif cursor_after_read > self.header_buffer_size:
-            # split the read, half from header & half from source
-            part1 = self.header.read()
-            part2 = self.read_source(size - len(part1))
-            result = part1 + part2
         else:
-            result = self.header.read(size)
+            current_cursor = self.header.tell()
+            cursor_after_read = current_cursor + size
+
+            if self.max_length is not None and source_cursor > self.max_length:
+                raise MaximumLengthIsReachedError(self.max_length)
+
+            elif source_cursor > self.header_buffer_size or current_cursor == self.header_buffer_size:
+                result = self.read_source(size)
+
+            elif cursor_after_read > self.header_buffer_size:
+                # split the read, half from header & half from source
+                part1 = self.header.read()
+                part2 = self.read_source(size - len(part1))
+                result = part1 + part2
+            else:
+                result = self.header.read(size)
 
         if self.max_length is not None and source_cursor + len(result) > self.max_length:
             raise MaximumLengthIsReachedError(self.max_length)
@@ -107,7 +118,7 @@ class BaseDescriptor(object):
         should return the current position which counted internally.
         """
         source_cursor = self.tell_source()
-        if not self.header:
+        if self.seekable() or self.header is None:
             return source_cursor
 
         elif self.header.tell() < self.header_buffer_size:
@@ -136,6 +147,45 @@ class BaseDescriptor(object):
         if not self.seekable():
             self._source_pos += len(result)
         return result
+
+    def get_header_buffer(self) -> bytes:
+        """
+        Returns the amount of :attr:`.header_buffer_size` from start of the underlying stream. this method should
+        called many times before the read method has been called on not seekable streams.
+
+        .. warning:: The :exc:`.DescriptorOperationError` will be raised if this method called after calling the
+                     :meth:`.read`. This situation is only happened on un-seekable streams.
+
+        .. seealso:: :meth:`.seekable`
+
+        """
+
+        if self.seekable():
+            # Preserve the current position:
+            pos = self.tell_source()
+
+            # Moving to first byte
+            self.seek(0)
+
+            # Reading from header
+            buffer = self.read_source(self.header_buffer_size)
+
+            # Seeking back to preserved position
+            self.seek(pos)
+
+        elif self.header is None:
+            pos = self.tell_source()
+            if pos:
+                raise DescriptorOperationError(
+                    "it's too late to get header buffer from descriptor. the underlying stream is not seekable and "
+                    "%d bytes are already fetched from." % pos)
+
+            buffer = self.read_source(self.header_buffer_size)
+            self.header = io.BytesIO(buffer)
+        else:
+            buffer = self.header.getvalue()
+
+        return buffer
 
     def seekable(self) -> bool:
         """

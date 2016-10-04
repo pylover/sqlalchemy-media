@@ -2,8 +2,8 @@ API Reference
 =============
 
 
-attachments
------------
+attachments Module
+------------------
 
 .. module:: sqlalchemy_media.attachments
 
@@ -70,8 +70,8 @@ Image
    .. autoattribute:: __max_length__
    .. autoattribute:: __min_length__
 
-descriptors
------------
+descriptors Module
+------------------
 
 .. module:: sqlalchemy_media.descriptors
 
@@ -114,8 +114,8 @@ AttachableDescriptor
 
 .. autoclass:: AttachableDescriptor
 
-stores
-------
+stores Module
+-------------
 
 .. module:: sqlalchemy_media.stores
 
@@ -137,8 +137,40 @@ StoreManager
    .. automethod:: __enter__
    .. automethod:: __exit__
 
-exceptions
-----------
+
+analyzers Module
+----------------
+
+.. module:: sqlalchemy_media.analyzers
+
+Analyzer
+^^^^^^^^
+
+.. autoclass:: Analyzer
+
+MagicAnalyzer
+^^^^^^^^^^^^^
+
+.. autoclass:: MagicAnalyzer
+
+
+validators Module
+-----------------
+
+.. module:: sqlalchemy_media.validators
+
+Validator
+^^^^^^^^^
+
+.. autoclass:: Validator
+
+ContentTypeValidator
+^^^^^^^^^^^^^^^^^^^^
+
+.. autoclass:: ContentTypeValidator
+
+exceptions Module
+-----------------
 
 .. module:: sqlalchemy_media.exceptions
 
@@ -152,8 +184,21 @@ exceptions
 
 .. autoexception:: DefaultStoreError
 
-constants
----------
+.. autoexception:: AnalyzeError
+
+.. autoexception:: ValidationError
+
+.. autoexception:: DescriptorOperationError
+
+.. autoexception:: DescriptorError
+
+.. autoexception:: OptionalPackageRequirementError
+
+.. autoexception:: ContentTypeValidationError
+
+
+constants Module
+----------------
 
 .. automodule:: sqlalchemy_media.constants
 

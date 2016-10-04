@@ -8,7 +8,7 @@ from sqlalchemy_media.helpers import copy_stream, md5sum
 from sqlalchemy_media.tests.helpers import simple_http_server, encode_multipart_data
 from sqlalchemy_media.descriptors import AttachableDescriptor, LocalFileSystemDescriptor, CgiFieldStorageDescriptor, \
     UrlDescriptor, StreamDescriptor
-from sqlalchemy_media.exceptions import MaximumLengthIsReachedError
+from sqlalchemy_media.exceptions import MaximumLengthIsReachedError, DescriptorOperationError
 
 
 class AttachableDescriptorsTestCase(unittest.TestCase):
@@ -45,6 +45,14 @@ class AttachableDescriptorsTestCase(unittest.TestCase):
         inp = b'abcdefghijklmnopqrstuvwxyz'
         descriptor = AttachableDescriptor(NonSeekableStream(inp), header_buffer_size=10)
 
+        # fetching header, it forces to cache header_buffer_size bytes from header.
+        buffer = descriptor.get_header_buffer()
+        self.assertEqual(buffer, b'abcdefghij')
+
+        # fetching again to test the cache functionality
+        buffer = descriptor.get_header_buffer()
+        self.assertEqual(buffer, b'abcdefghij')
+
         out = b''
         out += descriptor.read(9)
         self.assertEqual(descriptor.tell(), 9)
@@ -55,10 +63,17 @@ class AttachableDescriptorsTestCase(unittest.TestCase):
 
         # Max length error
         descriptor = AttachableDescriptor(NonSeekableStream(inp), header_buffer_size=24, max_length=20)
+        buffer = descriptor.get_header_buffer()
+        self.assertEqual(buffer, b'abcdefghijklmnopqrstuvwx')
         self.assertRaises(MaximumLengthIsReachedError, descriptor.read, 1)
 
         descriptor = AttachableDescriptor(NonSeekableStream(inp), header_buffer_size=10, max_length=20)
         self.assertRaises(MaximumLengthIsReachedError, descriptor.read, 22)
+
+        # Test getting header buffer after read on non-seekable streams.
+        descriptor = AttachableDescriptor(NonSeekableStream(inp), header_buffer_size=10, max_length=20)
+        self.assertEqual(descriptor.read(10), b'abcdefghij')
+        self.assertRaises(DescriptorOperationError, descriptor.get_header_buffer)
 
     def test_localfs(self):
 
@@ -73,6 +88,8 @@ class AttachableDescriptorsTestCase(unittest.TestCase):
         self.assertEqual(descriptor.width, 100)
         # noinspection PyUnresolvedReferences
         self.assertEqual(descriptor.height, 80)
+
+        self.assertEqual(len(descriptor.get_header_buffer()), 1024)
 
         buffer = io.BytesIO()
         copy_stream(descriptor, buffer)
