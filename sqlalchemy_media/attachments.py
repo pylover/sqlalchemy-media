@@ -104,10 +104,6 @@ class Attachment(MutableDict):
         :type: str
         """
         return self.get('store_id')
-    #
-    # @store_id.setter
-    # def store_id(self, value) -> None:
-    #     self['store_id'] = value
 
     @property
     def key(self) -> Hashable:
@@ -173,10 +169,6 @@ class Attachment(MutableDict):
         :type: str
         """
         return self.get('extension')
-    #
-    # @extension.setter
-    # def extension(self, value) -> None:
-    #     self['extension'] = value
 
     @property
     def content_type(self) -> str:
@@ -186,10 +178,6 @@ class Attachment(MutableDict):
         :type: str
         """
         return self.get('content_type')
-    #
-    # @content_type.setter
-    # def content_type(self, value) -> None:
-    #     self['content_type'] = value
 
     @property
     def original_filename(self) -> str:
@@ -199,10 +187,6 @@ class Attachment(MutableDict):
         :type: str
         """
         return self.get('original_filename')
-    #
-    # @original_filename.setter
-    # def original_filename(self, value) -> None:
-    #     self['original_filename'] = value
 
     @property
     def length(self) -> int:
