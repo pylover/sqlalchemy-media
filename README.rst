@@ -123,6 +123,7 @@ Here a simple example to how to use this library:
 
 Will produces::
 
+     1
     {'contentType': 'image/png',
      'extension': '.png',
      'key': '91aea7c3-9b69-418a-9a19-efd6c5604bd2',
