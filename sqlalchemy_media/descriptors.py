@@ -14,7 +14,7 @@ class BaseDescriptor(object):
     """
     Abstract base class for all descriptors. Instance of this class is a file-like object.
 
-    Descriptors are used to get some primitive information from an attachable(stream, filename or URI). users may not using this class directly. see :class:`.AttachableDescriptor` to see usage.
+    Descriptors are used to get some primitive information from an attachable(stream, filename or URI). users may not be using this class directly. see :class:`.AttachableDescriptor` to see usage.
 
     :param max_length: Maximum allowed file size.
     :param content_type: The file's mimetype to suppress the mimetype detection.
@@ -183,7 +183,7 @@ class BaseDescriptor(object):
 class StreamDescriptor(BaseDescriptor):
     """
     This class is used for describing a stream. so it just a proxy for streams.
-    The underlying stream will not to be closed after calling the :meth:`.close` method.
+    The underlying stream is not meant to be closed after calling the :meth:`.close` method.
 
     :param stream: File-like object to wrap.
     :param kwargs: the same as the :class:`.BaseDescriptor`
@@ -207,7 +207,7 @@ class StreamDescriptor(BaseDescriptor):
 
     def close(self) -> None:
         """
-        Do not closing the stream here, because we'r not opened it.
+        We are not closing the stream here, because we've not opened it.
 
         """
         pass
