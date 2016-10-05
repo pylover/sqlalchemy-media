@@ -6,7 +6,7 @@ from urllib.request import urlopen
 from cgi import FieldStorage
 
 from sqlalchemy_media.typing_ import Stream, Attachable
-from sqlalchemy_media.helpers import is_uri
+from sqlalchemy_media.helpers import is_uri, copy_stream
 from sqlalchemy_media.exceptions import MaximumLengthIsReachedError, DescriptorOperationError
 
 
@@ -79,13 +79,7 @@ class BaseDescriptor(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
 
-    def read(self, size: int) -> bytes:
-        """
-        Read from the underlying file.
-
-        :param size: Amount of bytes ro read.
-        """
-
+    def _read_chanked(self, size: int) -> bytes:
         source_cursor = self.tell_source()
         if self.seekable() or self.header is None:
             result = self.read_source(size)
@@ -111,6 +105,19 @@ class BaseDescriptor(object):
             raise MaximumLengthIsReachedError(self.max_length)
 
         return result
+
+    def read(self, size: int=None) -> bytes:
+        """
+        Read from the underlying file.
+
+        :param size: Amount of bytes ro read.
+        """
+        if size is None:
+            buffer = io.BytesIO()
+            copy_stream(self, buffer)
+            return buffer.getvalue()
+        else:
+            return self._read_chanked(size)
 
     def tell(self) -> int:
         """

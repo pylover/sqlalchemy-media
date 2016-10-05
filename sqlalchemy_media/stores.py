@@ -239,7 +239,7 @@ class StoreManager(object):
         cls._default = key
 
     @classmethod
-    def register(cls, key: str, store_factory: Callable, default: bool=False) -> None:
+    def register(cls, key: str, store_factory, default: bool=False):
         """
         Registers the store factory into stores registry, use :meth:`unregister` to remove it.
 
@@ -247,7 +247,6 @@ class StoreManager(object):
         :param store_factory: A callable that returns an instance of :class:`.Store`.
         :param default: If :data:`True` the given store will be marked as default also. in addition you can use
                         :meth:`.make_default` to mark a store as default.
-
         """
         _factories[key] = store_factory
         if default:

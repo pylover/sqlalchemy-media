@@ -167,6 +167,12 @@ MagicAnalyzer
 .. autoclass:: MagicAnalyzer
 
 
+WandAnalyzer
+^^^^^^^^^^^^
+
+.. autoclass:: WandAnalyzer
+
+
 validators Module
 -----------------
 

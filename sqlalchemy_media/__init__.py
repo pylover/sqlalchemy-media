@@ -5,7 +5,7 @@ from .attachments import Attachment, AttachmentCollection, AttachmentList, Attac
 from .stores import Store, FileSystemStore, StoreManager
 from .descriptors import BaseDescriptor, StreamDescriptor, StreamCloserDescriptor, LocalFileSystemDescriptor, \
     UrlDescriptor, CgiFieldStorageDescriptor, AttachableDescriptor
-from .analyzers import Analyzer, MagicAnalyzer
+from .analyzers import Analyzer, MagicAnalyzer, WandAnalyzer
 from .validators import Validator, ContentTypeValidator
 
 
