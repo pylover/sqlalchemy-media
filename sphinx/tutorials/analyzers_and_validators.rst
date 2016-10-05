@@ -5,6 +5,15 @@ Playing with Analyzers and Validators
 
 The following tutorial is going to describe how to use restrictions on attached filed:
 
+0. Prerequisites
+----------------
+
+Mimetype detection from file's content required the ``magic`` package to be installed.
+This is an optional package.
+
+.. code-block:: console
+
+   $ pip install python-magic
 
 1. CV
 -----

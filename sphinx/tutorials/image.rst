@@ -241,3 +241,6 @@ Another way is to re-set the attribute using new instance:
     Length: 10102
     Original filename: https://www.python.org/static/img/python-logo.png
 
+
+..  warning:: Setting SqlAlchemy model's attribute without enabling ``delete_orphan`` will cause the orphaned files
+              remaining in store for ever.
