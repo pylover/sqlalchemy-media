@@ -150,6 +150,8 @@ database.
         print(thumbnail.height)
         assert exists(join(TEMP_PATH, thumbnail.path))
 
+The thumbnail height is:
+
 ..  testoutput:: quickstart
 
     9
@@ -158,6 +160,21 @@ database.
 ..  warning:: Remember to commit the sqlalchemy's ``session`` after thumbnail generation to store the info, it's also
               can rollbacks the operation if transaction failed.
 
+
+Generating thumbnail with ``ratio``
+
+..  testcode:: quickstart
+
+    from os.path import exists, join
+
+    with StoreManager(session):
+        thumbnail = person1.image.get_thumbnail(ratio=.3, auto_generate=True)
+        print(thumbnail.width, thumbnail.height)
+        assert exists(join(TEMP_PATH, thumbnail.path))
+
+..  testoutput:: quickstart
+
+    174 49
 
 Call ``person1.image.locate()`` or ``person1.image.get_thumbnail(width=32, auto_generate=True).locate()`` to get the
 files URL in store.
