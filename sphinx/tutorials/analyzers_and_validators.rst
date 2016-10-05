@@ -13,14 +13,14 @@ For the first, let to create a type called ``CV``
 
 ..  testcode:: content_type
 
-        from sqlalchemy_media import File, MagicAnalyzer, ContentTypeValidator
-        from sqlalchemy_media.constants import MB, KB
+    from sqlalchemy_media import File, MagicAnalyzer, ContentTypeValidator
+    from sqlalchemy_media.constants import MB, KB
 
-        class CV(File):
-            __analyzer__ = MagicAnalyzer()
-            __validate__ = ContentTypeValidator(['application/pdf', 'image/jpeg'])
-            __max_length__ = 6*MB
-            __min_length__ = 10*KB
+    class CV(File):
+        __analyzer__ = MagicAnalyzer()
+        __validate__ = ContentTypeValidator(['application/pdf', 'image/jpeg'])
+        __max_length__ = 6*MB
+        __min_length__ = 10*KB
 
 
 2. Creating workbench
@@ -28,55 +28,55 @@ For the first, let to create a type called ``CV``
 
 ..  testcode:: content_type
 
-        import functools
+    import functools
 
-        from sqlalchemy import create_engine
-        from sqlalchemy.orm import sessionmaker
-        from sqlalchemy.ext.declarative import declarative_base
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+    from sqlalchemy.ext.declarative import declarative_base
 
-        from sqlalchemy_media import StoreManager, FileSystemStore
+    from sqlalchemy_media import StoreManager, FileSystemStore
 
-        TEMP_PATH = '/tmp/sqlalchemy-media'
-        Base = declarative_base()
-        engine = create_engine('sqlite:///:memory:', echo=False)
-        session_factory = sessionmaker(bind=engine)
+    TEMP_PATH = '/tmp/sqlalchemy-media'
+    Base = declarative_base()
+    engine = create_engine('sqlite:///:memory:', echo=False)
+    session_factory = sessionmaker(bind=engine)
 
-        StoreManager.register(
-            'fs',
-            functools.partial(FileSystemStore, TEMP_PATH, 'http://static.example.org/'),
-            default=True
-        )
+    StoreManager.register(
+        'fs',
+        functools.partial(FileSystemStore, TEMP_PATH, 'http://static.example.org/'),
+        default=True
+    )
 
 3. Model
 --------
 
 ..  testcode:: content_type
 
-        import json
+    import json
 
-        from sqlalchemy import TypeDecorator, Unicode, Column, Integer
+    from sqlalchemy import TypeDecorator, Unicode, Column, Integer
 
-        class Json(TypeDecorator):
-            impl = Unicode
+    class Json(TypeDecorator):
+        impl = Unicode
 
-            def process_bind_param(self, value, engine):
-                return json.dumps(value)
+        def process_bind_param(self, value, engine):
+            return json.dumps(value)
 
-            def process_result_value(self, value, engine):
-                if value is None:
-                    return None
-                return json.loads(value)
-
-
-        class Person(Base):
-            __tablename__ = 'person'
-
-            id = Column(Integer, primary_key=True)
-            cv = Column(CV.as_mutable(Json))
+        def process_result_value(self, value, engine):
+            if value is None:
+                return None
+            return json.loads(value)
 
 
-        Base.metadata.create_all(engine, checkfirst=True)
-        session = session_factory()
+    class Person(Base):
+        __tablename__ = 'person'
+
+        id = Column(Integer, primary_key=True)
+        cv = Column(CV.as_mutable(Json))
+
+
+    Base.metadata.create_all(engine, checkfirst=True)
+    session = session_factory()
 
 
 4. Submitting files
@@ -84,22 +84,22 @@ For the first, let to create a type called ``CV``
 
 ..  testcode:: content_type
 
-        import io
+    import io
 
-        from sqlalchemy_media.exceptions import ContentTypeValidationError
+    from sqlalchemy_media.exceptions import ContentTypeValidationError
 
-        person1 = Person(cv=CV())
-        with StoreManager(session):
-            person1.cv.attach('../sqlalchemy_media/tests/stuff/cat.jpg')  # OK
+    person1 = Person(cv=CV())
+    with StoreManager(session):
+        person1.cv.attach('../sqlalchemy_media/tests/stuff/cat.jpg')  # OK
 
-            try:
-                person1.cv.attach(io.BytesIO(b'Plain text'))
-            except ContentTypeValidationError:
-                print("ContentTypeValidationError is raised. It's so bad!")
+        try:
+            person1.cv.attach(io.BytesIO(b'Plain text'))
+        except ContentTypeValidationError:
+            print("ContentTypeValidationError is raised. It's so bad!")
 
 ..  testoutput:: content_type
 
-        ContentTypeValidationError is raised. It's so bad!
+    ContentTypeValidationError is raised. It's so bad!
 
 
 ..  seealso:: :class:`.WandAnalyzer` and :class:`.ImageDimensionValidator`
