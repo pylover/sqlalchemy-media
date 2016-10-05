@@ -186,7 +186,7 @@ class Attachment(MutableDict):
     @property
     def original_filename(self) -> str:
         """
-        Original file name, may provided by user within :attr:`cgi.FieldStorage.filename`, url or Physical filename.
+        Original file name, may be provided by user within :attr:`cgi.FieldStorage.filename`, url or Physical filename.
 
         :type: str
         """
@@ -235,8 +235,9 @@ class Attachment(MutableDict):
         """
         Deletes the file.
 
-        .. warning:: This operation can not be roll-backed.So if you want to delete a file, just set it's to
-                     :const:`None`, set it by new :class:`.Attachment` instance.
+        .. warning:: This operation can not be roll-backed.So if you want to delete a file, just set it to
+                     :const:`None` or set it by new :class:`.Attachment` instance, while passed ``delete_orphan=True``
+                     in :class:`.StoreManager` :
         """
         self.get_store().delete(self.path)
 
