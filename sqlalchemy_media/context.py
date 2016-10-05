@@ -1,10 +1,11 @@
 
 try:
     import _thread
-except ImportError: # pragma: no cover
+except ImportError:  # pragma: no cover
     import _dummy_thread as _thread
 
 try:
+    # noinspection PyPackageRequirements
     import greenlet
 except ImportError:
     greenlet = None
@@ -22,7 +23,7 @@ if greenlet is not None:  # pragma: no cover
         def get_id():
             return greenlet.getcurrent(), stackless.getcurrent()
 
-elif stackless is not None: # pragma: no cover
+elif stackless is not None:  # pragma: no cover
     get_id = stackless.getcurrent
 else:
     get_id = _thread.get_ident

@@ -1,5 +1,5 @@
 
-from typing import Tuple
+from typing import Tuple, AnyStr
 import unittest
 import threading
 import functools
@@ -37,7 +37,7 @@ def simple_http_server(content: bytes= b'Simple file content.', bind: Address=('
             self.end_headers()
             self.wfile.write(content)
 
-        def serve_static_file(self, filename: str):
+        def serve_static_file(self, filename: AnyStr):
             self.send_header('Content-Type', guess_type(filename))
             with open(filename, 'rb') as f:
                 self.serve_stream(f)
@@ -49,6 +49,7 @@ def simple_http_server(content: bytes= b'Simple file content.', bind: Address=('
             buffer.seek(0)
             copy_stream(buffer, self.wfile)
 
+        # noinspection PyPep8Naming
         def do_GET(self):
             self.send_response(HTTPStatus.OK)
             if isinstance(content, bytes):
@@ -57,6 +58,7 @@ def simple_http_server(content: bytes= b'Simple file content.', bind: Address=('
                 self.serve_static_file(content)
             else:
                 self.send_header('Content-Type', content_type)
+                # noinspection PyTypeChecker
                 self.serve_stream(content)
 
     http_server = HTTPServer(bind, SimpleHandler)
@@ -138,21 +140,21 @@ class TempStoreTestCase(SqlAlchemyTestCase):
 
 
 def encode_multipart_data(fields: dict=None, files: dict=None):  # pragma: no cover
-    BOUNDARY = ''.join(['-----', base64.urlsafe_b64encode(urandom(27)).decode()])
-    CRLF = b'\r\n'
+    boundary = ''.join(['-----', base64.urlsafe_b64encode(urandom(27)).decode()])
+    crlf = b'\r\n'
     lines = []
 
     if fields:
         for key, value in fields.items():
-            lines.append('--' + BOUNDARY)
+            lines.append('--' + boundary)
             lines.append('Content-Disposition: form-data; name="%s"' % key)
             lines.append('')
             lines.append(value)
 
     if files:
-        for key, filepath in files.items():
-            filename = split(filepath)[1]
-            lines.append('--' + BOUNDARY)
+        for key, file_path in files.items():
+            filename = split(file_path)[1]
+            lines.append('--' + boundary)
             lines.append(
                 'Content-Disposition: form-data; name="%s"; filename="%s"' %
                 (key, filename))
@@ -160,26 +162,27 @@ def encode_multipart_data(fields: dict=None, files: dict=None):  # pragma: no co
                 'Content-Type: %s' %
                 (guess_type(filename) or 'application/octet-stream'))
             lines.append('')
-            lines.append(open(filepath, 'rb').read())
+            lines.append(open(file_path, 'rb').read())
 
-    lines.append('--' + BOUNDARY + '--')
+    lines.append('--' + boundary + '--')
     lines.append('')
 
     body = io.BytesIO()
     length = 0
     for l in lines:
-        line = (l if isinstance(l, bytes) else l.encode()) + CRLF
+        # noinspection PyTypeChecker
+        line = (l if isinstance(l, bytes) else l.encode()) + crlf
         length += len(line)
         body.write(line)
     body.seek(0)
-    content_type = 'multipart/form-data; boundary=%s' % BOUNDARY
+    content_type = 'multipart/form-data; boundary=%s' % boundary
     return content_type, body, length
 
 
 if __name__ == '__main__':  # pragma: no cover
-    ct, b, l = encode_multipart_data(dict(test1='TEST1VALUE'), files=dict(cat='stuff/cat.jpg'))
+    ct, b, len_ = encode_multipart_data(dict(test1='TEST1VALUE'), files=dict(cat='stuff/cat.jpg'))
     print(ct)
-    print(l)
+    print(len_)
     print(b.read())
 
 #    with simple_http_server(bind=('', 8080), content=b'simple text') as httpd:

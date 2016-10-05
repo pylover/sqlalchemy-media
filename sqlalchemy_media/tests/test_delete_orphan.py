@@ -117,6 +117,7 @@ class DeleteOrphanTestCase(TempStoreTestCase):
             session.add(person1)
             session.commit()
             self.assertFalse(exists(first_filename))
+            # noinspection PyTypeChecker
             self.assertEqual(len(person1.files), 2)
 
             # Loading from db
@@ -137,7 +138,7 @@ class DeleteOrphanTestCase(TempStoreTestCase):
             self.assertEqual(len(person1.files), 1)
 
             old_attachment_filename = join(self.temp_path, person1.files[0].path)
-            attachment = person1.files[0].attach(BytesIO(b'Changed inside nested mutables!'))
+            attachment = person1.files[0].attach(BytesIO(b'Changed inside nested mutable!'))
             attachment_filename = join(self.temp_path, attachment.path)
             self.assertTrue(exists(old_attachment_filename))
             self.assertTrue(exists(attachment_filename))
@@ -197,6 +198,7 @@ class DeleteOrphanTestCase(TempStoreTestCase):
             session.add(person1)
             session.commit()
             self.assertFalse(exists(first_filename))
+            # noinspection PyTypeChecker
             self.assertEqual(len(person1.files), 1)
 
             # Loading from db
@@ -209,7 +211,6 @@ class DeleteOrphanTestCase(TempStoreTestCase):
             session.commit()
             self.assertFalse(exists(first_filename))
             self.assertEqual(len(person1.files), 0)
-
 
 
 if __name__ == '__main__':  # pragma: no cover

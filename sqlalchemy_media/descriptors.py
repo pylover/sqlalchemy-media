@@ -360,10 +360,6 @@ class AttachableDescriptor(BaseDescriptor):
 
     # noinspection PyInitNewSignature
     def __new__(cls, attachable: Attachable, **kwargs):
-        """
-
-        :return:
-        """
 
         if isinstance(attachable, FieldStorage):
             return_type = CgiFieldStorageDescriptor

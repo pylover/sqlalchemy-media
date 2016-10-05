@@ -1,4 +1,4 @@
-from typing import Hashable, List, Tuple, Dict
+from typing import Hashable, Tuple, Dict
 import copy
 import uuid
 import time
@@ -240,8 +240,8 @@ class Attachment(MutableDict):
         """
         self.get_store().delete(self.path)
 
-    def attach(self, attachable: Attachable, content_type: str = None, original_filename: str = None, extension: str = None,
-               store_id: str = None, overwrite: bool=False, **kwargs) -> 'Attachment':
+    def attach(self, attachable: Attachable, content_type: str = None, original_filename: str = None,
+               extension: str = None, store_id: str = None, overwrite: bool=False, **kwargs) -> 'Attachment':
         """
         Attach a file. if the session roll-backed, all operations will be rolled-back.
         The old file will be deleted after commit, if any.
@@ -557,6 +557,8 @@ class Thumbnail(BaseImage):
     """
     Representing an image thumbnail.
 
+    You may use :meth:`.generate_thumbnail` and or :meth:`.get_thumbnail` with ``auto_generate=True`` to get one.
+
     """
 
     __directory__ = 'thumbnails'
@@ -603,8 +605,8 @@ class Image(BaseImage):
 
         Generates and stores a thumbnail with the given arguments.
 
-        .. warning:: If non or more than one of the ``width``, ``height`` and or ``ratio`` are given, :exc:`ValueError` will be
-                     raised.
+        .. warning:: If non or more than one of the ``width``, ``height`` and or ``ratio`` are given, :exc:`ValueError`
+                     will be raised.
 
         :param width: The width of the thumbnail.
         :param height: The Height of the thumbnail.

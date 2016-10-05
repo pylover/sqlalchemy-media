@@ -17,7 +17,7 @@ def is_uri(x):
     return URI_REGEX_PATTERN.match(x) is not None
 
 
-def copy_stream(source: [Stream, 'BaseDescriptor'], target: Stream, *, chunk_size: int=16*1024, min_length: int=None,
+def copy_stream(source, target: Stream, *, chunk_size: int=16*1024, min_length: int=None,
                 max_length: int=None) -> int:
     length = 0
     while 1:

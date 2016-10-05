@@ -79,7 +79,7 @@ class Store(object):
         """
         raise NotImplementedError()  # pragma: no cover
 
-    def locate(self, attachment: 'Attachment') -> str:
+    def locate(self, attachment) -> str:
         """
         **[Abstract]**
 
@@ -112,7 +112,13 @@ class FileSystemStore(Store):
             makedirs(physical_directory, exist_ok=True)
 
         with open(physical_path, mode='wb') as target_file:
-            return copy_stream(stream, target_file, chunk_size=self.chunk_size, min_length=min_length, max_length=max_length)
+            return copy_stream(
+                stream,
+                target_file,
+                chunk_size=self.chunk_size,
+                min_length=min_length,
+                max_length=max_length
+            )
 
     def delete(self, filename: str):
         remove(self._get_physical_path(filename))
@@ -120,7 +126,7 @@ class FileSystemStore(Store):
     def open(self, filename: str, mode: str='rb') -> Stream:
         return open(self._get_physical_path(filename), mode=mode)
 
-    def locate(self, attachment: 'Attachment') -> str:
+    def locate(self, attachment) -> str:
         return '%s/%s' % (self.base_url, attachment.path)
 
 
@@ -187,7 +193,7 @@ class StoreManager(object):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """
-        Destore the context, pop itself from context stack and unbind all events.
+        Destroy the context, pop itself from context stack and unbind all events.
         """
         _context_stacks.setdefault(get_context_id(), []).pop()
         self.unbind_events()
@@ -308,7 +314,7 @@ class StoreManager(object):
         event.remove(self.session, 'after_soft_rollback', self.on_rollback)
         event.remove(self.session, 'persistent_to_deleted', self.on_delete)
 
-    def orphaned(self, *attachments: Iterable['Attachment']) -> None:
+    def orphaned(self, *attachments) -> None:
         """
         Mark one or more attachment(s) orphaned, So if :attr:`delete_orphan` is :data:`.True`, the attachment(s) will
         be deleted from store after session commit.
@@ -317,7 +323,7 @@ class StoreManager(object):
         if self.delete_orphan:
             self._files_orphaned.extend(attachments)
 
-    def adopted(self, *attachments: Iterable['Attachment']) -> None:
+    def adopted(self, *attachments) -> None:
         """
         Opposite of :meth:`.orphaned`
 
