@@ -9,5 +9,5 @@ from .analyzers import Analyzer, MagicAnalyzer, WandAnalyzer
 from .validators import Validator, ContentTypeValidator, ImageDimensionValidator
 
 
-__version__ = '0.4.0-dev0'
+__version__ = '0.4.1'
 

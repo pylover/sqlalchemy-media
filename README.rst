@@ -145,6 +145,9 @@ Changelog
 
 Here you can see the full list of changes made on each sqlalchemy-media release.
 
+0.4.1 (2016-10-06)
+  - #54 Fixed.
+
 0.4.0 (2016-10-05)
   - ImageDimensionValidator: #14
   - WandAnalyzer: #52
