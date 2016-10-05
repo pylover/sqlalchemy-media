@@ -157,6 +157,8 @@ The thumbnail height is:
     9
 
 
+.. note:: If your delete an image using instructions bellow, all thumbnails will be deleted also.
+
 ..  warning:: Remember to commit the sqlalchemy's ``session`` after thumbnail generation to store the info, it's also
               can rollbacks the operation if transaction failed.
 
@@ -202,27 +204,35 @@ Overwriting a file is achieved by attaching an image by :meth:`.attach`
     Length: 10102
     Original filename: https://www.python.org/static/img/python-logo.png
 
-9. Delete Orphan:
------------------
 
-Another way to delete orphaned images is ``delete_orphan=True``:
+9. Deleting & Delete Orphan
+---------------------------
+
+Set the model's attribute to :data:`.None`, while ``delete_orphan=True`` passed to :class:`.StoreManager`.
 
 ..  testcode:: quickstart
 
     with StoreManager(session, delete_orphan=True):
-        old_filename = join(TEMP_PATH, person1.image.path)
+        deleted_filename = join(TEMP_PATH, person1.image.path)
+        person1.image = None
+        session.commit()
 
+        assert not exists(deleted_filename)
+
+
+Another way is to re-set the attribute using new instance:
+
+..  testcode:: quickstart
+
+    with StoreManager(session, delete_orphan=True):
         person1.image = Image.create_from('https://www.python.org/static/img/python-logo.png')
-
-        new_filename = join(TEMP_PATH, person1.image.path)
         session.commit()
 
         print('Content type:', person1.image.content_type)
         print('Extension:', person1.image.extension)
         print('Length:', person1.image.length)
         print('Original filename:', person1.image.original_filename)
-        assert not exists(old_filename)
-        assert exists(new_filename)
+
 
 ..  testoutput:: quickstart
 
