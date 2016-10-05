@@ -40,3 +40,9 @@ class ContentTypeValidator(Validator):
 
         if analyze_result['content_type'] not in self.content_types:
             raise ContentTypeValidationError(analyze_result['content_type'])
+
+
+class ImageSizeValidator(Validator):
+    """
+    Validates image size
+    """

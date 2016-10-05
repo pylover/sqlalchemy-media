@@ -20,36 +20,36 @@ sqlalchemy-media
 
 
 
-Attaching any files(Image, Video & etc ) into sqlalchemy models using configurable stores including FileSystemStore.
-The main idea comes from `dahlia's SQLAlchemy-ImageAttach <https://github.com/dahlia/sqlalchemy-imageattach>`_.
+
+
 
 See the `documentation <http://sqlalchemy-media.dobisel.com>`_ for full description.
 
 Why ?
 -----
-Nowadays, most of database applications are requested to allow users to upload and attach files with various types to
+Nowadays, most of the database applications are used to allow users to upload and attach files of various types to
 ORM models.
 
 Handling those jobs is not simple if you have to care about Security, High-Availability, Scalability, CDN and more
-things you may have already concerned. Accepting a file from public space, analysing, validating, processing(Normalizing)
-and making it available to public space again is the main goal of this project.
+things you may have already been concerned. Accepting a file from public space, analysing, validating,
+processing(Normalizing) and making it available to public space again is the main goal of this project.
 
-Sql-Alchemy is the best platform to implement these stuff on. It has the mutable types to manipulate the objects with
-any type in-place. why not ?
+Sql-Alchemy is the best platform for implementing this stuff. It has the SqlAlchemyMutable_ types facility to manipulate
+the objects with any type in-place. why not ?
+
+.. note:: The main idea comes from `dahlia's SQLAlchemy-ImageAttach <https://github.com/dahlia/sqlalchemy-imageattach>`_.
 
 Overview
 --------
 
- - Store and locate any file, track it by sqlalchemy models.
+ - Storing and locating any file, tracking it by sqlalchemy models.
  - Storage layer is completely separated from data model, with a simple api: (put, delete, open, locate)
- - Using any SqlAlchemy type. This achieved by using the
-   `SqlAlchemy Type Decorators <http://docs.sqlalchemy.org/en/latest/core/custom_types.html#typedecorator-recipes>`_.
- - Using `SqlAlchemy Mutable <http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html>`_.
- - Offering *delete_orphan* flag, to automatically delete files which orphaned via attribute set or delete from
+ - Using any SqlAlchemy data type which interfaces Python dictionary. This is achieved by using the
+   SqlAlchemyTypeDecorators_ and SqlAlchemyMutable_.
+ - Offering ``delete_orphan`` flag to automatically delete files which orphaned via attribute set or delete from
    collections, or objects leaved in memory alone! by setting it's last pointer to None.
  - Attaching files from Url, LocalFileSystem and Streams.
- - Extracting the file's mimetype from the backend stream if possible, using python's built-in
-   `mimetypes <https://docs.python.org/3.5/library/mimetypes.html>`_ module
+ - Extracting the file's mimetype from the backend stream if possible, using python's built-in mimetypes_ module.
  - Limiting file size(min, max), to prevent DOS attacks.
  - Adding timestamp in url to help caching.
  - Using python type hinting to annotate arguments. So currently python3.5 and higher is supported.
@@ -58,7 +58,7 @@ Overview
 Quick Start
 -----------
 
-Here a simple example to how to use this library:
+Here is a simple example to see how to use this library:
 ::
 
      import json
@@ -122,7 +122,7 @@ Here a simple example to how to use this library:
              assert exists(path)
 
 
-Will produces::
+Will produce::
 
      1
      {'content_type': 'image/png',
@@ -135,3 +135,10 @@ Will produces::
      http://static.example.org/images/image-f4bc170c-bff3-4d21-9ef1-b8e1aeed11f2-www_python_org_static_img_python-logo@2x.png?_ts=1475610373.1160471
 
 
+
+
+.. _SqlAlchemyMutable <http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html>:
+
+.. _SqlAlchemyTypeDecorators <http://docs.sqlalchemy.org/en/latest/core/custom_types.html#typedecorator-recipes>:
+
+.. _mimetypes <https://docs.python.org/3.5/library/mimetypes.html>:
