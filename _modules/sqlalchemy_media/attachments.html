@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.attachments &mdash; sqlalchemy-media 0.3.0 documentation</title>
+  <title>sqlalchemy_media.attachments &mdash; sqlalchemy-media 0.4.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.3.0 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.4.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.3
+                0.4
               </div>
             
           
@@ -133,7 +133,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for sqlalchemy_media.attachments</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Hashable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Hashable</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">uuid</span>
 <span class="kn">import</span> <span class="nn">time</span>
@@ -321,7 +321,7 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">original_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Original file name, may provided by user within :attr:`cgi.FieldStorage.filename`, url or Physical filename.</span>
+<span class="sd">        Original file name, may be provided by user within :attr:`cgi.FieldStorage.filename`, url or Physical filename.</span>
 
 <span class="sd">        :type: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -370,13 +370,14 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Deletes the file.</span>
 
-<span class="sd">        .. warning:: This operation can not be roll-backed.So if you want to delete a file, just set it&#39;s to</span>
-<span class="sd">                     :const:`None`, set it by new :class:`.Attachment` instance.</span>
+<span class="sd">        .. warning:: This operation can not be roll-backed.So if you want to delete a file, just set it to</span>
+<span class="sd">                     :const:`None` or set it by new :class:`.Attachment` instance, while passed ``delete_orphan=True``</span>
+<span class="sd">                     in :class:`.StoreManager` :</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">get_store</span><span class="p">()</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Attachment.attach"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Attachment.attach">[docs]</a>    <span class="k">def</span> <span class="nf">attach</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attachable</span><span class="p">:</span> <span class="n">Attachable</span><span class="p">,</span> <span class="n">content_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">original_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="n">store_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Attachment&#39;</span><span class="p">:</span>
+<div class="viewcode-block" id="Attachment.attach"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Attachment.attach">[docs]</a>    <span class="k">def</span> <span class="nf">attach</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attachable</span><span class="p">:</span> <span class="n">Attachable</span><span class="p">,</span> <span class="n">content_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">original_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">store_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Attachment&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Attach a file. if the session roll-backed, all operations will be rolled-back.</span>
 <span class="sd">        The old file will be deleted after commit, if any.</span>
@@ -400,8 +401,6 @@
 
 <span class="sd">            - This method will returns the self. it&#39;s useful to chain method calls on object within single line.</span>
 <span class="sd">            - Additional ``kwargs`` are accepted to be stored in database alongside the file&#39;s metadata.</span>
-
-
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -692,6 +691,8 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Representing an image thumbnail.</span>
 
+<span class="sd">    You may use :meth:`.generate_thumbnail` and or :meth:`.get_thumbnail` with ``auto_generate=True`` to get one.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">__directory__</span> <span class="o">=</span> <span class="s1">&#39;thumbnails&#39;</span>
@@ -721,9 +722,9 @@
     <span class="n">__thumbnail_type__</span> <span class="o">=</span> <span class="n">Thumbnail</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">thumbnails</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">Thumbnail</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">thumbnails</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Thumbnail</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        A ``Dict[Tuple[int, int, float], Thumbnail]``, to hold thumbnails.</span>
+<span class="sd">        A ``List[Tuple[int, int, float, Thumbnail]]``, to hold thumbnails.</span>
 
 <span class="sd">        You may use :meth:`.generate_thumbnail` and or :meth:`.get_thumbnail` with ``auto_generate=True`` to fill it.</span>
 
@@ -738,8 +739,8 @@
 
 <span class="sd">        Generates and stores a thumbnail with the given arguments.</span>
 
-<span class="sd">        .. warning:: If non or more than one of the ``width``, ``height`` and or ``ratio`` are given, :exc:`ValueError` will be</span>
-<span class="sd">                     raised.</span>
+<span class="sd">        .. warning:: If non or more than one of the ``width``, ``height`` and or ``ratio`` are given, :exc:`ValueError`</span>
+<span class="sd">                     will be raised.</span>
 
 <span class="sd">        :param width: The width of the thumbnail.</span>
 <span class="sd">        :param height: The Height of the thumbnail.</span>
@@ -782,15 +783,16 @@
 
         <span class="n">thumbnail_buffer</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">thumbnails</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;thumbnails&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;thumbnails&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="n">ratio</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">width</span> <span class="o">/</span> <span class="n">original_size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ratio_precision</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">thumbnails</span><span class="p">[(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">ratio</span><span class="p">)]</span> <span class="o">=</span> <span class="n">thumbnail</span> <span class="o">=</span> <span class="n">Thumbnail</span><span class="o">.</span><span class="n">create_from</span><span class="p">(</span>
+        <span class="n">thumbnail</span> <span class="o">=</span> <span class="n">Thumbnail</span><span class="o">.</span><span class="n">create_from</span><span class="p">(</span>
             <span class="n">thumbnail_buffer</span><span class="p">,</span>
             <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;image/jpeg&#39;</span><span class="p">,</span>
             <span class="n">extension</span><span class="o">=</span><span class="s1">&#39;.jpg&#39;</span><span class="p">,</span>
             <span class="n">dimension</span><span class="o">=</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thumbnails</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">thumbnail</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">thumbnail</span></div>
 
@@ -822,7 +824,7 @@
             <span class="n">ratio</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">ratio</span><span class="p">,</span> <span class="n">ratio_precision</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">thumbnails</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">for</span> <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">),</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">thumbnails</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">thumbnails</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">w</span> <span class="o">==</span> <span class="n">width</span> <span class="ow">or</span> <span class="n">h</span> <span class="o">==</span> <span class="n">height</span> <span class="ow">or</span> <span class="nb">round</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">ratio_precision</span><span class="p">)</span> <span class="o">==</span> <span class="n">ratio</span><span class="p">:</span>
                     <span class="k">return</span> <span class="n">t</span>
 
@@ -846,7 +848,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2015, Vahid Mardani.
+        &copy; Copyright 2016, Vahid Mardani.
 
     </p>
   </div>
@@ -868,7 +870,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.3.0',
+            VERSION:'0.4.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

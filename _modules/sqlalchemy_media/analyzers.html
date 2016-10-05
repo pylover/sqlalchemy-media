@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.analyzers &mdash; sqlalchemy-media 0.3.0 documentation</title>
+  <title>sqlalchemy_media.analyzers &mdash; sqlalchemy-media 0.4.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.3.0 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.4.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.3
+                0.4
               </div>
             
           
@@ -135,7 +135,7 @@
   <h1>Source code for sqlalchemy_media.analyzers</h1><div class="highlight"><pre>
 <span></span>
 <span class="kn">from</span> <span class="nn">sqlalchemy_media.descriptors</span> <span class="k">import</span> <span class="n">BaseDescriptor</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.optionals</span> <span class="k">import</span> <span class="n">magic_mime_from_buffer</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.optionals</span> <span class="k">import</span> <span class="n">magic_mime_from_buffer</span><span class="p">,</span> <span class="n">ensure_wand</span>
 
 
 <div class="viewcode-block" id="Analyzer"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.analyzers.Analyzer">[docs]</a><span class="k">class</span> <span class="nc">Analyzer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -146,7 +146,7 @@
 
 <div class="viewcode-block" id="Analyzer.analyze"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.analyzers.Analyzer.analyze">[docs]</a>    <span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">:</span> <span class="n">BaseDescriptor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Should be overridden in inherited class and analyzes the :class:`.BaseDescriptor` instance given in constructor.</span>
+<span class="sd">        Should be overridden in inherited class and analyzes the given :class:`.BaseDescriptor` instance.</span>
 
 <span class="sd">        .. note:: An instance of :exc:`.AnalyzeError` or sub-types may raised</span>
 
@@ -158,16 +158,79 @@
 
 <div class="viewcode-block" id="MagicAnalyzer"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.analyzers.MagicAnalyzer">[docs]</a><span class="k">class</span> <span class="nc">MagicAnalyzer</span><span class="p">(</span><span class="n">Analyzer</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Analyze the file using the libmagic and it&#39;s python-wrapper: python-magic.</span>
+<span class="sd">    Analyze the file using the libmagic and it&#39;s Python wrapper: ``python-magic``.</span>
 
-<span class="sd">    .. warning:: You should install the python-magic in order, to use this class. otherwise, an</span>
+<span class="sd">    .. warning:: You should install the ``python-magic`` in order, to use this class. otherwise, an</span>
 <span class="sd">                 :exc:`.OptionalPackageRequirementError` will be raised.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">:</span> <span class="n">BaseDescriptor</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">:</span> <span class="n">BaseDescriptor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
             <span class="n">content_type</span><span class="o">=</span><span class="n">magic_mime_from_buffer</span><span class="p">(</span><span class="n">descriptor</span><span class="o">.</span><span class="n">get_header_buffer</span><span class="p">())</span>
         <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WandAnalyzer"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.analyzers.WandAnalyzer">[docs]</a><span class="k">class</span> <span class="nc">WandAnalyzer</span><span class="p">(</span><span class="n">Analyzer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    .. versionadded:: 0.4.0</span>
+
+<span class="sd">    Analyze an image using ``wand``.</span>
+
+<span class="sd">    .. warning:: You should install the ``wand`` in order, to use this class. otherwise, an</span>
+<span class="sd">                 :exc:`.OptionalPackageRequirementError` will be raised.</span>
+
+<span class="sd">    Use it as follow</span>
+
+<span class="sd">    ..  testcode::</span>
+
+<span class="sd">        from sqlalchemy import TypeDecorator, Unicode, Column, Integer</span>
+<span class="sd">        from sqlalchemy.ext.declarative import declarative_base</span>
+<span class="sd">        from sqlalchemy.dialects.postgresql import JSONB</span>
+
+<span class="sd">        from sqlalchemy_media import Image, WandAnalyzer</span>
+
+
+<span class="sd">        class ProfileImage(Image):</span>
+<span class="sd">           __analyzer__ = WandAnalyzer()</span>
+
+<span class="sd">        Base = declarative_base()</span>
+
+<span class="sd">        class Member(Base):</span>
+<span class="sd">            __tablename__ = &#39;person&#39;</span>
+
+<span class="sd">            id = Column(Integer, primary_key=True)</span>
+<span class="sd">            avatar = Column(ProfileImage.as_mutable(JSONB))</span>
+
+<span class="sd">    The use it inside :class:`.ContextManager` context:</span>
+
+<span class="sd">    ::</span>
+
+<span class="sd">        from sqlalchemy_media import ContextManager</span>
+
+<span class="sd">        session = &lt;....&gt;</span>
+
+<span class="sd">        with ContextManager(session):</span>
+<span class="sd">            me = Member(avatar=ProfileImage.create_from(&#39;donkey.jpg&#39;))</span>
+<span class="sd">            print(me.avatar.width)</span>
+<span class="sd">            print(me.avatar.height)</span>
+<span class="sd">            print(me.avatar.content_type)</span>
+
+<span class="sd">    .. note:: This object currently setects ``width``, ``height`` and ``mimetype`` of the image.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">:</span> <span class="n">BaseDescriptor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">ensure_wand</span><span class="p">()</span>
+        <span class="c1"># noinspection PyPackageRequirements</span>
+        <span class="kn">from</span> <span class="nn">wand.image</span> <span class="k">import</span> <span class="n">Image</span> <span class="k">as</span> <span class="n">WandImage</span>
+
+        <span class="k">with</span> <span class="n">WandImage</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">descriptor</span><span class="p">)</span><span class="k">as</span> <span class="n">img</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">width</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">width</span><span class="p">,</span>
+                <span class="n">height</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">height</span><span class="p">,</span>
+                <span class="n">content_type</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">mimetype</span>
+            <span class="p">)</span></div>
 </pre></div>
 
            </div>
@@ -179,7 +242,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2015, Vahid Mardani.
+        &copy; Copyright 2016, Vahid Mardani.
 
     </p>
   </div>
@@ -201,7 +264,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.3.0',
+            VERSION:'0.4.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

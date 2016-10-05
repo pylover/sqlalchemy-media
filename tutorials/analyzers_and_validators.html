@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Playing with Analyzers and Validators &mdash; sqlalchemy-media 0.3.0 documentation</title>
+  <title>Playing with Analyzers and Validators &mdash; sqlalchemy-media 0.4.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.3.0 documentation" href="../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.4.0 documentation" href="../index.html"/>
         <link rel="up" title="Tutorials" href="index.html"/>
         <link rel="next" title="API Reference" href="../api.html"/>
         <link rel="prev" title="Image &amp; Thumbnails" href="image.html"/> 
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.3
+                0.4
               </div>
             
           
@@ -136,7 +136,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../_sources/tutorials/content_type_restriction.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/tutorials/analyzers_and_validators.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -153,10 +153,13 @@
 <h2>1. CV<a class="headerlink" href="#cv" title="Permalink to this headline">¶</a></h2>
 <p>For the first, let to create a type called <code class="docutils literal"><span class="pre">CV</span></code></p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy_media</span> <span class="k">import</span> <span class="n">File</span><span class="p">,</span> <span class="n">MagicAnalyzer</span><span class="p">,</span> <span class="n">ContentTypeValidator</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.constants</span> <span class="k">import</span> <span class="n">MB</span><span class="p">,</span> <span class="n">KB</span>
 
 <span class="k">class</span> <span class="nc">CV</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
     <span class="n">__analyzer__</span> <span class="o">=</span> <span class="n">MagicAnalyzer</span><span class="p">()</span>
     <span class="n">__validate__</span> <span class="o">=</span> <span class="n">ContentTypeValidator</span><span class="p">([</span><span class="s1">&#39;application/pdf&#39;</span><span class="p">,</span> <span class="s1">&#39;image/jpeg&#39;</span><span class="p">])</span>
+    <span class="n">__max_length__</span> <span class="o">=</span> <span class="mi">6</span><span class="o">*</span><span class="n">MB</span>
+    <span class="n">__min_length__</span> <span class="o">=</span> <span class="mi">10</span><span class="o">*</span><span class="n">KB</span>
 </pre></div>
 </div>
 </div>
@@ -232,6 +235,10 @@
 <div class="highlight-none"><div class="highlight"><pre><span></span>ContentTypeValidationError is raised. It&#39;s so bad!
 </pre></div>
 </div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="../api.html#sqlalchemy_media.analyzers.WandAnalyzer" title="sqlalchemy_media.analyzers.WandAnalyzer"><code class="xref py py-class docutils literal"><span class="pre">WandAnalyzer</span></code></a> and <a class="reference internal" href="../api.html#sqlalchemy_media.validators.ImageDimensionValidator" title="sqlalchemy_media.validators.ImageDimensionValidator"><code class="xref py py-class docutils literal"><span class="pre">ImageDimensionValidator</span></code></a></p>
+</div>
 </div>
 </div>
 
@@ -254,7 +261,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2015, Vahid Mardani.
+        &copy; Copyright 2016, Vahid Mardani.
 
     </p>
   </div>
@@ -276,7 +283,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.3.0',
+            VERSION:'0.4.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

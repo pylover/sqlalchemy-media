@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.stores &mdash; sqlalchemy-media 0.3.0 documentation</title>
+  <title>sqlalchemy_media.stores &mdash; sqlalchemy-media 0.4.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.3.0 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.4.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.3
+                0.4
               </div>
             
           
@@ -214,7 +214,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>  <span class="c1"># pragma: no cover</span></div>
 
-<div class="viewcode-block" id="Store.locate"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.Store.locate">[docs]</a>    <span class="k">def</span> <span class="nf">locate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attachment</span><span class="p">:</span> <span class="s1">&#39;Attachment&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="Store.locate"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.Store.locate">[docs]</a>    <span class="k">def</span> <span class="nf">locate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attachment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **[Abstract]**</span>
 
@@ -247,7 +247,13 @@
             <span class="n">makedirs</span><span class="p">(</span><span class="n">physical_directory</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">physical_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">target_file</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">copy_stream</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">target_file</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chunk_size</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="n">min_length</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="n">max_length</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">copy_stream</span><span class="p">(</span>
+                <span class="n">stream</span><span class="p">,</span>
+                <span class="n">target_file</span><span class="p">,</span>
+                <span class="n">chunk_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chunk_size</span><span class="p">,</span>
+                <span class="n">min_length</span><span class="o">=</span><span class="n">min_length</span><span class="p">,</span>
+                <span class="n">max_length</span><span class="o">=</span><span class="n">max_length</span>
+            <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_physical_path</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
@@ -255,7 +261,7 @@
     <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Stream</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_physical_path</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">locate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attachment</span><span class="p">:</span> <span class="s1">&#39;Attachment&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">locate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attachment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="n">attachment</span><span class="o">.</span><span class="n">path</span><span class="p">)</span></div>
 
 
@@ -322,7 +328,7 @@
 
 <div class="viewcode-block" id="StoreManager.__exit__"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.__exit__">[docs]</a>    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Destore the context, pop itself from context stack and unbind all events.</span>
+<span class="sd">        Destroy the context, pop itself from context stack and unbind all events.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_context_stacks</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">get_context_id</span><span class="p">(),</span> <span class="p">[])</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">unbind_events</span><span class="p">()</span>
@@ -368,7 +374,7 @@
         <span class="n">cls</span><span class="o">.</span><span class="n">_default</span> <span class="o">=</span> <span class="n">key</span></div>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="StoreManager.register"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">store_factory</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="StoreManager.register"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">store_factory</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Registers the store factory into stores registry, use :meth:`unregister` to remove it.</span>
 
@@ -376,7 +382,6 @@
 <span class="sd">        :param store_factory: A callable that returns an instance of :class:`.Store`.</span>
 <span class="sd">        :param default: If :data:`True` the given store will be marked as default also. in addition you can use</span>
 <span class="sd">                        :meth:`.make_default` to mark a store as default.</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_factories</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">store_factory</span>
         <span class="k">if</span> <span class="n">default</span><span class="p">:</span>
@@ -443,7 +448,7 @@
         <span class="n">event</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">,</span> <span class="s1">&#39;after_soft_rollback&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_rollback</span><span class="p">)</span>
         <span class="n">event</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">,</span> <span class="s1">&#39;persistent_to_deleted&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_delete</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="StoreManager.orphaned"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.orphaned">[docs]</a>    <span class="k">def</span> <span class="nf">orphaned</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">attachments</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="s1">&#39;Attachment&#39;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="StoreManager.orphaned"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.orphaned">[docs]</a>    <span class="k">def</span> <span class="nf">orphaned</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">attachments</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Mark one or more attachment(s) orphaned, So if :attr:`delete_orphan` is :data:`.True`, the attachment(s) will</span>
 <span class="sd">        be deleted from store after session commit.</span>
@@ -452,7 +457,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">delete_orphan</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_files_orphaned</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">attachments</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="StoreManager.adopted"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.adopted">[docs]</a>    <span class="k">def</span> <span class="nf">adopted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">attachments</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="s1">&#39;Attachment&#39;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="StoreManager.adopted"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.adopted">[docs]</a>    <span class="k">def</span> <span class="nf">adopted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">attachments</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Opposite of :meth:`.orphaned`</span>
 
@@ -563,7 +568,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2015, Vahid Mardani.
+        &copy; Copyright 2016, Vahid Mardani.
 
     </p>
   </div>
@@ -585,7 +590,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.3.0',
+            VERSION:'0.4.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

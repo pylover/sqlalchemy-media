@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy-media &mdash; sqlalchemy-media 0.3.0 documentation</title>
+  <title>sqlalchemy-media &mdash; sqlalchemy-media 0.4.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.3.0 documentation" href="#"/>
+    <link rel="top" title="sqlalchemy-media 0.4.0 documentation" href="#"/>
         <link rel="next" title="Tutorials" href="tutorials/index.html"/> 
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.3
+                0.4
               </div>
             
           
@@ -140,6 +140,43 @@
 <a class="reference external image-reference" href="https://coveralls.io/github/pylover/sqlalchemy-media?branch=master"><img alt="https://coveralls.io/repos/github/pylover/sqlalchemy-media/badge.svg?branch=master" src="https://coveralls.io/repos/github/pylover/sqlalchemy-media/badge.svg?branch=master" /></a>
 <a class="reference external image-reference" href="https://github.com/pylover/sqlalchemy-media/blob/master/LICENSE"><img alt="https://img.shields.io/badge/license-GPLv3-brightgreen.svg" src="https://img.shields.io/badge/license-GPLv3-brightgreen.svg" /></a>
 <a class="reference external image-reference" href="https://github.com/pylover/sqlalchemy-media"><img alt="https://img.shields.io/github/stars/pylover/sqlalchemy-media.svg?style=social&amp;label=Star" src="https://img.shields.io/github/stars/pylover/sqlalchemy-media.svg?style=social&amp;label=Star" /></a>
+<div class="section" id="why">
+<h2>Why ?<a class="headerlink" href="#why" title="Permalink to this headline">¶</a></h2>
+<p>Nowadays, most of the database applications are used to allow users to upload and attach files of various types to
+ORM models.</p>
+<p>Handling those jobs is not simple if you have to care about Security, High-Availability, Scalability, CDN and more
+things you may have already been concerned. Accepting a file from public space, analysing, validating,
+processing(Normalizing) and making it available to public space again is the main goal of this project.</p>
+<p>Sql-Alchemy is the best platform for implementing this stuff. It has the
+<a class="reference external" href="http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html">SqlAlchemy Mutable</a> types facility to manipulate
+the objects with any type in-place. why not ?</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The main idea comes from <a class="reference external" href="https://github.com/dahlia/sqlalchemy-imageattach">dahlia&#8217;s SQLAlchemy-ImageAttach</a>.</p>
+</div>
+</div>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>Storing and locating any file, tracking it by sqlalchemy models.</li>
+<li>Storage layer is completely separated from data model, with a simple api: (put, delete, open, locate)</li>
+<li>Using any SqlAlchemy data type which interfaces Python dictionary. This is achieved by using the
+<a class="reference external" href="http://docs.sqlalchemy.org/en/latest/core/custom_types.html#typedecorator-recipes">SqlAlchemy Type Decorators</a> and
+<a class="reference external" href="http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html">SqlAlchemy Mutable</a>.</li>
+<li>Offering <code class="docutils literal"><span class="pre">delete_orphan</span></code> flag to automatically delete files which orphaned via attribute set or delete from
+collections, or objects leaved in memory alone! by setting it&#8217;s last pointer to None.</li>
+<li>Attaching files from Url, LocalFileSystem and Streams.</li>
+<li>Extracting the file&#8217;s mimetype from the backend stream if possible, using <code class="docutils literal"><span class="pre">magic</span></code> module.</li>
+<li>Limiting file size(min, max), to prevent DOS attacks.</li>
+<li>Adding timestamp in url to help caching.</li>
+<li>Using python type hinting to annotate arguments. So currently python3.5 and higher is supported.</li>
+<li>Auto generating thumbnails, using <code class="docutils literal"><span class="pre">width</span></code>, <code class="docutils literal"><span class="pre">height</span></code> and or <code class="docutils literal"><span class="pre">ratio</span></code>.</li>
+<li>Analyzing images using <code class="docutils literal"><span class="pre">wand</span></code>.</li>
+<li>Validating <code class="docutils literal"><span class="pre">mimetype</span></code>, <code class="docutils literal"><span class="pre">width</span></code>, <code class="docutils literal"><span class="pre">height</span></code> and image <code class="docutils literal"><span class="pre">ratio</span></code>.</li>
+</ul>
+</div></blockquote>
+</div>
 <div class="section" id="contents">
 <h2>Contents:<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
@@ -154,13 +191,14 @@
 <li class="toctree-l3"><a class="reference internal" href="tutorials/image.html#db-schema">5. DB Schema</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tutorials/image.html#action">6. Action !</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tutorials/image.html#thumbnails">7. Thumbnails</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials/image.html#delete-orphan">8. Delete Orphan:</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="tutorials/content_type_restriction.html">Playing with Analyzers and Validators</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="tutorials/content_type_restriction.html#cv">1. CV</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tutorials/content_type_restriction.html#creating-workbench">2. Creating workbench</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tutorials/content_type_restriction.html#model">3. Model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tutorials/content_type_restriction.html#submitting-files">4. Submitting files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/analyzers_and_validators.html">Playing with Analyzers and Validators</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials/analyzers_and_validators.html#cv">1. CV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials/analyzers_and_validators.html#creating-workbench">2. Creating workbench</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials/analyzers_and_validators.html#model">3. Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials/analyzers_and_validators.html#submitting-files">4. Submitting files</a></li>
 </ul>
 </li>
 </ul>
@@ -198,11 +236,13 @@
 <li class="toctree-l2"><a class="reference internal" href="api.html#module-sqlalchemy_media.analyzers">analyzers Module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api.html#analyzer">Analyzer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#magicanalyzer">MagicAnalyzer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#wandanalyzer">WandAnalyzer</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#module-sqlalchemy_media.validators">validators Module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api.html#validator">Validator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#contenttypevalidator">ContentTypeValidator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#imagedimensionvalidator">ImageDimensionValidator</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#module-sqlalchemy_media.exceptions">exceptions Module</a></li>
@@ -240,7 +280,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2015, Vahid Mardani.
+        &copy; Copyright 2016, Vahid Mardani.
 
     </p>
   </div>
@@ -262,7 +302,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.3.0',
+            VERSION:'0.4.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Image &amp; Thumbnails &mdash; sqlalchemy-media 0.3.0 documentation</title>
+  <title>Image &amp; Thumbnails &mdash; sqlalchemy-media 0.4.0 documentation</title>
   
 
   
@@ -35,9 +35,9 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.3.0 documentation" href="../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.4.0 documentation" href="../index.html"/>
         <link rel="up" title="Tutorials" href="index.html"/>
-        <link rel="next" title="Playing with Analyzers and Validators" href="content_type_restriction.html"/>
+        <link rel="next" title="Playing with Analyzers and Validators" href="analyzers_and_validators.html"/>
         <link rel="prev" title="Tutorials" href="index.html"/> 
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.3
+                0.4
               </div>
             
           
@@ -98,9 +98,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#db-schema">5. DB Schema</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#action">6. Action !</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#thumbnails">7. Thumbnails</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#delete-orphan">8. Delete Orphan:</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="content_type_restriction.html">Playing with Analyzers and Validators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analyzers_and_validators.html">Playing with Analyzers and Validators</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
@@ -279,6 +280,7 @@ Original filename: https://www.python.org/static/img/python-logo@2x.png
     <span class="k">assert</span> <span class="n">exists</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">TEMP_PATH</span><span class="p">,</span> <span class="n">thumbnail</span><span class="o">.</span><span class="n">path</span><span class="p">))</span>
 </pre></div>
 </div>
+<p>The thumbnail height is:</p>
 <div class="highlight-none"><div class="highlight"><pre><span></span>9
 </pre></div>
 </div>
@@ -287,8 +289,63 @@ Original filename: https://www.python.org/static/img/python-logo@2x.png
 <p class="last">Remember to commit the sqlalchemy&#8217;s <code class="docutils literal"><span class="pre">session</span></code> after thumbnail generation to store the info, it&#8217;s also
 can rollbacks the operation if transaction failed.</p>
 </div>
+<p>Generating thumbnail with <code class="docutils literal"><span class="pre">ratio</span></code></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">exists</span><span class="p">,</span> <span class="n">join</span>
+
+<span class="k">with</span> <span class="n">StoreManager</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
+    <span class="n">thumbnail</span> <span class="o">=</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">get_thumbnail</span><span class="p">(</span><span class="n">ratio</span><span class="o">=.</span><span class="mi">3</span><span class="p">,</span> <span class="n">auto_generate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">thumbnail</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="n">thumbnail</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">exists</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">TEMP_PATH</span><span class="p">,</span> <span class="n">thumbnail</span><span class="o">.</span><span class="n">path</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-none"><div class="highlight"><pre><span></span>174 49
+</pre></div>
+</div>
 <p>Call <code class="docutils literal"><span class="pre">person1.image.locate()</span></code> or <code class="docutils literal"><span class="pre">person1.image.get_thumbnail(width=32,</span> <span class="pre">auto_generate=True).locate()</span></code> to get the
 files URL in store.</p>
+</div>
+<div class="section" id="delete-orphan">
+<h2>8. Delete Orphan:<a class="headerlink" href="#delete-orphan" title="Permalink to this headline">¶</a></h2>
+<p>Overwriting a file is achieved by attaching an image over the attachment and setting <code class="docutils literal"><span class="pre">delete_orphan=True</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">StoreManager</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">delete_orphan</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="s1">&#39;https://www.python.org/static/img/python-logo.png&#39;</span><span class="p">)</span>
+    <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Content type:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">content_type</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Extension:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">extension</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Length:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Original filename:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">original_filename</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none"><div class="highlight"><pre><span></span>Content type: image/png
+Extension: .png
+Length: 10102
+Original filename: https://www.python.org/static/img/python-logo.png
+</pre></div>
+</div>
+<p>It&#8217;s also works by setting new attachment:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">StoreManager</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">delete_orphan</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">old_filename</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">TEMP_PATH</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="n">person1</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">create_from</span><span class="p">(</span><span class="s1">&#39;https://www.python.org/static/img/python-logo.png&#39;</span><span class="p">)</span>
+
+    <span class="n">new_filename</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">TEMP_PATH</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Content type:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">content_type</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Extension:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">extension</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Length:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Original filename:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">original_filename</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">old_filename</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">exists</span><span class="p">(</span><span class="n">new_filename</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none"><div class="highlight"><pre><span></span>Content type: image/png
+Extension: .png
+Length: 10102
+Original filename: https://www.python.org/static/img/python-logo.png
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -299,7 +356,7 @@ files URL in store.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="content_type_restriction.html" class="btn btn-neutral float-right" title="Playing with Analyzers and Validators" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="analyzers_and_validators.html" class="btn btn-neutral float-right" title="Playing with Analyzers and Validators" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral" title="Tutorials" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -311,7 +368,7 @@ files URL in store.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2015, Vahid Mardani.
+        &copy; Copyright 2016, Vahid Mardani.
 
     </p>
   </div>
@@ -333,7 +390,7 @@ files URL in store.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.3.0',
+            VERSION:'0.4.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

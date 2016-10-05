@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; sqlalchemy-media 0.3.0 documentation</title>
+  <title>API Reference &mdash; sqlalchemy-media 0.4.0 documentation</title>
   
 
   
@@ -35,8 +35,8 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.3.0 documentation" href="index.html"/>
-        <link rel="prev" title="Playing with Analyzers and Validators" href="tutorials/content_type_restriction.html"/> 
+    <link rel="top" title="sqlalchemy-media 0.4.0 documentation" href="index.html"/>
+        <link rel="prev" title="Playing with Analyzers and Validators" href="tutorials/analyzers_and_validators.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.3
+                0.4
               </div>
             
           
@@ -120,11 +120,13 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.analyzers">analyzers Module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#analyzer">Analyzer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#magicanalyzer">MagicAnalyzer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#wandanalyzer">WandAnalyzer</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.validators">validators Module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#validator">Validator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#contenttypevalidator">ContentTypeValidator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#imagedimensionvalidator">ImageDimensionValidator</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.exceptions">exceptions Module</a></li>
@@ -316,8 +318,9 @@ will overwritten by the given new one.</li>
 <dd><p>Deletes the file.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">This operation can not be roll-backed.So if you want to delete a file, just set it&#8217;s to
-<code class="xref py py-const docutils literal"><span class="pre">None</span></code>, set it by new <a class="reference internal" href="#sqlalchemy_media.attachments.Attachment" title="sqlalchemy_media.attachments.Attachment"><code class="xref py py-class docutils literal"><span class="pre">Attachment</span></code></a> instance.</p>
+<p class="last">This operation can not be roll-backed.So if you want to delete a file, just set it to
+<code class="xref py py-const docutils literal"><span class="pre">None</span></code> or set it by new <a class="reference internal" href="#sqlalchemy_media.attachments.Attachment" title="sqlalchemy_media.attachments.Attachment"><code class="xref py py-class docutils literal"><span class="pre">Attachment</span></code></a> instance, while passed <code class="docutils literal"><span class="pre">delete_orphan=True</span></code>
+in <a class="reference internal" href="#sqlalchemy_media.stores.StoreManager" title="sqlalchemy_media.stores.StoreManager"><code class="xref py py-class docutils literal"><span class="pre">StoreManager</span></code></a> :</p>
 </div>
 </dd></dl>
 
@@ -409,7 +412,7 @@ will overwritten by the given new one.</li>
 <dl class="attribute">
 <dt id="sqlalchemy_media.attachments.Attachment.original_filename">
 <code class="descname">original_filename</code><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.original_filename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Original file name, may provided by user within <code class="xref py py-attr docutils literal"><span class="pre">cgi.FieldStorage.filename</span></code>, url or Physical filename.</p>
+<dd><p>Original file name, may be provided by user within <code class="xref py py-attr docutils literal"><span class="pre">cgi.FieldStorage.filename</span></code>, url or Physical filename.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -686,8 +689,8 @@ If available, else empty string (&#8216;&#8217;) will be returned</p>
 <p>Generates and stores a thumbnail with the given arguments.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">If non or more than one of the <code class="docutils literal"><span class="pre">width</span></code>, <code class="docutils literal"><span class="pre">height</span></code> and or <code class="docutils literal"><span class="pre">ratio</span></code> are given, <a class="reference external" href="https://docs.python.org/3.5/library/exceptions.html#ValueError" title="(in Python v3.5)"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code></a> will be
-raised.</p>
+<p class="last">If non or more than one of the <code class="docutils literal"><span class="pre">width</span></code>, <code class="docutils literal"><span class="pre">height</span></code> and or <code class="docutils literal"><span class="pre">ratio</span></code> are given, <a class="reference external" href="https://docs.python.org/3.5/library/exceptions.html#ValueError" title="(in Python v3.5)"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code></a>
+will be raised.</p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -746,7 +749,7 @@ thumbnails.</p>
 <dl class="attribute">
 <dt id="sqlalchemy_media.attachments.Image.thumbnails">
 <code class="descname">thumbnails</code><a class="headerlink" href="#sqlalchemy_media.attachments.Image.thumbnails" title="Permalink to this definition">¶</a></dt>
-<dd><p>A <code class="docutils literal"><span class="pre">Dict[Tuple[int,</span> <span class="pre">int,</span> <span class="pre">float],</span> <span class="pre">Thumbnail]</span></code>, to hold thumbnails.</p>
+<dd><p>A <code class="docutils literal"><span class="pre">List[Tuple[int,</span> <span class="pre">int,</span> <span class="pre">float,</span> <span class="pre">Thumbnail]]</span></code>, to hold thumbnails.</p>
 <p>You may use <a class="reference internal" href="#sqlalchemy_media.attachments.Image.generate_thumbnail" title="sqlalchemy_media.attachments.Image.generate_thumbnail"><code class="xref py py-meth docutils literal"><span class="pre">generate_thumbnail()</span></code></a> and or <a class="reference internal" href="#sqlalchemy_media.attachments.Image.get_thumbnail" title="sqlalchemy_media.attachments.Image.get_thumbnail"><code class="xref py py-meth docutils literal"><span class="pre">get_thumbnail()</span></code></a> with <code class="docutils literal"><span class="pre">auto_generate=True</span></code> to fill it.</p>
 </dd></dl>
 
@@ -760,6 +763,7 @@ thumbnails.</p>
 <em class="property">class </em><code class="descclassname">sqlalchemy_media.attachments.</code><code class="descname">Thumbnail</code><a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Thumbnail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Thumbnail" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.attachments.BaseImage" title="sqlalchemy_media.attachments.BaseImage"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.attachments.BaseImage</span></code></a></p>
 <p>Representing an image thumbnail.</p>
+<p>You may use <a class="reference internal" href="#sqlalchemy_media.attachments.Image.generate_thumbnail" title="sqlalchemy_media.attachments.Image.generate_thumbnail"><code class="xref py py-meth docutils literal"><span class="pre">generate_thumbnail()</span></code></a> and or <a class="reference internal" href="#sqlalchemy_media.attachments.Image.get_thumbnail" title="sqlalchemy_media.attachments.Image.get_thumbnail"><code class="xref py py-meth docutils literal"><span class="pre">get_thumbnail()</span></code></a> with <code class="docutils literal"><span class="pre">auto_generate=True</span></code> to get one.</p>
 </dd></dl>
 
 </div>
@@ -871,7 +875,7 @@ called many times before the read method has been called on not seekable streams
 
 <dl class="method">
 <dt id="sqlalchemy_media.descriptors.BaseDescriptor.read">
-<code class="descname">read</code><span class="sig-paren">(</span><em>size: int</em><span class="sig-paren">)</span> &rarr; bytes<a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#BaseDescriptor.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.BaseDescriptor.read" title="Permalink to this definition">¶</a></dt>
+<code class="descname">read</code><span class="sig-paren">(</span><em>size: int = None</em><span class="sig-paren">)</span> &rarr; bytes<a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#BaseDescriptor.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.BaseDescriptor.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read from the underlying file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1126,7 +1130,7 @@ If not overridden, no error will be raised.</p>
 
 <dl class="method">
 <dt id="sqlalchemy_media.stores.Store.locate">
-<code class="descname">locate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores.html#Store.locate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.locate" title="Permalink to this definition">¶</a></dt>
+<code class="descname">locate</code><span class="sig-paren">(</span><em>attachment</em><span class="sig-paren">)</span> &rarr; str<a class="reference internal" href="_modules/sqlalchemy_media/stores.html#Store.locate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.locate" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>[Abstract]</strong></p>
 <p>If overridden in the inherited class, should locates the file&#8217;s url to share in public space.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1251,12 +1255,12 @@ If not overridden, no error will be raised.</p>
 <dl class="method">
 <dt id="sqlalchemy_media.stores.StoreManager.__exit__">
 <code class="descname">__exit__</code><span class="sig-paren">(</span><em>exc_type</em>, <em>exc_val</em>, <em>exc_tb</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores.html#StoreManager.__exit__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.StoreManager.__exit__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Destore the context, pop itself from context stack and unbind all events.</p>
+<dd><p>Destroy the context, pop itself from context stack and unbind all events.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="sqlalchemy_media.stores.StoreManager.adopted">
-<code class="descname">adopted</code><span class="sig-paren">(</span><em>*attachments: typing.Iterable[typing.Attachment]</em><span class="sig-paren">)</span> &rarr; None<a class="reference internal" href="_modules/sqlalchemy_media/stores.html#StoreManager.adopted"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.StoreManager.adopted" title="Permalink to this definition">¶</a></dt>
+<code class="descname">adopted</code><span class="sig-paren">(</span><em>*attachments</em><span class="sig-paren">)</span> &rarr; None<a class="reference internal" href="_modules/sqlalchemy_media/stores.html#StoreManager.adopted"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.StoreManager.adopted" title="Permalink to this definition">¶</a></dt>
 <dd><p>Opposite of <a class="reference internal" href="#sqlalchemy_media.stores.StoreManager.orphaned" title="sqlalchemy_media.stores.StoreManager.orphaned"><code class="xref py py-meth docutils literal"><span class="pre">orphaned()</span></code></a></p>
 </dd></dl>
 
@@ -1346,14 +1350,14 @@ if not found.</p>
 
 <dl class="method">
 <dt id="sqlalchemy_media.stores.StoreManager.orphaned">
-<code class="descname">orphaned</code><span class="sig-paren">(</span><em>*attachments: typing.Iterable[typing.Attachment]</em><span class="sig-paren">)</span> &rarr; None<a class="reference internal" href="_modules/sqlalchemy_media/stores.html#StoreManager.orphaned"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.StoreManager.orphaned" title="Permalink to this definition">¶</a></dt>
+<code class="descname">orphaned</code><span class="sig-paren">(</span><em>*attachments</em><span class="sig-paren">)</span> &rarr; None<a class="reference internal" href="_modules/sqlalchemy_media/stores.html#StoreManager.orphaned"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.StoreManager.orphaned" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mark one or more attachment(s) orphaned, So if <a class="reference internal" href="#sqlalchemy_media.stores.StoreManager.delete_orphan" title="sqlalchemy_media.stores.StoreManager.delete_orphan"><code class="xref py py-attr docutils literal"><span class="pre">delete_orphan</span></code></a> is <a class="reference external" href="https://docs.python.org/3.5/library/constants.html#True" title="(in Python v3.5)"><code class="xref py py-data docutils literal"><span class="pre">True</span></code></a>, the attachment(s) will
 be deleted from store after session commit.</p>
 </dd></dl>
 
 <dl class="classmethod">
 <dt id="sqlalchemy_media.stores.StoreManager.register">
-<em class="property">classmethod </em><code class="descname">register</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores.html#StoreManager.register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.StoreManager.register" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">register</code><span class="sig-paren">(</span><em>key: str</em>, <em>store_factory</em>, <em>default: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores.html#StoreManager.register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.StoreManager.register" title="Permalink to this definition">¶</a></dt>
 <dd><p>Registers the store factory into stores registry, use <a class="reference internal" href="#sqlalchemy_media.stores.StoreManager.unregister" title="sqlalchemy_media.stores.StoreManager.unregister"><code class="xref py py-meth docutils literal"><span class="pre">unregister()</span></code></a> to remove it.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1443,7 +1447,7 @@ be deleted from store after session commit.</p>
 <dl class="method">
 <dt id="sqlalchemy_media.analyzers.Analyzer.analyze">
 <code class="descname">analyze</code><span class="sig-paren">(</span><em>descriptor: sqlalchemy_media.descriptors.BaseDescriptor</em><span class="sig-paren">)</span> &rarr; dict<a class="reference internal" href="_modules/sqlalchemy_media/analyzers.html#Analyzer.analyze"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.analyzers.Analyzer.analyze" title="Permalink to this definition">¶</a></dt>
-<dd><p>Should be overridden in inherited class and analyzes the <a class="reference internal" href="#sqlalchemy_media.descriptors.BaseDescriptor" title="sqlalchemy_media.descriptors.BaseDescriptor"><code class="xref py py-class docutils literal"><span class="pre">BaseDescriptor</span></code></a> instance given in constructor.</p>
+<dd><p>Should be overridden in inherited class and analyzes the given <a class="reference internal" href="#sqlalchemy_media.descriptors.BaseDescriptor" title="sqlalchemy_media.descriptors.BaseDescriptor"><code class="xref py py-class docutils literal"><span class="pre">BaseDescriptor</span></code></a> instance.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">An instance of <a class="reference internal" href="#sqlalchemy_media.exceptions.AnalyzeError" title="sqlalchemy_media.exceptions.AnalyzeError"><code class="xref py py-exc docutils literal"><span class="pre">AnalyzeError</span></code></a> or sub-types may raised</p>
@@ -1469,11 +1473,65 @@ be deleted from store after session commit.</p>
 <dt id="sqlalchemy_media.analyzers.MagicAnalyzer">
 <em class="property">class </em><code class="descclassname">sqlalchemy_media.analyzers.</code><code class="descname">MagicAnalyzer</code><a class="reference internal" href="_modules/sqlalchemy_media/analyzers.html#MagicAnalyzer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.analyzers.MagicAnalyzer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.analyzers.Analyzer" title="sqlalchemy_media.analyzers.Analyzer"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.analyzers.Analyzer</span></code></a></p>
-<p>Analyze the file using the libmagic and it&#8217;s python-wrapper: python-magic.</p>
+<p>Analyze the file using the libmagic and it&#8217;s Python wrapper: <code class="docutils literal"><span class="pre">python-magic</span></code>.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">You should install the python-magic in order, to use this class. otherwise, an
+<p class="last">You should install the <code class="docutils literal"><span class="pre">python-magic</span></code> in order, to use this class. otherwise, an
 <a class="reference internal" href="#sqlalchemy_media.exceptions.OptionalPackageRequirementError" title="sqlalchemy_media.exceptions.OptionalPackageRequirementError"><code class="xref py py-exc docutils literal"><span class="pre">OptionalPackageRequirementError</span></code></a> will be raised.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="wandanalyzer">
+<h3>WandAnalyzer<a class="headerlink" href="#wandanalyzer" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.analyzers.WandAnalyzer">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.analyzers.</code><code class="descname">WandAnalyzer</code><a class="reference internal" href="_modules/sqlalchemy_media/analyzers.html#WandAnalyzer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.analyzers.WandAnalyzer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.analyzers.Analyzer" title="sqlalchemy_media.analyzers.Analyzer"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.analyzers.Analyzer</span></code></a></p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.4.0.</span></p>
+</div>
+<p>Analyze an image using <code class="docutils literal"><span class="pre">wand</span></code>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">You should install the <code class="docutils literal"><span class="pre">wand</span></code> in order, to use this class. otherwise, an
+<a class="reference internal" href="#sqlalchemy_media.exceptions.OptionalPackageRequirementError" title="sqlalchemy_media.exceptions.OptionalPackageRequirementError"><code class="xref py py-exc docutils literal"><span class="pre">OptionalPackageRequirementError</span></code></a> will be raised.</p>
+</div>
+<p>Use it as follow</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="k">import</span> <span class="n">TypeDecorator</span><span class="p">,</span> <span class="n">Unicode</span><span class="p">,</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Integer</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.ext.declarative</span> <span class="k">import</span> <span class="n">declarative_base</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.dialects.postgresql</span> <span class="k">import</span> <span class="n">JSONB</span>
+
+<span class="kn">from</span> <span class="nn">sqlalchemy_media</span> <span class="k">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">WandAnalyzer</span>
+
+
+<span class="k">class</span> <span class="nc">ProfileImage</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+   <span class="n">__analyzer__</span> <span class="o">=</span> <span class="n">WandAnalyzer</span><span class="p">()</span>
+
+<span class="n">Base</span> <span class="o">=</span> <span class="n">declarative_base</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nc">Member</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;person&#39;</span>
+
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">avatar</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">ProfileImage</span><span class="o">.</span><span class="n">as_mutable</span><span class="p">(</span><span class="n">JSONB</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The use it inside <code class="xref py py-class docutils literal"><span class="pre">ContextManager</span></code> context:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy_media</span> <span class="k">import</span> <span class="n">ContextManager</span>
+
+<span class="n">session</span> <span class="o">=</span> <span class="o">&lt;....&gt;</span>
+
+<span class="k">with</span> <span class="n">ContextManager</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
+    <span class="n">me</span> <span class="o">=</span> <span class="n">Member</span><span class="p">(</span><span class="n">avatar</span><span class="o">=</span><span class="n">ProfileImage</span><span class="o">.</span><span class="n">create_from</span><span class="p">(</span><span class="s1">&#39;donkey.jpg&#39;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">me</span><span class="o">.</span><span class="n">avatar</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">me</span><span class="o">.</span><span class="n">avatar</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">me</span><span class="o">.</span><span class="n">avatar</span><span class="o">.</span><span class="n">content_type</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This object currently setects <code class="docutils literal"><span class="pre">width</span></code>, <code class="docutils literal"><span class="pre">height</span></code> and <code class="docutils literal"><span class="pre">mimetype</span></code> of the image.</p>
 </div>
 </dd></dl>
 
@@ -1521,6 +1579,59 @@ be deleted from store after session commit.</p>
 <em class="property">class </em><code class="descclassname">sqlalchemy_media.validators.</code><code class="descname">ContentTypeValidator</code><span class="sig-paren">(</span><em>content_types: typing.Iterable[str]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/validators.html#ContentTypeValidator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.validators.ContentTypeValidator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.validators.Validator" title="sqlalchemy_media.validators.Validator"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.validators.Validator</span></code></a></p>
 <p>Assert content types.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>content_types</strong> &#8211; An iterable whose items are allowed content types.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><a class="reference internal" href="#sqlalchemy_media.exceptions.ContentTypeValidationError" title="sqlalchemy_media.exceptions.ContentTypeValidationError"><code class="xref py py-exc docutils literal"><span class="pre">ContentTypeValidationError</span></code></a> may be raised during validation.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="imagedimensionvalidator">
+<h3>ImageDimensionValidator<a class="headerlink" href="#imagedimensionvalidator" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.validators.ImageDimensionValidator">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.validators.</code><code class="descname">ImageDimensionValidator</code><span class="sig-paren">(</span><em>minimum: typing.Tuple[int</em>, <em>int] = None</em>, <em>maximum: typing.Tuple[int</em>, <em>int] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/validators.html#ImageDimensionValidator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.validators.ImageDimensionValidator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.validators.Validator" title="sqlalchemy_media.validators.Validator"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.validators.Validator</span></code></a></p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.4.0.</span></p>
+</div>
+<p>Validates image size</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>minimum</strong> &#8211; Minimum allowed dimension (w, h).</li>
+<li><strong>maximum</strong> &#8211; Maximum allowed dimension (w, h).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><a class="reference internal" href="#sqlalchemy_media.exceptions.DimensionValidationError" title="sqlalchemy_media.exceptions.DimensionValidationError"><code class="xref py py-exc docutils literal"><span class="pre">DimensionValidationError</span></code></a> may be raised during validation.</p>
+</div>
+<p>Use it as follow</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy_media</span> <span class="k">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">WandAnalyzer</span><span class="p">,</span> <span class="n">ImageDimensionValidator</span>
+
+
+<span class="k">class</span> <span class="nc">ProfileImage</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+   <span class="n">__analyzer__</span> <span class="o">=</span> <span class="n">WandAnalyzer</span><span class="p">()</span>
+   <span class="n">__validator__</span> <span class="o">=</span> <span class="n">ImageDimensionValidator</span><span class="p">((</span><span class="mi">64</span><span class="p">,</span> <span class="mi">48</span><span class="p">),</span> <span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">96</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span>.. note:: This object currently setects ``width``, ``height`` and ``mimetype`` of the image.
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -1634,6 +1745,13 @@ it&#8217;s version criteria to inform the user.</p>
 <p>Raised when requested thumbnail is not available(generated) yet.</p>
 </dd></dl>
 
+<dl class="exception">
+<dt id="sqlalchemy_media.exceptions.DimensionValidationError">
+<em class="property">exception </em><code class="descclassname">sqlalchemy_media.exceptions.</code><code class="descname">DimensionValidationError</code><a class="reference internal" href="_modules/sqlalchemy_media/exceptions.html#DimensionValidationError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.exceptions.DimensionValidationError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.exceptions.ValidationError" title="sqlalchemy_media.exceptions.ValidationError"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.exceptions.ValidationError</span></code></a></p>
+<p>Raises when <code class="docutils literal"><span class="pre">width</span></code> or <code class="docutils literal"><span class="pre">height</span></code> of the media is not meet the limitations.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="module-sqlalchemy_media.optionals">
 <span id="optionals-module"></span><h2>optionals Module<a class="headerlink" href="#module-sqlalchemy_media.optionals" title="Permalink to this headline">¶</a></h2>
@@ -1703,7 +1821,7 @@ requested package is not provided.</p>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="tutorials/content_type_restriction.html" class="btn btn-neutral" title="Playing with Analyzers and Validators" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="tutorials/analyzers_and_validators.html" class="btn btn-neutral" title="Playing with Analyzers and Validators" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -1712,7 +1830,7 @@ requested package is not provided.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2015, Vahid Mardani.
+        &copy; Copyright 2016, Vahid Mardani.
 
     </p>
   </div>
@@ -1734,7 +1852,7 @@ requested package is not provided.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.3.0',
+            VERSION:'0.4.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
