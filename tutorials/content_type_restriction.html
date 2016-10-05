@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Playing with Analyzers and Validators &mdash; sqlalchemy-media 0.2.1 documentation</title>
+  <title>Playing with Analyzers and Validators &mdash; sqlalchemy-media 0.3.0 documentation</title>
   
 
   
@@ -35,10 +35,10 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.2.1 documentation" href="../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.3.0 documentation" href="../index.html"/>
         <link rel="up" title="Tutorials" href="index.html"/>
         <link rel="next" title="API Reference" href="../api.html"/>
-        <link rel="prev" title="Attaching Files" href="quickstart.html"/> 
+        <link rel="prev" title="Image &amp; Thumbnails" href="image.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.2
+                0.3
               </div>
             
           
@@ -89,7 +89,7 @@
             
                 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorials</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html">Attaching Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image.html">Image &amp; Thumbnails</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Playing with Analyzers and Validators</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#cv">1. CV</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#creating-workbench">2. Creating workbench</a></li>
@@ -217,7 +217,7 @@
 <h2>4. Submitting files<a class="headerlink" href="#submitting-files" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">io</span>
 
-<span class="kn">from</span> <span class="nn">sqlalchemy_media</span> <span class="k">import</span> <span class="n">ContentTypeValidationError</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.exceptions</span> <span class="k">import</span> <span class="n">ContentTypeValidationError</span>
 
 <span class="n">person1</span> <span class="o">=</span> <span class="n">Person</span><span class="p">(</span><span class="n">cv</span><span class="o">=</span><span class="n">CV</span><span class="p">())</span>
 <span class="k">with</span> <span class="n">StoreManager</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
@@ -245,7 +245,7 @@
         <a href="../api.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="quickstart.html" class="btn btn-neutral" title="Attaching Files" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="image.html" class="btn btn-neutral" title="Image &amp; Thumbnails" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -276,7 +276,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.2.1',
+            VERSION:'0.3.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

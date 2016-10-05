@@ -60,6 +60,12 @@ FileDict
 
    .. autoattribute:: __item_type__
 
+BaseImage
+^^^^^^^^^
+
+.. autoclass:: BaseImage
+
+
 Image
 ^^^^^
 
@@ -69,6 +75,13 @@ Image
    .. autoattribute:: __prefix__
    .. autoattribute:: __max_length__
    .. autoattribute:: __min_length__
+
+
+Thumbnail
+^^^^^^^^^
+
+.. autoclass:: Thumbnail
+
 
 descriptors Module
 ------------------
@@ -196,6 +209,12 @@ exceptions Module
 
 .. autoexception:: ContentTypeValidationError
 
+.. autoexception:: ThumbnailIsNotAvailableError
+
+optionals Module
+----------------
+
+.. automodule:: sqlalchemy_media.optionals
 
 constants Module
 ----------------

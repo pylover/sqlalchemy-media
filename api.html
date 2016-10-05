@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; sqlalchemy-media 0.2.1 documentation</title>
+  <title>API Reference &mdash; sqlalchemy-media 0.3.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.2.1 documentation" href="index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.3.0 documentation" href="index.html"/>
         <link rel="prev" title="Playing with Analyzers and Validators" href="tutorials/content_type_restriction.html"/> 
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.2
+                0.3
               </div>
             
           
@@ -96,7 +96,9 @@
 <li class="toctree-l3"><a class="reference internal" href="#file">File</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#filelist">FileList</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#filedict">FileDict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#baseimage">BaseImage</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#image">Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#thumbnail">Thumbnail</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.descriptors">descriptors Module</a><ul>
@@ -126,6 +128,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.exceptions">exceptions Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.optionals">optionals Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.constants">constants Module</a></li>
 </ul>
 </li>
@@ -218,7 +221,7 @@ All attachment types will be inherited from this class.</p>
 
 <dl class="method">
 <dt id="sqlalchemy_media.attachments.Attachment.attach">
-<code class="descname">attach</code><span class="sig-paren">(</span><em>attachable: typing.Union[typing.IO[_io.BytesIO], typing.Iterable[typing.Iterable[typing.Any]]], content_type: str = None, original_filename: str = None, extension: str = None, store_id: str = None, overwrite: bool = False</em><span class="sig-paren">)</span> &rarr; sqlalchemy_media.attachments.Attachment<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Attachment.attach"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.attach" title="Permalink to this definition">¶</a></dt>
+<code class="descname">attach</code><span class="sig-paren">(</span><em>attachable: typing.Union[typing.IO[_io.BytesIO], typing.Iterable[typing.Iterable[typing.Any]]], content_type: str = None, original_filename: str = None, extension: str = None, store_id: str = None, overwrite: bool = False, **kwargs</em><span class="sig-paren">)</span> &rarr; sqlalchemy_media.attachments.Attachment<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Attachment.attach"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.attach" title="Permalink to this definition">¶</a></dt>
 <dd><p>Attach a file. if the session roll-backed, all operations will be rolled-back.
 The old file will be deleted after commit, if any.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -236,6 +239,7 @@ and readability.</li>
 <li><strong>overwrite</strong> &#8211; Overwrites the file without changing it&#8217;s unique-key and name, useful to prevent broken links.
 Currently, when using this option, Rollback function is not available, because the old file
 will overwritten by the given new one.</li>
+<li><strong>kwargs</strong> &#8211; Additional metadata to be stored in backend.</li>
 </ul>
 </td>
 </tr>
@@ -246,7 +250,12 @@ will overwritten by the given new one.</li>
 <p class="last"><a class="reference internal" href="#sqlalchemy_media.exceptions.MaximumLengthIsReachedError" title="sqlalchemy_media.exceptions.MaximumLengthIsReachedError"><code class="xref py py-exc docutils literal"><span class="pre">MaximumLengthIsReachedError</span></code></a> and or <a class="reference internal" href="#sqlalchemy_media.exceptions.MinimumLengthIsNotReachedError" title="sqlalchemy_media.exceptions.MinimumLengthIsNotReachedError"><code class="xref py py-exc docutils literal"><span class="pre">MinimumLengthIsNotReachedError</span></code></a> may raised.</p>
 </div>
 <div class="versionchanged">
-<p><span class="versionmodified">Changed in version 0.1.2: </span>This method will returns the self. it&#8217;s useful to chain method calls on object within single line.</p>
+<ul>
+<span class="versionmodified">Changed in version 0.1.2: </span><li><p class="first">This method will returns the self. it&#8217;s useful to chain method calls on object within single line.</p>
+</li>
+<li><p class="first">Additional <code class="docutils literal"><span class="pre">kwargs</span></code> are accepted to be stored in database alongside the file&#8217;s metadata.</p>
+</li>
+</ul>
 </div>
 </dd></dl>
 
@@ -602,12 +611,44 @@ If available, else empty string (&#8216;&#8217;) will be returned</p>
 </dd></dl>
 
 </div>
+<div class="section" id="baseimage">
+<h3>BaseImage<a class="headerlink" href="#baseimage" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.attachments.BaseImage">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.attachments.</code><code class="descname">BaseImage</code><a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#BaseImage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.BaseImage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.attachments.File" title="sqlalchemy_media.attachments.File"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.attachments.File</span></code></a></p>
+<p>Base class for all images.</p>
+<dl class="method">
+<dt id="sqlalchemy_media.attachments.BaseImage.attach">
+<code class="descname">attach</code><span class="sig-paren">(</span><em>*args</em>, <em>*</em>, <em>dimension: typing.Tuple[int</em>, <em>int] = None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#BaseImage.attach"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.BaseImage.attach" title="Permalink to this definition">¶</a></dt>
+<dd><p>A new overload for <a class="reference internal" href="#sqlalchemy_media.attachments.Attachment.attach" title="sqlalchemy_media.attachments.Attachment.attach"><code class="xref py py-meth docutils literal"><span class="pre">Attachment.attach()</span></code></a>, which accepts one additional argument: <code class="docutils literal"><span class="pre">dimension</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>args</strong> &#8211; The same as the: <a class="reference internal" href="#sqlalchemy_media.attachments.Attachment.attach" title="sqlalchemy_media.attachments.Attachment.attach"><code class="xref py py-meth docutils literal"><span class="pre">Attachment.attach()</span></code></a>.</li>
+<li><strong>dimension</strong> &#8211; Image (width, height).</li>
+<li><strong>kwargs</strong> &#8211; The same as the: <a class="reference internal" href="#sqlalchemy_media.attachments.Attachment.attach" title="sqlalchemy_media.attachments.Attachment.attach"><code class="xref py py-meth docutils literal"><span class="pre">Attachment.attach()</span></code></a>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The same as the: <a class="reference internal" href="#sqlalchemy_media.attachments.Attachment.attach" title="sqlalchemy_media.attachments.Attachment.attach"><code class="xref py py-meth docutils literal"><span class="pre">Attachment.attach()</span></code></a>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="image">
 <h3>Image<a class="headerlink" href="#image" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="sqlalchemy_media.attachments.Image">
 <em class="property">class </em><code class="descclassname">sqlalchemy_media.attachments.</code><code class="descname">Image</code><a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Image" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.attachments.File" title="sqlalchemy_media.attachments.File"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.attachments.File</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.attachments.BaseImage" title="sqlalchemy_media.attachments.BaseImage"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.attachments.BaseImage</span></code></a></p>
 <p>Equivalent to</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Image</span><span class="p">(</span><span class="n">Attachment</span><span class="p">):</span>
     <span class="n">__directory__</span> <span class="o">=</span> <span class="s1">&#39;images&#39;</span>
@@ -636,6 +677,89 @@ If available, else empty string (&#8216;&#8217;) will be returned</p>
 <code class="descname">__min_length__</code><em class="property"> = 4096</em><a class="headerlink" href="#sqlalchemy_media.attachments.Image.__min_length__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="method">
+<dt id="sqlalchemy_media.attachments.Image.generate_thumbnail">
+<code class="descname">generate_thumbnail</code><span class="sig-paren">(</span><em>width: int = None</em>, <em>height: int = None</em>, <em>ratio: float = None</em>, <em>ratio_precision: int = 5</em><span class="sig-paren">)</span> &rarr; sqlalchemy_media.attachments.Thumbnail<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Image.generate_thumbnail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Image.generate_thumbnail" title="Permalink to this definition">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">New in version 0.2.2.</span></p>
+</div>
+<p>Generates and stores a thumbnail with the given arguments.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">If non or more than one of the <code class="docutils literal"><span class="pre">width</span></code>, <code class="docutils literal"><span class="pre">height</span></code> and or <code class="docutils literal"><span class="pre">ratio</span></code> are given, <a class="reference external" href="https://docs.python.org/3.5/library/exceptions.html#ValueError" title="(in Python v3.5)"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code></a> will be
+raised.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>width</strong> &#8211; The width of the thumbnail.</li>
+<li><strong>height</strong> &#8211; The Height of the thumbnail.</li>
+<li><strong>ratio</strong> &#8211; The coefficient to reduce, Must be less than <code class="docutils literal"><span class="pre">1.0</span></code>.</li>
+<li><strong>ratio_precision</strong> &#8211; Number of digits after the decimal point to picked to store from the ratio. default: 2.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the Newly generated <a class="reference internal" href="#sqlalchemy_media.attachments.Thumbnail" title="sqlalchemy_media.attachments.Thumbnail"><code class="xref py py-class docutils literal"><span class="pre">Thumbnail</span></code></a> instance.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy_media.attachments.Image.get_thumbnail">
+<code class="descname">get_thumbnail</code><span class="sig-paren">(</span><em>width: int = None</em>, <em>height: int = None</em>, <em>ratio: float = None</em>, <em>ratio_precision: int = 2</em>, <em>auto_generate: bool = False</em><span class="sig-paren">)</span> &rarr; sqlalchemy_media.attachments.Thumbnail<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Image.get_thumbnail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Image.get_thumbnail" title="Permalink to this definition">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">New in version 0.2.2.</span></p>
+</div>
+<p>Search for the thumbnail with given arguments, if <code class="docutils literal"><span class="pre">auto_generate</span></code> is <a class="reference external" href="https://docs.python.org/3.5/library/constants.html#False" title="(in Python v3.5)"><code class="xref py py-data docutils literal"><span class="pre">False</span></code></a>, the
+<a class="reference internal" href="#sqlalchemy_media.exceptions.ThumbnailIsNotAvailableError" title="sqlalchemy_media.exceptions.ThumbnailIsNotAvailableError"><code class="xref py py-exc docutils literal"><span class="pre">ThumbnailIsNotAvailableError</span></code></a> will be raise, else tries to call the <a class="reference internal" href="#sqlalchemy_media.attachments.Image.generate_thumbnail" title="sqlalchemy_media.attachments.Image.generate_thumbnail"><code class="xref py py-meth docutils literal"><span class="pre">generate_thumbnail()</span></code></a> to create
+a new one.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>width</strong> &#8211; Width of the thumbnail to search for.</li>
+<li><strong>height</strong> &#8211; Height of the thumbnail to search for.</li>
+<li><strong>ratio</strong> &#8211; Ratio of the thumbnail to search for.</li>
+<li><strong>ratio_precision</strong> &#8211; Number of digits after the decimal point to picked for search from the ratio.
+default: 2.</li>
+<li><strong>auto_generate</strong> &#8211; If <a class="reference external" href="https://docs.python.org/3.5/library/constants.html#True" title="(in Python v3.5)"><code class="xref py py-data docutils literal"><span class="pre">True</span></code></a>, tries to generate a new thumbnail.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#sqlalchemy_media.attachments.Thumbnail" title="sqlalchemy_media.attachments.Thumbnail"><code class="xref py py-class docutils literal"><span class="pre">Thumbnail</span></code></a> instance.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">if <code class="docutils literal"><span class="pre">auto_generate</span></code> is <a class="reference external" href="https://docs.python.org/3.5/library/constants.html#True" title="(in Python v3.5)"><code class="xref py py-data docutils literal"><span class="pre">True</span></code></a>, you have to commit the session, to store the generated
+thumbnails.</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.Image.thumbnails">
+<code class="descname">thumbnails</code><a class="headerlink" href="#sqlalchemy_media.attachments.Image.thumbnails" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <code class="docutils literal"><span class="pre">Dict[Tuple[int,</span> <span class="pre">int,</span> <span class="pre">float],</span> <span class="pre">Thumbnail]</span></code>, to hold thumbnails.</p>
+<p>You may use <a class="reference internal" href="#sqlalchemy_media.attachments.Image.generate_thumbnail" title="sqlalchemy_media.attachments.Image.generate_thumbnail"><code class="xref py py-meth docutils literal"><span class="pre">generate_thumbnail()</span></code></a> and or <a class="reference internal" href="#sqlalchemy_media.attachments.Image.get_thumbnail" title="sqlalchemy_media.attachments.Image.get_thumbnail"><code class="xref py py-meth docutils literal"><span class="pre">get_thumbnail()</span></code></a> with <code class="docutils literal"><span class="pre">auto_generate=True</span></code> to fill it.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="thumbnail">
+<h3>Thumbnail<a class="headerlink" href="#thumbnail" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.attachments.Thumbnail">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.attachments.</code><code class="descname">Thumbnail</code><a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Thumbnail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Thumbnail" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.attachments.BaseImage" title="sqlalchemy_media.attachments.BaseImage"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.attachments.BaseImage</span></code></a></p>
+<p>Representing an image thumbnail.</p>
 </dd></dl>
 
 </div>
@@ -1017,12 +1141,12 @@ If not overridden, no error will be raised.</p>
 
 <dl class="method">
 <dt id="sqlalchemy_media.stores.Store.open">
-<code class="descname">open</code><span class="sig-paren">(</span><em>filename: str</em>, <em>mode: str = 'r'</em><span class="sig-paren">)</span> &rarr; typing.Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO]<a class="reference internal" href="_modules/sqlalchemy_media/stores.html#Store.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.open" title="Permalink to this definition">¶</a></dt>
+<code class="descname">open</code><span class="sig-paren">(</span><em>filename: str</em>, <em>mode: str = 'rb'</em><span class="sig-paren">)</span> &rarr; typing.Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO]<a class="reference internal" href="_modules/sqlalchemy_media/stores.html#Store.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.open" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>[Abstract]</strong></p>
-<p>If overridden in the inherited class, should return a file-like object representing the file in the store.</p>
+<p>Should be overridden in inherited class and return a file-like object representing the file in the store.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Some stores are not supporting stream access, if yes, just leave it unimplemented.</p>
+<p class="last">Caller of this method is responsible to close the stream.</p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1036,6 +1160,9 @@ If not overridden, no error will be raised.</p>
 </tr>
 </tbody>
 </table>
+<div class="versionchanged">
+<p><span class="versionmodified">Changed in version This: </span>method should be overridden in inherited class.</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -1500,6 +1627,56 @@ it&#8217;s version criteria to inform the user.</p>
 </table>
 </dd></dl>
 
+<dl class="exception">
+<dt id="sqlalchemy_media.exceptions.ThumbnailIsNotAvailableError">
+<em class="property">exception </em><code class="descclassname">sqlalchemy_media.exceptions.</code><code class="descname">ThumbnailIsNotAvailableError</code><a class="reference internal" href="_modules/sqlalchemy_media/exceptions.html#ThumbnailIsNotAvailableError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.exceptions.ThumbnailIsNotAvailableError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.exceptions.SqlAlchemyMediaException" title="sqlalchemy_media.exceptions.SqlAlchemyMediaException"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.exceptions.SqlAlchemyMediaException</span></code></a></p>
+<p>Raised when requested thumbnail is not available(generated) yet.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-sqlalchemy_media.optionals">
+<span id="optionals-module"></span><h2>optionals Module<a class="headerlink" href="#module-sqlalchemy_media.optionals" title="Permalink to this headline">¶</a></h2>
+<p>This module is a helper for handing optional packages.</p>
+<p>Optional packages are not included in <code class="docutils literal"><span class="pre">setup.py</span></code>. So <a class="reference internal" href="#sqlalchemy_media.exceptions.OptionalPackageRequirementError" title="sqlalchemy_media.exceptions.OptionalPackageRequirementError"><code class="xref py py-exc docutils literal"><span class="pre">OptionalPackageRequirementError</span></code></a> will be raised if
+requested package is not provided.</p>
+<dl class="function">
+<dt id="sqlalchemy_media.optionals.ensure_wand">
+<code class="descclassname">sqlalchemy_media.optionals.</code><code class="descname">ensure_wand</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/optionals.html#ensure_wand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.optionals.ensure_wand" title="Permalink to this definition">¶</a></dt>
+<dd><div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last"><a class="reference internal" href="#sqlalchemy_media.exceptions.OptionalPackageRequirementError" title="sqlalchemy_media.exceptions.OptionalPackageRequirementError"><code class="xref py py-exc docutils literal"><span class="pre">OptionalPackageRequirementError</span></code></a> will be raised if <cite>wand</cite> is not installed.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The wand module.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="sqlalchemy_media.optionals.magic_mime_from_buffer">
+<code class="descclassname">sqlalchemy_media.optionals.</code><code class="descname">magic_mime_from_buffer</code><span class="sig-paren">(</span><em>buffer: bytes</em><span class="sig-paren">)</span> &rarr; str<a class="reference internal" href="_modules/sqlalchemy_media/optionals.html#magic_mime_from_buffer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.optionals.magic_mime_from_buffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Try to detect mimetype using <code class="docutils literal"><span class="pre">magic</span></code> library.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last"><a class="reference internal" href="#sqlalchemy_media.exceptions.OptionalPackageRequirementError" title="sqlalchemy_media.exceptions.OptionalPackageRequirementError"><code class="xref py py-exc docutils literal"><span class="pre">OptionalPackageRequirementError</span></code></a> will be raised if <cite>python-magic</cite> is not installed.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>buffer</strong> &#8211; buffer from header of file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The mimetype</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="module-sqlalchemy_media.constants">
 <span id="constants-module"></span><h2>constants Module<a class="headerlink" href="#module-sqlalchemy_media.constants" title="Permalink to this headline">¶</a></h2>
@@ -1557,7 +1734,7 @@ it&#8217;s version criteria to inform the user.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.2.1',
+            VERSION:'0.3.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

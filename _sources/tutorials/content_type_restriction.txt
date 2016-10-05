@@ -83,7 +83,7 @@ For the first, let to create a type called ``CV``
 
         import io
 
-        from sqlalchemy_media import ContentTypeValidationError
+        from sqlalchemy_media.exceptions import ContentTypeValidationError
 
         person1 = Person(cv=CV())
         with StoreManager(session):

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.attachments &mdash; sqlalchemy-media 0.2.1 documentation</title>
+  <title>sqlalchemy_media.attachments &mdash; sqlalchemy-media 0.3.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.2.1 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.3.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.2
+                0.3
               </div>
             
           
@@ -133,20 +133,24 @@
            <div itemprop="articleBody">
             
   <h1>Source code for sqlalchemy_media.attachments</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Hashable</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Hashable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">uuid</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">io</span>
 <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">splitext</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Iterable</span>
 
 <span class="kn">from</span> <span class="nn">sqlalchemy.ext.mutable</span> <span class="k">import</span> <span class="n">MutableList</span><span class="p">,</span> <span class="n">MutableDict</span>
 
 <span class="kn">from</span> <span class="nn">sqlalchemy_media.stores</span> <span class="k">import</span> <span class="n">StoreManager</span><span class="p">,</span> <span class="n">Store</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.typing_</span> <span class="k">import</span> <span class="n">Attachable</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.typing_</span> <span class="k">import</span> <span class="n">Attachable</span><span class="p">,</span> <span class="n">Dimension</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy_media.descriptors</span> <span class="k">import</span> <span class="n">AttachableDescriptor</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy_media.constants</span> <span class="k">import</span> <span class="n">MB</span><span class="p">,</span> <span class="n">KB</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.optionals</span> <span class="k">import</span> <span class="n">ensure_wand</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.helpers</span> <span class="k">import</span> <span class="n">validate_width_height_ratio</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.exceptions</span> <span class="k">import</span> <span class="n">ThumbnailIsNotAvailableError</span>
 
 
 <div class="viewcode-block" id="Attachment"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Attachment">[docs]</a><span class="k">class</span> <span class="nc">Attachment</span><span class="p">(</span><span class="n">MutableDict</span><span class="p">):</span>
@@ -372,7 +376,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">get_store</span><span class="p">()</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Attachment.attach"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Attachment.attach">[docs]</a>    <span class="k">def</span> <span class="nf">attach</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attachable</span><span class="p">:</span> <span class="n">Attachable</span><span class="p">,</span> <span class="n">content_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">original_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="n">store_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Attachment&#39;</span><span class="p">:</span>
+               <span class="n">store_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Attachment&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Attach a file. if the session roll-backed, all operations will be rolled-back.</span>
 <span class="sd">        The old file will be deleted after commit, if any.</span>
@@ -388,10 +392,16 @@
 <span class="sd">                          Currently, when using this option, Rollback function is not available, because the old file</span>
 <span class="sd">                          will overwritten by the given new one.</span>
 
+<span class="sd">        :param kwargs: Additional metadata to be stored in backend.</span>
+
 <span class="sd">        .. note:: :exc:`.MaximumLengthIsReachedError` and or :exc:`.MinimumLengthIsNotReachedError` may raised.</span>
 
 <span class="sd">        .. versionchanged:: 0.1.2</span>
-<span class="sd">            This method will returns the self. it&#39;s useful to chain method calls on object within single line.</span>
+
+<span class="sd">            - This method will returns the self. it&#39;s useful to chain method calls on object within single line.</span>
+<span class="sd">            - Additional ``kwargs`` are accepted to be stored in database alongside the file&#39;s metadata.</span>
+
+
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -411,13 +421,14 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
 
             <span class="c1"># Store information from descriptor</span>
-            <span class="n">attachment_info</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">attachment_info</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">attachment_info</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
                 <span class="n">original_filename</span><span class="o">=</span><span class="n">descriptor</span><span class="o">.</span><span class="n">original_filename</span><span class="p">,</span>
                 <span class="n">extension</span><span class="o">=</span><span class="n">descriptor</span><span class="o">.</span><span class="n">extension</span><span class="p">,</span>
                 <span class="n">content_type</span><span class="o">=</span><span class="n">descriptor</span><span class="o">.</span><span class="n">content_type</span><span class="p">,</span>
                 <span class="n">length</span><span class="o">=</span><span class="n">descriptor</span><span class="o">.</span><span class="n">content_length</span><span class="p">,</span>
                 <span class="n">store_id</span><span class="o">=</span><span class="n">store_id</span>
-            <span class="p">)</span>
+            <span class="p">))</span>
 
             <span class="c1"># Analyze</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__analyzer__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -647,7 +658,47 @@
     <span class="n">__item_type__</span> <span class="o">=</span> <span class="n">File</span></div>
 
 
-<div class="viewcode-block" id="Image"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Image">[docs]</a><span class="k">class</span> <span class="nc">Image</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseImage"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.BaseImage">[docs]</a><span class="k">class</span> <span class="nc">BaseImage</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for all images.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="BaseImage.attach"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.BaseImage.attach">[docs]</a>    <span class="k">def</span> <span class="nf">attach</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">dimension</span><span class="p">:</span> <span class="n">Dimension</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A new overload for :meth:`.Attachment.attach`, which accepts one additional argument: ``dimension``.</span>
+
+<span class="sd">        :param args: The same as the: :meth:`.Attachment.attach`.</span>
+<span class="sd">        :param dimension: Image (width, height).</span>
+<span class="sd">        :param kwargs: The same as the: :meth:`.Attachment.attach`.</span>
+
+<span class="sd">        :return: The same as the: :meth:`.Attachment.attach`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">dimension</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">],</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dimension</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">width</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">height</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Thumbnail"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Thumbnail">[docs]</a><span class="k">class</span> <span class="nc">Thumbnail</span><span class="p">(</span><span class="n">BaseImage</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Representing an image thumbnail.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">__directory__</span> <span class="o">=</span> <span class="s1">&#39;thumbnails&#39;</span>
+    <span class="n">__prefix__</span> <span class="o">=</span> <span class="s1">&#39;thumbnail&#39;</span></div>
+
+
+<div class="viewcode-block" id="Image"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Image">[docs]</a><span class="k">class</span> <span class="nc">Image</span><span class="p">(</span><span class="n">BaseImage</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Equivalent to</span>
 <span class="sd">    ::</span>
@@ -664,7 +715,126 @@
     <span class="n">__prefix__</span> <span class="o">=</span> <span class="s1">&#39;image&#39;</span>
 
     <span class="n">__max_length__</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">MB</span>
-    <span class="n">__min_length__</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">KB</span></div>
+    <span class="n">__min_length__</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">KB</span>
+
+    <span class="c1">#: It allows to customize the type of thumbnail images.</span>
+    <span class="n">__thumbnail_type__</span> <span class="o">=</span> <span class="n">Thumbnail</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">thumbnails</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">Thumbnail</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A ``Dict[Tuple[int, int, float], Thumbnail]``, to hold thumbnails.</span>
+
+<span class="sd">        You may use :meth:`.generate_thumbnail` and or :meth:`.get_thumbnail` with ``auto_generate=True`` to fill it.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;thumbnails&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Image.generate_thumbnail"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Image.generate_thumbnail">[docs]</a>    <span class="k">def</span> <span class="nf">generate_thumbnail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ratio</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ratio_precision</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">Thumbnail</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        .. versionadded:: 0.2.2</span>
+
+<span class="sd">        Generates and stores a thumbnail with the given arguments.</span>
+
+<span class="sd">        .. warning:: If non or more than one of the ``width``, ``height`` and or ``ratio`` are given, :exc:`ValueError` will be</span>
+<span class="sd">                     raised.</span>
+
+<span class="sd">        :param width: The width of the thumbnail.</span>
+<span class="sd">        :param height: The Height of the thumbnail.</span>
+<span class="sd">        :param ratio: The coefficient to reduce, Must be less than ``1.0``.</span>
+<span class="sd">        :param ratio_precision: Number of digits after the decimal point to picked to store from the ratio. default: 2.</span>
+<span class="sd">        :return: the Newly generated :class:`.Thumbnail` instance.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Validating parameters</span>
+        <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">ratio</span> <span class="o">=</span> <span class="n">validate_width_height_ratio</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">ratio</span><span class="p">)</span>
+
+        <span class="c1"># Ensuring the wand package is installed.</span>
+        <span class="n">ensure_wand</span><span class="p">()</span>
+        <span class="c1"># noinspection PyPackageRequirements</span>
+        <span class="kn">from</span> <span class="nn">wand.image</span> <span class="k">import</span> <span class="n">Image</span> <span class="k">as</span> <span class="n">WandImage</span>
+
+        <span class="c1"># opening the original file</span>
+        <span class="n">thumbnail_buffer</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
+        <span class="n">store</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_store</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">store</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">original_file</span><span class="p">:</span>
+
+            <span class="c1"># generating thumbnail and storing in buffer</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">WandImage</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">original_file</span><span class="p">)</span>
+            <span class="n">img</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="s1">&#39;jpg&#39;</span>
+
+            <span class="k">with</span> <span class="n">img</span><span class="p">:</span>
+                <span class="n">original_size</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">size</span>
+
+                <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">width</span><span class="p">):</span>
+                    <span class="n">width</span> <span class="o">=</span> <span class="n">width</span><span class="p">(</span><span class="n">original_size</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">height</span><span class="p">):</span>
+                    <span class="n">height</span> <span class="o">=</span> <span class="n">height</span><span class="p">(</span><span class="n">original_size</span><span class="p">)</span>
+
+                <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
+                <span class="n">height</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">height</span><span class="p">)</span>
+
+                <span class="n">img</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+                <span class="n">img</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">thumbnail_buffer</span><span class="p">)</span>
+
+        <span class="n">thumbnail_buffer</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">thumbnails</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;thumbnails&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">ratio</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">width</span> <span class="o">/</span> <span class="n">original_size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ratio_precision</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thumbnails</span><span class="p">[(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">ratio</span><span class="p">)]</span> <span class="o">=</span> <span class="n">thumbnail</span> <span class="o">=</span> <span class="n">Thumbnail</span><span class="o">.</span><span class="n">create_from</span><span class="p">(</span>
+            <span class="n">thumbnail_buffer</span><span class="p">,</span>
+            <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;image/jpeg&#39;</span><span class="p">,</span>
+            <span class="n">extension</span><span class="o">=</span><span class="s1">&#39;.jpg&#39;</span><span class="p">,</span>
+            <span class="n">dimension</span><span class="o">=</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">thumbnail</span></div>
+
+<div class="viewcode-block" id="Image.get_thumbnail"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Image.get_thumbnail">[docs]</a>    <span class="k">def</span> <span class="nf">get_thumbnail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ratio</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ratio_precision</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                      <span class="n">auto_generate</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Thumbnail</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        .. versionadded:: 0.2.2</span>
+
+<span class="sd">        Search for the thumbnail with given arguments, if ``auto_generate`` is :data:`.False`, the</span>
+<span class="sd">        :exc:`.ThumbnailIsNotAvailableError` will be raise, else tries to call the :meth:`generate_thumbnail` to create</span>
+<span class="sd">        a new one.</span>
+
+<span class="sd">        :param width: Width of the thumbnail to search for.</span>
+<span class="sd">        :param height: Height of the thumbnail to search for.</span>
+<span class="sd">        :param ratio: Ratio of the thumbnail to search for.</span>
+<span class="sd">        :param ratio_precision: Number of digits after the decimal point to picked for search from the ratio.</span>
+<span class="sd">                                default: 2.</span>
+<span class="sd">        :param auto_generate: If :data:`.True`, tries to generate a new thumbnail.</span>
+
+<span class="sd">        :return: :class:`.Thumbnail` instance.</span>
+
+<span class="sd">        .. warning:: if ``auto_generate`` is :data:`.True`, you have to commit the session, to store the generated</span>
+<span class="sd">                     thumbnails.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">ratio</span><span class="p">:</span>
+            <span class="n">ratio</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">ratio</span><span class="p">,</span> <span class="n">ratio_precision</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">thumbnails</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">),</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">thumbnails</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">w</span> <span class="o">==</span> <span class="n">width</span> <span class="ow">or</span> <span class="n">h</span> <span class="o">==</span> <span class="n">height</span> <span class="ow">or</span> <span class="nb">round</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">ratio_precision</span><span class="p">)</span> <span class="o">==</span> <span class="n">ratio</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">t</span>
+
+        <span class="c1"># thumbnail not found</span>
+        <span class="k">if</span> <span class="n">auto_generate</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_thumbnail</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">ratio</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ThumbnailIsNotAvailableError</span><span class="p">(</span>
+                <span class="s1">&#39;Thumbnail is not available with thi criteria: width=</span><span class="si">%s</span><span class="s1"> height=</span><span class="si">%s</span><span class="s1"> ration=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">ratio</span><span class="p">)</span>
+            <span class="p">)</span></div></div>
+
+
 </pre></div>
 
            </div>
@@ -698,7 +868,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.2.1',
+            VERSION:'0.3.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

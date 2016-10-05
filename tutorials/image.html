@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Attaching Files &mdash; sqlalchemy-media 0.2.1 documentation</title>
+  <title>Image &amp; Thumbnails &mdash; sqlalchemy-media 0.3.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.2.1 documentation" href="../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.3.0 documentation" href="../index.html"/>
         <link rel="up" title="Tutorials" href="index.html"/>
         <link rel="next" title="Playing with Analyzers and Validators" href="content_type_restriction.html"/>
         <link rel="prev" title="Tutorials" href="index.html"/> 
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.2
+                0.3
               </div>
             
           
@@ -89,13 +89,15 @@
             
                 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorials</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Attaching Files</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Image &amp; Thumbnails</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#prerequisites">0. Prerequisites</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#creating-workbench">1. Creating workbench</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#storage">2. Storage</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#backend-type">3. Backend Type</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#defining-the-model">4. Defining The Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#db-schema">5. DB Schema</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#action">6. Action !</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#thumbnails">7. Thumbnails</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="content_type_restriction.html">Playing with Analyzers and Validators</a></li>
@@ -134,11 +136,11 @@
       
           <li><a href="index.html">Tutorials</a> &raquo;</li>
       
-    <li>Attaching Files</li>
+    <li>Image &amp; Thumbnails</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../_sources/tutorials/quickstart.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/tutorials/image.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -148,9 +150,17 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="attaching-files">
-<h1>Attaching Files<a class="headerlink" href="#attaching-files" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="image-thumbnails">
+<h1>Image &amp; Thumbnails<a class="headerlink" href="#image-thumbnails" title="Permalink to this headline">¶</a></h1>
 <p>This is how to attach image file to sqlalchemy model using the <a class="reference internal" href="../api.html#sqlalchemy_media.stores.FileSystemStore" title="sqlalchemy_media.stores.FileSystemStore"><code class="xref py py-class docutils literal"><span class="pre">FileSystemStore</span></code></a>.</p>
+<div class="section" id="prerequisites">
+<h2>0. Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<p>Thumbnail generation required the <code class="docutils literal"><span class="pre">wand</span></code>, and content type detection required <code class="docutils literal"><span class="pre">magic</span></code> package.
+These are optional packages. so you have to install them:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install wand python-magic
+</pre></div>
+</div>
+</div>
 <div class="section" id="creating-workbench">
 <h2>1. Creating workbench<a class="headerlink" href="#creating-workbench" title="Permalink to this headline">¶</a></h2>
 <p>Setting up and <code class="docutils literal"><span class="pre">engine</span></code> along-side the <code class="docutils literal"><span class="pre">session_factory</span></code>. And creating a constant for the directory to store files.</p>
@@ -240,9 +250,7 @@ database.</p>
 </div>
 <div class="section" id="action">
 <h2>6. Action !<a class="headerlink" href="#action" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">join</span><span class="p">,</span> <span class="n">exists</span>
-
-<span class="k">with</span> <span class="n">StoreManager</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">StoreManager</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
     <span class="n">person1</span> <span class="o">=</span> <span class="n">Person</span><span class="p">()</span>
     <span class="n">person1</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">create_from</span><span class="p">(</span><span class="s1">&#39;https://www.python.org/static/img/python-logo@2x.png&#39;</span><span class="p">)</span>
     <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">person1</span><span class="p">)</span>
@@ -260,7 +268,27 @@ Length: 15770
 Original filename: https://www.python.org/static/img/python-logo@2x.png
 </pre></div>
 </div>
-<p>Call <code class="docutils literal"><span class="pre">person1.image.locate()</span></code> to get the files URL in store.</p>
+</div>
+<div class="section" id="thumbnails">
+<h2>7. Thumbnails<a class="headerlink" href="#thumbnails" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">exists</span><span class="p">,</span> <span class="n">join</span>
+
+<span class="k">with</span> <span class="n">StoreManager</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
+    <span class="n">thumbnail</span> <span class="o">=</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">get_thumbnail</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">auto_generate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">thumbnail</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">exists</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">TEMP_PATH</span><span class="p">,</span> <span class="n">thumbnail</span><span class="o">.</span><span class="n">path</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-none"><div class="highlight"><pre><span></span>9
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Remember to commit the sqlalchemy&#8217;s <code class="docutils literal"><span class="pre">session</span></code> after thumbnail generation to store the info, it&#8217;s also
+can rollbacks the operation if transaction failed.</p>
+</div>
+<p>Call <code class="docutils literal"><span class="pre">person1.image.locate()</span></code> or <code class="docutils literal"><span class="pre">person1.image.get_thumbnail(width=32,</span> <span class="pre">auto_generate=True).locate()</span></code> to get the
+files URL in store.</p>
 </div>
 </div>
 
@@ -305,7 +333,7 @@ Original filename: https://www.python.org/static/img/python-logo@2x.png
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.2.1',
+            VERSION:'0.3.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

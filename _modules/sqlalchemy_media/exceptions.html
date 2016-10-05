@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.exceptions &mdash; sqlalchemy-media 0.2.1 documentation</title>
+  <title>sqlalchemy_media.exceptions &mdash; sqlalchemy-media 0.3.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.2.1 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.3.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.2
+                0.3
               </div>
             
           
@@ -135,34 +135,6 @@
   <h1>Source code for sqlalchemy_media.exceptions</h1><div class="highlight"><pre>
 <span></span>
 <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">join</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">abspath</span>
-
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-
-    <span class="s1">&#39;SqlAlchemyMediaException&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;MaximumLengthIsReachedError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;MinimumLengthIsNotReachedError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;ContextError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;DefaultStoreError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;AnalyzeError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;ValidationError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;ContentTypeValidationError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;DescriptorError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;DescriptorOperationError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;OptionalPackageRequirementError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;SqlAlchemyMediaException&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;MaximumLengthIsReachedError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;MinimumLengthIsNotReachedError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;ContextError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;DefaultStoreError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;AnalyzeError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;ValidationError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;ContentTypeValidationError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;DescriptorError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;DescriptorOperationError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;OptionalPackageRequirementError&#39;</span>
-
-<span class="p">]</span>
 
 
 <div class="viewcode-block" id="SqlAlchemyMediaException"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.exceptions.SqlAlchemyMediaException">[docs]</a><span class="k">class</span> <span class="nc">SqlAlchemyMediaException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
@@ -274,6 +246,13 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Cannot find the package: </span><span class="si">%s</span><span class="s1"> in file: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">package_name</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="s1">&#39;The following packages are missing. in order please install them: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">packages</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="ThumbnailIsNotAvailableError"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.exceptions.ThumbnailIsNotAvailableError">[docs]</a><span class="k">class</span> <span class="nc">ThumbnailIsNotAvailableError</span><span class="p">(</span><span class="n">SqlAlchemyMediaException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Raised when requested thumbnail is not available(generated) yet.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span></div>
 </pre></div>
 
            </div>
@@ -307,7 +286,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.2.1',
+            VERSION:'0.3.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
