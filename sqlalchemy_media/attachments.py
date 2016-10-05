@@ -600,7 +600,7 @@ class Image(BaseImage):
             -> Thumbnail:
         """
 
-        .. versionadded:: 0.2.2
+        .. versionadded:: 0.3.0
 
         Generates and stores a thumbnail with the given arguments.
 
@@ -665,7 +665,7 @@ class Image(BaseImage):
                       auto_generate: bool=False) -> Thumbnail:
         """
 
-        .. versionadded:: 0.2.2
+        .. versionadded:: 0.3.0
 
         Search for the thumbnail with given arguments, if ``auto_generate`` is :data:`.False`, the
         :exc:`.ThumbnailIsNotAvailableError` will be raise, else tries to call the :meth:`generate_thumbnail` to create

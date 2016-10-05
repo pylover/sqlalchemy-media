@@ -5,6 +5,9 @@ from sqlalchemy_media.optionals import magic_mime_from_buffer, ensure_wand
 
 class Analyzer(object):
     """
+
+    .. versionadded:: 0.2.0
+
     The abstract base class for all analyzers.
 
     """
@@ -23,6 +26,9 @@ class Analyzer(object):
 
 class MagicAnalyzer(Analyzer):
     """
+
+    .. versionadded:: 0.2.0
+
     Analyze the file using the libmagic and it's Python wrapper: ``python-magic``.
 
     .. warning:: You should install the ``python-magic`` in order, to use this class. otherwise, an

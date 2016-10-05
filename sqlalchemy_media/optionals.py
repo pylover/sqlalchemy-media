@@ -1,4 +1,8 @@
 """
+
+optionals Module
+----------------
+
 This module is a helper for handing optional packages.
 
 Optional packages are not included in ``setup.py``. So :exc:`.OptionalPackageRequirementError` will be raised if

@@ -7,7 +7,11 @@ from sqlalchemy_media.exceptions import ContentTypeValidationError, DimensionVal
 
 class Validator(object):
     """
+
+    .. versionadded:: 0.2.0
+
     The abstract base class for all validators.
+
     """
 
     def validate(self, analyze_result: dict) -> None:
@@ -28,6 +32,9 @@ class Validator(object):
 
 class ContentTypeValidator(Validator):
     """
+
+    .. versionadded:: 0.2.0
+
     Assert content types.
 
     :param content_types: An iterable whose items are allowed content types.
@@ -58,6 +65,8 @@ class ImageDimensionValidator(Validator):
     :param minimum: Minimum allowed dimension (w, h).
     :param maximum: Maximum allowed dimension (w, h).
 
+    .. note:: Pass ``0`` on ``None`` for disabling assertion for one of: ``(w, h)``.
+
     .. note:: :exc:`.DimensionValidationError` may be raised during validation.
 
     Use it as follow
@@ -70,11 +79,6 @@ class ImageDimensionValidator(Validator):
         class ProfileImage(Image):
            __analyzer__ = WandAnalyzer()
            __validator__ = ImageDimensionValidator((64, 48), (128, 96))
-
-
-    ::
-
-    .. note:: This object currently setects ``width``, ``height`` and ``mimetype`` of the image.
 
 
     """

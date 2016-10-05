@@ -1,4 +1,9 @@
+"""
 
+constants Module
+----------------
+
+"""
 
 #: Represents Kilo-Bytes
 KB = 1024

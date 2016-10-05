@@ -1,12 +1,17 @@
 """
 
+mimetypes_ Module
+-----------------
+
 Due the python bugs:
 
- - https://bugs.python.org/issue4963
- - https://bugs.python.org/issue1043134
- - https://bugs.python.org/issue6626#msg91205
+- https://bugs.python.org/issue4963
+- https://bugs.python.org/issue1043134
+- https://bugs.python.org/issue6626#msg91205
 
 The database was hardcoded here.
+
+.. versionadded:: 0.3.0
 
 """
 

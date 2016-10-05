@@ -156,6 +156,7 @@ Here you can see the full list of changes made on each sqlalchemy-media release.
 0.2.0 (2016-10-05)
   - Added two tutorials in documentation
   - Restricting Content-type: #28
+  - MagicAnalyzer
   - Including all requirements*.txt in distribution: #49
   - Including test stuff in distribution: #36
   - Descriptive error message when an optional package is missing: #48
