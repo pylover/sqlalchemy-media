@@ -51,8 +51,7 @@ Overview
  - Offering ``delete_orphan`` flag to automatically delete files which orphaned via attribute set or delete from
    collections, or objects leaved in memory alone! by setting it's last pointer to None.
  - Attaching files from Url, LocalFileSystem and Streams.
- - Extracting the file's mimetype from the backend stream if possible, using python's built-in
-   `mimetypes <https://docs.python.org/3.5/library/mimetypes.html>`_ module.
+ - Extracting the file's mimetype from the backend stream if possible, using ``magic`` module.
  - Limiting file size(min, max), to prevent DOS attacks.
  - Adding timestamp in url to help caching.
  - Using python type hinting to annotate arguments. So currently python3.5 and higher is supported.
