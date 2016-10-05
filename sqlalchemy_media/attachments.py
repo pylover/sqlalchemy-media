@@ -1,4 +1,4 @@
-from typing import Hashable, Tuple, Dict
+from typing import Hashable, Tuple, List
 import copy
 import uuid
 import time
@@ -587,9 +587,9 @@ class Image(BaseImage):
     __thumbnail_type__ = Thumbnail
 
     @property
-    def thumbnails(self) -> Dict[Tuple[int, int, float], Thumbnail]:
+    def thumbnails(self) -> List[Tuple[int, int, float, Thumbnail]]:
         """
-        A ``Dict[Tuple[int, int, float], Thumbnail]``, to hold thumbnails.
+        A ``List[Tuple[int, int, float, Thumbnail]]``, to hold thumbnails.
 
         You may use :meth:`.generate_thumbnail` and or :meth:`.get_thumbnail` with ``auto_generate=True`` to fill it.
 
@@ -648,15 +648,16 @@ class Image(BaseImage):
 
         thumbnail_buffer.seek(0)
         if self.thumbnails is None:
-            self['thumbnails'] = {}
+            self['thumbnails'] = []
 
         ratio = round(width / original_size[0], ratio_precision)
-        self.thumbnails[(width, height, ratio)] = thumbnail = Thumbnail.create_from(
+        thumbnail = Thumbnail.create_from(
             thumbnail_buffer,
             content_type='image/jpeg',
             extension='.jpg',
             dimension=(width, height)
         )
+        self.thumbnails.append((width, height, ratio, thumbnail))
 
         return thumbnail
 
@@ -688,7 +689,7 @@ class Image(BaseImage):
             ratio = round(ratio, ratio_precision)
 
         if self.thumbnails is not None:
-            for (w, h, r), t in self.thumbnails.items():
+            for w, h, r, t in self.thumbnails:
                 if w == width or h == height or round(r, ratio_precision) == ratio:
                     return t
 

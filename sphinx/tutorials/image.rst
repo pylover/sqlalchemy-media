@@ -178,3 +178,54 @@ Generating thumbnail with ``ratio``
 
 Call ``person1.image.locate()`` or ``person1.image.get_thumbnail(width=32, auto_generate=True).locate()`` to get the
 files URL in store.
+
+8. Delete Orphan:
+-----------------
+
+Overwriting a file is achieved by attaching an image over the attachment and setting ``delete_orphan=True``:
+
+..  testcode:: quickstart
+
+    with StoreManager(session, delete_orphan=True):
+        person1.image.attach('https://www.python.org/static/img/python-logo.png')
+        session.commit()
+
+        print('Content type:', person1.image.content_type)
+        print('Extension:', person1.image.extension)
+        print('Length:', person1.image.length)
+        print('Original filename:', person1.image.original_filename)
+
+..  testoutput:: quickstart
+
+    Content type: image/png
+    Extension: .png
+    Length: 10102
+    Original filename: https://www.python.org/static/img/python-logo.png
+
+
+It's also works by setting new attachment:
+
+..  testcode:: quickstart
+
+    with StoreManager(session, delete_orphan=True):
+        old_filename = join(TEMP_PATH, person1.image.path)
+
+        person1.image = Image.create_from('https://www.python.org/static/img/python-logo.png')
+
+        new_filename = join(TEMP_PATH, person1.image.path)
+        session.commit()
+
+        print('Content type:', person1.image.content_type)
+        print('Extension:', person1.image.extension)
+        print('Length:', person1.image.length)
+        print('Original filename:', person1.image.original_filename)
+        assert not exists(old_filename)
+        assert exists(new_filename)
+
+..  testoutput:: quickstart
+
+    Content type: image/png
+    Extension: .png
+    Length: 10102
+    Original filename: https://www.python.org/static/img/python-logo.png
+
