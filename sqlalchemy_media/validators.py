@@ -50,7 +50,7 @@ class ContentTypeValidator(Validator):
 class ImageDimensionValidator(Validator):
     """
 
-    .. versionadded:: 0.3.0-dev0
+    .. versionadded:: 0.4.0
 
 
     Validates image size

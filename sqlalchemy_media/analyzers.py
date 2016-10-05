@@ -38,7 +38,7 @@ class MagicAnalyzer(Analyzer):
 class WandAnalyzer(Analyzer):
     """
 
-    .. versionadded:: 0.3.0-dev0
+    .. versionadded:: 0.4.0
 
     Analyze an image using ``wand``.
 
