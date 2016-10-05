@@ -11,13 +11,16 @@ The following tutorial is going to describe how to use restrictions on attached 
 
 For the first, let to create a type called ``CV``
 
-.. testcode:: content_type
+..  testcode:: content_type
 
-       from sqlalchemy_media import File, MagicAnalyzer, ContentTypeValidator
+        from sqlalchemy_media import File, MagicAnalyzer, ContentTypeValidator
+        from sqlalchemy_media.constants import MB, KB
 
-       class CV(File):
-           __analyzer__ = MagicAnalyzer()
-           __validate__ = ContentTypeValidator(['application/pdf', 'image/jpeg'])
+        class CV(File):
+            __analyzer__ = MagicAnalyzer()
+            __validate__ = ContentTypeValidator(['application/pdf', 'image/jpeg'])
+            __max_length__ = 6*MB
+            __min_length__ = 10*KB
 
 
 2. Creating workbench
