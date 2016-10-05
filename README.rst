@@ -19,11 +19,11 @@ sqlalchemy-media
      :target: https://github.com/pylover/sqlalchemy-media/blob/master/LICENSE
 
 
-
-
-
+Documentation
+-------------
 
 See the `documentation <http://sqlalchemy-media.dobisel.com>`_ for full description.
+
 
 Why ?
 -----
