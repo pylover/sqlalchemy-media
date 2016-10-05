@@ -63,16 +63,18 @@ class Store(object):
         """
         raise NotImplementedError()  # pragma: no cover
 
-    def open(self, filename: str, mode: str='r') -> Stream:
+    def open(self, filename: str, mode: str='rb') -> Stream:
         """
         **[Abstract]**
 
-        If overridden in the inherited class, should return a file-like object representing the file in the store.
+        Should be overridden in inherited class and return a file-like object representing the file in the store.
 
-        .. note:: Some stores are not supporting stream access, if yes, just leave it unimplemented.
+        .. note:: Caller of this method is responsible to close the stream.
 
         :param filename: The filename to open.
         :param mode: same as the `mode` in famous :func:`.open` function.
+
+        .. versionchanged:: This method should be overridden in inherited class.
 
         """
         raise NotImplementedError()  # pragma: no cover

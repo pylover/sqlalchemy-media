@@ -1,8 +1,6 @@
 
 import re
 from hashlib import md5
-from typing import BinaryIO
-from urllib.request import urlopen
 
 from sqlalchemy_media.typing_ import Stream
 from sqlalchemy_media.exceptions import MaximumLengthIsReachedError, MinimumLengthIsNotReachedError
@@ -55,3 +53,47 @@ def md5sum(f):
     finally:
         if file_obj is not f:
             file_obj.close()
+
+
+def validate_width_height_ratio(width: int = None, height: int = None, ratio: float = None):
+
+    params = ratio, width, height
+    param_count = sum(p is not None for p in params)
+    if not param_count:
+        raise ValueError('Pass one of: ratio, width, or height')
+    elif param_count > 1:
+        raise ValueError('Pass only one argument in ratio, width, or height; these parameters are exclusive from '
+                         'each other')
+
+    if width is not None:
+        if not isinstance(width, int):
+            raise TypeError('Argument width must be integer, not: %s' % type(width))
+        elif width < 1:
+            raise ValueError('Argument width must be a natural number, not: %s' % repr(width))
+
+        def height(size):
+            return size[1] * (width / size[0])
+
+    elif height is not None:
+        if not isinstance(height, int):
+            raise TypeError('Argument height must be integer, not %s' % type(height))
+        elif height < 1:
+            raise ValueError('Argument height must be natural number, not %s' % repr(height))
+
+        def width(size):
+            return size[0] * (height / size[1])
+
+    elif ratio is not None:
+        if not isinstance(ratio, float):
+            raise TypeError('Argument ratio must be float, not: %s' % type(ratio))
+
+        if ratio > 1:
+            raise ValueError('ratio must be less than `1.0` .')
+
+        def width(size):
+            return size[0] * ratio
+
+        def height(size):
+            return size[1] * ratio
+
+    return width, height, ratio

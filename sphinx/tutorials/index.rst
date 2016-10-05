@@ -4,6 +4,6 @@ Tutorials
 .. toctree::
    :maxdepth: 2
 
-   quickstart
+   image
    content_type_restriction
 

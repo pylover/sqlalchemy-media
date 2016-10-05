@@ -1,17 +1,21 @@
-from typing import Hashable
+from typing import Hashable, List, Tuple, Dict
 import copy
 import uuid
 import time
 import re
+import io
 from os.path import splitext
 from collections import Iterable
 
 from sqlalchemy.ext.mutable import MutableList, MutableDict
 
 from sqlalchemy_media.stores import StoreManager, Store
-from sqlalchemy_media.typing_ import Attachable
+from sqlalchemy_media.typing_ import Attachable, Dimension
 from sqlalchemy_media.descriptors import AttachableDescriptor
 from sqlalchemy_media.constants import MB, KB
+from sqlalchemy_media.optionals import ensure_wand
+from sqlalchemy_media.helpers import validate_width_height_ratio
+from sqlalchemy_media.exceptions import ThumbnailIsNotAvailableError
 
 
 class Attachment(MutableDict):
@@ -237,7 +241,7 @@ class Attachment(MutableDict):
         self.get_store().delete(self.path)
 
     def attach(self, attachable: Attachable, content_type: str = None, original_filename: str = None, extension: str = None,
-               store_id: str = None, overwrite: bool=False) -> 'Attachment':
+               store_id: str = None, overwrite: bool=False, **kwargs) -> 'Attachment':
         """
         Attach a file. if the session roll-backed, all operations will be rolled-back.
         The old file will be deleted after commit, if any.
@@ -253,10 +257,16 @@ class Attachment(MutableDict):
                           Currently, when using this option, Rollback function is not available, because the old file
                           will overwritten by the given new one.
 
+        :param kwargs: Additional metadata to be stored in backend.
+
         .. note:: :exc:`.MaximumLengthIsReachedError` and or :exc:`.MinimumLengthIsNotReachedError` may raised.
 
         .. versionchanged:: 0.1.2
-            This method will returns the self. it's useful to chain method calls on object within single line.
+
+            - This method will returns the self. it's useful to chain method calls on object within single line.
+            - Additional ``kwargs`` are accepted to be stored in database alongside the file's metadata.
+
+
 
         """
 
@@ -276,13 +286,14 @@ class Attachment(MutableDict):
                 self.key = str(uuid.uuid4())
 
             # Store information from descriptor
-            attachment_info = dict(
+            attachment_info = kwargs.copy()
+            attachment_info.update(dict(
                 original_filename=descriptor.original_filename,
                 extension=descriptor.extension,
                 content_type=descriptor.content_type,
                 length=descriptor.content_length,
                 store_id=store_id
-            )
+            ))
 
             # Analyze
             if self.__analyzer__ is not None:
@@ -512,7 +523,47 @@ class FileDict(AttachmentDict):
     __item_type__ = File
 
 
-class Image(File):
+class BaseImage(File):
+    """
+    Base class for all images.
+
+    """
+
+    def attach(self, *args, dimension: Dimension=None, **kwargs):
+        """
+        A new overload for :meth:`.Attachment.attach`, which accepts one additional argument: ``dimension``.
+
+        :param args: The same as the: :meth:`.Attachment.attach`.
+        :param dimension: Image (width, height).
+        :param kwargs: The same as the: :meth:`.Attachment.attach`.
+
+        :return: The same as the: :meth:`.Attachment.attach`.
+        """
+        if dimension:
+            kwargs['width'], kwargs['height'] = dimension
+
+        return super().attach(*args, **kwargs)
+
+    @property
+    def width(self):
+        return self.get('width')
+
+    @property
+    def height(self):
+        return self.get('height')
+
+
+class Thumbnail(BaseImage):
+    """
+    Representing an image thumbnail.
+
+    """
+
+    __directory__ = 'thumbnails'
+    __prefix__ = 'thumbnail'
+
+
+class Image(BaseImage):
     """
     Equivalent to
     ::
@@ -530,3 +581,122 @@ class Image(File):
 
     __max_length__ = 2 * MB
     __min_length__ = 4 * KB
+
+    #: It allows to customize the type of thumbnail images.
+    __thumbnail_type__ = Thumbnail
+
+    @property
+    def thumbnails(self) -> Dict[Tuple[int, int, float], Thumbnail]:
+        """
+        A ``Dict[Tuple[int, int, float], Thumbnail]``, to hold thumbnails.
+
+        You may use :meth:`.generate_thumbnail` and or :meth:`.get_thumbnail` with ``auto_generate=True`` to fill it.
+
+        """
+        return self.get('thumbnails')
+
+    def generate_thumbnail(self, width: int=None, height: int=None, ratio: float=None, ratio_precision: int=5) \
+            -> Thumbnail:
+        """
+
+        .. versionadded:: 0.2.2
+
+        Generates and stores a thumbnail with the given arguments.
+
+        .. warning:: If non or more than one of the ``width``, ``height`` and or ``ratio`` are given, :exc:`ValueError` will be
+                     raised.
+
+        :param width: The width of the thumbnail.
+        :param height: The Height of the thumbnail.
+        :param ratio: The coefficient to reduce, Must be less than ``1.0``.
+        :param ratio_precision: Number of digits after the decimal point to picked to store from the ratio. default: 2.
+        :return: the Newly generated :class:`.Thumbnail` instance.
+
+        """
+
+        # Validating parameters
+        width, height, ratio = validate_width_height_ratio(width, height, ratio)
+
+        # Ensuring the wand package is installed.
+        ensure_wand()
+        # noinspection PyPackageRequirements
+        from wand.image import Image as WandImage
+
+        # opening the original file
+        thumbnail_buffer = io.BytesIO()
+        store = self.get_store()
+        with store.open(self.path) as original_file:
+
+            # generating thumbnail and storing in buffer
+            img = WandImage(file=original_file)
+            img.format = 'jpg'
+
+            with img:
+                original_size = img.size
+
+                if callable(width):
+                    width = width(original_size)
+                if callable(height):
+                    height = height(original_size)
+
+                width = int(width)
+                height = int(height)
+
+                img.resize(width, height)
+                img.save(file=thumbnail_buffer)
+
+        thumbnail_buffer.seek(0)
+        if self.thumbnails is None:
+            self['thumbnails'] = {}
+
+        ratio = round(width / original_size[0], ratio_precision)
+        self.thumbnails[(width, height, ratio)] = thumbnail = Thumbnail.create_from(
+            thumbnail_buffer,
+            content_type='image/jpeg',
+            extension='.jpg',
+            dimension=(width, height)
+        )
+
+        return thumbnail
+
+    def get_thumbnail(self, width: int=None, height: int=None, ratio: float=None, ratio_precision: int=2,
+                      auto_generate: bool=False) -> Thumbnail:
+        """
+
+        .. versionadded:: 0.2.2
+
+        Search for the thumbnail with given arguments, if ``auto_generate`` is :data:`.False`, the
+        :exc:`.ThumbnailIsNotAvailableError` will be raise, else tries to call the :meth:`generate_thumbnail` to create
+        a new one.
+
+        :param width: Width of the thumbnail to search for.
+        :param height: Height of the thumbnail to search for.
+        :param ratio: Ratio of the thumbnail to search for.
+        :param ratio_precision: Number of digits after the decimal point to picked for search from the ratio.
+                                default: 2.
+        :param auto_generate: If :data:`.True`, tries to generate a new thumbnail.
+
+        :return: :class:`.Thumbnail` instance.
+
+        .. warning:: if ``auto_generate`` is :data:`.True`, you have to commit the session, to store the generated
+                     thumbnails.
+
+        """
+
+        if ratio:
+            ratio = round(ratio, ratio_precision)
+
+        if self.thumbnails is not None:
+            for (w, h, r), t in self.thumbnails.items():
+                if w == width or h == height or round(r, ratio_precision) == ratio:
+                    return t
+
+        # thumbnail not found
+        if auto_generate:
+            return self.generate_thumbnail(width, height, ratio)
+        else:
+            raise ThumbnailIsNotAvailableError(
+                'Thumbnail is not available with thi criteria: width=%s height=%s ration=%s' % (width, height, ratio)
+            )
+
+

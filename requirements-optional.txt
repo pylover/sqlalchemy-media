@@ -1,1 +1,2 @@
 python-magic >= 0.4.12
+wand >= 0.4.3

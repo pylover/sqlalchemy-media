@@ -2,34 +2,6 @@
 from os.path import join, dirname, abspath
 
 
-__all__ = [
-
-    'SqlAlchemyMediaException',
-    'MaximumLengthIsReachedError',
-    'MinimumLengthIsNotReachedError',
-    'ContextError',
-    'DefaultStoreError',
-    'AnalyzeError',
-    'ValidationError',
-    'ContentTypeValidationError',
-    'DescriptorError',
-    'DescriptorOperationError',
-    'OptionalPackageRequirementError',
-    'SqlAlchemyMediaException',
-    'MaximumLengthIsReachedError',
-    'MinimumLengthIsNotReachedError',
-    'ContextError',
-    'DefaultStoreError',
-    'AnalyzeError',
-    'ValidationError',
-    'ContentTypeValidationError',
-    'DescriptorError',
-    'DescriptorOperationError',
-    'OptionalPackageRequirementError'
-
-]
-
-
 class SqlAlchemyMediaException(Exception):
     """
     The base class for all exceptions
@@ -139,3 +111,10 @@ class OptionalPackageRequirementError(SqlAlchemyMediaException):
             raise ValueError('Cannot find the package: %s in file: %s' % (package_name, filename))
 
         super().__init__('The following packages are missing. in order please install them: %s' % ', '.join(packages))
+
+
+class ThumbnailIsNotAvailableError(SqlAlchemyMediaException):
+    """
+    Raised when requested thumbnail is not available(generated) yet.
+
+    """
