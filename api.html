@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; sqlalchemy-media 0.4.0 documentation</title>
+  <title>API Reference &mdash; sqlalchemy-media 0.4.1 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.4.0 documentation" href="index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.4.1 documentation" href="index.html"/>
         <link rel="prev" title="Playing with Analyzers and Validators" href="tutorials/analyzers_and_validators.html"/> 
 
   
@@ -130,8 +130,12 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.exceptions">exceptions Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.optionals">optionals Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.constants">constants Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-sqlalchemy_media.mimetypes_">Other Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mimetypes-module">mimetypes_ Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#optionals-module">optionals Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#constants-module">constants Module</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -366,6 +370,12 @@ in <a class="reference internal" href="#sqlalchemy_media.stores.StoreManager" ti
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy_media.attachments.Attachment.get_objects_to_delete">
+<code class="descname">get_objects_to_delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; typing.Iterable<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Attachment.get_objects_to_delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.get_objects_to_delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the files to be deleted, if the attachment is marked for deletion.</p>
 </dd></dl>
 
 <dl class="method">
@@ -684,7 +694,7 @@ If available, else empty string (&#8216;&#8217;) will be returned</p>
 <dt id="sqlalchemy_media.attachments.Image.generate_thumbnail">
 <code class="descname">generate_thumbnail</code><span class="sig-paren">(</span><em>width: int = None</em>, <em>height: int = None</em>, <em>ratio: float = None</em>, <em>ratio_precision: int = 5</em><span class="sig-paren">)</span> &rarr; sqlalchemy_media.attachments.Thumbnail<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Image.generate_thumbnail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Image.generate_thumbnail" title="Permalink to this definition">¶</a></dt>
 <dd><div class="versionadded">
-<p><span class="versionmodified">New in version 0.2.2.</span></p>
+<p><span class="versionmodified">New in version 0.3.0.</span></p>
 </div>
 <p>Generates and stores a thumbnail with the given arguments.</p>
 <div class="admonition warning">
@@ -712,10 +722,16 @@ will be raised.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="sqlalchemy_media.attachments.Image.get_objects_to_delete">
+<code class="descname">get_objects_to_delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; typing.Iterable<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Image.get_objects_to_delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Image.get_objects_to_delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the files to be deleted, if the attachment is marked for deletion.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="sqlalchemy_media.attachments.Image.get_thumbnail">
 <code class="descname">get_thumbnail</code><span class="sig-paren">(</span><em>width: int = None</em>, <em>height: int = None</em>, <em>ratio: float = None</em>, <em>ratio_precision: int = 2</em>, <em>auto_generate: bool = False</em><span class="sig-paren">)</span> &rarr; sqlalchemy_media.attachments.Thumbnail<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Image.get_thumbnail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Image.get_thumbnail" title="Permalink to this definition">¶</a></dt>
 <dd><div class="versionadded">
-<p><span class="versionmodified">New in version 0.2.2.</span></p>
+<p><span class="versionmodified">New in version 0.3.0.</span></p>
 </div>
 <p>Search for the thumbnail with given arguments, if <code class="docutils literal"><span class="pre">auto_generate</span></code> is <a class="reference external" href="https://docs.python.org/3.5/library/constants.html#False" title="(in Python v3.5)"><code class="xref py py-data docutils literal"><span class="pre">False</span></code></a>, the
 <a class="reference internal" href="#sqlalchemy_media.exceptions.ThumbnailIsNotAvailableError" title="sqlalchemy_media.exceptions.ThumbnailIsNotAvailableError"><code class="xref py py-exc docutils literal"><span class="pre">ThumbnailIsNotAvailableError</span></code></a> will be raise, else tries to call the <a class="reference internal" href="#sqlalchemy_media.attachments.Image.generate_thumbnail" title="sqlalchemy_media.attachments.Image.generate_thumbnail"><code class="xref py py-meth docutils literal"><span class="pre">generate_thumbnail()</span></code></a> to create
@@ -1443,6 +1459,9 @@ be deleted from store after session commit.</p>
 <dt id="sqlalchemy_media.analyzers.Analyzer">
 <em class="property">class </em><code class="descclassname">sqlalchemy_media.analyzers.</code><code class="descname">Analyzer</code><a class="reference internal" href="_modules/sqlalchemy_media/analyzers.html#Analyzer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.analyzers.Analyzer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.5/library/functions.html#object" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.2.0.</span></p>
+</div>
 <p>The abstract base class for all analyzers.</p>
 <dl class="method">
 <dt id="sqlalchemy_media.analyzers.Analyzer.analyze">
@@ -1473,6 +1492,9 @@ be deleted from store after session commit.</p>
 <dt id="sqlalchemy_media.analyzers.MagicAnalyzer">
 <em class="property">class </em><code class="descclassname">sqlalchemy_media.analyzers.</code><code class="descname">MagicAnalyzer</code><a class="reference internal" href="_modules/sqlalchemy_media/analyzers.html#MagicAnalyzer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.analyzers.MagicAnalyzer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.analyzers.Analyzer" title="sqlalchemy_media.analyzers.Analyzer"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.analyzers.Analyzer</span></code></a></p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.2.0.</span></p>
+</div>
 <p>Analyze the file using the libmagic and it&#8217;s Python wrapper: <code class="docutils literal"><span class="pre">python-magic</span></code>.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
@@ -1545,6 +1567,9 @@ be deleted from store after session commit.</p>
 <dt id="sqlalchemy_media.validators.Validator">
 <em class="property">class </em><code class="descclassname">sqlalchemy_media.validators.</code><code class="descname">Validator</code><a class="reference internal" href="_modules/sqlalchemy_media/validators.html#Validator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.validators.Validator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.5/library/functions.html#object" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.2.0.</span></p>
+</div>
 <p>The abstract base class for all validators.</p>
 <dl class="method">
 <dt id="sqlalchemy_media.validators.Validator.validate">
@@ -1578,6 +1603,9 @@ be deleted from store after session commit.</p>
 <dt id="sqlalchemy_media.validators.ContentTypeValidator">
 <em class="property">class </em><code class="descclassname">sqlalchemy_media.validators.</code><code class="descname">ContentTypeValidator</code><span class="sig-paren">(</span><em>content_types: typing.Iterable[str]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/validators.html#ContentTypeValidator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.validators.ContentTypeValidator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.validators.Validator" title="sqlalchemy_media.validators.Validator"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.validators.Validator</span></code></a></p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.2.0.</span></p>
+</div>
 <p>Assert content types.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1618,6 +1646,10 @@ be deleted from store after session commit.</p>
 </table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
+<p class="last">Pass <code class="docutils literal"><span class="pre">0</span></code> on <code class="docutils literal"><span class="pre">None</span></code> for disabling assertion for one of: <code class="docutils literal"><span class="pre">(w,</span> <span class="pre">h)</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
 <p class="last"><a class="reference internal" href="#sqlalchemy_media.exceptions.DimensionValidationError" title="sqlalchemy_media.exceptions.DimensionValidationError"><code class="xref py py-exc docutils literal"><span class="pre">DimensionValidationError</span></code></a> may be raised during validation.</p>
 </div>
 <p>Use it as follow</p>
@@ -1627,9 +1659,6 @@ be deleted from store after session commit.</p>
 <span class="k">class</span> <span class="nc">ProfileImage</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
    <span class="n">__analyzer__</span> <span class="o">=</span> <span class="n">WandAnalyzer</span><span class="p">()</span>
    <span class="n">__validator__</span> <span class="o">=</span> <span class="n">ImageDimensionValidator</span><span class="p">((</span><span class="mi">64</span><span class="p">,</span> <span class="mi">48</span><span class="p">),</span> <span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">96</span><span class="p">))</span>
-</pre></div>
-</div>
-<div class="highlight-default"><div class="highlight"><pre><span></span>.. note:: This object currently setects ``width``, ``height`` and ``mimetype`` of the image.
 </pre></div>
 </div>
 </dd></dl>
@@ -1753,8 +1782,23 @@ it&#8217;s version criteria to inform the user.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-sqlalchemy_media.optionals">
-<span id="optionals-module"></span><h2>optionals Module<a class="headerlink" href="#module-sqlalchemy_media.optionals" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-sqlalchemy_media.mimetypes_">
+<span id="other-modules"></span><h2>Other Modules<a class="headerlink" href="#module-sqlalchemy_media.mimetypes_" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="mimetypes-module">
+<h3><a href="#id1"><span class="problematic" id="id2">mimetypes_</span></a> Module<a class="headerlink" href="#mimetypes-module" title="Permalink to this headline">¶</a></h3>
+<p>Due the python bugs:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://bugs.python.org/issue4963">https://bugs.python.org/issue4963</a></li>
+<li><a class="reference external" href="https://bugs.python.org/issue1043134">https://bugs.python.org/issue1043134</a></li>
+<li><a class="reference external" href="https://bugs.python.org/issue6626#msg91205">https://bugs.python.org/issue6626#msg91205</a></li>
+</ul>
+<p>The database was hardcoded here.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.3.0.</span></p>
+</div>
+</div>
+<span class="target" id="module-sqlalchemy_media.optionals"></span><div class="section" id="optionals-module">
+<h3>optionals Module<a class="headerlink" href="#optionals-module" title="Permalink to this headline">¶</a></h3>
 <p>This module is a helper for handing optional packages.</p>
 <p>Optional packages are not included in <code class="docutils literal"><span class="pre">setup.py</span></code>. So <a class="reference internal" href="#sqlalchemy_media.exceptions.OptionalPackageRequirementError" title="sqlalchemy_media.exceptions.OptionalPackageRequirementError"><code class="xref py py-exc docutils literal"><span class="pre">OptionalPackageRequirementError</span></code></a> will be raised if
 requested package is not provided.</p>
@@ -1796,8 +1840,8 @@ requested package is not provided.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-sqlalchemy_media.constants">
-<span id="constants-module"></span><h2>constants Module<a class="headerlink" href="#module-sqlalchemy_media.constants" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-sqlalchemy_media.constants"></span><div class="section" id="constants-module">
+<h3>constants Module<a class="headerlink" href="#constants-module" title="Permalink to this headline">¶</a></h3>
 <dl class="data">
 <dt id="sqlalchemy_media.constants.KB">
 <code class="descclassname">sqlalchemy_media.constants.</code><code class="descname">KB</code><em class="property"> = 1024</em><a class="headerlink" href="#sqlalchemy_media.constants.KB" title="Permalink to this definition">¶</a></dt>
@@ -1810,6 +1854,7 @@ requested package is not provided.</p>
 <dd><p>Represents Mega-Bytes</p>
 </dd></dl>
 
+</div>
 </div>
 </div>
 
@@ -1852,7 +1897,7 @@ requested package is not provided.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.4.0',
+            VERSION:'0.4.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

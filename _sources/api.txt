@@ -226,13 +226,13 @@ exceptions Module
 
 .. autoexception:: DimensionValidationError
 
-optionals Module
-----------------
+
+Other Modules
+-------------
+
+.. automodule:: sqlalchemy_media.mimetypes_
 
 .. automodule:: sqlalchemy_media.optionals
-
-constants Module
-----------------
 
 .. automodule:: sqlalchemy_media.constants
 
