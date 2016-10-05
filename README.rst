@@ -146,8 +146,9 @@ Changelog
 Here you can see the full list of changes made on each sqlalchemy-media release.
 
 0.3.0 (2016-10-05)
-  - WandAnalyzer. #52
-  - Thumbnail auto generation implemented. #11,  See doc.
+  - ImageDimensionValidator: #14
+  - WandAnalyzer: #52
+  - Thumbnail auto generation implemented: #11,  See doc.
   - Not using python's built-in mimetype module, due the bug: https://bugs.python.org/issue4963
 
 0.2.0 (2016-10-05)
