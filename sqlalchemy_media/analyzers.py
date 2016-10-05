@@ -23,9 +23,9 @@ class Analyzer(object):
 
 class MagicAnalyzer(Analyzer):
     """
-    Analyze the file using the libmagic and it's python-wrapper: python-magic.
+    Analyze the file using the libmagic and it's Python wrapper: ``python-magic``.
 
-    .. warning:: You should install the python-magic in order, to use this class. otherwise, an
+    .. warning:: You should install the ``python-magic`` in order, to use this class. otherwise, an
                  :exc:`.OptionalPackageRequirementError` will be raised.
     """
 
@@ -41,6 +41,9 @@ class WandAnalyzer(Analyzer):
     .. versionadded:: 0.3.0-dev0
 
     Analyze an image using ``wand``.
+
+    .. warning:: You should install the ``wand`` in order, to use this class. otherwise, an
+                 :exc:`.OptionalPackageRequirementError` will be raised.
 
     Use it as follow
 

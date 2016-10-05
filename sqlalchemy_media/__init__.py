@@ -6,7 +6,7 @@ from .stores import Store, FileSystemStore, StoreManager
 from .descriptors import BaseDescriptor, StreamDescriptor, StreamCloserDescriptor, LocalFileSystemDescriptor, \
     UrlDescriptor, CgiFieldStorageDescriptor, AttachableDescriptor
 from .analyzers import Analyzer, MagicAnalyzer, WandAnalyzer
-from .validators import Validator, ContentTypeValidator
+from .validators import Validator, ContentTypeValidator, ImageDimensionValidator
 
 
 __version__ = '0.3.0-dev0'

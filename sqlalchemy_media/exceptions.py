@@ -118,3 +118,10 @@ class ThumbnailIsNotAvailableError(SqlAlchemyMediaException):
     Raised when requested thumbnail is not available(generated) yet.
 
     """
+
+
+class DimensionValidationError(ValidationError):
+    """
+    Raises when ``width`` or ``height`` of the media is not meet the limitations.
+
+    """

@@ -188,6 +188,13 @@ ContentTypeValidator
 
 .. autoclass:: ContentTypeValidator
 
+
+ImageDimensionValidator
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autoclass:: ImageDimensionValidator
+
+
 exceptions Module
 -----------------
 
@@ -216,6 +223,8 @@ exceptions Module
 .. autoexception:: ContentTypeValidationError
 
 .. autoexception:: ThumbnailIsNotAvailableError
+
+.. autoexception:: DimensionValidationError
 
 optionals Module
 ----------------

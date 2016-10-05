@@ -267,8 +267,6 @@ class Attachment(MutableDict):
             - This method will returns the self. it's useful to chain method calls on object within single line.
             - Additional ``kwargs`` are accepted to be stored in database alongside the file's metadata.
 
-
-
         """
 
         # Wrap in AttachableDescriptor
