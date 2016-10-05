@@ -1,5 +1,5 @@
 
-from typing import Iterable, Callable
+from typing import Iterable
 from os import makedirs, remove
 from os.path import abspath, join, dirname, exists
 
@@ -340,7 +340,8 @@ class StoreManager(object):
         Schedules one or more attachment(s) to be deleted from store just after sqlalchemy session commit.
 
         """
-        self._files_to_delete_after_commit.extend(attachments)
+        for attachment in attachments:
+            self._files_to_delete_after_commit.extend(attachment.get_objects_to_delete())
 
     # noinspection PyUnresolvedReferences
     def register_to_delete_after_rollback(self, *files: Iterable['Attachment']) -> None:

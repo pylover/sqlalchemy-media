@@ -1,11 +1,10 @@
-from typing import Hashable, Tuple, List
+from typing import Hashable, Tuple, List, Generator, Iterable
 import copy
 import uuid
 import time
 import re
 import io
 from os.path import splitext
-from collections import Iterable
 
 from sqlalchemy.ext.mutable import MutableList, MutableDict
 
@@ -328,6 +327,13 @@ class Attachment(MutableDict):
         """
         store = self.get_store()
         return '%s?_ts=%s' % (store.locate(self), self.timestamp)
+
+    def get_objects_to_delete(self) -> Iterable:
+        """
+        Returns the files to be deleted, if the attachment is marked for deletion.
+
+        """
+        yield self
 
 
 class AttachmentCollection(object):
@@ -701,4 +707,12 @@ class Image(BaseImage):
                 'Thumbnail is not available with thi criteria: width=%s height=%s ration=%s' % (width, height, ratio)
             )
 
+    def get_objects_to_delete(self) -> Iterable:
+        """
+        Returns the files to be deleted, if the attachment is marked for deletion.
 
+        """
+        yield from super().get_objects_to_delete()
+        if self.thumbnails:
+            for t in self.thumbnails:
+                yield t[3]

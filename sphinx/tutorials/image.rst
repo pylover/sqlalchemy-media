@@ -179,14 +179,14 @@ Generating thumbnail with ``ratio``
 Call ``person1.image.locate()`` or ``person1.image.get_thumbnail(width=32, auto_generate=True).locate()`` to get the
 files URL in store.
 
-8. Delete Orphan:
------------------
+8. Overwriting
+--------------
 
-Overwriting a file is achieved by attaching an image over the attachment and setting ``delete_orphan=True``:
+Overwriting a file is achieved by attaching an image by :meth:`.attach`
 
 ..  testcode:: quickstart
 
-    with StoreManager(session, delete_orphan=True):
+    with StoreManager(session):
         person1.image.attach('https://www.python.org/static/img/python-logo.png')
         session.commit()
 
@@ -202,8 +202,10 @@ Overwriting a file is achieved by attaching an image over the attachment and set
     Length: 10102
     Original filename: https://www.python.org/static/img/python-logo.png
 
+9. Delete Orphan:
+-----------------
 
-It's also works by setting new attachment:
+Another way to delete orphaned images is ``delete_orphan=True``:
 
 ..  testcode:: quickstart
 

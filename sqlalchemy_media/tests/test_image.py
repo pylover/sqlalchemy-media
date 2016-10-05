@@ -62,14 +62,16 @@ class ImageTestCase(TempStoreTestCase):
             self.assertEqual(thumbnail.extension, '.jpg')
             self.assertEqual(thumbnail.width, 100)
             self.assertEqual(thumbnail.height, 75)
-            self.assertTrue(exists(join(self.temp_path, thumbnail.path)))
+            first_thumbnail_filename = join(self.temp_path, thumbnail.path)
+            self.assertTrue(exists(first_thumbnail_filename))
             self.assertIsNotNone(person1.image.get_thumbnail(width=100))
             self.assertIsNotNone(person1.image.get_thumbnail(height=75))
 
             # Generate thumbnail with height
             thumbnail = person1.image.generate_thumbnail(height=20)
             self.assertEqual(thumbnail.width, 26)
-            self.assertTrue(exists(join(self.temp_path, thumbnail.path)))
+            second_thumbnail_filename = join(self.temp_path, thumbnail.path)
+            self.assertTrue(exists(second_thumbnail_filename))
             self.assertIsNotNone(person1.image.get_thumbnail(width=26))
             self.assertIsNotNone(person1.image.get_thumbnail(height=20))
 
@@ -77,7 +79,8 @@ class ImageTestCase(TempStoreTestCase):
             thumbnail = person1.image.generate_thumbnail(ratio=1/3)
             self.assertEqual(thumbnail.width, 213)
             self.assertEqual(thumbnail.height, 160)
-            self.assertTrue(exists(join(self.temp_path, thumbnail.path)))
+            third_thumbnail_filename = join(self.temp_path, thumbnail.path)
+            self.assertTrue(exists(third_thumbnail_filename))
             self.assertIsNotNone(person1.image.get_thumbnail(ratio=1/3))
             self.assertIsNotNone(person1.image.get_thumbnail(width=213))
             self.assertIsNotNone(person1.image.get_thumbnail(height=160))
@@ -94,6 +97,14 @@ class ImageTestCase(TempStoreTestCase):
             self.assertRaises(TypeError, person1.image.generate_thumbnail, width='a')
             self.assertRaises(TypeError, person1.image.generate_thumbnail, height='a')
             self.assertRaises(TypeError, person1.image.generate_thumbnail, ratio='a')
+
+        # Attaching new image must deletes all thumbnails: issue: #54
+        with StoreManager(session):
+            person1.image.attach(self.cat_png)
+            session.commit()
+            self.assertFalse(exists(first_thumbnail_filename))
+            self.assertFalse(exists(second_thumbnail_filename))
+            self.assertFalse(exists(third_thumbnail_filename))
 
 
 if __name__ == '__main__':  # pragma: no cover
