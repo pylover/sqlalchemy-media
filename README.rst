@@ -137,8 +137,8 @@ Will produce::
 
 
 
-.. _SqlAlchemyMutable <http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html>:
+.. _SqlAlchemyMutable: <http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html>
 
-.. _SqlAlchemyTypeDecorators <http://docs.sqlalchemy.org/en/latest/core/custom_types.html#typedecorator-recipes>:
+.. _SqlAlchemyTypeDecorators: <http://docs.sqlalchemy.org/en/latest/core/custom_types.html#typedecorator-recipes>
 
-.. _mimetypes <https://docs.python.org/3.5/library/mimetypes.html>:
+.. _mimetypes: <https://docs.python.org/3.5/library/mimetypes.html>
