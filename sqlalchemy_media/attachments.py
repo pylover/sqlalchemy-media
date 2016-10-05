@@ -261,6 +261,8 @@ class Attachment(MutableDict):
 
         .. note:: :exc:`.MaximumLengthIsReachedError` and or :exc:`.MinimumLengthIsNotReachedError` may raised.
 
+        .. warning:: This operation can not be roll-backed, if ``overwrite=True`` given.
+
         .. versionchanged:: 0.1.2
 
             - This method will returns the self. it's useful to chain method calls on object within single line.
