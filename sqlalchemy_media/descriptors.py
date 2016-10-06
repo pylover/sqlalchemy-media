@@ -20,7 +20,7 @@ class BaseDescriptor(object):
     seeking over underlying streams. users may not be using this class directly. see :class:`.AttachableDescriptor`
     to know how to use it.
 
-    .. versionadded:: 0.4.1-dev0
+    .. versionadded:: 0.5.0
 
        - ``min_length`` argument
 
@@ -300,7 +300,7 @@ class StreamDescriptor(BaseDescriptor):
     def prepare_to_read(self, backend: str= 'temp') -> None:
         """
 
-        .. versionadded:: 0.4.1-dev0
+        .. versionadded:: 0.5.0
 
         If the underlying stream is not seekable, tries to store the underlying non-seekable stream as an instance of
         :class:`io.BytesIO`, :obj:`tempfile.NamedTemporaryFile` and :obj:`tempfile.TemporaryFile`.
@@ -347,7 +347,7 @@ class StreamDescriptor(BaseDescriptor):
     def replace(self, attachable: [io.BytesIO, io.FileIO], position=None, **kwargs):
         """
 
-        .. versionadded:: 0.4.1-dev0
+        .. versionadded:: 0.5.0
 
         Replace the underlying stream with a seekable one.
 

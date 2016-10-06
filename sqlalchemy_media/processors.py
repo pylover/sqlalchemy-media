@@ -13,7 +13,7 @@ from sqlalchemy_media.optionals import magic_mime_from_buffer, ensure_wand
 class Processor(object):
     """
 
-    .. versionadded:: 0.4.1-dev0
+    .. versionadded:: 0.5.0
 
     Abstract base class for all processors.
 
@@ -42,7 +42,7 @@ class Analyzer(Processor):
 
     .. versionadded:: 0.2.0
 
-    .. versionchanged:: 0.4.1-dev0
+    .. versionchanged:: 0.5.0
 
        - Inherited from :class:`.Processor`
        - The ``analyze`` method renamed to ``process`` to override the parent method.
@@ -68,7 +68,7 @@ class MagicAnalyzer(Analyzer):
 
     .. versionadded:: 0.2.0
 
-    .. versionchanged:: 0.4.1-dev0
+    .. versionchanged:: 0.5.0
 
        - Inherited from :class:`.Processor`
        - The ``analyze`` method renamed to ``process`` to override the parent method.
@@ -90,7 +90,7 @@ class WandAnalyzer(Analyzer):
 
     .. versionadded:: 0.4.0
 
-    .. versionchanged:: 0.4.1-dev0
+    .. versionchanged:: 0.5.0
 
        - Inherited from :class:`.Processor`
        - The ``analyze`` method renamed to ``process`` to override the parent method.
@@ -160,7 +160,7 @@ class Validator(Processor):
 
     .. versionadded:: 0.2.0
 
-    .. versionchanged:: 0.4.1-dev0
+    .. versionchanged:: 0.5.0
 
        - Inherited from :class:`.Processor`
        - The ``validate`` method renamed to ``process`` to override the parent method.
@@ -215,7 +215,7 @@ class ImageValidator(ContentTypeValidator):
 
     .. versionadded:: 0.4.0
 
-    .. versionchanged:: 0.4.1-dev0
+    .. versionchanged:: 0.5.0
 
        - Renamed from ``ImageDimensionValidator`` to ``ImageValidator``.
 
@@ -288,7 +288,7 @@ class ImageValidator(ContentTypeValidator):
 class ImageProcessor(Processor):
     """
 
-    .. versionadded:: 0.4.1-dev0
+    .. versionadded:: 0.5.0
 
     Used to re-sampling, resizing, reformatting bitmaps.
 

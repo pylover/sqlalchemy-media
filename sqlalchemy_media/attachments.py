@@ -33,7 +33,7 @@ class Attachment(MutableDict):
 
     This object should be used inside a :class:`.StoreManager` context.
 
-    .. versionchanged:: 0.4.1-dev0
+    .. versionchanged:: 0.5.0
 
        - removed ``__analyzer__`` attribute, using ``__pre_processors__`` instead.
        - removed ``__validate__`` attribute, using ``__pre_processors__`` instead.
@@ -309,7 +309,7 @@ class Attachment(MutableDict):
             - This method will return the self. it's useful to chain method calls on the object within a single line.
             - Additional ``kwargs`` are accepted to be stored in database alongside the file's metadata.
 
-        .. versionchanged:: 0.4.1-dev0
+        .. versionchanged:: 0.5.0
 
             - ``suppress_pre_process`` argument.
             - ``suppress_validation`` argument.

@@ -44,7 +44,7 @@ class Store(object):
 
         Should be overridden in inherited class and puts the stream as the given filename in the store.
 
-        .. versionchanged:: 0.4.1-dev0
+        .. versionchanged:: 0.5.0
 
            - ``min_length`` has been removed.
            - ``max_length`` has been removed.

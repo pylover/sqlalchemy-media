@@ -9,4 +9,4 @@ from .processors import Processor, ImageProcessor, Analyzer, MagicAnalyzer, Wand
     ContentTypeValidator, ImageValidator
 
 
-__version__ = '0.4.1-dev0'
+__version__ = '0.5.0'
