@@ -53,6 +53,9 @@ class Attachment(MutableDict):
     #: Instance of any class driver from :class:`.Validator`.
     __validate__ = None
 
+    #: An instance of :class:`.PreProcessor`, to convert, reformat & change contents before storing the attachment.
+    __pre_processor__ = None
+
     @classmethod
     def _listen_on_attribute(cls, attribute, coerce, parent_cls):
         StoreManager.observe_attribute(attribute)
@@ -201,10 +204,6 @@ class Attachment(MutableDict):
         """
         return int(self.get('length'))
 
-    @length.setter
-    def length(self, value) -> None:
-        self['length'] = value
-
     @property
     def timestamp(self):
         """
@@ -245,10 +244,48 @@ class Attachment(MutableDict):
         self.get_store().delete(self.path)
 
     def attach(self, attachable: Attachable, content_type: str = None, original_filename: str = None,
-               extension: str = None, store_id: str = None, overwrite: bool=False, **kwargs) -> 'Attachment':
+               extension: str = None, store_id: str = None, overwrite: bool=False, suppress_pre_process: bool=False,
+               suppress_validation: bool=False, **kwargs) -> 'Attachment':
         """
         Attach a file. if the session is rolled-back, all operations will be rolled-back.
         The old file will be deleted after commit, if any.
+
+        Workflow::
+
+
+                             +--------+
+                             | Start  |
+                             +---+----+
+                                 |
+                      +----------v-----------+
+                      | Wrap with Descriptor <----+
+                      +----------+-----------+    |
+                                 |                |
+                      +----------v-----------+    |
+                      | Nothing or Analyze   |    |
+                      +----------+-----------+    |
+                                 |                |
+                      +----------v-----------+    |
+                      | Nothing or Validate  |    |
+                      +----------+-----------+    |
+                                 |                |
+                      +----------v-----------+    |
+                      |Nothing or Pre Process+----+
+                      +------+---------------+
+                             |
+                  +----------+-----------+
+                  |                      |
+           +------v---------+  +---------v------+
+           |  Store in DB   |  |Store In Storage|
+           +------+---------+  +---------+------+
+                  |                      |
+                  +----------+-----------+
+                             |
+                             |
+                         +---v----+
+                         | Finish |
+                         +--------+
+
 
         :param attachable: stream, filename or URL to attach.
         :param content_type: If given, the content-detection is suppressed.
@@ -260,7 +297,8 @@ class Attachment(MutableDict):
         :param overwrite: Overwrites the file without changing it's unique-key and name, useful to prevent broken links.
                           Currently, when using this option, Rollback function is not available, because the old file
                           will be overwritten by the given new one.
-
+        :param suppress_pre_process: When is :data:`.True`, ignores the pre-processing phase, during attachment.
+        :param suppress_validation: When is :data:`.True`, ignores the validation phase, during attachment.
         :param kwargs: Additional metadata to be stored in backend.
 
         .. note:: :exc:`.MaximumLengthIsReachedError` and or :exc:`.MinimumLengthIsNotReachedError` may be raised.
@@ -271,6 +309,12 @@ class Attachment(MutableDict):
 
             - This method will return the self. it's useful to chain method calls on the object within a single line.
             - Additional ``kwargs`` are accepted to be stored in database alongside the file's metadata.
+
+        .. versionchanged:: 0.4.1-dev0
+
+            - ``suppress_pre_process`` argument.
+            - ``suppress_validation`` argument.
+            - pre-processing phase.
 
         """
 
@@ -306,11 +350,17 @@ class Attachment(MutableDict):
                 if self.__validate__ is not None:
                     self.__validate__.validate(attachment_info)
 
+            # Pre-processing
+            if self.__pre_processor__ is not None:
+                new_attachable, new_attachment_info = self.__pre_processor__.process(descriptor, attachment_info)
+                attachment_info.update(new_attachment_info)
+                return self.attach(new_attachable, suppress_pre_process=True, **new_attachment_info)
+
             # Updating the mutable dictionary
             self.update({k: v for k, v in attachment_info.items() if v is not None})
 
             # Putting the file on the store.
-            self.length = self.get_store().put(
+            self['length'] = self.get_store().put(
                 self.path,
                 descriptor,
                 max_length=self.__max_length__,
