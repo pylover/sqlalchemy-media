@@ -195,6 +195,23 @@ ImageDimensionValidator
 .. autoclass:: ImageDimensionValidator
 
 
+processors Module
+-----------------
+
+.. module:: sqlalchemy_media.processors
+
+Processor
+^^^^^^^^^
+
+.. autoclass:: Processor
+
+
+ImageProcessor
+^^^^^^^^^^^^^^
+
+.. autoclass:: ImageProcessor
+
+
 exceptions Module
 -----------------
 

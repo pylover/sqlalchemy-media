@@ -7,6 +7,7 @@ from .descriptors import BaseDescriptor, StreamDescriptor, StreamCloserDescripto
     UrlDescriptor, CgiFieldStorageDescriptor, AttachableDescriptor
 from .analyzers import Analyzer, MagicAnalyzer, WandAnalyzer
 from .validators import Validator, ContentTypeValidator, ImageDimensionValidator
+from .processors import Processor, ImageProcessor
 
 
 __version__ = '0.4.1-dev0'

@@ -335,29 +335,31 @@ class Attachment(MutableDict):
 
             # Store information from descriptor
             attachment_info = kwargs.copy()
-            attachment_info.update(dict(
+            attachment_info.update(
                 original_filename=descriptor.original_filename,
                 extension=descriptor.extension,
                 content_type=descriptor.content_type,
                 length=descriptor.content_length,
                 store_id=store_id
-            ))
+            )
 
             # Analyze
             if self.__analyzer__ is not None:
                 attachment_info.update(self.__analyzer__.analyze(descriptor))
 
-                if self.__validate__ is not None:
+                if not suppress_validation and self.__validate__ is not None:
                     self.__validate__.validate(attachment_info)
 
             # Pre-processing
-            if self.__pre_processor__ is not None:
+            if not suppress_pre_process and self.__pre_processor__ is not None:
                 new_attachable, new_attachment_info = self.__pre_processor__.process(descriptor, attachment_info)
                 attachment_info.update(new_attachment_info)
-                return self.attach(new_attachable, suppress_pre_process=True, **new_attachment_info)
+
+                with new_attachable:
+                    return self.attach(new_attachable, suppress_pre_process=True, **new_attachment_info)
 
             # Updating the mutable dictionary
-            self.update({k: v for k, v in attachment_info.items() if v is not None})
+            self.update([(k, v) for k, v in attachment_info.items() if v is not None])
 
             # Putting the file on the store.
             self['length'] = self.get_store().put(

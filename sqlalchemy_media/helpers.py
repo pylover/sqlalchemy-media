@@ -74,7 +74,7 @@ def validate_width_height_ratio(width: int = None, height: int = None, ratio: fl
             raise ValueError('Argument width must be a natural number, not: %s' % repr(width))
 
         def height(size):
-            return size[1] * (width / size[0])
+            return int(size[1] * (width / size[0]))
 
     elif height is not None:
         if not isinstance(height, int):
@@ -83,7 +83,7 @@ def validate_width_height_ratio(width: int = None, height: int = None, ratio: fl
             raise ValueError('Argument height must be natural number, not %s' % repr(height))
 
         def width(size):
-            return size[0] * (height / size[1])
+            return int(size[0] * (height / size[1]))
 
     elif ratio is not None:
         if not isinstance(ratio, float):
@@ -93,10 +93,10 @@ def validate_width_height_ratio(width: int = None, height: int = None, ratio: fl
             raise ValueError('ratio must be less than `1.0` .')
 
         def width(size):
-            return size[0] * ratio
+            return int(size[0] * ratio)
 
         def height(size):
-            return size[1] * ratio
+            return int(size[1] * ratio)
 
     return width, height, ratio
 

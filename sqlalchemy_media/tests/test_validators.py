@@ -25,15 +25,18 @@ class ValidatorTestCase(unittest.TestCase):
         validator = ContentTypeValidator(['text/plain', 'image/jpeg'])
         analyzer = MagicAnalyzer()
 
-        self.assertIsNone(validator.validate(analyzer.analyze(AttachableDescriptor(io.BytesIO(b'Simple text')))))
+        with AttachableDescriptor(io.BytesIO(b'Simple text')) as d:
+            self.assertIsNone(validator.validate(analyzer.analyze(d)))
 
-        self.assertIsNone(validator.validate(analyzer.analyze(AttachableDescriptor(self.cat_jpeg))))
+        with AttachableDescriptor(self.cat_jpeg) as d:
+            self.assertIsNone(validator.validate(analyzer.analyze(d)))
 
-        self.assertRaises(
-            ContentTypeValidationError,
-            validator.validate,
-            analyzer.analyze(AttachableDescriptor(self.cat_png))
-        )
+        with AttachableDescriptor(self.cat_png) as d:
+            self.assertRaises(
+                ContentTypeValidationError,
+                validator.validate,
+                analyzer.analyze(d)
+            )
 
         self.assertRaises(
             ContentTypeValidationError,

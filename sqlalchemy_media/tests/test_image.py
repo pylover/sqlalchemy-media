@@ -8,6 +8,7 @@ from sqlalchemy_media.attachments import Image, Thumbnail
 from sqlalchemy_media.stores import StoreManager
 from sqlalchemy_media.tests.helpers import Json, TempStoreTestCase
 from sqlalchemy_media.exceptions import ThumbnailIsNotAvailableError
+from sqlalchemy_media.processors import ImageProcessor
 
 
 class ImageTestCase(TempStoreTestCase):
@@ -105,6 +106,26 @@ class ImageTestCase(TempStoreTestCase):
             self.assertFalse(exists(first_thumbnail_filename))
             self.assertFalse(exists(second_thumbnail_filename))
             self.assertFalse(exists(third_thumbnail_filename))
+
+    def test_pre_process(self):
+
+        class Banner(Image):
+            __pre_processor__ = ImageProcessor(fmt='jpeg', width=300)
+
+        class Person(self.Base):
+            __tablename__ = 'person'
+            id = Column(Integer, primary_key=True)
+            image = Column(Banner.as_mutable(Json), nullable=True)
+
+        session = self.create_all_and_get_session()
+
+        # person1 = Person(name='person1')
+        person1 = Person()
+        self.assertIsNone(person1.image)
+
+        with StoreManager(session):
+            person1.image = Banner.create_from(self.cat_png)
+            self.assertEqual(person1.image.content_type, 'image/jpeg')
 
 
 if __name__ == '__main__':  # pragma: no cover
