@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Playing with Analyzers and Validators &mdash; sqlalchemy-media 0.4.1 documentation</title>
+  <title>Playing with Analyzers and Validators &mdash; sqlalchemy-media 0.5.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.4.1 documentation" href="../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.5.0 documentation" href="../index.html"/>
         <link rel="up" title="Tutorials" href="index.html"/>
         <link rel="next" title="API Reference" href="../api.html"/>
         <link rel="prev" title="Image &amp; Thumbnails" href="image.html"/> 
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.4
+                0.5
               </div>
             
           
@@ -88,9 +88,11 @@
             
             
                 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installing</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorials</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="image.html">Image &amp; Thumbnails</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Playing with Analyzers and Validators</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#prerequisites">0. Prerequisites</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#cv">1. CV</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#creating-workbench">2. Creating workbench</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#model">3. Model</a></li>
@@ -149,6 +151,14 @@
   <div class="section" id="playing-with-analyzers-and-validators">
 <h1>Playing with Analyzers and Validators<a class="headerlink" href="#playing-with-analyzers-and-validators" title="Permalink to this headline">¶</a></h1>
 <p>The following tutorial is going to describe how to use restrictions on attached filed:</p>
+<div class="section" id="prerequisites">
+<h2>0. Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<p>Mimetype detection from file&#8217;s content required the <code class="docutils literal"><span class="pre">magic</span></code> package to be installed.
+This is an optional package.</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install python-magic
+</pre></div>
+</div>
+</div>
 <div class="section" id="cv">
 <h2>1. CV<a class="headerlink" href="#cv" title="Permalink to this headline">¶</a></h2>
 <p>For the first, let to create a type called <code class="docutils literal"><span class="pre">CV</span></code></p>
@@ -156,8 +166,10 @@
 <span class="kn">from</span> <span class="nn">sqlalchemy_media.constants</span> <span class="k">import</span> <span class="n">MB</span><span class="p">,</span> <span class="n">KB</span>
 
 <span class="k">class</span> <span class="nc">CV</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
-    <span class="n">__analyzer__</span> <span class="o">=</span> <span class="n">MagicAnalyzer</span><span class="p">()</span>
-    <span class="n">__validate__</span> <span class="o">=</span> <span class="n">ContentTypeValidator</span><span class="p">([</span><span class="s1">&#39;application/pdf&#39;</span><span class="p">,</span> <span class="s1">&#39;image/jpeg&#39;</span><span class="p">])</span>
+    <span class="n">__pre_processors__</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">MagicAnalyzer</span><span class="p">(),</span>
+        <span class="n">ContentTypeValidator</span><span class="p">([</span><span class="s1">&#39;application/pdf&#39;</span><span class="p">,</span> <span class="s1">&#39;image/jpeg&#39;</span><span class="p">])</span>
+    <span class="p">]</span>
     <span class="n">__max_length__</span> <span class="o">=</span> <span class="mi">6</span><span class="o">*</span><span class="n">MB</span>
     <span class="n">__min_length__</span> <span class="o">=</span> <span class="mi">10</span><span class="o">*</span><span class="n">KB</span>
 </pre></div>
@@ -220,7 +232,8 @@
 <h2>4. Submitting files<a class="headerlink" href="#submitting-files" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">io</span>
 
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.exceptions</span> <span class="k">import</span> <span class="n">ContentTypeValidationError</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.exceptions</span> <span class="k">import</span> <span class="n">ContentTypeValidationError</span><span class="p">,</span> \
+    <span class="n">MinimumLengthIsNotReachedError</span>
 
 <span class="n">person1</span> <span class="o">=</span> <span class="n">Person</span><span class="p">(</span><span class="n">cv</span><span class="o">=</span><span class="n">CV</span><span class="p">())</span>
 <span class="k">with</span> <span class="n">StoreManager</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
@@ -228,7 +241,7 @@
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">person1</span><span class="o">.</span><span class="n">cv</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;Plain text&#39;</span><span class="p">))</span>
-    <span class="k">except</span> <span class="n">ContentTypeValidationError</span><span class="p">:</span>
+    <span class="k">except</span> <span class="p">(</span><span class="n">ContentTypeValidationError</span><span class="p">,</span> <span class="n">MinimumLengthIsNotReachedError</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ContentTypeValidationError is raised. It&#39;s so bad!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -237,7 +250,7 @@
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="../api.html#sqlalchemy_media.analyzers.WandAnalyzer" title="sqlalchemy_media.analyzers.WandAnalyzer"><code class="xref py py-class docutils literal"><span class="pre">WandAnalyzer</span></code></a> and <a class="reference internal" href="../api.html#sqlalchemy_media.validators.ImageDimensionValidator" title="sqlalchemy_media.validators.ImageDimensionValidator"><code class="xref py py-class docutils literal"><span class="pre">ImageDimensionValidator</span></code></a></p>
+<p class="last"><a class="reference internal" href="../api.html#sqlalchemy_media.processors.WandAnalyzer" title="sqlalchemy_media.processors.WandAnalyzer"><code class="xref py py-class docutils literal"><span class="pre">WandAnalyzer</span></code></a> and <code class="xref py py-class docutils literal"><span class="pre">ImageDimensionValidator</span></code></p>
 </div>
 </div>
 </div>
@@ -283,7 +296,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.4.1',
+            VERSION:'0.5.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

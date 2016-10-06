@@ -89,7 +89,14 @@ the ``as_mutable`` method is used to make a type mutable.
 
     from sqlalchemy import Column, Integer
 
-    from sqlalchemy_media import Image
+    from sqlalchemy_media import Image, WandAnalyzer, ImageValidator, ImageProcessor
+
+    class ProfileImage(Image):
+        __pre_processors__ = [
+            WandAnalyzer(),
+            ImageValidator((120, 120), (800, 600), content_types=['image/jpeg', 'image/png']),
+            ImageProcessor(fmt='jpeg', width=120)
+        ]
 
     class Person(Base):
         __tablename__ = 'person'
@@ -241,3 +248,6 @@ Another way is to re-set the attribute using new instance:
     Length: 10102
     Original filename: https://www.python.org/static/img/python-logo.png
 
+
+..  warning:: Setting SqlAlchemy model's attribute without enabling ``delete_orphan`` will cause the orphaned files
+              remaining in store for ever.

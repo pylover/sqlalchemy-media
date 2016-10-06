@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy-media &mdash; sqlalchemy-media 0.4.1 documentation</title>
+  <title>sqlalchemy-media &mdash; sqlalchemy-media 0.5.0 documentation</title>
   
 
   
@@ -35,8 +35,8 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.4.1 documentation" href="#"/>
-        <link rel="next" title="Tutorials" href="tutorials/index.html"/> 
+    <link rel="top" title="sqlalchemy-media 0.5.0 documentation" href="#"/>
+        <link rel="next" title="Installing" href="install.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.4
+                0.5
               </div>
             
           
@@ -86,6 +86,7 @@
             
             
                 <ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 </ul>
@@ -181,6 +182,12 @@ collections, or objects leaved in memory alone! by setting it&#8217;s last point
 <h2>Contents:<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html#pypi">PyPi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#source">Source</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#optional-packages">Optional packages</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Tutorials</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/image.html">Image &amp; Thumbnails</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="tutorials/image.html#prerequisites">0. Prerequisites</a></li>
@@ -196,6 +203,7 @@ collections, or objects leaved in memory alone! by setting it&#8217;s last point
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/analyzers_and_validators.html">Playing with Analyzers and Validators</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials/analyzers_and_validators.html#prerequisites">0. Prerequisites</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tutorials/analyzers_and_validators.html#cv">1. CV</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tutorials/analyzers_and_validators.html#creating-workbench">2. Creating workbench</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tutorials/analyzers_and_validators.html#model">3. Model</a></li>
@@ -234,16 +242,15 @@ collections, or objects leaved in memory alone! by setting it&#8217;s last point
 <li class="toctree-l3"><a class="reference internal" href="api.html#storemanager">StoreManager</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#module-sqlalchemy_media.analyzers">analyzers Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-sqlalchemy_media.processors">processors Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#processor">Processor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#analyzer">Analyzer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#magicanalyzer">MagicAnalyzer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#wandanalyzer">WandAnalyzer</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#module-sqlalchemy_media.validators">validators Module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api.html#validator">Validator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#contenttypevalidator">ContentTypeValidator</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#imagedimensionvalidator">ImageDimensionValidator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#imagevalidator">ImageValidator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#imageprocessor">ImageProcessor</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#module-sqlalchemy_media.exceptions">exceptions Module</a></li>
@@ -275,7 +282,7 @@ collections, or objects leaved in memory alone! by setting it&#8217;s last point
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="tutorials/index.html" class="btn btn-neutral float-right" title="Tutorials" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="install.html" class="btn btn-neutral float-right" title="Installing" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>
@@ -307,7 +314,7 @@ collections, or objects leaved in memory alone! by setting it&#8217;s last point
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.4.1',
+            VERSION:'0.5.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
