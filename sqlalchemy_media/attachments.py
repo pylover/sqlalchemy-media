@@ -24,7 +24,7 @@ class Attachment(MutableDict):
 
     Actually this is an instance of :class:`sqlalchemy.ext.mutable.MutableDict` which inherited from :class:`dict`.
 
-    .. doctest::
+    ..  doctest::
 
         >>> from sqlalchemy_media import Attachment
         >>> print(Attachment(key1='Value1'))
@@ -100,7 +100,7 @@ class Attachment(MutableDict):
     @property
     def store_id(self) -> str:
         """
-        Returns the id of store used to put this file on.
+        Returns the id of the store used to put this file on.
 
         Stores must be registered with appropriate id via :meth:`.StoreManager.register`.
 
@@ -126,7 +126,7 @@ class Attachment(MutableDict):
     def empty(self) -> bool:
         """
         Check if file is attached to this object or not. Returns :const:`True` when a file is loaded on this object via
-        :meth:`.attach` method. or SqlAlchemy db load mechanism. else :const:`False.`
+        :meth:`.attach` method or SqlAlchemy db load mechanism, else :const:`False.`
 
         :type: bool
         """
@@ -144,8 +144,9 @@ class Attachment(MutableDict):
     @property
     def filename(self) -> str:
         """
-        The filename used to store the attachment in storage. with this format:
-        '{self.__prefix__}-{self.key}{self.suffix}{if self.extension else ''}'
+        The filename used to store the attachment in the storage with this format::
+            
+            '{self.__prefix__}-{self.key}{self.suffix}{if self.extension else ''}'
 
         :type: str
         """
@@ -155,7 +156,7 @@ class Attachment(MutableDict):
     def suffix(self) -> str:
         """
         The same as the :meth:`sqlalchemy_media.attachments.Attachment.original_filename` plus a leading minus(-)
-        If available, else empty string ('') will be returned
+        If available, else empty string ('') will be returned.
 
         :type: str
         """
@@ -185,7 +186,7 @@ class Attachment(MutableDict):
     @property
     def original_filename(self) -> str:
         """
-        Original file name, may be provided by user within :attr:`cgi.FieldStorage.filename`, url or Physical filename.
+        Original file name, it may be provided by user within :attr:`cgi.FieldStorage.filename`, url or Physical filename.
 
         :type: str
         """
@@ -219,13 +220,15 @@ class Attachment(MutableDict):
 
     def copy(self) -> 'Attachment':
         """
-        Copy this object using deepcopy
+        Copy this object using deepcopy.
+        
         """
         return self.__class__(copy.deepcopy(self))
 
     def get_store(self) -> Store:
         """
         Returns the :class:`sqlalchemy_media.stores.Store` instance, which this file is stored on.
+        
         """
         store_manager = StoreManager.get_current_store_manager()
         return store_manager.get(self.store_id)
@@ -236,36 +239,37 @@ class Attachment(MutableDict):
 
         .. warning:: This operation can not be roll-backed.So if you want to delete a file, just set it to
                      :const:`None` or set it by new :class:`.Attachment` instance, while passed ``delete_orphan=True``
-                     in :class:`.StoreManager` :
+                     in :class:`.StoreManager`.
+                     
         """
         self.get_store().delete(self.path)
 
     def attach(self, attachable: Attachable, content_type: str = None, original_filename: str = None,
                extension: str = None, store_id: str = None, overwrite: bool=False, **kwargs) -> 'Attachment':
         """
-        Attach a file. if the session roll-backed, all operations will be rolled-back.
+        Attach a file. if the session is rolled-back, all operations will be rolled-back.
         The old file will be deleted after commit, if any.
 
         :param attachable: stream, filename or URL to attach.
         :param content_type: If given, the content-detection is suppressed.
-        :param original_filename: Original name of the file, if available, to append on the filename, useful for SEO,
-                                  and readability.
-        :param extension: The file's extension, is available.else, trying to guess it by content_type
+        :param original_filename: Original name of the file, if available, to append to the end of the the filename, 
+                                  useful for SEO, and readability.
+        :param extension: The file's extension, is available.else, tries to guess it by content_type
         :param store_id: The store id to store this file on. Stores must be registered with appropriate id via
                          :meth:`sqlalchemy_media.stores.StoreManager.register`.
         :param overwrite: Overwrites the file without changing it's unique-key and name, useful to prevent broken links.
                           Currently, when using this option, Rollback function is not available, because the old file
-                          will overwritten by the given new one.
+                          will be overwritten by the given new one.
 
         :param kwargs: Additional metadata to be stored in backend.
 
-        .. note:: :exc:`.MaximumLengthIsReachedError` and or :exc:`.MinimumLengthIsNotReachedError` may raised.
+        .. note:: :exc:`.MaximumLengthIsReachedError` and or :exc:`.MinimumLengthIsNotReachedError` may be raised.
 
-        .. warning:: This operation can not be roll-backed, if ``overwrite=True`` given.
+        .. warning:: This operation can not be rolled-back, if ``overwrite=True`` given.
 
         .. versionchanged:: 0.1.2
 
-            - This method will returns the self. it's useful to chain method calls on object within single line.
+            - This method will return the self. it's useful to chain method calls on the object within a single line.
             - Additional ``kwargs`` are accepted to be stored in database alongside the file's metadata.
 
         """
@@ -340,7 +344,7 @@ class Attachment(MutableDict):
 
 class AttachmentCollection(object):
     """
-    Mixin to make a collection of :class:`.Attachment`
+    Mixin to make a mutable iterator as a collection of :class:`.Attachment`.
 
     """
 
@@ -446,6 +450,7 @@ class AttachmentDict(AttachmentCollection, MutableDict):
         me = Person()
         me.files = MyDict()
         me.files['original'] = MyAttachment.create_from(any_file)
+        
     """
 
     @classmethod
@@ -498,6 +503,7 @@ class AttachmentDict(AttachmentCollection, MutableDict):
 class File(Attachment):
     """
     Representing an attached file. Normally if you want to store any file, this class is the best choice.
+    
     """
 
     __directory__ = 'files'
@@ -545,6 +551,7 @@ class BaseImage(File):
         :param kwargs: The same as the: :meth:`.Attachment.attach`.
 
         :return: The same as the: :meth:`.Attachment.attach`.
+        
         """
         if dimension:
             kwargs['width'], kwargs['height'] = dimension
@@ -612,13 +619,14 @@ class Image(BaseImage):
 
         Generates and stores a thumbnail with the given arguments.
 
-        .. warning:: If non or more than one of the ``width``, ``height`` and or ``ratio`` are given, :exc:`ValueError`
+        .. warning:: If none or more than one of the ``width``, ``height`` and or ``ratio`` are given, :exc:`ValueError`
                      will be raised.
 
         :param width: The width of the thumbnail.
         :param height: The Height of the thumbnail.
         :param ratio: The coefficient to reduce, Must be less than ``1.0``.
-        :param ratio_precision: Number of digits after the decimal point to picked to store from the ratio. default: 2.
+        :param ratio_precision: Number of digits after the decimal point of the ``ratio`` argument to tune thumbnail
+                                lookup precision. default: 2.
         :return: the Newly generated :class:`.Thumbnail` instance.
 
         """
@@ -676,14 +684,14 @@ class Image(BaseImage):
         .. versionadded:: 0.3.0
 
         Search for the thumbnail with given arguments, if ``auto_generate`` is :data:`.False`, the
-        :exc:`.ThumbnailIsNotAvailableError` will be raise, else tries to call the :meth:`generate_thumbnail` to create
+        :exc:`.ThumbnailIsNotAvailableError` will be raised, else tries to call the :meth:`generate_thumbnail` to create
         a new one.
 
         :param width: Width of the thumbnail to search for.
         :param height: Height of the thumbnail to search for.
         :param ratio: Ratio of the thumbnail to search for.
-        :param ratio_precision: Number of digits after the decimal point to picked for search from the ratio.
-                                default: 2.
+        :param ratio_precision: Number of digits after the decimal point of the ``ratio`` argument to tune thumbnail
+                                lookup precision. default: 2.
         :param auto_generate: If :data:`.True`, tries to generate a new thumbnail.
 
         :return: :class:`.Thumbnail` instance.
@@ -706,7 +714,7 @@ class Image(BaseImage):
             return self.generate_thumbnail(width, height, ratio)
         else:
             raise ThumbnailIsNotAvailableError(
-                'Thumbnail is not available with thi criteria: width=%s height=%s ration=%s' % (width, height, ratio)
+                'Thumbnail is not available with these criteria: width=%s height=%s ration=%s' % (width, height, ratio)
             )
 
     def get_objects_to_delete(self) -> Iterable:
