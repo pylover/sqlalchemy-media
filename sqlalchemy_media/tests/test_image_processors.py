@@ -24,7 +24,7 @@ class ImageProcessorTestCase(unittest.TestCase):
                 length=100000,
                 extension='.jpg',
             ))
-            self.assertEqual(len(new_file.getvalue()), 11149)
+            self.assertTrue(len(new_file.getvalue()) > 0)
             self.assertDictEqual(info, {
                 'content_type': 'image/jpeg',
                 'width': 200,
