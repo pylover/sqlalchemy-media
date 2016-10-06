@@ -198,8 +198,10 @@ class FileTestCase(TempStoreTestCase):
     def test_content_type_validator(self):
 
         class PDFFile(File):
-            __analyzer__ = MagicAnalyzer()
-            __validate__ = ContentTypeValidator(['application/pdf', 'image/jpeg'])
+            __pre_processors__ = [
+                MagicAnalyzer(),
+                ContentTypeValidator(['application/pdf', 'image/jpeg'])
+            ]
 
         class Person(self.Base):
             __tablename__ = 'person'

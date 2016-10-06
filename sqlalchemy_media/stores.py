@@ -38,16 +38,19 @@ class Store(object):
         """
         pass
 
-    def put(self, filename: str, stream: Stream, *, min_length=None, max_length=None) -> int:
+    def put(self, filename: str, stream: Stream) -> int:
         """
         **[Abstract]**
 
         Should be overridden in inherited class and puts the stream as the given filename in the store.
 
+        .. versionchanged:: 0.4.1-dev0
+
+           - ``min_length`` has been removed.
+           - ``max_length`` has been removed.
+
         :param filename: the target filename.
         :param stream: the source stream
-        :param min_length: Minimum allowed file length.
-        :param max_length: Maximum allowed file length.
         :return: length of the stored file.
         """
         raise NotImplementedError()  # pragma: no cover
@@ -104,7 +107,7 @@ class FileSystemStore(Store):
     def _get_physical_path(self, filename: str) -> str:
         return join(self.root_path, filename)
 
-    def put(self, filename: str, stream: Stream, *, min_length: int=None, max_length: int=None):
+    def put(self, filename: str, stream: Stream):
         physical_path = self._get_physical_path(filename)
         physical_directory = dirname(physical_path)
 
@@ -115,9 +118,7 @@ class FileSystemStore(Store):
             return copy_stream(
                 stream,
                 target_file,
-                chunk_size=self.chunk_size,
-                min_length=min_length,
-                max_length=max_length
+                chunk_size=self.chunk_size
             )
 
     def delete(self, filename: str):

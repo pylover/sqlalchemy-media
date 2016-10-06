@@ -3,8 +3,7 @@ import unittest
 import io
 from os.path import dirname, abspath, join
 
-from sqlalchemy_media.analyzers import MagicAnalyzer, WandAnalyzer
-from sqlalchemy_media.validators import ContentTypeValidator, ImageDimensionValidator
+from sqlalchemy_media.processors import MagicAnalyzer, WandAnalyzer, ContentTypeValidator, ImageValidator
 from sqlalchemy_media.descriptors import AttachableDescriptor
 from sqlalchemy_media.exceptions import ContentTypeValidationError, DimensionValidationError
 
@@ -26,76 +25,70 @@ class ValidatorTestCase(unittest.TestCase):
         analyzer = MagicAnalyzer()
 
         with AttachableDescriptor(io.BytesIO(b'Simple text')) as d:
-            self.assertIsNone(validator.validate(analyzer.analyze(d)))
+            ctx = {}
+            analyzer.process(d, ctx)
+            validator.process(d, ctx)
 
         with AttachableDescriptor(self.cat_jpeg) as d:
-            self.assertIsNone(validator.validate(analyzer.analyze(d)))
+            ctx = {}
+            analyzer.process(d, ctx)
+            validator.process(d, ctx)
 
         with AttachableDescriptor(self.cat_png) as d:
+            ctx = {}
+            analyzer.process(d, ctx)
+
             self.assertRaises(
                 ContentTypeValidationError,
-                validator.validate,
-                analyzer.analyze(d)
+                validator.process, d, ctx
             )
 
-        self.assertRaises(
-            ContentTypeValidationError,
-            validator.validate,
-            {}
-        )
+            self.assertRaises(
+                ContentTypeValidationError,
+                validator.process, d, {}
+            )
 
-    def test_image_dimension_validator(self):
+    def test_image_validator(self):
         # guess content types from extension
 
         analyzer = WandAnalyzer()
 
-        def analyze(f):
-            return analyzer.analyze(AttachableDescriptor(f))
+        with AttachableDescriptor(self.dog_jpg) as d:
+            ctx = {}
+            analyzer.process(d, ctx)
+            ImageValidator((10, 10), (250, 250), content_types=['image/jpeg']).process(d, ctx)
+            ImageValidator((10, 0), (0, 250)).process(d, ctx)
+            ImageValidator((0, 0), (0, 250)).process(d, ctx)
+            ImageValidator((0, 0), (0, 0)).process(d, ctx)
 
-        self.assertIsNone(ImageDimensionValidator((10, 10), (250, 250)).validate(analyze(self.dog_jpg)))
-        self.assertIsNone(ImageDimensionValidator((10, 0), (0, 250)).validate(analyze(self.dog_jpg)))
-        self.assertIsNone(ImageDimensionValidator((0, 0), (0, 250)).validate(analyze(self.dog_jpg)))
-        self.assertIsNone(ImageDimensionValidator((0, 0), (0, 0)).validate(analyze(self.dog_jpg)))
+            # Lack of analyzer data
+            self.assertRaises(
+                DimensionValidationError,
+                ImageValidator(maximum=(1, 0)).process, d, {}
+            )
 
-        # Lack of analyzer data
-        self.assertRaises(
-            DimensionValidationError,
-            ImageDimensionValidator(maximum=(639, 0)).validate,
-            {}
-        )
+            # Maximum
+            self.assertRaises(
+                DimensionValidationError,
+                ImageValidator(maximum=(212, 0)).process, d, ctx
+            )
 
-        # Maximum
-        self.assertRaises(
-            DimensionValidationError,
-            ImageDimensionValidator(maximum=(639, 0)).validate,
-            analyze(self.cat_jpeg)
-        )
+            self.assertRaises(
+                DimensionValidationError,
+                ImageValidator(maximum=(0, 159)).process, d, ctx
+            )
 
-        self.assertRaises(
-            DimensionValidationError,
-            ImageDimensionValidator(maximum=(0, 479)).validate,
-            analyze(self.cat_jpeg)
-        )
+            # Minimum
+            self.assertRaises(
+                DimensionValidationError,
+                ImageValidator(minimum=(214, 0)).process, d, ctx
+            )
 
-        # Minimum
-        self.assertRaises(
-            DimensionValidationError,
-            ImageDimensionValidator(minimum=(641, 0)).validate,
-            analyze(self.cat_jpeg)
-        )
+            self.assertRaises(
+                DimensionValidationError,
+                ImageValidator(minimum=(0, 161)).process, d, ctx
+            )
 
-        self.assertRaises(
-            DimensionValidationError,
-            ImageDimensionValidator(minimum=(0, 481)).validate,
-            analyze(self.cat_jpeg)
-        )
-
-        #
-        # self.assertRaises(
-        #     DimensionValidationError,
-        #     validator.validate,
-        #     {}
-        # )
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

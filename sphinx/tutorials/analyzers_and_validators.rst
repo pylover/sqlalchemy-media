@@ -26,8 +26,10 @@ For the first, let to create a type called ``CV``
     from sqlalchemy_media.constants import MB, KB
 
     class CV(File):
-        __analyzer__ = MagicAnalyzer()
-        __validate__ = ContentTypeValidator(['application/pdf', 'image/jpeg'])
+        __pre_processors__ = [
+            MagicAnalyzer(),
+            ContentTypeValidator(['application/pdf', 'image/jpeg'])
+        ]
         __max_length__ = 6*MB
         __min_length__ = 10*KB
 
@@ -95,7 +97,8 @@ For the first, let to create a type called ``CV``
 
     import io
 
-    from sqlalchemy_media.exceptions import ContentTypeValidationError
+    from sqlalchemy_media.exceptions import ContentTypeValidationError, \
+        MinimumLengthIsNotReachedError
 
     person1 = Person(cv=CV())
     with StoreManager(session):
@@ -103,7 +106,7 @@ For the first, let to create a type called ``CV``
 
         try:
             person1.cv.attach(io.BytesIO(b'Plain text'))
-        except ContentTypeValidationError:
+        except (ContentTypeValidationError, MinimumLengthIsNotReachedError):
             print("ContentTypeValidationError is raised. It's so bad!")
 
 ..  testoutput:: content_type

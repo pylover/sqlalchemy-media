@@ -89,10 +89,14 @@ the ``as_mutable`` method is used to make a type mutable.
 
     from sqlalchemy import Column, Integer
 
-    from sqlalchemy_media import Image, WandAnalyzer
+    from sqlalchemy_media import Image, WandAnalyzer, ImageValidator, ImageProcessor
 
     class ProfileImage(Image):
-        __analyzer__
+        __pre_processors__ = [
+            WandAnalyzer(),
+            ImageValidator((120, 120), (800, 600), content_types=['image/jpeg', 'image/png']),
+            ImageProcessor(fmt='jpeg', width=120)
+        ]
 
     class Person(Base):
         __tablename__ = 'person'

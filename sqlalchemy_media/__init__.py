@@ -5,10 +5,8 @@ from .attachments import Attachment, AttachmentCollection, AttachmentList, Attac
 from .stores import Store, FileSystemStore, StoreManager
 from .descriptors import BaseDescriptor, StreamDescriptor, StreamCloserDescriptor, LocalFileSystemDescriptor, \
     UrlDescriptor, CgiFieldStorageDescriptor, AttachableDescriptor
-from .analyzers import Analyzer, MagicAnalyzer, WandAnalyzer
-from .validators import Validator, ContentTypeValidator, ImageDimensionValidator
-from .processors import Processor, ImageProcessor
+from .processors import Processor, ImageProcessor, Analyzer, MagicAnalyzer, WandAnalyzer, Validator, \
+    ContentTypeValidator, ImageValidator
 
 
 __version__ = '0.4.1-dev0'
-

@@ -1,4 +1,4 @@
-from typing import Hashable, Tuple, List, Generator, Iterable
+from typing import Hashable, Tuple, List, Iterable
 import copy
 import uuid
 import time
@@ -33,6 +33,11 @@ class Attachment(MutableDict):
 
     This object should be used inside a :class:`.StoreManager` context.
 
+    .. versionchanged:: 0.4.1-dev0
+
+       - removed ``__analyzer__`` attribute, using ``__pre_processors__`` instead.
+       - removed ``__validate__`` attribute, using ``__pre_processors__`` instead.
+
     """
 
     #: The directory name of the file.
@@ -47,14 +52,8 @@ class Attachment(MutableDict):
     #: Limit the file's minimum size.
     __min_length__ = None
 
-    #: Instance of any class driver from :class:`.Analyzer`.
-    __analyzer__ = None
-
-    #: Instance of any class driver from :class:`.Validator`.
-    __validate__ = None
-
-    #: An instance of :class:`.PreProcessor`, to convert, reformat & change contents before storing the attachment.
-    __pre_processor__ = None
+    #: An instance of :class:`.Processor`, to convert, reformat & change contents before storing the attachment.
+    __pre_processors__ = None
 
     @classmethod
     def _listen_on_attribute(cls, attribute, coerce, parent_cls):
@@ -323,7 +322,9 @@ class Attachment(MutableDict):
                 attachable,
                 content_type=content_type,
                 original_filename=original_filename,
-                extension=extension
+                extension=extension,
+                max_length=self.__max_length__,
+                min_length=self.__min_length__
         ) as descriptor:
 
             # Backup the old key and filename if exists
@@ -343,31 +344,20 @@ class Attachment(MutableDict):
                 store_id=store_id
             )
 
-            # Analyze
-            if self.__analyzer__ is not None:
-                attachment_info.update(self.__analyzer__.analyze(descriptor))
-
-                if not suppress_validation and self.__validate__ is not None:
-                    self.__validate__.validate(attachment_info)
-
             # Pre-processing
-            if not suppress_pre_process and self.__pre_processor__ is not None:
-                new_attachable, new_attachment_info = self.__pre_processor__.process(descriptor, attachment_info)
-                attachment_info.update(new_attachment_info)
+            if self.__pre_processors__:
+                processors = self.__pre_processors__ if isinstance(self.__pre_processors__, Iterable) \
+                    else [self.__pre_processors__]
 
-                with new_attachable:
-                    return self.attach(new_attachable, suppress_pre_process=True, **new_attachment_info)
+                # noinspection PyTypeChecker
+                for processor in processors:
+                    processor.process(descriptor, attachment_info)
 
             # Updating the mutable dictionary
             self.update([(k, v) for k, v in attachment_info.items() if v is not None])
 
             # Putting the file on the store.
-            self['length'] = self.get_store().put(
-                self.path,
-                descriptor,
-                max_length=self.__max_length__,
-                min_length=self.__min_length__
-            )
+            self['length'] = self.get_store().put(self.path, descriptor)
 
             self.timestamp = time.time()
 

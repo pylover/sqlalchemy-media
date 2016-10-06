@@ -47,7 +47,10 @@ def simple_http_server(content: bytes= b'Simple file content.', bind: Address=('
             self.send_header('Content-Length', str(copy_stream(stream, buffer)))
             self.end_headers()
             buffer.seek(0)
-            copy_stream(buffer, self.wfile)
+            try:
+                copy_stream(buffer, self.wfile)
+            except ConnectionResetError:
+                pass
 
         # noinspection PyPep8Naming
         def do_GET(self):

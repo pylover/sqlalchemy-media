@@ -16,6 +16,7 @@ Attachment
    .. autoattribute:: __prefix__
    .. autoattribute:: __max_length__
    .. autoattribute:: __min_length__
+   .. autoattribute:: __pre_processors__
 
 
 AttachmentCollection
@@ -151,10 +152,16 @@ StoreManager
    .. automethod:: __exit__
 
 
-analyzers Module
-----------------
+processors Module
+-----------------
 
-.. module:: sqlalchemy_media.analyzers
+.. module:: sqlalchemy_media.processors
+
+Processor
+^^^^^^^^^
+
+.. autoclass:: Processor
+
 
 Analyzer
 ^^^^^^^^
@@ -173,11 +180,6 @@ WandAnalyzer
 .. autoclass:: WandAnalyzer
 
 
-validators Module
------------------
-
-.. module:: sqlalchemy_media.validators
-
 Validator
 ^^^^^^^^^
 
@@ -189,21 +191,10 @@ ContentTypeValidator
 .. autoclass:: ContentTypeValidator
 
 
-ImageDimensionValidator
-^^^^^^^^^^^^^^^^^^^^^^^
+ImageValidator
+^^^^^^^^^^^^^^
 
-.. autoclass:: ImageDimensionValidator
-
-
-processors Module
------------------
-
-.. module:: sqlalchemy_media.processors
-
-Processor
-^^^^^^^^^
-
-.. autoclass:: Processor
+.. autoclass:: ImageValidator
 
 
 ImageProcessor

@@ -110,7 +110,7 @@ class ImageTestCase(TempStoreTestCase):
     def test_pre_process(self):
 
         class Banner(Image):
-            __pre_processor__ = ImageProcessor(fmt='jpeg', width=300)
+            __pre_processors__ = ImageProcessor(fmt='jpeg', width=300)
 
         class Person(self.Base):
             __tablename__ = 'person'

@@ -20,12 +20,13 @@ class ImageProcessorTestCase(unittest.TestCase):
         # guess content types from extension
 
         with AttachableDescriptor(self.cat_png) as d:
-            new_file, info = ImageProcessor(fmt='jpg', width=200).process(d, dict(
+            ctx = dict(
                 length=100000,
                 extension='.jpg',
-            ))
-            self.assertTrue(len(new_file.getvalue()) > 0)
-            self.assertDictEqual(info, {
+            )
+            ImageProcessor(fmt='jpg', width=200).process(d, ctx)
+
+            self.assertDictEqual(ctx, {
                 'content_type': 'image/jpeg',
                 'width': 200,
                 'height': 150,
@@ -33,27 +34,20 @@ class ImageProcessorTestCase(unittest.TestCase):
 
         with AttachableDescriptor(self.cat_jpeg) as d:
             # Checking when not modifying stream.
-            new_file, info = ImageProcessor().process(d, dict())
-            self.assertIsNone(new_file)
-            self.assertIsNone(info)
+            ctx = dict()
+            ImageProcessor().process(d, ctx)
+            self.assertFalse(len(ctx))
 
-        with AttachableDescriptor(self.cat_jpeg) as d:
             # Checking when not modifying stream.
-            new_file, info = ImageProcessor(fmt='jpeg').process(d, dict())
-            self.assertIsNone(new_file)
-            self.assertIsNone(info)
+            ImageProcessor(fmt='jpeg').process(d, ctx)
+            self.assertFalse(len(ctx))
 
-        with AttachableDescriptor(self.cat_jpeg) as d:
-            # Checking when not modifying stream.
-            new_file, info = ImageProcessor(fmt='jpeg', width=640).process(d, dict())
-            self.assertIsNone(new_file)
-            self.assertIsNone(info)
+            ImageProcessor(fmt='jpeg', width=640).process(d, ctx)
+            self.assertFalse(len(ctx))
 
-        with AttachableDescriptor(self.cat_jpeg) as d:
-            # Checking when not modifying stream.
-            new_file, info = ImageProcessor(height=480).process(d, dict())
-            self.assertIsNone(new_file)
-            self.assertIsNone(info)
+            ImageProcessor(fmt='jpeg', height=480).process(d, ctx)
+            self.assertFalse(len(ctx))
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

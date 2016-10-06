@@ -4,10 +4,12 @@ from sqlalchemy_media.mimetypes_ import guess_extension, guess_type
 from os.path import splitext
 from urllib.request import urlopen
 from cgi import FieldStorage
+from tempfile import TemporaryFile, NamedTemporaryFile
 
 from sqlalchemy_media.typing_ import Stream, Attachable
 from sqlalchemy_media.helpers import is_uri, copy_stream
-from sqlalchemy_media.exceptions import MaximumLengthIsReachedError, DescriptorOperationError
+from sqlalchemy_media.exceptions import MaximumLengthIsReachedError, MinimumLengthIsNotReachedError, \
+    DescriptorOperationError
 
 
 class BaseDescriptor(object):
@@ -18,6 +20,11 @@ class BaseDescriptor(object):
     seeking over underlying streams. users may not be using this class directly. see :class:`.AttachableDescriptor`
     to know how to use it.
 
+    .. versionadded:: 0.4.1-dev0
+
+       - ``min_length`` argument
+
+    :param min_length: Maximum allowed file size.
     :param max_length: Maximum allowed file size.
     :param content_type: The file's mimetype to suppress the mimetype detection.
     :param content_length: The length of the file in bytes, if available. Some descriptors like :class:`.UrlDescriptor`
@@ -45,9 +52,10 @@ class BaseDescriptor(object):
     #: Amount of bytes to cache from header on non-seekable streams.
     header_buffer_size = 1024
 
-    def __init__(self, max_length: int=None, content_type: str=None, content_length: int=None, extension: str=None,
-                 original_filename: str=None, header_buffer_size=1024, **kwargs):
+    def __init__(self, min_length: int=None, max_length: int=None, content_type: str=None, content_length: int=None,
+                 extension: str=None, original_filename: str=None, header_buffer_size=1024, **kwargs):
 
+        self.min_length = min_length
         self.max_length = max_length
         self.header_buffer_size = header_buffer_size
         self.content_length = content_length
@@ -79,7 +87,7 @@ class BaseDescriptor(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
 
-    def _read_chanked(self, size: int) -> bytes:
+    def _read_chunked(self, size: int) -> bytes:
         source_cursor = self.tell_source()
         if self.seekable() or self.header is None:
             result = self.read_source(size)
@@ -117,7 +125,7 @@ class BaseDescriptor(object):
             copy_stream(self, buffer)
             return buffer.getvalue()
         else:
-            return self._read_chanked(size)
+            return self._read_chunked(size)
 
     def tell(self) -> int:
         """
@@ -195,6 +203,15 @@ class BaseDescriptor(object):
 
         return buffer
 
+    def close(self) -> None:
+        """
+        Closes the underlying stream. and check for ``min_length``.
+
+        """
+        pos = self.tell()
+        if self.min_length and self.min_length > pos:
+            raise MinimumLengthIsNotReachedError(self.min_length)
+
     def seekable(self) -> bool:
         """
         **[Abstract]**
@@ -235,13 +252,6 @@ class BaseDescriptor(object):
         """
         raise NotImplementedError('Seek operation is not supported by this object: %r' % self)  # pragma: no cover
 
-    def close(self) -> None:
-        """
-        Closes the underlying stream.
-        
-        """
-        raise NotImplementedError()  # pragma: no cover
-
 
 class StreamDescriptor(BaseDescriptor):
     """
@@ -274,7 +284,87 @@ class StreamDescriptor(BaseDescriptor):
         We are not closing the stream here, because we've not opened it.
 
         """
-        pass
+        super().close()
+
+    @property
+    def filename(self):
+        """
+        Retrieve the filename of the backend stream is available.
+
+        """
+        if hasattr(self._file, 'name'):
+            return self._file.name
+
+        raise DescriptorOperationError('This property is not available on the underlying stream: %r' % self._file)
+
+    def prepare_to_read(self, backend: str= 'temp') -> None:
+        """
+
+        .. versionadded:: 0.4.1-dev0
+
+        If the underlying stream is not seekable, tries to store the underlying non-seekable stream as an instance of
+        :class:`io.BytesIO`, :obj:`tempfile.NamedTemporaryFile` and :obj:`tempfile.TemporaryFile`.
+
+        .. warning:: Anyway, this method will seeks the descriptor to ``0``.
+
+        .. warning:: If any physical file is created during this operation, This will be deleted after the
+                     :meth:`.close` has been called.
+
+        .. warning:: :exc:`.DescriptorOperationError` may be raised, if the current position is greater than zero ``0``,
+                     and also if called on a seekable instance.
+
+        .. note:: The ``file`` option is also a temp file but file is guaranteed to have a visible name in the file
+                  system (on Unix, the directory entry is not unlinked). filename will be
+                  retrieved by the :prop:`.filename`.
+
+        :param backend: Available choices are: ``memory``, ``file`` and ``temp``.
+
+        """
+
+        if self.seekable():
+            self.seek(0)
+            return
+
+        if backend == 'memory':
+            buffer = io.BytesIO()
+        elif backend == 'temp':
+            buffer = TemporaryFile()
+        elif backend == 'file':
+            buffer = NamedTemporaryFile()
+        else:
+            raise DescriptorOperationError('Invalid backend for descriptor: %r' % backend)
+
+        length = copy_stream(self, buffer)
+        buffer.seek(0)
+        self.replace(
+            buffer,
+            position=0,
+            content_length=length,
+            extension=self.extension,
+            original_filename=self.original_filename,
+        )
+
+    def replace(self, attachable: [io.BytesIO, io.FileIO], position=None, **kwargs):
+        """
+
+        .. versionadded:: 0.4.1-dev0
+
+        Replace the underlying stream with a seekable one.
+
+        :param attachable: A seekable file-object.
+        :param position: Position of the new seekable file-object. if :data:`.None`, position will be preserved.
+        :param kwargs: the same as the :class:`.BaseDescriptor`
+        """
+
+        if position is None:
+            position = self.tell()
+        # Close the old stream
+        self.close()
+        self._file = attachable
+
+        # Some hacks are here:
+        super().__init__(**kwargs)
+        self.seek(position)
 
 
 class StreamCloserDescriptor(StreamDescriptor):
@@ -289,6 +379,7 @@ class StreamCloserDescriptor(StreamDescriptor):
         Overridden to close the underlying stream.
         
         """
+        super().close()
         self._file.close()
 
 
