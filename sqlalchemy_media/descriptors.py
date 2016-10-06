@@ -14,13 +14,13 @@ class BaseDescriptor(object):
     """
     Abstract base class for all descriptors. Instance of this class is a file-like object.
 
-    Descriptors are used to get some primitive information from an attachable(stream, filename or URI) and also allows
-    seeking over underlying stream. users may not be using this class directly. see :class:`.AttachableDescriptor`
-    to see how to use it.
+    Descriptors are used to get some primitive information from an attachable(stream, filename or URI) and also allow
+    seeking over underlying streams. users may not be using this class directly. see :class:`.AttachableDescriptor`
+    to know how to use it.
 
     :param max_length: Maximum allowed file size.
     :param content_type: The file's mimetype to suppress the mimetype detection.
-    :param content_length: The length of file in bytes, if available. Some descriptors like :class:`.UrlDescriptor`
+    :param content_length: The length of the file in bytes, if available. Some descriptors like :class:`.UrlDescriptor`
                            are providing this keyword argument.
     :param extension: The file's extension to suppress guessing it.
     :param original_filename: Original filename, useful to detect `content_type` and or `extension`.
@@ -123,6 +123,7 @@ class BaseDescriptor(object):
         """
         Get the current position of the stream. Even if the underlying stream is not :meth:`.seekable`, this method
         should return the current position which counted internally.
+        
         """
         source_cursor = self.tell_source()
         if self.seekable() or self.header is None:
@@ -157,11 +158,11 @@ class BaseDescriptor(object):
 
     def get_header_buffer(self) -> bytes:
         """
-        Returns the amount of :attr:`.header_buffer_size` from start of the underlying stream. this method should
-        called many times before the read method has been called on not seekable streams.
+        Returns the amount of :attr:`.header_buffer_size` from the beginning of the underlying stream. this method
+        should be called many times before the :meth:`.read` method is called on non-seekable descriptors.
 
-        .. warning:: The :exc:`.DescriptorOperationError` will be raised if this method called after calling the
-                     :meth:`.read`. This situation is only happened on un-seekable streams.
+        .. warning:: The :exc:`.DescriptorOperationError` will be raised if this method is called after calling the
+                     :meth:`.read`. This situation is only happened on non-seekable descriptors.
 
         .. seealso:: :meth:`.seekable`
 
@@ -184,7 +185,7 @@ class BaseDescriptor(object):
             pos = self.tell_source()
             if pos:
                 raise DescriptorOperationError(
-                    "it's too late to get header buffer from descriptor. the underlying stream is not seekable and "
+                    "it's too late to get header buffer from the descriptor. the underlying stream is not seekable and "
                     "%d bytes are already fetched from." % pos)
 
             buffer = self.read_source(self.header_buffer_size)
@@ -208,6 +209,7 @@ class BaseDescriptor(object):
         **[Abstract]**
 
         Should be overridden in inherited class and return the underlying stream's current position.
+        
         """
         raise NotImplementedError()  # pragma: no cover
 
@@ -229,23 +231,26 @@ class BaseDescriptor(object):
         .. note:: The :exc:`io.UnsupportedOperation` will be raised if the underlying stream is not :meth:`.seekable`.
 
         :param position: the position to seek on.
+        
         """
         raise NotImplementedError('Seek operation is not supported by this object: %r' % self)  # pragma: no cover
 
     def close(self) -> None:
         """
         Closes the underlying stream.
+        
         """
         raise NotImplementedError()  # pragma: no cover
 
 
 class StreamDescriptor(BaseDescriptor):
     """
-    This class is used for describing a stream. so it just a proxy for streams.
+    This class is used for describing a stream. so it's just a proxy for streams.
     The underlying stream is not meant to be closed after calling the :meth:`.close` method.
 
     :param stream: File-like object to wrap.
     :param kwargs: the same as the :class:`.BaseDescriptor`
+    
     """
 
     def __init__(self, stream: Stream, **kwargs):
@@ -274,13 +279,15 @@ class StreamDescriptor(BaseDescriptor):
 
 class StreamCloserDescriptor(StreamDescriptor):
     """
-    The same as the :class:`.StreamDescriptor`, the only difference is this class trying to close the stream after
+    The same as the :class:`.StreamDescriptor`, the only difference is that this class tries to close the stream after
     calling the :meth:`.close` method.
+    
     """
 
     def close(self) -> None:
         """
         Overridden to close the underlying stream.
+        
         """
         self._file.close()
 
@@ -333,7 +340,7 @@ class CgiFieldStorageDescriptor(StreamCloserDescriptor):
     """
     Describes a :class:`cgi.FieldStorage`.
 
-    :param storage: The :class:`cgi.FieldStorage` instance to describe.
+    :param storage: The :class:`cgi.FieldStorage` instance to be described.
     :param kwargs: the same as the :class:`.BaseDescriptor`
 
     """
