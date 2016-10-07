@@ -4,7 +4,7 @@ import warnings
 import functools
 from hashlib import md5
 
-from sqlalchemy_media.typing_ import Stream
+from sqlalchemy_media.typing_ import FileLike
 
 
 URI_REGEX_PATTERN = re.compile(
@@ -18,7 +18,7 @@ def is_uri(x):
     return URI_REGEX_PATTERN.match(x) is not None
 
 
-def copy_stream(source, target: Stream, *, chunk_size: int=16*1024) -> int:
+def copy_stream(source, target: FileLike, *, chunk_size: int= 16 * 1024) -> int:
     length = 0
     while 1:
         buf = source.read(chunk_size)

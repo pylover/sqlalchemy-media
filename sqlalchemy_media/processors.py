@@ -26,8 +26,8 @@ class Processor(object):
         **[Abstract]**
 
 
-        Should be overridden in inherited class and apply the process on the stream. the result may be inserted info
-        ``context`` argument.
+        Should be overridden in inherited class and apply the process on the file-like object. the result may be
+        inserted info ``context`` argument.
 
         :param descriptor: The :class:`.BaseDescriptor` instance, to read the blob info from.
         :param context: A dictionary to put and get the info about the attachment. which as ``content_type``, ``width``,
@@ -367,11 +367,11 @@ class ImageProcessor(Processor):
                      | <--------------- right ---------->               |
                      +--------------------------------------------------+
 
-                 .. seealso::
+    .. seealso::
 
-                    - ``crop`` `method <http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.BaseImage.crop>`_.
-                    - ``gravity`` `argument <http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.GRAVITY_TYPES>`_.
-                    - `Wand <http://docs.wand-py.org/>`_
+       - ``crop`` `method <http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.BaseImage.crop>`_.
+       - ``gravity`` `argument <http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.GRAVITY_TYPES>`_.
+       - `Wand <http://docs.wand-py.org/>`_
 
     """
 

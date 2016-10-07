@@ -6,7 +6,7 @@ from urllib.request import urlopen
 from cgi import FieldStorage
 from tempfile import TemporaryFile, NamedTemporaryFile
 
-from sqlalchemy_media.typing_ import Stream, Attachable
+from sqlalchemy_media.typing_ import FileLike, Attachable
 from sqlalchemy_media.helpers import is_uri, copy_stream
 from sqlalchemy_media.exceptions import MaximumLengthIsReachedError, MinimumLengthIsNotReachedError, \
     DescriptorOperationError
@@ -16,9 +16,10 @@ class BaseDescriptor(object):
     """
     Abstract base class for all descriptors. Instance of this class is a file-like object.
 
-    Descriptors are used to get some primitive information from an attachable(stream, filename or URI) and also allow
-    seeking over underlying streams. users may not be using this class directly. see :class:`.AttachableDescriptor`
-    to know how to use it.
+    Descriptors are used to get some primitive information from an attachable(file-like object, filename or URI) and
+    also allow seeking over underlying file-object. users may not be using this class directly.
+
+    .. seealso:: :class:`.AttachableDescriptor` to know how to use it.
 
     .. versionadded:: 0.5.0
 
@@ -32,24 +33,24 @@ class BaseDescriptor(object):
     :param extension: The file's extension to suppress guessing it.
     :param original_filename: Original filename, useful to detect `content_type` and or `extension`.
     :param kwargs: Additional keyword arguments to set as attribute on descriptor instance.
-    :param header_buffer_size: Amount of bytes to read and buffer from stream for analysis purpose if stream is not
-                               seekable.
+    :param header_buffer_size: Amount of bytes to read and buffer from underlying file-like object for analysis purpose
+                               if file-like object is not seekable.
 
     """
 
-    #: Buffer to store cached header on non-seekable streams.
+    #: Buffer to store cached header on non-seekable file-like objects.
     header = None
 
-    #: Original filename of the underlying stream.
+    #: Original filename of the underlying file-object.
     original_filename = None
 
-    #: Extension of the underlying stream.
+    #: Extension of the underlying file-object.
     extension = None
 
-    #: Content type of the underlying stream.
+    #: Content type of the underlying file-object.
     content_type = None
 
-    #: Amount of bytes to cache from header on non-seekable streams.
+    #: Amount of bytes to cache from header on non-seekable file-like objects.
     header_buffer_size = 1024
 
     def __init__(self, min_length: int=None, max_length: int=None, content_type: str=None, content_length: int=None,
@@ -129,8 +130,8 @@ class BaseDescriptor(object):
 
     def tell(self) -> int:
         """
-        Get the current position of the stream. Even if the underlying stream is not :meth:`.seekable`, this method
-        should return the current position which counted internally.
+        Get the current position of the file-like object. Even if the underlying file-object is not :meth:`.seekable`,
+        this method should return the current position which counted internally.
         
         """
         source_cursor = self.tell_source()
@@ -145,7 +146,8 @@ class BaseDescriptor(object):
 
     def tell_source(self):
         """
-        Returns the underlying stream's current position. even if the underlying stream is not :meth:`.seekable`.
+        Returns the underlying file-object's current position. even if the underlying file-object is not
+        :meth:`.seekable`.
 
         """
         if self.seekable():
@@ -155,7 +157,7 @@ class BaseDescriptor(object):
 
     def read_source(self, size: int) -> bytes:
         """
-        Used to read from underlying stream.
+        Used to read from underlying file-object.
 
         :param size: Amount of bytes to read.
         """
@@ -166,7 +168,7 @@ class BaseDescriptor(object):
 
     def get_header_buffer(self) -> bytes:
         """
-        Returns the amount of :attr:`.header_buffer_size` from the beginning of the underlying stream. this method
+        Returns the amount of :attr:`.header_buffer_size` from the beginning of the underlying file-object. this method
         should be called many times before the :meth:`.read` method is called on non-seekable descriptors.
 
         .. warning:: The :exc:`.DescriptorOperationError` will be raised if this method is called after calling the
@@ -193,8 +195,8 @@ class BaseDescriptor(object):
             pos = self.tell_source()
             if pos:
                 raise DescriptorOperationError(
-                    "it's too late to get header buffer from the descriptor. the underlying stream is not seekable and "
-                    "%d bytes are already fetched from." % pos)
+                    "it's too late to get header buffer from the descriptor. the underlying file-object is not "
+                    "seekable and %d bytes are already fetched from." % pos)
 
             buffer = self.read_source(self.header_buffer_size)
             self.header = io.BytesIO(buffer)
@@ -205,7 +207,7 @@ class BaseDescriptor(object):
 
     def close(self) -> None:
         """
-        Closes the underlying stream. and check for ``min_length``.
+        Closes the underlying file-object. and check for ``min_length``.
 
         """
         pos = self.tell()
@@ -216,7 +218,7 @@ class BaseDescriptor(object):
         """
         **[Abstract]**
 
-        Should be overridden in inherited class and return :data:`True` if the underlying stream is seekable.
+        Should be overridden in inherited class and return :data:`True` if the underlying file-object is seekable.
 
         """
         raise NotImplementedError()  # pragma: no cover
@@ -225,7 +227,7 @@ class BaseDescriptor(object):
         """
         **[Abstract]**
 
-        Should be overridden in inherited class and return the underlying stream's current position.
+        Should be overridden in inherited class and return the underlying file-object's current position.
         
         """
         raise NotImplementedError()  # pragma: no cover
@@ -234,7 +236,7 @@ class BaseDescriptor(object):
         """
         **[Abstract]**
 
-        Should be overridden in inherited class and read from underlying stream.
+        Should be overridden in inherited class and read from underlying file-object.
 
         :param size: Amount of bytes to read.
 
@@ -245,7 +247,8 @@ class BaseDescriptor(object):
         """
         Seek the file at the given position.
 
-        .. note:: The :exc:`io.UnsupportedOperation` will be raised if the underlying stream is not :meth:`.seekable`.
+        .. note:: The :exc:`io.UnsupportedOperation` will be raised if the underlying file-object is not
+        :meth:`.seekable`.
 
         :param position: the position to seek on.
         
@@ -255,15 +258,15 @@ class BaseDescriptor(object):
 
 class StreamDescriptor(BaseDescriptor):
     """
-    This class is used for describing a stream. so it's just a proxy for streams.
-    The underlying stream is not meant to be closed after calling the :meth:`.close` method.
+    This class is used for describing a file-like object. so it's just a proxy for file-like objects.
+    The underlying file-object is not meant to be closed after calling the :meth:`.close` method.
 
     :param stream: File-like object to wrap.
     :param kwargs: the same as the :class:`.BaseDescriptor`
     
     """
 
-    def __init__(self, stream: Stream, **kwargs):
+    def __init__(self, stream: FileLike, **kwargs):
         self._file = stream
         super().__init__(**kwargs)
 
@@ -281,7 +284,7 @@ class StreamDescriptor(BaseDescriptor):
 
     def close(self) -> None:
         """
-        We are not closing the stream here, because we've not opened it.
+        We are not closing the file-like object here, because we've not opened it.
 
         """
         super().close()
@@ -289,21 +292,21 @@ class StreamDescriptor(BaseDescriptor):
     @property
     def filename(self):
         """
-        Retrieve the filename of the backend stream is available.
+        Retrieve the filename of the backend file-like object is available.
 
         """
         if hasattr(self._file, 'name'):
             return self._file.name
 
-        raise DescriptorOperationError('This property is not available on the underlying stream: %r' % self._file)
+        raise DescriptorOperationError('This property is not available on the underlying file-object: %r' % self._file)
 
     def prepare_to_read(self, backend: str= 'temp') -> None:
         """
 
         .. versionadded:: 0.5.0
 
-        If the underlying stream is not seekable, tries to store the underlying non-seekable stream as an instance of
-        :class:`io.BytesIO`, :obj:`tempfile.NamedTemporaryFile` and :obj:`tempfile.TemporaryFile`.
+        If the underlying file-object is not seekable, tries to store the underlying non-seekable file-like object as an
+        instance of :class:`io.BytesIO`, :obj:`tempfile.NamedTemporaryFile` and :obj:`tempfile.TemporaryFile`.
 
         .. warning:: Anyway, this method will seeks the descriptor to ``0``.
 
@@ -349,7 +352,7 @@ class StreamDescriptor(BaseDescriptor):
 
         .. versionadded:: 0.5.0
 
-        Replace the underlying stream with a seekable one.
+        Replace the underlying file-object with a seekable one.
 
         :param attachable: A seekable file-object.
         :param position: Position of the new seekable file-object. if :data:`.None`, position will be preserved.
@@ -358,7 +361,7 @@ class StreamDescriptor(BaseDescriptor):
 
         if position is None:
             position = self.tell()
-        # Close the old stream
+        # Close the old file-like object
         self.close()
         self._file = attachable
 
@@ -369,14 +372,14 @@ class StreamDescriptor(BaseDescriptor):
 
 class StreamCloserDescriptor(StreamDescriptor):
     """
-    The same as the :class:`.StreamDescriptor`, the only difference is that this class tries to close the stream after
-    calling the :meth:`.close` method.
+    The same as the :class:`.StreamDescriptor`, the only difference is that this class tries to close the file-like
+    object after calling the :meth:`.close` method.
     
     """
 
     def close(self) -> None:
         """
-        Overridden to close the underlying stream.
+        Overridden to close the underlying file-object.
         
         """
         super().close()

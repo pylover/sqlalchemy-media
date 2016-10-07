@@ -286,7 +286,7 @@ class Attachment(MutableDict):
                          +--------+
 
 
-        :param attachable: stream, filename or URL to attach.
+        :param attachable: file-like object, filename or URL to attach.
         :param content_type: If given, the content-detection is suppressed.
         :param original_filename: Original name of the file, if available, to append to the end of the the filename, 
                                   useful for SEO, and readability.

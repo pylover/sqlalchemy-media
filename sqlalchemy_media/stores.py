@@ -6,7 +6,7 @@ from os.path import abspath, join, dirname, exists
 from sqlalchemy import event
 from sqlalchemy.util.langhelpers import symbol
 
-from sqlalchemy_media.typing_ import Stream
+from sqlalchemy_media.typing_ import FileLike
 from sqlalchemy_media.context import get_id as get_context_id
 from sqlalchemy_media.exceptions import ContextError, DefaultStoreError
 from sqlalchemy_media.helpers import copy_stream
@@ -38,11 +38,11 @@ class Store(object):
         """
         pass
 
-    def put(self, filename: str, stream: Stream) -> int:
+    def put(self, filename: str, stream: FileLike) -> int:
         """
         **[Abstract]**
 
-        Should be overridden in inherited class and puts the stream as the given filename in the store.
+        Should be overridden in inherited class and puts the file-like object as the given filename in the store.
 
         .. versionchanged:: 0.5.0
 
@@ -50,7 +50,7 @@ class Store(object):
            - ``max_length`` has been removed.
 
         :param filename: the target filename.
-        :param stream: the source stream
+        :param stream: the source file-like object
         :return: length of the stored file.
         """
         raise NotImplementedError()  # pragma: no cover
@@ -66,13 +66,13 @@ class Store(object):
         """
         raise NotImplementedError()  # pragma: no cover
 
-    def open(self, filename: str, mode: str='rb') -> Stream:
+    def open(self, filename: str, mode: str='rb') -> FileLike:
         """
         **[Abstract]**
 
         Should be overridden in inherited class and return a file-like object representing the file in the store.
 
-        .. note:: Caller of this method is responsible to close the stream.
+        .. note:: Caller of this method is responsible to close the file-like object.
 
         :param filename: The filename to open.
         :param mode: same as the `mode` in famous :func:`.open` function.
@@ -107,7 +107,7 @@ class FileSystemStore(Store):
     def _get_physical_path(self, filename: str) -> str:
         return join(self.root_path, filename)
 
-    def put(self, filename: str, stream: Stream):
+    def put(self, filename: str, stream: FileLike):
         physical_path = self._get_physical_path(filename)
         physical_directory = dirname(physical_path)
 
@@ -124,7 +124,7 @@ class FileSystemStore(Store):
     def delete(self, filename: str):
         remove(self._get_physical_path(filename))
 
-    def open(self, filename: str, mode: str='rb') -> Stream:
+    def open(self, filename: str, mode: str='rb') -> FileLike:
         return open(self._get_physical_path(filename), mode=mode)
 
     def locate(self, attachment) -> str:

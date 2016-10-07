@@ -17,7 +17,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 from sqlalchemy_media import StoreManager, FileSystemStore
-from sqlalchemy_media.typing_ import Stream
+from sqlalchemy_media.typing_ import FileLike
 from sqlalchemy_media.helpers import copy_stream
 from sqlalchemy_media.mimetypes_ import guess_type
 
@@ -42,7 +42,7 @@ def simple_http_server(content: bytes= b'Simple file content.', bind: Address=('
             with open(filename, 'rb') as f:
                 self.serve_stream(f)
 
-        def serve_stream(self, stream: Stream):
+        def serve_stream(self, stream: FileLike):
             buffer = io.BytesIO()
             self.send_header('Content-Length', str(copy_stream(stream, buffer)))
             self.end_headers()

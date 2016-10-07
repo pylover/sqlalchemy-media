@@ -46,14 +46,14 @@ class DefaultStoreError(SqlAlchemyMediaException):
 
 class AnalyzeError(SqlAlchemyMediaException):
     """
-    Raised when :class:`.Analyzer` can not analyze the stream.
+    Raised when :class:`.Analyzer` can not analyze the file-like object.
 
     """
 
 
 class ValidationError(SqlAlchemyMediaException):
     """
-    Raised when :class:`.Validator` can not validate the stream.
+    Raised when :class:`.Validator` can not validate the file-like object.
 
     """
 
