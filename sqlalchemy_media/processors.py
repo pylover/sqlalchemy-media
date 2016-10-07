@@ -4,7 +4,7 @@ import io
 from typing import Iterable
 
 from sqlalchemy_media.typing_ import Dimension
-from sqlalchemy_media.exceptions import ContentTypeValidationError, DimensionValidationError
+from sqlalchemy_media.exceptions import ContentTypeValidationError, DimensionValidationError, AspectRatioValidationError
 from sqlalchemy_media.helpers import validate_width_height_ratio
 from sqlalchemy_media.descriptors import StreamDescriptor
 from sqlalchemy_media.optionals import magic_mime_from_buffer, ensure_wand
@@ -224,6 +224,13 @@ class ImageValidator(ContentTypeValidator):
     :param minimum: Minimum allowed dimension (w, h).
     :param maximum: Maximum allowed dimension (w, h).
     :param content_types: An iterable whose items are allowed content types.
+    :param min_aspect_ratio: Minimum allowed image aspect ratio.
+    :param max_aspect_ratio: Maximum allowed image aspect ratio.
+
+    .. versionadded:: 0.5.0-dev0
+
+       - ``min_aspect_ratio`` and ``max_aspect_ratio``
+
 
     .. note:: Pass ``0`` on ``None`` for disabling assertion for one of: ``(w, h)``.
 
@@ -244,9 +251,12 @@ class ImageValidator(ContentTypeValidator):
 
     """
 
-    def __init__(self, minimum: Dimension=None, maximum: Dimension=None, content_types=None):
+    def __init__(self, minimum: Dimension=None, maximum: Dimension=None, content_types=None,
+                 min_aspect_ratio: float=None, max_aspect_ratio: float=None):
         self.min_width, self.min_height = minimum if minimum else (0, 0)
         self.max_width, self.max_height = maximum if maximum else (0, 0)
+        self.min_aspect_ratio = min_aspect_ratio
+        self.max_aspect_ratio = max_aspect_ratio
         if content_types:
             super().__init__(content_types=content_types)
 
@@ -282,6 +292,17 @@ class ImageValidator(ContentTypeValidator):
             raise DimensionValidationError('Maximum allowed height is: %d, but the %d is given.' % (
                 self.max_height,
                 height
+            ))
+
+        aspect_ratio = width / height
+        if (self.min_aspect_ratio and self.min_aspect_ratio > aspect_ratio) or \
+                (self.max_aspect_ratio and self.max_aspect_ratio < aspect_ratio):
+            raise AspectRatioValidationError('Invalid aspect ration %s / %s = %s, accepted_range: %s - %s' % (
+                width,
+                height,
+                aspect_ratio,
+                self.min_aspect_ratio,
+                self.max_aspect_ratio
             ))
 
 

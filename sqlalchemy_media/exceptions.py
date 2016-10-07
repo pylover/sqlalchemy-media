@@ -128,3 +128,10 @@ class DimensionValidationError(ValidationError):
     Raises when ``width`` or ``height`` of the media is not meet the limitations.
 
     """
+
+
+class AspectRatioValidationError(ValidationError):
+    """
+    Raises when the image aspect ratio is not valid.
+
+    """

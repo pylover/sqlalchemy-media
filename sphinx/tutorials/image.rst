@@ -94,8 +94,22 @@ the ``as_mutable`` method is used to make a type mutable.
     class ProfileImage(Image):
         __pre_processors__ = [
             WandAnalyzer(),
-            ImageValidator((120, 120), (800, 600), content_types=['image/jpeg', 'image/png']),
-            ImageProcessor(fmt='jpeg', width=120)
+            ImageValidator(
+                minimum=(120, 120),
+                maximum=(800, 600),
+                min_aspect_ratio=1.2,
+                content_types=['image/jpeg', 'image/png']
+            ),
+            ImageProcessor(
+                fmt='jpeg',
+                width=120,
+                crop=dict(
+                    left='10%',
+                    top='10%',
+                    width='80%',
+                    height='80%',
+                )
+            )
         ]
 
     class Person(Base):

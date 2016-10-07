@@ -5,7 +5,7 @@ from os.path import dirname, abspath, join
 
 from sqlalchemy_media.processors import MagicAnalyzer, WandAnalyzer, ContentTypeValidator, ImageValidator
 from sqlalchemy_media.descriptors import AttachableDescriptor
-from sqlalchemy_media.exceptions import ContentTypeValidationError, DimensionValidationError
+from sqlalchemy_media.exceptions import ContentTypeValidationError, DimensionValidationError, AspectRatioValidationError
 
 
 class ValidatorTestCase(unittest.TestCase):
@@ -87,6 +87,16 @@ class ValidatorTestCase(unittest.TestCase):
             self.assertRaises(
                 DimensionValidationError,
                 ImageValidator(minimum=(0, 161)).process, d, ctx
+            )
+
+            self.assertRaises(
+                AspectRatioValidationError,
+                ImageValidator(min_aspect_ratio=1.4).process, d, ctx
+            )
+
+            self.assertRaises(
+                AspectRatioValidationError,
+                ImageValidator(max_aspect_ratio=1.3).process, d, ctx
             )
 
 
