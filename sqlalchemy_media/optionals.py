@@ -26,7 +26,7 @@ def magic_mime_from_buffer(buffer: bytes) -> str:
     """
     Try to detect mimetype using ``magic`` library.
 
-    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if `python-magic` is not installed.
+    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``python-magic`` is not installed.
 
     :param buffer: buffer from header of file.
 
@@ -51,9 +51,7 @@ except ImportError:  # pragma: no cover
 def ensure_wand():
     """
 
-    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if `wand` is not installed.
-
-    :return: The wand module.
+    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``wand`` is not installed.
 
     """
 
