@@ -173,3 +173,15 @@ Here you can see the full list of changes made on each sqlalchemy-media release.
 
 0.1.1 (2016-10-03)
   - Improving coverage
+
+
+Python is really Awesome!
+-------------------------
+
+::
+
+    img.crop(**{
+        key: int(value[:-1]) / 100 * (img.width if key in ('width', 'left', 'right') else img.height)
+        if key in ('left', 'top', 'right', 'bottom', 'width', 'height') and '%' in value else value
+        for key, value in self.crop.items()
+    })

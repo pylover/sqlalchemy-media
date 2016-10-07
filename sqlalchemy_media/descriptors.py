@@ -315,7 +315,7 @@ class StreamDescriptor(BaseDescriptor):
 
         .. note:: The ``file`` option is also a temp file but file is guaranteed to have a visible name in the file
                   system (on Unix, the directory entry is not unlinked). filename will be
-                  retrieved by the :prop:`.filename`.
+                  retrieved by the :attr:`.filename`.
 
         :param backend: Available choices are: ``memory``, ``file`` and ``temp``.
 

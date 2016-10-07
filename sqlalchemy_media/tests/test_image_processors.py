@@ -1,9 +1,11 @@
 
+import io
 import unittest
 from os.path import dirname, abspath, join
 
 from sqlalchemy_media.descriptors import AttachableDescriptor
-from sqlalchemy_media.processors import ImageProcessor
+from sqlalchemy_media.processors import ImageProcessor, WandAnalyzer
+from sqlalchemy_media.helpers import copy_stream
 
 
 class ImageProcessorTestCase(unittest.TestCase):
@@ -16,7 +18,7 @@ class ImageProcessorTestCase(unittest.TestCase):
         cls.cat_png = join(cls.stuff_path, 'cat.png')
         cls.dog_jpg = join(cls.stuff_path, 'dog_213X160.jpg')
 
-    def test_image_processor(self):
+    def test_resize_reformat(self):
         # guess content types from extension
 
         with AttachableDescriptor(self.cat_png) as d:
@@ -47,6 +49,22 @@ class ImageProcessorTestCase(unittest.TestCase):
 
             ImageProcessor(fmt='jpeg', height=480).process(d, ctx)
             self.assertFalse(len(ctx))
+
+    def test_crop(self):
+        with AttachableDescriptor(self.cat_jpeg) as d:
+            # Checking when not modifying stream.
+            ctx = dict()
+            ImageProcessor(crop=dict(width='50%', height='50%', gravity='center')).process(d, ctx)
+            ctx = dict()
+            WandAnalyzer().process(d, ctx)
+            self.assertDictEqual(
+                ctx,
+                {
+                    'content_type': 'image/jpeg',
+                    'width': 320,
+                    'height': 240,
+                }
+            )
 
 
 if __name__ == '__main__':  # pragma: no cover

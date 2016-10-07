@@ -292,25 +292,75 @@ class ImageProcessor(Processor):
 
     Used to re-sampling, resizing, reformatting bitmaps.
 
+    .. warning::
+
+       - If ``width`` or ``height`` is given with ``crop``, Cropping will be processed after the resize.
+       - If you pass both ``width`` and ``height``, aspect ratio may not be preserved.
+
     :param fmt: This argument will be directly passing to ``wand``. so, for list of available choices, see:
                 `ImageMagic Documentation <http://www.imagemagick.org/script/formats.php>`_
 
     :param width: The new image width.
     :param height: The new image height.
+    :param crop: Used to crop the image.
+
+                 .. versionadded:: 0.5.0-dev0
+
+                 The crop dimension as a dictionary containing the keys described
+                 `here <http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.BaseImage.crop>`_.
 
 
-    .. warning:: If you pass both ``width`` and ``height``, aspect ratio may not be preserved.
 
-    .. seealso:: `Wand <http://docs.wand-py.org/>`_
+                 Including you can
+                 use percent ``%`` sing to automatically calculate the values from original image dimension::
+
+                     ImageProcessor(crop=dict(width='50%', height='50%', gravity='center'))
+                     ImageProcessor(crop=dict(width='10%', height='10%', gravity='south_east'))
+
+                 Or::
+
+                     ImageProcessor(crop=dict(
+                        top='10%',
+                        bottom='10%',
+                        left='10%',
+                        right='10%',
+                        width='80%',
+                        height='80%'
+                     ))
+
+                 Included from wand documentation::
+
+                     +--------------------------------------------------+
+                     |              ^                         ^         |
+                     |              |                         |         |
+                     |             top                        |         |
+                     |              |                         |         |
+                     |              v                         |         |
+                     | <-- left --> +-------------------+  bottom       |
+                     |              |             ^     |     |         |
+                     |              | <-- width --|---> |     |         |
+                     |              |           height  |     |         |
+                     |              |             |     |     |         |
+                     |              |             v     |     |         |
+                     |              +-------------------+     v         |
+                     | <--------------- right ---------->               |
+                     +--------------------------------------------------+
+
+                 .. seealso::
+
+                    - ``crop`` `method <http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.BaseImage.crop>`_.
+                    - ``gravity`` `argument <http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.GRAVITY_TYPES>`_.
+                    - `Wand <http://docs.wand-py.org/>`_
 
     """
 
-    def __init__(self, fmt: str=None, width: int=None, height: int=None):
+    def __init__(self, fmt: str=None, width: int=None, height: int=None, crop=None):
         self.format = fmt.upper() if fmt else None
         self.width = width
         self.height = height
+        self.crop = crop
 
-    def process(self, descriptor: StreamDescriptor, context: dict, ):
+    def process(self, descriptor: StreamDescriptor, context: dict):
 
         # Ensuring the wand package is installed.
         ensure_wand()
@@ -321,7 +371,7 @@ class ImageProcessor(Processor):
         # generating thumbnail and storing in buffer
         img = WandImage(file=descriptor)
 
-        if (self.format is None or img.format == self.format) and (
+        if self.crop is None and (self.format is None or img.format == self.format) and (
                 (self.width is None or img.width == self.width) and
                 (self.height is None or img.height == self.height)):
             img.close()
@@ -347,6 +397,14 @@ class ImageProcessor(Processor):
                     width(img.size) if callable(width) else width,
                     height(img.size) if callable(height) else height
                 )
+
+            # Cropping
+            if self.crop:
+                img.crop(**{
+                    key: int(int(value[:-1]) / 100 * (img.width if key in ('width', 'left', 'right') else img.height))
+                    if key in ('left', 'top', 'right', 'bottom', 'width', 'height') and '%' in value else value
+                    for key, value in self.crop.items()
+                })
 
             img.save(file=output_buffer)
 
