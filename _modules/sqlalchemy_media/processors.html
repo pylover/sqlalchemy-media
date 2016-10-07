@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.processors &mdash; sqlalchemy-media 0.5.0 documentation</title>
+  <title>sqlalchemy_media.processors &mdash; sqlalchemy-media 0.6.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.5.0 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.6.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.5
+                0.6
               </div>
             
           
@@ -140,7 +140,7 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Iterable</span>
 
 <span class="kn">from</span> <span class="nn">sqlalchemy_media.typing_</span> <span class="k">import</span> <span class="n">Dimension</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.exceptions</span> <span class="k">import</span> <span class="n">ContentTypeValidationError</span><span class="p">,</span> <span class="n">DimensionValidationError</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.exceptions</span> <span class="k">import</span> <span class="n">ContentTypeValidationError</span><span class="p">,</span> <span class="n">DimensionValidationError</span><span class="p">,</span> <span class="n">AspectRatioValidationError</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy_media.helpers</span> <span class="k">import</span> <span class="n">validate_width_height_ratio</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy_media.descriptors</span> <span class="k">import</span> <span class="n">StreamDescriptor</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy_media.optionals</span> <span class="k">import</span> <span class="n">magic_mime_from_buffer</span><span class="p">,</span> <span class="n">ensure_wand</span>
@@ -162,8 +162,8 @@
 <span class="sd">        **[Abstract]**</span>
 
 
-<span class="sd">        Should be overridden in inherited class and apply the process on the stream. the result may be inserted info</span>
-<span class="sd">        ``context`` argument.</span>
+<span class="sd">        Should be overridden in inherited class and apply the process on the file-like object. the result may be</span>
+<span class="sd">        inserted info ``context`` argument.</span>
 
 <span class="sd">        :param descriptor: The :class:`.BaseDescriptor` instance, to read the blob info from.</span>
 <span class="sd">        :param context: A dictionary to put and get the info about the attachment. which as ``content_type``, ``width``,</span>
@@ -360,6 +360,13 @@
 <span class="sd">    :param minimum: Minimum allowed dimension (w, h).</span>
 <span class="sd">    :param maximum: Maximum allowed dimension (w, h).</span>
 <span class="sd">    :param content_types: An iterable whose items are allowed content types.</span>
+<span class="sd">    :param min_aspect_ratio: Minimum allowed image aspect ratio.</span>
+<span class="sd">    :param max_aspect_ratio: Maximum allowed image aspect ratio.</span>
+
+<span class="sd">    .. versionadded:: 0.6.0</span>
+
+<span class="sd">       - ``min_aspect_ratio`` and ``max_aspect_ratio``</span>
+
 
 <span class="sd">    .. note:: Pass ``0`` on ``None`` for disabling assertion for one of: ``(w, h)``.</span>
 
@@ -380,9 +387,12 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimum</span><span class="p">:</span> <span class="n">Dimension</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">maximum</span><span class="p">:</span> <span class="n">Dimension</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">content_types</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimum</span><span class="p">:</span> <span class="n">Dimension</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">maximum</span><span class="p">:</span> <span class="n">Dimension</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">content_types</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">min_aspect_ratio</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_aspect_ratio</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_height</span> <span class="o">=</span> <span class="n">minimum</span> <span class="k">if</span> <span class="n">minimum</span> <span class="k">else</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_height</span> <span class="o">=</span> <span class="n">maximum</span> <span class="k">if</span> <span class="n">maximum</span> <span class="k">else</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_aspect_ratio</span> <span class="o">=</span> <span class="n">min_aspect_ratio</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_aspect_ratio</span> <span class="o">=</span> <span class="n">max_aspect_ratio</span>
         <span class="k">if</span> <span class="n">content_types</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">content_types</span><span class="o">=</span><span class="n">content_types</span><span class="p">)</span>
 
@@ -418,6 +428,17 @@
             <span class="k">raise</span> <span class="n">DimensionValidationError</span><span class="p">(</span><span class="s1">&#39;Maximum allowed height is: </span><span class="si">%d</span><span class="s1">, but the </span><span class="si">%d</span><span class="s1"> is given.&#39;</span> <span class="o">%</span> <span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">max_height</span><span class="p">,</span>
                 <span class="n">height</span>
+            <span class="p">))</span>
+
+        <span class="n">aspect_ratio</span> <span class="o">=</span> <span class="n">width</span> <span class="o">/</span> <span class="n">height</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_aspect_ratio</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_aspect_ratio</span> <span class="o">&gt;</span> <span class="n">aspect_ratio</span><span class="p">)</span> <span class="ow">or</span> \
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_aspect_ratio</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_aspect_ratio</span> <span class="o">&lt;</span> <span class="n">aspect_ratio</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">AspectRatioValidationError</span><span class="p">(</span><span class="s1">&#39;Invalid aspect ration </span><span class="si">%s</span><span class="s1"> / </span><span class="si">%s</span><span class="s1"> = </span><span class="si">%s</span><span class="s1">, accepted_range: </span><span class="si">%s</span><span class="s1"> - </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="n">width</span><span class="p">,</span>
+                <span class="n">height</span><span class="p">,</span>
+                <span class="n">aspect_ratio</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">min_aspect_ratio</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">max_aspect_ratio</span>
             <span class="p">))</span></div>
 
 
@@ -428,25 +449,75 @@
 
 <span class="sd">    Used to re-sampling, resizing, reformatting bitmaps.</span>
 
+<span class="sd">    .. warning::</span>
+
+<span class="sd">       - If ``width`` or ``height`` is given with ``crop``, Cropping will be processed after the resize.</span>
+<span class="sd">       - If you pass both ``width`` and ``height``, aspect ratio may not be preserved.</span>
+
 <span class="sd">    :param fmt: This argument will be directly passing to ``wand``. so, for list of available choices, see:</span>
 <span class="sd">                `ImageMagic Documentation &lt;http://www.imagemagick.org/script/formats.php&gt;`_</span>
 
 <span class="sd">    :param width: The new image width.</span>
 <span class="sd">    :param height: The new image height.</span>
+<span class="sd">    :param crop: Used to crop the image.</span>
+
+<span class="sd">                 .. versionadded:: 0.6.0</span>
+
+<span class="sd">                 The crop dimension as a dictionary containing the keys described</span>
+<span class="sd">                 `here &lt;http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.BaseImage.crop&gt;`_.</span>
 
 
-<span class="sd">    .. warning:: If you pass both ``width`` and ``height``, aspect ratio may not be preserved.</span>
 
-<span class="sd">    .. seealso:: `Wand &lt;http://docs.wand-py.org/&gt;`_</span>
+<span class="sd">                 Including you can</span>
+<span class="sd">                 use percent ``%`` sing to automatically calculate the values from original image dimension::</span>
+
+<span class="sd">                     ImageProcessor(crop=dict(width=&#39;50%&#39;, height=&#39;50%&#39;, gravity=&#39;center&#39;))</span>
+<span class="sd">                     ImageProcessor(crop=dict(width=&#39;10%&#39;, height=&#39;10%&#39;, gravity=&#39;south_east&#39;))</span>
+
+<span class="sd">                 Or::</span>
+
+<span class="sd">                     ImageProcessor(crop=dict(</span>
+<span class="sd">                        top=&#39;10%&#39;,</span>
+<span class="sd">                        bottom=&#39;10%&#39;,</span>
+<span class="sd">                        left=&#39;10%&#39;,</span>
+<span class="sd">                        right=&#39;10%&#39;,</span>
+<span class="sd">                        width=&#39;80%&#39;,</span>
+<span class="sd">                        height=&#39;80%&#39;</span>
+<span class="sd">                     ))</span>
+
+<span class="sd">                 Included from wand documentation::</span>
+
+<span class="sd">                     +--------------------------------------------------+</span>
+<span class="sd">                     |              ^                         ^         |</span>
+<span class="sd">                     |              |                         |         |</span>
+<span class="sd">                     |             top                        |         |</span>
+<span class="sd">                     |              |                         |         |</span>
+<span class="sd">                     |              v                         |         |</span>
+<span class="sd">                     | &lt;-- left --&gt; +-------------------+  bottom       |</span>
+<span class="sd">                     |              |             ^     |     |         |</span>
+<span class="sd">                     |              | &lt;-- width --|---&gt; |     |         |</span>
+<span class="sd">                     |              |           height  |     |         |</span>
+<span class="sd">                     |              |             |     |     |         |</span>
+<span class="sd">                     |              |             v     |     |         |</span>
+<span class="sd">                     |              +-------------------+     v         |</span>
+<span class="sd">                     | &lt;--------------- right ----------&gt;               |</span>
+<span class="sd">                     +--------------------------------------------------+</span>
+
+<span class="sd">    .. seealso::</span>
+
+<span class="sd">       - ``crop`` `method &lt;http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.BaseImage.crop&gt;`_.</span>
+<span class="sd">       - ``gravity`` `argument &lt;http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.GRAVITY_TYPES&gt;`_.</span>
+<span class="sd">       - `Wand &lt;http://docs.wand-py.org/&gt;`_</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fmt</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fmt</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">crop</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="n">fmt</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">if</span> <span class="n">fmt</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">width</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">height</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">crop</span> <span class="o">=</span> <span class="n">crop</span>
 
-    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">:</span> <span class="n">StreamDescriptor</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">:</span> <span class="n">StreamDescriptor</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 
         <span class="c1"># Ensuring the wand package is installed.</span>
         <span class="n">ensure_wand</span><span class="p">()</span>
@@ -457,7 +528,7 @@
         <span class="c1"># generating thumbnail and storing in buffer</span>
         <span class="n">img</span> <span class="o">=</span> <span class="n">WandImage</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">descriptor</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">format</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">img</span><span class="o">.</span><span class="n">format</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">crop</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">format</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">img</span><span class="o">.</span><span class="n">format</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
                 <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">img</span><span class="o">.</span><span class="n">width</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)</span> <span class="ow">and</span>
                 <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">img</span><span class="o">.</span><span class="n">height</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">)):</span>
             <span class="n">img</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -483,6 +554,14 @@
                     <span class="n">width</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">width</span><span class="p">)</span> <span class="k">else</span> <span class="n">width</span><span class="p">,</span>
                     <span class="n">height</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">height</span><span class="p">)</span> <span class="k">else</span> <span class="n">height</span>
                 <span class="p">)</span>
+
+            <span class="c1"># Cropping</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">crop</span><span class="p">:</span>
+                <span class="n">img</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="o">**</span><span class="p">{</span>
+                    <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">width</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">img</span><span class="o">.</span><span class="n">height</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;top&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="s1">&#39;bottom&#39;</span><span class="p">,</span> <span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;%&#39;</span> <span class="ow">in</span> <span class="n">value</span> <span class="k">else</span> <span class="n">value</span>
+                    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">crop</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="p">})</span>
 
             <span class="n">img</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">output_buffer</span><span class="p">)</span>
 
@@ -527,7 +606,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.5.0',
+            VERSION:'0.6.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

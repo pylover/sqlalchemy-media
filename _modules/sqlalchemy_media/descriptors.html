@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.descriptors &mdash; sqlalchemy-media 0.5.0 documentation</title>
+  <title>sqlalchemy_media.descriptors &mdash; sqlalchemy-media 0.6.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.5.0 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.6.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.5
+                0.6
               </div>
             
           
@@ -142,7 +142,7 @@
 <span class="kn">from</span> <span class="nn">cgi</span> <span class="k">import</span> <span class="n">FieldStorage</span>
 <span class="kn">from</span> <span class="nn">tempfile</span> <span class="k">import</span> <span class="n">TemporaryFile</span><span class="p">,</span> <span class="n">NamedTemporaryFile</span>
 
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.typing_</span> <span class="k">import</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">Attachable</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.typing_</span> <span class="k">import</span> <span class="n">FileLike</span><span class="p">,</span> <span class="n">Attachable</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy_media.helpers</span> <span class="k">import</span> <span class="n">is_uri</span><span class="p">,</span> <span class="n">copy_stream</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy_media.exceptions</span> <span class="k">import</span> <span class="n">MaximumLengthIsReachedError</span><span class="p">,</span> <span class="n">MinimumLengthIsNotReachedError</span><span class="p">,</span> \
     <span class="n">DescriptorOperationError</span>
@@ -152,9 +152,10 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Abstract base class for all descriptors. Instance of this class is a file-like object.</span>
 
-<span class="sd">    Descriptors are used to get some primitive information from an attachable(stream, filename or URI) and also allow</span>
-<span class="sd">    seeking over underlying streams. users may not be using this class directly. see :class:`.AttachableDescriptor`</span>
-<span class="sd">    to know how to use it.</span>
+<span class="sd">    Descriptors are used to get some primitive information from an attachable(file-like object, filename or URI) and</span>
+<span class="sd">    also allow seeking over underlying file-object. users may not be using this class directly.</span>
+
+<span class="sd">    .. seealso:: :class:`.AttachableDescriptor` to know how to use it.</span>
 
 <span class="sd">    .. versionadded:: 0.5.0</span>
 
@@ -168,24 +169,24 @@
 <span class="sd">    :param extension: The file&#39;s extension to suppress guessing it.</span>
 <span class="sd">    :param original_filename: Original filename, useful to detect `content_type` and or `extension`.</span>
 <span class="sd">    :param kwargs: Additional keyword arguments to set as attribute on descriptor instance.</span>
-<span class="sd">    :param header_buffer_size: Amount of bytes to read and buffer from stream for analysis purpose if stream is not</span>
-<span class="sd">                               seekable.</span>
+<span class="sd">    :param header_buffer_size: Amount of bytes to read and buffer from underlying file-like object for analysis purpose</span>
+<span class="sd">                               if file-like object is not seekable.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1">#: Buffer to store cached header on non-seekable streams.</span>
+    <span class="c1">#: Buffer to store cached header on non-seekable file-like objects.</span>
     <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="c1">#: Original filename of the underlying stream.</span>
+    <span class="c1">#: Original filename of the underlying file-object.</span>
     <span class="n">original_filename</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="c1">#: Extension of the underlying stream.</span>
+    <span class="c1">#: Extension of the underlying file-object.</span>
     <span class="n">extension</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="c1">#: Content type of the underlying stream.</span>
+    <span class="c1">#: Content type of the underlying file-object.</span>
     <span class="n">content_type</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="c1">#: Amount of bytes to cache from header on non-seekable streams.</span>
+    <span class="c1">#: Amount of bytes to cache from header on non-seekable file-like objects.</span>
     <span class="n">header_buffer_size</span> <span class="o">=</span> <span class="mi">1024</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_length</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_length</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">content_type</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">content_length</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -265,8 +266,8 @@
 
 <div class="viewcode-block" id="BaseDescriptor.tell"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.BaseDescriptor.tell">[docs]</a>    <span class="k">def</span> <span class="nf">tell</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the current position of the stream. Even if the underlying stream is not :meth:`.seekable`, this method</span>
-<span class="sd">        should return the current position which counted internally.</span>
+<span class="sd">        Get the current position of the file-like object. Even if the underlying file-object is not :meth:`.seekable`,</span>
+<span class="sd">        this method should return the current position which counted internally.</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">source_cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell_source</span><span class="p">()</span>
@@ -281,7 +282,8 @@
 
 <div class="viewcode-block" id="BaseDescriptor.tell_source"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.BaseDescriptor.tell_source">[docs]</a>    <span class="k">def</span> <span class="nf">tell_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the underlying stream&#39;s current position. even if the underlying stream is not :meth:`.seekable`.</span>
+<span class="sd">        Returns the underlying file-object&#39;s current position. even if the underlying file-object is not</span>
+<span class="sd">        :meth:`.seekable`.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">seekable</span><span class="p">():</span>
@@ -291,7 +293,7 @@
 
 <div class="viewcode-block" id="BaseDescriptor.read_source"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.BaseDescriptor.read_source">[docs]</a>    <span class="k">def</span> <span class="nf">read_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Used to read from underlying stream.</span>
+<span class="sd">        Used to read from underlying file-object.</span>
 
 <span class="sd">        :param size: Amount of bytes to read.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -302,7 +304,7 @@
 
 <div class="viewcode-block" id="BaseDescriptor.get_header_buffer"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.BaseDescriptor.get_header_buffer">[docs]</a>    <span class="k">def</span> <span class="nf">get_header_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the amount of :attr:`.header_buffer_size` from the beginning of the underlying stream. this method</span>
+<span class="sd">        Returns the amount of :attr:`.header_buffer_size` from the beginning of the underlying file-object. this method</span>
 <span class="sd">        should be called many times before the :meth:`.read` method is called on non-seekable descriptors.</span>
 
 <span class="sd">        .. warning:: The :exc:`.DescriptorOperationError` will be raised if this method is called after calling the</span>
@@ -329,8 +331,8 @@
             <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell_source</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">pos</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">DescriptorOperationError</span><span class="p">(</span>
-                    <span class="s2">&quot;it&#39;s too late to get header buffer from the descriptor. the underlying stream is not seekable and &quot;</span>
-                    <span class="s2">&quot;</span><span class="si">%d</span><span class="s2"> bytes are already fetched from.&quot;</span> <span class="o">%</span> <span class="n">pos</span><span class="p">)</span>
+                    <span class="s2">&quot;it&#39;s too late to get header buffer from the descriptor. the underlying file-object is not &quot;</span>
+                    <span class="s2">&quot;seekable and </span><span class="si">%d</span><span class="s2"> bytes are already fetched from.&quot;</span> <span class="o">%</span> <span class="n">pos</span><span class="p">)</span>
 
             <span class="n">buffer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_source</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header_buffer_size</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
@@ -341,7 +343,7 @@
 
 <div class="viewcode-block" id="BaseDescriptor.close"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.BaseDescriptor.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Closes the underlying stream. and check for ``min_length``.</span>
+<span class="sd">        Closes the underlying file-object. and check for ``min_length``.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
@@ -352,7 +354,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **[Abstract]**</span>
 
-<span class="sd">        Should be overridden in inherited class and return :data:`True` if the underlying stream is seekable.</span>
+<span class="sd">        Should be overridden in inherited class and return :data:`True` if the underlying file-object is seekable.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>  <span class="c1"># pragma: no cover</span></div>
@@ -361,7 +363,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **[Abstract]**</span>
 
-<span class="sd">        Should be overridden in inherited class and return the underlying stream&#39;s current position.</span>
+<span class="sd">        Should be overridden in inherited class and return the underlying file-object&#39;s current position.</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>  <span class="c1"># pragma: no cover</span></div>
@@ -370,7 +372,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **[Abstract]**</span>
 
-<span class="sd">        Should be overridden in inherited class and read from underlying stream.</span>
+<span class="sd">        Should be overridden in inherited class and read from underlying file-object.</span>
 
 <span class="sd">        :param size: Amount of bytes to read.</span>
 
@@ -381,7 +383,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Seek the file at the given position.</span>
 
-<span class="sd">        .. note:: The :exc:`io.UnsupportedOperation` will be raised if the underlying stream is not :meth:`.seekable`.</span>
+<span class="sd">        .. note:: The :exc:`io.UnsupportedOperation` will be raised if the underlying file-object is not</span>
+<span class="sd">        :meth:`.seekable`.</span>
 
 <span class="sd">        :param position: the position to seek on.</span>
 <span class="sd">        </span>
@@ -391,15 +394,15 @@
 
 <div class="viewcode-block" id="StreamDescriptor"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.StreamDescriptor">[docs]</a><span class="k">class</span> <span class="nc">StreamDescriptor</span><span class="p">(</span><span class="n">BaseDescriptor</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This class is used for describing a stream. so it&#39;s just a proxy for streams.</span>
-<span class="sd">    The underlying stream is not meant to be closed after calling the :meth:`.close` method.</span>
+<span class="sd">    This class is used for describing a file-like object. so it&#39;s just a proxy for file-like objects.</span>
+<span class="sd">    The underlying file-object is not meant to be closed after calling the :meth:`.close` method.</span>
 
 <span class="sd">    :param stream: File-like object to wrap.</span>
 <span class="sd">    :param kwargs: the same as the :class:`.BaseDescriptor`</span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">FileLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_file</span> <span class="o">=</span> <span class="n">stream</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -417,7 +420,7 @@
 
 <div class="viewcode-block" id="StreamDescriptor.close"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.StreamDescriptor.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        We are not closing the stream here, because we&#39;ve not opened it.</span>
+<span class="sd">        We are not closing the file-like object here, because we&#39;ve not opened it.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
@@ -425,21 +428,21 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">filename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Retrieve the filename of the backend stream is available.</span>
+<span class="sd">        Retrieve the filename of the backend file-like object is available.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="o">.</span><span class="n">name</span>
 
-        <span class="k">raise</span> <span class="n">DescriptorOperationError</span><span class="p">(</span><span class="s1">&#39;This property is not available on the underlying stream: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">DescriptorOperationError</span><span class="p">(</span><span class="s1">&#39;This property is not available on the underlying file-object: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">)</span>
 
 <div class="viewcode-block" id="StreamDescriptor.prepare_to_read"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.StreamDescriptor.prepare_to_read">[docs]</a>    <span class="k">def</span> <span class="nf">prepare_to_read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">backend</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span> <span class="s1">&#39;temp&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        .. versionadded:: 0.5.0</span>
 
-<span class="sd">        If the underlying stream is not seekable, tries to store the underlying non-seekable stream as an instance of</span>
-<span class="sd">        :class:`io.BytesIO`, :obj:`tempfile.NamedTemporaryFile` and :obj:`tempfile.TemporaryFile`.</span>
+<span class="sd">        If the underlying file-object is not seekable, tries to store the underlying non-seekable file-like object as an</span>
+<span class="sd">        instance of :class:`io.BytesIO`, :obj:`tempfile.NamedTemporaryFile` and :obj:`tempfile.TemporaryFile`.</span>
 
 <span class="sd">        .. warning:: Anyway, this method will seeks the descriptor to ``0``.</span>
 
@@ -451,7 +454,7 @@
 
 <span class="sd">        .. note:: The ``file`` option is also a temp file but file is guaranteed to have a visible name in the file</span>
 <span class="sd">                  system (on Unix, the directory entry is not unlinked). filename will be</span>
-<span class="sd">                  retrieved by the :prop:`.filename`.</span>
+<span class="sd">                  retrieved by the :attr:`.filename`.</span>
 
 <span class="sd">        :param backend: Available choices are: ``memory``, ``file`` and ``temp``.</span>
 
@@ -485,7 +488,7 @@
 
 <span class="sd">        .. versionadded:: 0.5.0</span>
 
-<span class="sd">        Replace the underlying stream with a seekable one.</span>
+<span class="sd">        Replace the underlying file-object with a seekable one.</span>
 
 <span class="sd">        :param attachable: A seekable file-object.</span>
 <span class="sd">        :param position: Position of the new seekable file-object. if :data:`.None`, position will be preserved.</span>
@@ -494,7 +497,7 @@
 
         <span class="k">if</span> <span class="n">position</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
-        <span class="c1"># Close the old stream</span>
+        <span class="c1"># Close the old file-like object</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_file</span> <span class="o">=</span> <span class="n">attachable</span>
 
@@ -505,14 +508,14 @@
 
 <div class="viewcode-block" id="StreamCloserDescriptor"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.StreamCloserDescriptor">[docs]</a><span class="k">class</span> <span class="nc">StreamCloserDescriptor</span><span class="p">(</span><span class="n">StreamDescriptor</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    The same as the :class:`.StreamDescriptor`, the only difference is that this class tries to close the stream after</span>
-<span class="sd">    calling the :meth:`.close` method.</span>
+<span class="sd">    The same as the :class:`.StreamDescriptor`, the only difference is that this class tries to close the file-like</span>
+<span class="sd">    object after calling the :meth:`.close` method.</span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="StreamCloserDescriptor.close"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.StreamCloserDescriptor.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Overridden to close the underlying stream.</span>
+<span class="sd">        Overridden to close the underlying file-object.</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -643,7 +646,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.5.0',
+            VERSION:'0.6.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

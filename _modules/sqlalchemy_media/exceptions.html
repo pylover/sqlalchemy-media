@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.exceptions &mdash; sqlalchemy-media 0.5.0 documentation</title>
+  <title>sqlalchemy_media.exceptions &mdash; sqlalchemy-media 0.6.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.5.0 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.6.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.5
+                0.6
               </div>
             
           
@@ -182,14 +182,14 @@
 
 <div class="viewcode-block" id="AnalyzeError"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.exceptions.AnalyzeError">[docs]</a><span class="k">class</span> <span class="nc">AnalyzeError</span><span class="p">(</span><span class="n">SqlAlchemyMediaException</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Raised when :class:`.Analyzer` can not analyze the stream.</span>
+<span class="sd">    Raised when :class:`.Analyzer` can not analyze the file-like object.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span></div>
 
 
 <div class="viewcode-block" id="ValidationError"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.exceptions.ValidationError">[docs]</a><span class="k">class</span> <span class="nc">ValidationError</span><span class="p">(</span><span class="n">SqlAlchemyMediaException</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Raised when :class:`.Validator` can not validate the stream.</span>
+<span class="sd">    Raised when :class:`.Validator` can not validate the file-like object.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span></div>
 
@@ -264,6 +264,13 @@
 <span class="sd">    Raises when ``width`` or ``height`` of the media is not meet the limitations.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+<span class="k">class</span> <span class="nc">AspectRatioValidationError</span><span class="p">(</span><span class="n">ValidationError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Raises when the image aspect ratio is not valid.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 </pre></div>
 
            </div>
@@ -297,7 +304,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.5.0',
+            VERSION:'0.6.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
