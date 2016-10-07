@@ -102,16 +102,18 @@ class OptionalPackageRequirementError(SqlAlchemyMediaException):
     :param package_name: The name of the missing package.
     """
 
+    __optional_packages__ = [
+        'python-magic >= 0.4.12',
+        'wand >= 0.4.3'
+    ]
+
     def __init__(self, package_name: str):
 
         # Searching for package name in requirements-optional.txt
-        this_dir = dirname(__file__)
-        filename = abspath(join(this_dir, '..', 'requirements-optional.txt'))
-        with open(filename) as f:
-            packages = [l for l in f if package_name in l]
+        packages = [l for l in self.__optional_packages__ if package_name in l]
 
         if not len(packages):
-            raise ValueError('Cannot find the package: %s in file: %s' % (package_name, filename))
+            raise ValueError('Cannot find the package: %s.' % package_name)
 
         super().__init__('The following packages are missing. in order please install them: %s' % ', '.join(packages))
 
