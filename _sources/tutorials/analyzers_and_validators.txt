@@ -114,4 +114,4 @@ For the first, let to create a type called ``CV``
     ContentTypeValidationError is raised. It's so bad!
 
 
-..  seealso:: :class:`.WandAnalyzer` and :class:`.ImageDimensionValidator`
+..  seealso:: :class:`.WandAnalyzer`, :class:`.ImageValidator` amd :class:`.ImageProcessor`
