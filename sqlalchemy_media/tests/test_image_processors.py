@@ -32,6 +32,7 @@ class ImageProcessorTestCase(unittest.TestCase):
                 'content_type': 'image/jpeg',
                 'width': 200,
                 'height': 150,
+                'extension': '.jpg'
             })
 
         with AttachableDescriptor(self.cat_jpeg) as d:
