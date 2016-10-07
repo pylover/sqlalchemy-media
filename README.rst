@@ -149,7 +149,7 @@ Here you can see the full list of changes made on each sqlalchemy-media release.
 0.6.0
   - Image crop feature: #16.
 
-0.4.1-dev0
+0.5.0
   - #17, #55. Merge analizers, validators and processors as processors. for simplicity.
 
 0.4.1 (2016-10-06)
