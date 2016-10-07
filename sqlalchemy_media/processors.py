@@ -227,7 +227,7 @@ class ImageValidator(ContentTypeValidator):
     :param min_aspect_ratio: Minimum allowed image aspect ratio.
     :param max_aspect_ratio: Maximum allowed image aspect ratio.
 
-    .. versionadded:: 0.5.0-dev0
+    .. versionadded:: 0.6.0
 
        - ``min_aspect_ratio`` and ``max_aspect_ratio``
 
@@ -325,7 +325,7 @@ class ImageProcessor(Processor):
     :param height: The new image height.
     :param crop: Used to crop the image.
 
-                 .. versionadded:: 0.5.0-dev0
+                 .. versionadded:: 0.6.0
 
                  The crop dimension as a dictionary containing the keys described
                  `here <http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.BaseImage.crop>`_.
