@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.exceptions &mdash; sqlalchemy-media 0.6.1 documentation</title>
+  <title>sqlalchemy_media.exceptions &mdash; sqlalchemy-media 0.6.3 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.6.1 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.6.3 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -238,16 +238,18 @@
 <span class="sd">    :param package_name: The name of the missing package.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">__optional_packages__</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;python-magic &gt;= 0.4.12&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;wand &gt;= 0.4.3&#39;</span>
+    <span class="p">]</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">package_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 
         <span class="c1"># Searching for package name in requirements-optional.txt</span>
-        <span class="n">this_dir</span> <span class="o">=</span> <span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">)</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="n">abspath</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">this_dir</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;requirements-optional.txt&#39;</span><span class="p">))</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">packages</span> <span class="o">=</span> <span class="p">[</span><span class="n">l</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span> <span class="k">if</span> <span class="n">package_name</span> <span class="ow">in</span> <span class="n">l</span><span class="p">]</span>
+        <span class="n">packages</span> <span class="o">=</span> <span class="p">[</span><span class="n">l</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__optional_packages__</span> <span class="k">if</span> <span class="n">package_name</span> <span class="ow">in</span> <span class="n">l</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">packages</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Cannot find the package: </span><span class="si">%s</span><span class="s1"> in file: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">package_name</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Cannot find the package: </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="n">package_name</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="s1">&#39;The following packages are missing. in order please install them: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">packages</span><span class="p">))</span></div>
 
@@ -304,7 +306,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.6.1',
+            VERSION:'0.6.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
