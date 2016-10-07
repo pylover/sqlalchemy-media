@@ -95,7 +95,7 @@ the ``as_mutable`` method is used to make a type mutable.
         __pre_processors__ = [
             WandAnalyzer(),
             ImageValidator(
-                minimum=(120, 120),
+                minimum=(80, 80),
                 maximum=(800, 600),
                 min_aspect_ratio=1.2,
                 content_types=['image/jpeg', 'image/png']
@@ -117,7 +117,7 @@ the ``as_mutable`` method is used to make a type mutable.
 
         id = Column(Integer, primary_key=True)
         name = Column(Unicode(100))
-        image = Column(Image.as_mutable(Json))
+        image = Column(ProfileImage.as_mutable(Json))
 
         def __repr__(self):
             return "<%s id=%s>" % (self.name, self.id)
@@ -142,7 +142,7 @@ database.
 
     with StoreManager(session):
         person1 = Person()
-        person1.image = Image.create_from('https://www.python.org/static/img/python-logo@2x.png')
+        person1.image = ProfileImage.create_from('https://www.python.org/static/img/python-logo@2x.png')
         session.add(person1)
         session.commit()
 
@@ -153,9 +153,9 @@ database.
 
 ..  testoutput:: quickstart
 
-    Content type: image/png
-    Extension: .png
-    Length: 15770
+    Content type: image/jpeg
+    Extension: .jpg
+    Length: 2020
     Original filename: https://www.python.org/static/img/python-logo@2x.png
 
 
@@ -175,7 +175,7 @@ The thumbnail height is:
 
 ..  testoutput:: quickstart
 
-    9
+    8
 
 
 .. note:: If your delete an image using instructions bellow, all thumbnails will be deleted also.
@@ -197,7 +197,7 @@ Generating thumbnail with ``ratio``
 
 ..  testoutput:: quickstart
 
-    174 49
+    28 7
 
 Call ``person1.image.locate()`` or ``person1.image.get_thumbnail(width=32, auto_generate=True).locate()`` to get the
 files URL in store.
@@ -220,9 +220,9 @@ Overwriting a file is achieved by attaching an image by :meth:`.attach`
 
 ..  testoutput:: quickstart
 
-    Content type: image/png
-    Extension: .png
-    Length: 10102
+    Content type: image/jpeg
+    Extension: .jpg
+    Length: 2080
     Original filename: https://www.python.org/static/img/python-logo.png
 
 
@@ -246,7 +246,7 @@ Another way is to re-set the attribute using new instance:
 ..  testcode:: quickstart
 
     with StoreManager(session, delete_orphan=True):
-        person1.image = Image.create_from('https://www.python.org/static/img/python-logo.png')
+        person1.image = ProfileImage.create_from('https://www.python.org/static/img/python-logo.png')
         session.commit()
 
         print('Content type:', person1.image.content_type)
@@ -257,9 +257,9 @@ Another way is to re-set the attribute using new instance:
 
 ..  testoutput:: quickstart
 
-    Content type: image/png
-    Extension: .png
-    Length: 10102
+    Content type: image/jpeg
+    Extension: .jpg
+    Length: 2080
     Original filename: https://www.python.org/static/img/python-logo.png
 
 

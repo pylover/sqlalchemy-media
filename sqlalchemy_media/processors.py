@@ -1,9 +1,9 @@
-
 import io
 
 from typing import Iterable
 
 from sqlalchemy_media.typing_ import Dimension
+from sqlalchemy_media.mimetypes_ import guess_extension
 from sqlalchemy_media.exceptions import ContentTypeValidationError, DimensionValidationError, AspectRatioValidationError
 from sqlalchemy_media.helpers import validate_width_height_ratio
 from sqlalchemy_media.descriptors import StreamDescriptor
@@ -51,6 +51,7 @@ class Analyzer(Processor):
     The abstract base class for all analyzers.
 
     """
+
     def process(self, descriptor: StreamDescriptor, context: dict):
         """
         Should be overridden in inherited class and analyzes the given :class:`.BaseDescriptor` instance.
@@ -145,6 +146,7 @@ class WandAnalyzer(Analyzer):
         # noinspection PyPackageRequirements
         from wand.image import Image as WandImage
 
+        # This processor requires seekable stream.
         descriptor.prepare_to_read(backend='memory')
 
         with WandImage(file=descriptor)as img:
@@ -153,6 +155,9 @@ class WandAnalyzer(Analyzer):
                 height=img.height,
                 content_type=img.mimetype
             )
+
+        # prepare for next processor, calling this method is not bad.
+        descriptor.prepare_to_read(backend='memory')
 
 
 class Validator(Processor):
@@ -169,7 +174,7 @@ class Validator(Processor):
 
     """
 
-    def process(self,  descriptor: StreamDescriptor, context: dict) -> None:
+    def process(self, descriptor: StreamDescriptor, context: dict) -> None:
         """
         **[Abstract]**
 
@@ -199,7 +204,7 @@ class ContentTypeValidator(Validator):
 
     """
 
-    def __init__(self, content_types: Iterable[str]=None):
+    def __init__(self, content_types: Iterable[str] = None):
         self.content_types = set(content_types)
 
     def process(self, descriptor: StreamDescriptor, context: dict):
@@ -251,8 +256,8 @@ class ImageValidator(ContentTypeValidator):
 
     """
 
-    def __init__(self, minimum: Dimension=None, maximum: Dimension=None, content_types=None,
-                 min_aspect_ratio: float=None, max_aspect_ratio: float=None):
+    def __init__(self, minimum: Dimension = None, maximum: Dimension = None, content_types=None,
+                 min_aspect_ratio: float = None, max_aspect_ratio: float = None):
         self.min_width, self.min_height = minimum if minimum else (0, 0)
         self.max_width, self.max_height = maximum if maximum else (0, 0)
         self.min_aspect_ratio = min_aspect_ratio
@@ -375,7 +380,7 @@ class ImageProcessor(Processor):
 
     """
 
-    def __init__(self, fmt: str=None, width: int=None, height: int=None, crop=None):
+    def __init__(self, fmt: str = None, width: int = None, height: int = None, crop=None):
         self.format = fmt.upper() if fmt else None
         self.width = width
         self.height = height
@@ -393,8 +398,8 @@ class ImageProcessor(Processor):
         img = WandImage(file=descriptor)
 
         if self.crop is None and (self.format is None or img.format == self.format) and (
-                (self.width is None or img.width == self.width) and
-                (self.height is None or img.height == self.height)):
+                    (self.width is None or img.width == self.width) and
+                    (self.height is None or img.height == self.height)):
             img.close()
             descriptor.prepare_to_read(backend='memory')
             return
@@ -408,8 +413,6 @@ class ImageProcessor(Processor):
             # Changing format if required.
             if self.format and img.format != self.format:
                 img.format = self.format
-                if 'extension' in context:
-                    del context['extension']
 
             # Changing dimension if required.
             if self.width or self.height:
@@ -425,14 +428,15 @@ class ImageProcessor(Processor):
                     key: int(int(value[:-1]) / 100 * (img.width if key in ('width', 'left', 'right') else img.height))
                     if key in ('left', 'top', 'right', 'bottom', 'width', 'height') and '%' in value else value
                     for key, value in self.crop.items()
-                })
+                    })
 
             img.save(file=output_buffer)
 
             context.update(
                 content_type=img.mimetype,
                 width=img.width,
-                height=img.height
+                height=img.height,
+                extension=guess_extension(img.mimetype)
             )
 
         output_buffer.seek(0)

@@ -330,7 +330,7 @@ _db = {
     'image/gif': ('.gif',),
     'image/ief': ('.ief',),
     'image/jp2': ('.jp2', '.jpg2',),
-    'image/jpeg': ('.jpeg', '.jpg', '.jpe',),
+    'image/jpeg': ('.jpg', '.jpeg', '.jpe',),
     'image/jpm': ('.jpm',),
     'image/jpx': ('.jpx', '.jpf',),
     'image/pcx': ('.pcx',),

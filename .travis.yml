@@ -13,17 +13,13 @@ before_install:
   - pip install -U pip setuptools wheel
   - pip install -r requirements-dev.txt
 
-install:
-  - pip install -ve .
+install: pip install -ve .
 
-script:
-  - coverage run --source sqlalchemy_media $(which nosetests)
+script: coverage run --source sqlalchemy_media $(which nosetests)
 
-after_success:
-  - coveralls
+after_success: coveralls
 
-after_deploy:
-  - if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then ./travis-gh-pages.sh ; fi
+after_deploy: if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then ./travis-gh-pages.sh ; fi
 
 deploy:
   provider: pypi
