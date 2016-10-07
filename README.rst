@@ -146,7 +146,7 @@ Changelog
 
 Here you can see the full list of changes made on each sqlalchemy-media release.
 
-0.6.1
+0.6.2
   - Fixing a bug in ``optionals`` module.
 
 0.6.1
