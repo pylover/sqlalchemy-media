@@ -146,7 +146,7 @@ Changelog
 
 Here you can see the full list of changes made on each sqlalchemy-media release.
 
-0.5.0-dev0
+0.6.0
   - Image crop feature: #16.
 
 0.4.1-dev0
