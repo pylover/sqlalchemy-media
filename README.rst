@@ -187,16 +187,20 @@ Here is a simple example to see how to use this library:
 
 Will produce::
 
-     1
-     {'content_type': 'image/png',
-      'extension': '.png',
-      'key': 'f4bc170c-bff3-4d21-9ef1-b8e1aeed11f2',
-      'length': 15770,
-      'original_filename': 'https://www.python.org/static/img/python-logo@2x.png',
-      'timestamp': '1475610373.1160471'}
-     /tmp/sqlalchemy-media/images/image-f4bc170c-bff3-4d21-9ef1-b8e1aeed11f2-www_python_org_static_img_python-logo@2x.png
-     http://static.example.org/images/image-f4bc170c-bff3-4d21-9ef1-b8e1aeed11f2-www_python_org_static_img_python-logo@2x.png?_ts=1475610373.1160471
-
+    Content type: image/jpeg
+    Extension: .jpg
+    Length: 2020
+    Original filename: https://www.python.org/static/img/python-logo@2x.png
+    8
+    28 7
+    Content type: image/jpeg
+    Extension: .jpg
+    Length: 2080
+    Original filename: https://www.python.org/static/img/python-logo.png
+    Content type: image/jpeg
+    Extension: .jpg
+    Length: 2080
+    Original filename: https://www.python.org/static/img/python-logo.png
 
 
 Changelog
