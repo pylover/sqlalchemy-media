@@ -1,3 +1,1 @@
-include requirements-dev.txt
-include requirements-optional.txt
 include sqlalchemy_media/tests/stuff/*
