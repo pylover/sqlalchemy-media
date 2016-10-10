@@ -28,6 +28,7 @@ setup(
     platforms=["any"],
     long_description=read('README.rst'),
     install_requires=dependencies,
+    license='MIT',
     classifiers=[
         'Programming Language :: Python :: 3.5',
         'Topic :: Software Development :: Libraries'
