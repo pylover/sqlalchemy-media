@@ -25,7 +25,7 @@ sqlalchemy-media
 .. image:: https://coveralls.io/repos/github/pylover/sqlalchemy-media/badge.svg?branch=master
      :target: https://coveralls.io/github/pylover/sqlalchemy-media?branch=master
 
-.. image:: https://img.shields.io/badge/license-GPLv3-brightgreen.svg
+.. image:: https://img.shields.io/badge/license-MIT-brightgreen.svg
      :target: https://github.com/pylover/sqlalchemy-media/blob/master/LICENSE
 
 .. image:: https://img.shields.io/github/stars/pylover/sqlalchemy-media.svg?style=social&label=Star
