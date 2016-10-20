@@ -5,6 +5,7 @@ from os.path import join, dirname, abspath
 class SqlAlchemyMediaException(Exception):
     """
     The base class for all exceptions
+
     """
     pass
 
@@ -115,7 +116,10 @@ class OptionalPackageRequirementError(SqlAlchemyMediaException):
         if not len(packages):
             raise ValueError('Cannot find the package: %s.' % package_name)
 
-        super().__init__('The following packages are missing. in order to use this feature please install them: %s' % ', '.join(packages))
+        super().__init__(
+            'The following packages are missing. in order to use this feature please install them'
+            ': %s' % ', '.join(packages)
+        )
 
 
 class ThumbnailIsNotAvailableError(SqlAlchemyMediaException):
