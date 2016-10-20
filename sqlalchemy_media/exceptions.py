@@ -80,7 +80,7 @@ class ContentTypeValidationError(ValidationError):
 
 class DescriptorError(SqlAlchemyMediaException):
     """
-    A sub-class instance of this exception may raised when an error has occurred in :class:`.BaseDescriptor` and
+    A sub-class instance of this exception may be raised when an error occurs in :class:`.BaseDescriptor` and
     it's subtypes.
 
     """
@@ -115,7 +115,7 @@ class OptionalPackageRequirementError(SqlAlchemyMediaException):
         if not len(packages):
             raise ValueError('Cannot find the package: %s.' % package_name)
 
-        super().__init__('The following packages are missing. in order please install them: %s' % ', '.join(packages))
+        super().__init__('The following packages are missing. in order to use this feature please install them: %s' % ', '.join(packages))
 
 
 class ThumbnailIsNotAvailableError(SqlAlchemyMediaException):
@@ -127,7 +127,7 @@ class ThumbnailIsNotAvailableError(SqlAlchemyMediaException):
 
 class DimensionValidationError(ValidationError):
     """
-    Raises when ``width`` or ``height`` of the media is not meet the limitations.
+    Raises when ``width`` or ``height`` of the media does not meet the limitations.
 
     """
 
