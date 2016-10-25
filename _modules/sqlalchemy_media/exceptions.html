@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.exceptions &mdash; sqlalchemy-media 0.7.0 documentation</title>
+  <title>sqlalchemy_media.exceptions &mdash; sqlalchemy-media 0.8.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.7.0 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.8.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.7
+                0.8
               </div>
             
           
@@ -135,8 +135,6 @@
             
   <h1>Source code for sqlalchemy_media.exceptions</h1><div class="highlight"><pre>
 <span></span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">join</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">abspath</span>
-
 
 <div class="viewcode-block" id="SqlAlchemyMediaException"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.exceptions.SqlAlchemyMediaException">[docs]</a><span class="k">class</span> <span class="nc">SqlAlchemyMediaException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -159,8 +157,8 @@
 <span class="sd">    Indicates the minimum allowed length is not \.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_length</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="s1">&#39;Cannot store files smaller than: </span><span class="si">%d</span><span class="s1"> bytes&#39;</span> <span class="o">%</span> <span class="n">min_length</span><span class="p">)</span></div>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_length</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="s1">&#39;Cannot store files smaller than: </span><span class="si">%d</span><span class="s1"> bytes, but the file length is: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">min_length</span><span class="p">,</span> <span class="n">length</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="ContextError"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.exceptions.ContextError">[docs]</a><span class="k">class</span> <span class="nc">ContextError</span><span class="p">(</span><span class="n">SqlAlchemyMediaException</span><span class="p">):</span>
@@ -306,7 +304,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.7.0',
+            VERSION:'0.8.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

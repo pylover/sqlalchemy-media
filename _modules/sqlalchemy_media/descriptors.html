@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.descriptors &mdash; sqlalchemy-media 0.7.0 documentation</title>
+  <title>sqlalchemy_media.descriptors &mdash; sqlalchemy-media 0.8.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.7.0 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.8.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.7
+                0.8
               </div>
             
           
@@ -136,6 +136,7 @@
   <h1>Source code for sqlalchemy_media.descriptors</h1><div class="highlight"><pre>
 <span></span>
 <span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy_media.mimetypes_</span> <span class="k">import</span> <span class="n">guess_extension</span><span class="p">,</span> <span class="n">guess_type</span>
 <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">splitext</span>
 <span class="kn">from</span> <span class="nn">urllib.request</span> <span class="k">import</span> <span class="n">urlopen</span>
@@ -341,14 +342,22 @@
 
         <span class="k">return</span> <span class="n">buffer</span></div>
 
-<div class="viewcode-block" id="BaseDescriptor.close"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.BaseDescriptor.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="BaseDescriptor.close"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.BaseDescriptor.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">check_length</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Closes the underlying file-object. and check for ``min_length``.</span>
 
+<span class="sd">        :param check_length: Check the minimum length of the stream and :class:`MinimumLengthIsNotReachedError` mar</span>
+<span class="sd">                             raised during close. default is `True`.</span>
+
+<span class="sd">        .. versionadded:: 0.7.0-dev.0</span>
+
+<span class="sd">            - `check_length`</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_length</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_length</span> <span class="o">&gt;</span> <span class="n">pos</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">MinimumLengthIsNotReachedError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_length</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">check_length</span><span class="p">:</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_length</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_length</span> <span class="o">&gt;</span> <span class="n">pos</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">MinimumLengthIsNotReachedError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_length</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BaseDescriptor.seekable"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.BaseDescriptor.seekable">[docs]</a>    <span class="k">def</span> <span class="nf">seekable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -416,14 +425,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">seekable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="o">.</span><span class="n">seekable</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">,</span> <span class="s1">&#39;seekable&#39;</span><span class="p">)</span> <span class="ow">and</span>  <span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="o">.</span><span class="n">seekable</span><span class="p">()</span>
 
-<div class="viewcode-block" id="StreamDescriptor.close"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.StreamDescriptor.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="StreamDescriptor.close"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.StreamDescriptor.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        We are not closing the file-like object here, because we&#39;ve not opened it.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">filename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -513,12 +522,12 @@
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="StreamCloserDescriptor.close"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.StreamCloserDescriptor.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="StreamCloserDescriptor.close"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.descriptors.StreamCloserDescriptor.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Overridden to close the underlying file-object.</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
 
 
@@ -646,7 +655,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.7.0',
+            VERSION:'0.8.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

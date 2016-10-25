@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; sqlalchemy-media 0.7.0 documentation</title>
+  <title>API Reference &mdash; sqlalchemy-media 0.8.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.7.0 documentation" href="index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.8.0 documentation" href="index.html"/>
         <link rel="prev" title="Playing with Analyzers and Validators" href="tutorials/analyzers_and_validators.html"/> 
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.7
+                0.8
               </div>
             
           
@@ -917,8 +917,23 @@ if file-like object is not seekable.</li>
 
 <dl class="method">
 <dt id="sqlalchemy_media.descriptors.BaseDescriptor.close">
-<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; None<a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#BaseDescriptor.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.BaseDescriptor.close" title="Permalink to this definition">¶</a></dt>
+<code class="descname">close</code><span class="sig-paren">(</span><em>check_length=True</em><span class="sig-paren">)</span> &rarr; None<a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#BaseDescriptor.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.BaseDescriptor.close" title="Permalink to this definition">¶</a></dt>
 <dd><p>Closes the underlying file-object. and check for <code class="docutils literal"><span class="pre">min_length</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>check_length</strong> &#8211; Check the minimum length of the stream and <code class="xref py py-class docutils literal"><span class="pre">MinimumLengthIsNotReachedError</span></code> mar
+raised during close. default is <cite>True</cite>.</td>
+</tr>
+</tbody>
+</table>
+<div class="versionadded">
+<ul>
+<span class="versionmodified">New in version 0.7.0-dev.0: </span><li><p class="first"><cite>check_length</cite></p>
+</li>
+</ul>
+</div>
 </dd></dl>
 
 <dl class="attribute">
@@ -1060,7 +1075,7 @@ The underlying file-object is not meant to be closed after calling the <a class=
 </table>
 <dl class="method">
 <dt id="sqlalchemy_media.descriptors.StreamDescriptor.close">
-<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; None<a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#StreamDescriptor.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.StreamDescriptor.close" title="Permalink to this definition">¶</a></dt>
+<code class="descname">close</code><span class="sig-paren">(</span><em>**kw</em><span class="sig-paren">)</span> &rarr; None<a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#StreamDescriptor.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.StreamDescriptor.close" title="Permalink to this definition">¶</a></dt>
 <dd><p>We are not closing the file-like object here, because we&#8217;ve not opened it.</p>
 </dd></dl>
 
@@ -1143,7 +1158,7 @@ retrieved by the <a class="reference internal" href="#sqlalchemy_media.descripto
 object after calling the <a class="reference internal" href="#sqlalchemy_media.descriptors.StreamCloserDescriptor.close" title="sqlalchemy_media.descriptors.StreamCloserDescriptor.close"><code class="xref py py-meth docutils literal"><span class="pre">close()</span></code></a> method.</p>
 <dl class="method">
 <dt id="sqlalchemy_media.descriptors.StreamCloserDescriptor.close">
-<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; None<a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#StreamCloserDescriptor.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.StreamCloserDescriptor.close" title="Permalink to this definition">¶</a></dt>
+<code class="descname">close</code><span class="sig-paren">(</span><em>**kw</em><span class="sig-paren">)</span> &rarr; None<a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#StreamCloserDescriptor.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.StreamCloserDescriptor.close" title="Permalink to this definition">¶</a></dt>
 <dd><p>Overridden to close the underlying file-object.</p>
 </dd></dl>
 
@@ -1994,7 +2009,7 @@ use percent <code class="docutils literal"><span class="pre">%</span></code> sin
 
 <dl class="exception">
 <dt id="sqlalchemy_media.exceptions.MinimumLengthIsNotReachedError">
-<em class="property">exception </em><code class="descclassname">sqlalchemy_media.exceptions.</code><code class="descname">MinimumLengthIsNotReachedError</code><span class="sig-paren">(</span><em>min_length</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/exceptions.html#MinimumLengthIsNotReachedError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.exceptions.MinimumLengthIsNotReachedError" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><code class="descclassname">sqlalchemy_media.exceptions.</code><code class="descname">MinimumLengthIsNotReachedError</code><span class="sig-paren">(</span><em>min_length</em>, <em>length=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/exceptions.html#MinimumLengthIsNotReachedError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.exceptions.MinimumLengthIsNotReachedError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.exceptions.SqlAlchemyMediaException" title="sqlalchemy_media.exceptions.SqlAlchemyMediaException"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.exceptions.SqlAlchemyMediaException</span></code></a></p>
 <p>Indicates the minimum allowed length is not .</p>
 </dd></dl>
@@ -2200,7 +2215,7 @@ requested package is not provided.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.7.0',
+            VERSION:'0.8.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

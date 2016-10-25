@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.attachments &mdash; sqlalchemy-media 0.7.0 documentation</title>
+  <title>sqlalchemy_media.attachments &mdash; sqlalchemy-media 0.8.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.7.0 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.8.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.7
+                0.8
               </div>
             
           
@@ -191,6 +191,10 @@
     <span class="c1">#: An instance of :class:`.Processor`, to convert, reformat &amp; change contents before storing the attachment.</span>
     <span class="n">__pre_processors__</span> <span class="o">=</span> <span class="kc">None</span>
 
+    <span class="c1">#: Automatically coerce `:obj:.Attachable` objects. So if True, you can set the models attribute by a `file` or</span>
+    <span class="c1"># `filename` or :class:`cgi.FieldStorage`.</span>
+    <span class="n">__auto_coercion__</span> <span class="o">=</span> <span class="kc">False</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_listen_on_attribute</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">coerce</span><span class="p">,</span> <span class="n">parent_cls</span><span class="p">):</span>
         <span class="n">StoreManager</span><span class="o">.</span><span class="n">observe_attribute</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span>
@@ -202,7 +206,7 @@
 <span class="sd">        Checking attachment type, raising :exc:`TypeError` if the value is not derived from :class:`.Attachment`.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Attachment</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">cls</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">cls</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Value type must be subclass of </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">cls</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
@@ -213,7 +217,14 @@
 <span class="sd">        .. seealso:: :meth:`sqlalchemy.ext.mutable.MutableDict.coerce`</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">cls</span><span class="o">.</span><span class="n">_assert_type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">cls</span><span class="o">.</span><span class="n">_assert_type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">cls</span><span class="o">.</span><span class="n">__auto_coercion__</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">create_from</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">raise</span>
+
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">coerce</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
 
     <span class="nd">@classmethod</span>
@@ -454,14 +465,16 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Wrap in AttachableDescriptor</span>
-        <span class="k">with</span> <span class="n">AttachableDescriptor</span><span class="p">(</span>
-                <span class="n">attachable</span><span class="p">,</span>
-                <span class="n">content_type</span><span class="o">=</span><span class="n">content_type</span><span class="p">,</span>
-                <span class="n">original_filename</span><span class="o">=</span><span class="n">original_filename</span><span class="p">,</span>
-                <span class="n">extension</span><span class="o">=</span><span class="n">extension</span><span class="p">,</span>
-                <span class="n">max_length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__max_length__</span><span class="p">,</span>
-                <span class="n">min_length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__min_length__</span>
-        <span class="p">)</span> <span class="k">as</span> <span class="n">descriptor</span><span class="p">:</span>
+        <span class="n">descriptor</span> <span class="o">=</span> <span class="n">AttachableDescriptor</span><span class="p">(</span>
+            <span class="n">attachable</span><span class="p">,</span>
+            <span class="n">content_type</span><span class="o">=</span><span class="n">content_type</span><span class="p">,</span>
+            <span class="n">original_filename</span><span class="o">=</span><span class="n">original_filename</span><span class="p">,</span>
+            <span class="n">extension</span><span class="o">=</span><span class="n">extension</span><span class="p">,</span>
+            <span class="n">max_length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__max_length__</span><span class="p">,</span>
+            <span class="n">min_length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__min_length__</span>
+        <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
 
             <span class="c1"># Backup the old key and filename if exists</span>
             <span class="k">if</span> <span class="n">overwrite</span><span class="p">:</span>
@@ -502,6 +515,13 @@
 
             <span class="k">if</span> <span class="n">old_attachment</span><span class="p">:</span>
                 <span class="n">store_manager</span><span class="o">.</span><span class="n">register_to_delete_after_commit</span><span class="p">(</span><span class="n">old_attachment</span><span class="p">)</span>
+
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">descriptor</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">check_length</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">raise</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">descriptor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
@@ -937,7 +957,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.7.0',
+            VERSION:'0.8.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
