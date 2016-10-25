@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.processors &mdash; sqlalchemy-media 0.8.0 documentation</title>
+  <title>sqlalchemy_media.processors &mdash; sqlalchemy-media 0.8.1 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.8.0 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.8.1 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -149,7 +149,7 @@
 <div class="viewcode-block" id="Processor"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.processors.Processor">[docs]</a><span class="k">class</span> <span class="nc">Processor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd">    .. versionadded:: 0.5.0</span>
+<span class="sd">    .. versionadded:: 0.5</span>
 
 <span class="sd">    Abstract base class for all processors.</span>
 
@@ -176,9 +176,9 @@
 <div class="viewcode-block" id="Analyzer"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.processors.Analyzer">[docs]</a><span class="k">class</span> <span class="nc">Analyzer</span><span class="p">(</span><span class="n">Processor</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd">    .. versionadded:: 0.2.0</span>
+<span class="sd">    .. versionadded:: 0.2</span>
 
-<span class="sd">    .. versionchanged:: 0.5.0</span>
+<span class="sd">    .. versionchanged:: 0.5</span>
 
 <span class="sd">       - Inherited from :class:`.Processor`</span>
 <span class="sd">       - The ``analyze`` method renamed to ``process`` to override the parent method.</span>
@@ -203,9 +203,9 @@
 <div class="viewcode-block" id="MagicAnalyzer"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.processors.MagicAnalyzer">[docs]</a><span class="k">class</span> <span class="nc">MagicAnalyzer</span><span class="p">(</span><span class="n">Analyzer</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd">    .. versionadded:: 0.2.0</span>
+<span class="sd">    .. versionadded:: 0.2</span>
 
-<span class="sd">    .. versionchanged:: 0.5.0</span>
+<span class="sd">    .. versionchanged:: 0.5</span>
 
 <span class="sd">       - Inherited from :class:`.Processor`</span>
 <span class="sd">       - The ``analyze`` method renamed to ``process`` to override the parent method.</span>
@@ -225,9 +225,9 @@
 <div class="viewcode-block" id="WandAnalyzer"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.processors.WandAnalyzer">[docs]</a><span class="k">class</span> <span class="nc">WandAnalyzer</span><span class="p">(</span><span class="n">Analyzer</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd">    .. versionadded:: 0.4.0</span>
+<span class="sd">    .. versionadded:: 0.4</span>
 
-<span class="sd">    .. versionchanged:: 0.5.0</span>
+<span class="sd">    .. versionchanged:: 0.5</span>
 
 <span class="sd">       - Inherited from :class:`.Processor`</span>
 <span class="sd">       - The ``analyze`` method renamed to ``process`` to override the parent method.</span>
@@ -299,9 +299,9 @@
 <div class="viewcode-block" id="Validator"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.processors.Validator">[docs]</a><span class="k">class</span> <span class="nc">Validator</span><span class="p">(</span><span class="n">Processor</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd">    .. versionadded:: 0.2.0</span>
+<span class="sd">    .. versionadded:: 0.2</span>
 
-<span class="sd">    .. versionchanged:: 0.5.0</span>
+<span class="sd">    .. versionchanged:: 0.5</span>
 
 <span class="sd">       - Inherited from :class:`.Processor`</span>
 <span class="sd">       - The ``validate`` method renamed to ``process`` to override the parent method.</span>
@@ -330,7 +330,7 @@
 <div class="viewcode-block" id="ContentTypeValidator"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.processors.ContentTypeValidator">[docs]</a><span class="k">class</span> <span class="nc">ContentTypeValidator</span><span class="p">(</span><span class="n">Validator</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd">    .. versionadded:: 0.2.0</span>
+<span class="sd">    .. versionadded:: 0.2</span>
 
 <span class="sd">    Assert content types.</span>
 
@@ -354,9 +354,9 @@
 <div class="viewcode-block" id="ImageValidator"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.processors.ImageValidator">[docs]</a><span class="k">class</span> <span class="nc">ImageValidator</span><span class="p">(</span><span class="n">ContentTypeValidator</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd">    .. versionadded:: 0.4.0</span>
+<span class="sd">    .. versionadded:: 0.4</span>
 
-<span class="sd">    .. versionchanged:: 0.5.0</span>
+<span class="sd">    .. versionchanged:: 0.5</span>
 
 <span class="sd">       - Renamed from ``ImageDimensionValidator`` to ``ImageValidator``.</span>
 
@@ -368,7 +368,7 @@
 <span class="sd">    :param min_aspect_ratio: Minimum allowed image aspect ratio.</span>
 <span class="sd">    :param max_aspect_ratio: Maximum allowed image aspect ratio.</span>
 
-<span class="sd">    .. versionadded:: 0.6.0</span>
+<span class="sd">    .. versionadded:: 0.6</span>
 
 <span class="sd">       - ``min_aspect_ratio`` and ``max_aspect_ratio``</span>
 
@@ -450,7 +450,7 @@
 <div class="viewcode-block" id="ImageProcessor"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.processors.ImageProcessor">[docs]</a><span class="k">class</span> <span class="nc">ImageProcessor</span><span class="p">(</span><span class="n">Processor</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd">    .. versionadded:: 0.5.0</span>
+<span class="sd">    .. versionadded:: 0.5</span>
 
 <span class="sd">    Used to re-sampling, resizing, reformatting bitmaps.</span>
 
@@ -466,7 +466,7 @@
 <span class="sd">    :param height: The new image height.</span>
 <span class="sd">    :param crop: Used to crop the image.</span>
 
-<span class="sd">                 .. versionadded:: 0.6.0</span>
+<span class="sd">                 .. versionadded:: 0.6</span>
 
 <span class="sd">                 The crop dimension as a dictionary containing the keys described</span>
 <span class="sd">                 `here &lt;http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.BaseImage.crop&gt;`_.</span>
@@ -610,7 +610,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.8.0',
+            VERSION:'0.8.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

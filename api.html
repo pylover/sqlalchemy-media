@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; sqlalchemy-media 0.8.0 documentation</title>
+  <title>API Reference &mdash; sqlalchemy-media 0.8.1 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.8.0 documentation" href="index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.8.1 documentation" href="index.html"/>
         <link rel="prev" title="Playing with Analyzers and Validators" href="tutorials/analyzers_and_validators.html"/> 
 
   
@@ -203,7 +203,7 @@ All attachment types will be inherited from this class.</p>
 <p>This object should be used inside a <a class="reference internal" href="#sqlalchemy_media.stores.StoreManager" title="sqlalchemy_media.stores.StoreManager"><code class="xref py py-class docutils literal"><span class="pre">StoreManager</span></code></a> context.</p>
 <div class="versionchanged">
 <ul>
-<span class="versionmodified">Changed in version 0.5.0: </span><li><p class="first">removed <code class="docutils literal"><span class="pre">__analyzer__</span></code> attribute, using <code class="docutils literal"><span class="pre">__pre_processors__</span></code> instead.</p>
+<span class="versionmodified">Changed in version 0.5: </span><li><p class="first">removed <code class="docutils literal"><span class="pre">__analyzer__</span></code> attribute, using <code class="docutils literal"><span class="pre">__pre_processors__</span></code> instead.</p>
 </li>
 <li><p class="first">removed <code class="docutils literal"><span class="pre">__validate__</span></code> attribute, using <code class="docutils literal"><span class="pre">__pre_processors__</span></code> instead.</p>
 </li>
@@ -312,7 +312,7 @@ will be overwritten by the given new one.</li>
 </div>
 <div class="versionchanged">
 <ul>
-<span class="versionmodified">Changed in version 0.1.2: </span><li><p class="first">This method will return the self. it&#8217;s useful to chain method calls on the object within a single line.</p>
+<span class="versionmodified">Changed in version 0.1: </span><li><p class="first">This method will return the self. it&#8217;s useful to chain method calls on the object within a single line.</p>
 </li>
 <li><p class="first">Additional <code class="docutils literal"><span class="pre">kwargs</span></code> are accepted to be stored in database alongside the file&#8217;s metadata.</p>
 </li>
@@ -320,7 +320,7 @@ will be overwritten by the given new one.</li>
 </div>
 <div class="versionchanged">
 <ul>
-<span class="versionmodified">Changed in version 0.5.0: </span><li><p class="first"><code class="docutils literal"><span class="pre">suppress_pre_process</span></code> argument.</p>
+<span class="versionmodified">Changed in version 0.5: </span><li><p class="first"><code class="docutils literal"><span class="pre">suppress_pre_process</span></code> argument.</p>
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">suppress_validation</span></code> argument.</p>
 </li>
@@ -761,7 +761,7 @@ If available, else empty string (&#8216;&#8217;) will be returned.</p>
 <dt id="sqlalchemy_media.attachments.Image.generate_thumbnail">
 <code class="descname">generate_thumbnail</code><span class="sig-paren">(</span><em>width: int = None</em>, <em>height: int = None</em>, <em>ratio: float = None</em>, <em>ratio_precision: int = 5</em><span class="sig-paren">)</span> &rarr; sqlalchemy_media.attachments.Thumbnail<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Image.generate_thumbnail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Image.generate_thumbnail" title="Permalink to this definition">¶</a></dt>
 <dd><div class="versionadded">
-<p><span class="versionmodified">New in version 0.3.0.</span></p>
+<p><span class="versionmodified">New in version 0.3.</span></p>
 </div>
 <p>Generates and stores a thumbnail with the given arguments.</p>
 <div class="admonition warning">
@@ -799,7 +799,7 @@ lookup precision. default: 2.</li>
 <dt id="sqlalchemy_media.attachments.Image.get_thumbnail">
 <code class="descname">get_thumbnail</code><span class="sig-paren">(</span><em>width: int = None</em>, <em>height: int = None</em>, <em>ratio: float = None</em>, <em>ratio_precision: int = 2</em>, <em>auto_generate: bool = False</em><span class="sig-paren">)</span> &rarr; sqlalchemy_media.attachments.Thumbnail<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Image.get_thumbnail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Image.get_thumbnail" title="Permalink to this definition">¶</a></dt>
 <dd><div class="versionadded">
-<p><span class="versionmodified">New in version 0.3.0.</span></p>
+<p><span class="versionmodified">New in version 0.3.</span></p>
 </div>
 <p>Search for the thumbnail with given arguments, if <code class="docutils literal"><span class="pre">auto_generate</span></code> is <a class="reference external" href="https://docs.python.org/3.5/library/constants.html#False" title="(in Python v3.5)"><code class="xref py py-data docutils literal"><span class="pre">False</span></code></a>, the
 <a class="reference internal" href="#sqlalchemy_media.exceptions.ThumbnailIsNotAvailableError" title="sqlalchemy_media.exceptions.ThumbnailIsNotAvailableError"><code class="xref py py-exc docutils literal"><span class="pre">ThumbnailIsNotAvailableError</span></code></a> will be raised, else tries to call the <a class="reference internal" href="#sqlalchemy_media.attachments.Image.generate_thumbnail" title="sqlalchemy_media.attachments.Image.generate_thumbnail"><code class="xref py py-meth docutils literal"><span class="pre">generate_thumbnail()</span></code></a> to create
@@ -869,7 +869,7 @@ also allow seeking over underlying file-object. users may not be using this clas
 </div>
 <div class="versionadded">
 <ul>
-<span class="versionmodified">New in version 0.5.0: </span><li><p class="first"><code class="docutils literal"><span class="pre">min_length</span></code> argument</p>
+<span class="versionmodified">New in version 0.5: </span><li><p class="first"><code class="docutils literal"><span class="pre">min_length</span></code> argument</p>
 </li>
 </ul>
 </div>
@@ -930,7 +930,7 @@ raised during close. default is <cite>True</cite>.</td>
 </table>
 <div class="versionadded">
 <ul>
-<span class="versionmodified">New in version 0.7.0-dev.0: </span><li><p class="first"><cite>check_length</cite></p>
+<span class="versionmodified">New in version 0.8: </span><li><p class="first"><cite>check_length</cite></p>
 </li>
 </ul>
 </div>
@@ -1089,7 +1089,7 @@ The underlying file-object is not meant to be closed after calling the <a class=
 <dt id="sqlalchemy_media.descriptors.StreamDescriptor.prepare_to_read">
 <code class="descname">prepare_to_read</code><span class="sig-paren">(</span><em>backend: str = 'temp'</em><span class="sig-paren">)</span> &rarr; None<a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#StreamDescriptor.prepare_to_read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.StreamDescriptor.prepare_to_read" title="Permalink to this definition">¶</a></dt>
 <dd><div class="versionadded">
-<p><span class="versionmodified">New in version 0.5.0.</span></p>
+<p><span class="versionmodified">New in version 0.5.</span></p>
 </div>
 <p>If the underlying file-object is not seekable, tries to store the underlying non-seekable file-like object as an
 instance of <a class="reference external" href="https://docs.python.org/3.5/library/io.html#io.BytesIO" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">io.BytesIO</span></code></a>, <a class="reference external" href="https://docs.python.org/3.5/library/tempfile.html#tempfile.NamedTemporaryFile" title="(in Python v3.5)"><code class="xref py py-obj docutils literal"><span class="pre">tempfile.NamedTemporaryFile</span></code></a> and <a class="reference external" href="https://docs.python.org/3.5/library/tempfile.html#tempfile.TemporaryFile" title="(in Python v3.5)"><code class="xref py py-obj docutils literal"><span class="pre">tempfile.TemporaryFile</span></code></a>.</p>
@@ -1127,7 +1127,7 @@ retrieved by the <a class="reference internal" href="#sqlalchemy_media.descripto
 <dt id="sqlalchemy_media.descriptors.StreamDescriptor.replace">
 <code class="descname">replace</code><span class="sig-paren">(</span><em>attachable: [&lt;class '_io.BytesIO'&gt;, &lt;class '_io.FileIO'&gt;], position=None, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#StreamDescriptor.replace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.StreamDescriptor.replace" title="Permalink to this definition">¶</a></dt>
 <dd><div class="versionadded">
-<p><span class="versionmodified">New in version 0.5.0.</span></p>
+<p><span class="versionmodified">New in version 0.5.</span></p>
 </div>
 <p>Replace the underlying file-object with a seekable one.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1341,9 +1341,6 @@ If not overridden, no error will be raised.</p>
 </tr>
 </tbody>
 </table>
-<div class="versionchanged">
-<p><span class="versionmodified">Changed in version This: </span>method should be overridden in inherited class.</p>
-</div>
 </dd></dl>
 
 <dl class="method">
@@ -1353,7 +1350,7 @@ If not overridden, no error will be raised.</p>
 <p>Should be overridden in inherited class and puts the file-like object as the given filename in the store.</p>
 <div class="versionchanged">
 <ul>
-<span class="versionmodified">Changed in version 0.5.0: </span><li><p class="first"><code class="docutils literal"><span class="pre">min_length</span></code> has been removed.</p>
+<span class="versionmodified">Changed in version 0.5: </span><li><p class="first"><code class="docutils literal"><span class="pre">min_length</span></code> has been removed.</p>
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">max_length</span></code> has been removed.</p>
 </li>
@@ -1627,7 +1624,7 @@ be deleted from store after session commit.</p>
 <em class="property">class </em><code class="descclassname">sqlalchemy_media.processors.</code><code class="descname">Processor</code><a class="reference internal" href="_modules/sqlalchemy_media/processors.html#Processor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.processors.Processor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.5/library/functions.html#object" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 0.5.0.</span></p>
+<p><span class="versionmodified">New in version 0.5.</span></p>
 </div>
 <p>Abstract base class for all processors.</p>
 <p>Processors are used to modify/replace the attachment before storing.</p>
@@ -1662,11 +1659,11 @@ inserted info <code class="docutils literal"><span class="pre">context</span></c
 <em class="property">class </em><code class="descclassname">sqlalchemy_media.processors.</code><code class="descname">Analyzer</code><a class="reference internal" href="_modules/sqlalchemy_media/processors.html#Analyzer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.processors.Analyzer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.processors.Processor" title="sqlalchemy_media.processors.Processor"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.processors.Processor</span></code></a></p>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 0.2.0.</span></p>
+<p><span class="versionmodified">New in version 0.2.</span></p>
 </div>
 <div class="versionchanged">
 <ul>
-<span class="versionmodified">Changed in version 0.5.0: </span><li><p class="first">Inherited from <a class="reference internal" href="#sqlalchemy_media.processors.Processor" title="sqlalchemy_media.processors.Processor"><code class="xref py py-class docutils literal"><span class="pre">Processor</span></code></a></p>
+<span class="versionmodified">Changed in version 0.5: </span><li><p class="first">Inherited from <a class="reference internal" href="#sqlalchemy_media.processors.Processor" title="sqlalchemy_media.processors.Processor"><code class="xref py py-class docutils literal"><span class="pre">Processor</span></code></a></p>
 </li>
 <li><p class="first">The <code class="docutils literal"><span class="pre">analyze</span></code> method renamed to <code class="docutils literal"><span class="pre">process</span></code> to override the parent method.</p>
 </li>
@@ -1693,11 +1690,11 @@ inserted info <code class="docutils literal"><span class="pre">context</span></c
 <em class="property">class </em><code class="descclassname">sqlalchemy_media.processors.</code><code class="descname">MagicAnalyzer</code><a class="reference internal" href="_modules/sqlalchemy_media/processors.html#MagicAnalyzer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.processors.MagicAnalyzer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.processors.Analyzer" title="sqlalchemy_media.processors.Analyzer"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.processors.Analyzer</span></code></a></p>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 0.2.0.</span></p>
+<p><span class="versionmodified">New in version 0.2.</span></p>
 </div>
 <div class="versionchanged">
 <ul>
-<span class="versionmodified">Changed in version 0.5.0: </span><li><p class="first">Inherited from <a class="reference internal" href="#sqlalchemy_media.processors.Processor" title="sqlalchemy_media.processors.Processor"><code class="xref py py-class docutils literal"><span class="pre">Processor</span></code></a></p>
+<span class="versionmodified">Changed in version 0.5: </span><li><p class="first">Inherited from <a class="reference internal" href="#sqlalchemy_media.processors.Processor" title="sqlalchemy_media.processors.Processor"><code class="xref py py-class docutils literal"><span class="pre">Processor</span></code></a></p>
 </li>
 <li><p class="first">The <code class="docutils literal"><span class="pre">analyze</span></code> method renamed to <code class="docutils literal"><span class="pre">process</span></code> to override the parent method.</p>
 </li>
@@ -1719,11 +1716,11 @@ inserted info <code class="docutils literal"><span class="pre">context</span></c
 <em class="property">class </em><code class="descclassname">sqlalchemy_media.processors.</code><code class="descname">WandAnalyzer</code><a class="reference internal" href="_modules/sqlalchemy_media/processors.html#WandAnalyzer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.processors.WandAnalyzer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.processors.Analyzer" title="sqlalchemy_media.processors.Analyzer"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.processors.Analyzer</span></code></a></p>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 0.4.0.</span></p>
+<p><span class="versionmodified">New in version 0.4.</span></p>
 </div>
 <div class="versionchanged">
 <ul>
-<span class="versionmodified">Changed in version 0.5.0: </span><li><p class="first">Inherited from <a class="reference internal" href="#sqlalchemy_media.processors.Processor" title="sqlalchemy_media.processors.Processor"><code class="xref py py-class docutils literal"><span class="pre">Processor</span></code></a></p>
+<span class="versionmodified">Changed in version 0.5: </span><li><p class="first">Inherited from <a class="reference internal" href="#sqlalchemy_media.processors.Processor" title="sqlalchemy_media.processors.Processor"><code class="xref py py-class docutils literal"><span class="pre">Processor</span></code></a></p>
 </li>
 <li><p class="first">The <code class="docutils literal"><span class="pre">analyze</span></code> method renamed to <code class="docutils literal"><span class="pre">process</span></code> to override the parent method.</p>
 </li>
@@ -1781,11 +1778,11 @@ inserted info <code class="docutils literal"><span class="pre">context</span></c
 <em class="property">class </em><code class="descclassname">sqlalchemy_media.processors.</code><code class="descname">Validator</code><a class="reference internal" href="_modules/sqlalchemy_media/processors.html#Validator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.processors.Validator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.processors.Processor" title="sqlalchemy_media.processors.Processor"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.processors.Processor</span></code></a></p>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 0.2.0.</span></p>
+<p><span class="versionmodified">New in version 0.2.</span></p>
 </div>
 <div class="versionchanged">
 <ul>
-<span class="versionmodified">Changed in version 0.5.0: </span><li><p class="first">Inherited from <a class="reference internal" href="#sqlalchemy_media.processors.Processor" title="sqlalchemy_media.processors.Processor"><code class="xref py py-class docutils literal"><span class="pre">Processor</span></code></a></p>
+<span class="versionmodified">Changed in version 0.5: </span><li><p class="first">Inherited from <a class="reference internal" href="#sqlalchemy_media.processors.Processor" title="sqlalchemy_media.processors.Processor"><code class="xref py py-class docutils literal"><span class="pre">Processor</span></code></a></p>
 </li>
 <li><p class="first">The <code class="docutils literal"><span class="pre">validate</span></code> method renamed to <code class="docutils literal"><span class="pre">process</span></code> to override the parent method.</p>
 </li>
@@ -1829,7 +1826,7 @@ inserted info <code class="docutils literal"><span class="pre">context</span></c
 <em class="property">class </em><code class="descclassname">sqlalchemy_media.processors.</code><code class="descname">ContentTypeValidator</code><span class="sig-paren">(</span><em>content_types: typing.Iterable[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/processors.html#ContentTypeValidator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.processors.ContentTypeValidator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.processors.Validator" title="sqlalchemy_media.processors.Validator"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.processors.Validator</span></code></a></p>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 0.2.0.</span></p>
+<p><span class="versionmodified">New in version 0.2.</span></p>
 </div>
 <p>Assert content types.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1854,11 +1851,11 @@ inserted info <code class="docutils literal"><span class="pre">context</span></c
 <em class="property">class </em><code class="descclassname">sqlalchemy_media.processors.</code><code class="descname">ImageValidator</code><span class="sig-paren">(</span><em>minimum: typing.Tuple[int</em>, <em>int] = None</em>, <em>maximum: typing.Tuple[int</em>, <em>int] = None</em>, <em>content_types=None</em>, <em>min_aspect_ratio: float = None</em>, <em>max_aspect_ratio: float = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/processors.html#ImageValidator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.processors.ImageValidator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.processors.ContentTypeValidator" title="sqlalchemy_media.processors.ContentTypeValidator"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.processors.ContentTypeValidator</span></code></a></p>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 0.4.0.</span></p>
+<p><span class="versionmodified">New in version 0.4.</span></p>
 </div>
 <div class="versionchanged">
 <ul>
-<span class="versionmodified">Changed in version 0.5.0: </span><li><p class="first">Renamed from <code class="docutils literal"><span class="pre">ImageDimensionValidator</span></code> to <code class="docutils literal"><span class="pre">ImageValidator</span></code>.</p>
+<span class="versionmodified">Changed in version 0.5: </span><li><p class="first">Renamed from <code class="docutils literal"><span class="pre">ImageDimensionValidator</span></code> to <code class="docutils literal"><span class="pre">ImageValidator</span></code>.</p>
 </li>
 </ul>
 </div>
@@ -1880,7 +1877,7 @@ inserted info <code class="docutils literal"><span class="pre">context</span></c
 </table>
 <div class="versionadded">
 <ul>
-<span class="versionmodified">New in version 0.6.0: </span><li><p class="first"><code class="docutils literal"><span class="pre">min_aspect_ratio</span></code> and <code class="docutils literal"><span class="pre">max_aspect_ratio</span></code></p>
+<span class="versionmodified">New in version 0.6: </span><li><p class="first"><code class="docutils literal"><span class="pre">min_aspect_ratio</span></code> and <code class="docutils literal"><span class="pre">max_aspect_ratio</span></code></p>
 </li>
 </ul>
 </div>
@@ -1913,7 +1910,7 @@ inserted info <code class="docutils literal"><span class="pre">context</span></c
 <em class="property">class </em><code class="descclassname">sqlalchemy_media.processors.</code><code class="descname">ImageProcessor</code><span class="sig-paren">(</span><em>fmt: str = None</em>, <em>width: int = None</em>, <em>height: int = None</em>, <em>crop=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/processors.html#ImageProcessor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.processors.ImageProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.processors.Processor" title="sqlalchemy_media.processors.Processor"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.processors.Processor</span></code></a></p>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 0.5.0.</span></p>
+<p><span class="versionmodified">New in version 0.5.</span></p>
 </div>
 <p>Used to re-sampling, resizing, reformatting bitmaps.</p>
 <div class="admonition warning">
@@ -1934,7 +1931,7 @@ inserted info <code class="docutils literal"><span class="pre">context</span></c
 <li><strong>height</strong> &#8211; The new image height.</li>
 <li><strong>crop</strong> &#8211; <p>Used to crop the image.</p>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 0.6.0.</span></p>
+<p><span class="versionmodified">New in version 0.6.</span></p>
 </div>
 <p>The crop dimension as a dictionary containing the keys described
 <a class="reference external" href="http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.BaseImage.crop">here</a>.</p>
@@ -2120,7 +2117,7 @@ it&#8217;s version criteria to inform the user.</p>
 </ul>
 <p>The database was hardcoded here.</p>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 0.3.0.</span></p>
+<p><span class="versionmodified">New in version 0.3.</span></p>
 </div>
 </div>
 <span class="target" id="module-sqlalchemy_media.optionals"></span><div class="section" id="optionals-module">
@@ -2215,7 +2212,7 @@ requested package is not provided.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.8.0',
+            VERSION:'0.8.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
