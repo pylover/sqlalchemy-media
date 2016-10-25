@@ -55,6 +55,10 @@ class Attachment(MutableDict):
     #: An instance of :class:`.Processor`, to convert, reformat & change contents before storing the attachment.
     __pre_processors__ = None
 
+    #: Automatically coerce `:obj:.Attachable` objects. So if True, you can set the models attribute by a `file` or
+    # `filename` or :class:`cgi.FieldStorage`.
+    __auto_coercion__ = False
+
     @classmethod
     def _listen_on_attribute(cls, attribute, coerce, parent_cls):
         StoreManager.observe_attribute(attribute)
@@ -66,7 +70,7 @@ class Attachment(MutableDict):
         Checking attachment type, raising :exc:`TypeError` if the value is not derived from :class:`.Attachment`.
 
         """
-        if isinstance(value, Attachment) and not isinstance(value, cls):
+        if not isinstance(value, cls):
             raise TypeError('Value type must be subclass of %s' % cls)
 
     @classmethod
@@ -77,7 +81,14 @@ class Attachment(MutableDict):
         .. seealso:: :meth:`sqlalchemy.ext.mutable.MutableDict.coerce`
 
         """
-        cls._assert_type(value)
+        if value is not None and not isinstance(value, dict):
+            try:
+                cls._assert_type(value)
+            except TypeError:
+                if cls.__auto_coercion__:
+                    return cls.create_from(value)
+                raise
+
         return super().coerce(key, value)
 
     @classmethod
@@ -318,14 +329,16 @@ class Attachment(MutableDict):
         """
 
         # Wrap in AttachableDescriptor
-        with AttachableDescriptor(
-                attachable,
-                content_type=content_type,
-                original_filename=original_filename,
-                extension=extension,
-                max_length=self.__max_length__,
-                min_length=self.__min_length__
-        ) as descriptor:
+        descriptor = AttachableDescriptor(
+            attachable,
+            content_type=content_type,
+            original_filename=original_filename,
+            extension=extension,
+            max_length=self.__max_length__,
+            min_length=self.__min_length__
+        )
+
+        try:
 
             # Backup the old key and filename if exists
             if overwrite:
@@ -366,6 +379,13 @@ class Attachment(MutableDict):
 
             if old_attachment:
                 store_manager.register_to_delete_after_commit(old_attachment)
+
+        except:
+            descriptor.close(check_length=False)
+            raise
+
+        else:
+            descriptor.close()
 
         return self
 

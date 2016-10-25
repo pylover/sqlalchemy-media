@@ -1,5 +1,6 @@
 
 import io
+import sys
 from sqlalchemy_media.mimetypes_ import guess_extension, guess_type
 from os.path import splitext
 from urllib.request import urlopen
@@ -205,14 +206,22 @@ class BaseDescriptor(object):
 
         return buffer
 
-    def close(self) -> None:
+    def close(self, check_length=True) -> None:
         """
         Closes the underlying file-object. and check for ``min_length``.
 
+        :param check_length: Check the minimum length of the stream and :class:`MinimumLengthIsNotReachedError` mar
+                             raised during close. default is `True`.
+
+        .. versionadded:: 0.7.0-dev.0
+
+            - `check_length`
+
         """
-        pos = self.tell()
-        if self.min_length and self.min_length > pos:
-            raise MinimumLengthIsNotReachedError(self.min_length)
+        if check_length:
+            pos = self.tell()
+            if self.min_length and self.min_length > pos:
+                raise MinimumLengthIsNotReachedError(self.min_length, pos)
 
     def seekable(self) -> bool:
         """
@@ -280,14 +289,14 @@ class StreamDescriptor(BaseDescriptor):
         self._file.seek(position)
 
     def seekable(self):
-        return self._file.seekable()
+        return hasattr(self._file, 'seekable') and  self._file.seekable()
 
-    def close(self) -> None:
+    def close(self, **kw) -> None:
         """
         We are not closing the file-like object here, because we've not opened it.
 
         """
-        super().close()
+        super().close(**kw)
 
     @property
     def filename(self):
@@ -377,12 +386,12 @@ class StreamCloserDescriptor(StreamDescriptor):
     
     """
 
-    def close(self) -> None:
+    def close(self, **kw) -> None:
         """
         Overridden to close the underlying file-object.
         
         """
-        super().close()
+        super().close(**kw)
         self._file.close()
 
 

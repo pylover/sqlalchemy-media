@@ -149,13 +149,35 @@ class FileTestCase(TempStoreTestCase):
         person1 = Person()
 
         def set_invalid_type():
-            person1.cv = File()
+            person1.cv = list()
 
         def set_invalid_type_via_constructor():
-            Person(cv=File())
+            Person(cv=67)
 
         self.assertRaises(TypeError, set_invalid_type)
         self.assertRaises(TypeError, set_invalid_type_via_constructor)
+
+    def test_attribute_type_coersion(self):
+
+        class MyAttachmentType(File):
+            __auto_coercion__ = True
+            pass
+
+        class Person(self.Base):
+            __tablename__ = 'person'
+            id = Column(Integer, primary_key=True)
+            cv = Column(MyAttachmentType.as_mutable(Json), nullable=True)
+
+        session = self.create_all_and_get_session()
+        with StoreManager(session):
+            person1 = Person()
+            person1.cv = BytesIO(b'Simple text')
+            self.assertIsInstance(person1.cv, MyAttachmentType)
+
+            person2 = Person(cv=BytesIO(b'Simple text'))
+            self.assertIsInstance(person2.cv, MyAttachmentType)
+            session.add(person2)
+            session.commit()
 
     def test_model_constructor(self):
 
