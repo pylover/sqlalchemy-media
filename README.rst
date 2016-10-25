@@ -203,6 +203,12 @@ Will produce::
     Original filename: https://www.python.org/static/img/python-logo.png
 
 
+Examples
+--------
+
+Checkout the `examples` directory in the root of the repo.
+
+
 Changelog
 ---------
 
