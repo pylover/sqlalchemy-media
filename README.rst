@@ -214,6 +214,11 @@ Changelog
 
 Here you can see the full list of changes made on each sqlalchemy-media release.
 
+0.8.0
+
+  -  Automatically coerce `:obj:.Attachable` objects. So if True, you can set the models attribute by a `file`,
+     `filename` or :class:`cgi.FieldStorage`.
+
 0.6.2
   - Fixing a bug in ``optionals`` module.
 
