@@ -1,6 +1,4 @@
 
-from os.path import join, dirname, abspath
-
 
 class SqlAlchemyMediaException(Exception):
     """
@@ -23,8 +21,8 @@ class MinimumLengthIsNotReachedError(SqlAlchemyMediaException):
     Indicates the minimum allowed length is not \.
     """
 
-    def __init__(self, min_length):
-        super().__init__('Cannot store files smaller than: %d bytes' % min_length)
+    def __init__(self, min_length, length=None):
+        super().__init__('Cannot store files smaller than: %d bytes, but the file length is: %s' % (min_length, length))
 
 
 class ContextError(SqlAlchemyMediaException):
