@@ -33,7 +33,7 @@ class Attachment(MutableDict):
 
     This object should be used inside a :class:`.StoreManager` context.
 
-    .. versionchanged:: 0.5.0
+    .. versionchanged:: 0.5
 
        - removed ``__analyzer__`` attribute, using ``__pre_processors__`` instead.
        - removed ``__validate__`` attribute, using ``__pre_processors__`` instead.
@@ -315,12 +315,12 @@ class Attachment(MutableDict):
 
         .. warning:: This operation can not be rolled-back, if ``overwrite=True`` given.
 
-        .. versionchanged:: 0.1.2
+        .. versionchanged:: 0.1
 
             - This method will return the self. it's useful to chain method calls on the object within a single line.
             - Additional ``kwargs`` are accepted to be stored in database alongside the file's metadata.
 
-        .. versionchanged:: 0.5.0
+        .. versionchanged:: 0.5
 
             - ``suppress_pre_process`` argument.
             - ``suppress_validation`` argument.
@@ -677,7 +677,7 @@ class Image(BaseImage):
             -> Thumbnail:
         """
 
-        .. versionadded:: 0.3.0
+        .. versionadded:: 0.3
 
         Generates and stores a thumbnail with the given arguments.
 
@@ -743,7 +743,7 @@ class Image(BaseImage):
                       auto_generate: bool=False) -> Thumbnail:
         """
 
-        .. versionadded:: 0.3.0
+        .. versionadded:: 0.3
 
         Search for the thumbnail with given arguments, if ``auto_generate`` is :data:`.False`, the
         :exc:`.ThumbnailIsNotAvailableError` will be raised, else tries to call the :meth:`generate_thumbnail` to create

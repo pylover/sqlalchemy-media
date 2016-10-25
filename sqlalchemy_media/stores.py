@@ -44,7 +44,7 @@ class Store(object):
 
         Should be overridden in inherited class and puts the file-like object as the given filename in the store.
 
-        .. versionchanged:: 0.5.0
+        .. versionchanged:: 0.5
 
            - ``min_length`` has been removed.
            - ``max_length`` has been removed.
@@ -76,8 +76,6 @@ class Store(object):
 
         :param filename: The filename to open.
         :param mode: same as the `mode` in famous :func:`.open` function.
-
-        .. versionchanged:: This method should be overridden in inherited class.
 
         """
         raise NotImplementedError()  # pragma: no cover

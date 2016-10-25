@@ -13,7 +13,7 @@ from sqlalchemy_media.optionals import magic_mime_from_buffer, ensure_wand
 class Processor(object):
     """
 
-    .. versionadded:: 0.5.0
+    .. versionadded:: 0.5
 
     Abstract base class for all processors.
 
@@ -40,9 +40,9 @@ class Processor(object):
 class Analyzer(Processor):
     """
 
-    .. versionadded:: 0.2.0
+    .. versionadded:: 0.2
 
-    .. versionchanged:: 0.5.0
+    .. versionchanged:: 0.5
 
        - Inherited from :class:`.Processor`
        - The ``analyze`` method renamed to ``process`` to override the parent method.
@@ -67,9 +67,9 @@ class Analyzer(Processor):
 class MagicAnalyzer(Analyzer):
     """
 
-    .. versionadded:: 0.2.0
+    .. versionadded:: 0.2
 
-    .. versionchanged:: 0.5.0
+    .. versionchanged:: 0.5
 
        - Inherited from :class:`.Processor`
        - The ``analyze`` method renamed to ``process`` to override the parent method.
@@ -89,9 +89,9 @@ class MagicAnalyzer(Analyzer):
 class WandAnalyzer(Analyzer):
     """
 
-    .. versionadded:: 0.4.0
+    .. versionadded:: 0.4
 
-    .. versionchanged:: 0.5.0
+    .. versionchanged:: 0.5
 
        - Inherited from :class:`.Processor`
        - The ``analyze`` method renamed to ``process`` to override the parent method.
@@ -163,9 +163,9 @@ class WandAnalyzer(Analyzer):
 class Validator(Processor):
     """
 
-    .. versionadded:: 0.2.0
+    .. versionadded:: 0.2
 
-    .. versionchanged:: 0.5.0
+    .. versionchanged:: 0.5
 
        - Inherited from :class:`.Processor`
        - The ``validate`` method renamed to ``process`` to override the parent method.
@@ -194,7 +194,7 @@ class Validator(Processor):
 class ContentTypeValidator(Validator):
     """
 
-    .. versionadded:: 0.2.0
+    .. versionadded:: 0.2
 
     Assert content types.
 
@@ -218,9 +218,9 @@ class ContentTypeValidator(Validator):
 class ImageValidator(ContentTypeValidator):
     """
 
-    .. versionadded:: 0.4.0
+    .. versionadded:: 0.4
 
-    .. versionchanged:: 0.5.0
+    .. versionchanged:: 0.5
 
        - Renamed from ``ImageDimensionValidator`` to ``ImageValidator``.
 
@@ -232,7 +232,7 @@ class ImageValidator(ContentTypeValidator):
     :param min_aspect_ratio: Minimum allowed image aspect ratio.
     :param max_aspect_ratio: Maximum allowed image aspect ratio.
 
-    .. versionadded:: 0.6.0
+    .. versionadded:: 0.6
 
        - ``min_aspect_ratio`` and ``max_aspect_ratio``
 
@@ -314,7 +314,7 @@ class ImageValidator(ContentTypeValidator):
 class ImageProcessor(Processor):
     """
 
-    .. versionadded:: 0.5.0
+    .. versionadded:: 0.5
 
     Used to re-sampling, resizing, reformatting bitmaps.
 
@@ -330,7 +330,7 @@ class ImageProcessor(Processor):
     :param height: The new image height.
     :param crop: Used to crop the image.
 
-                 .. versionadded:: 0.6.0
+                 .. versionadded:: 0.6
 
                  The crop dimension as a dictionary containing the keys described
                  `here <http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.BaseImage.crop>`_.

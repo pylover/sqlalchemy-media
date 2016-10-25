@@ -11,7 +11,7 @@ Due the python bugs:
 
 The database was hardcoded here.
 
-.. versionadded:: 0.3.0
+.. versionadded:: 0.3
 
 """
 

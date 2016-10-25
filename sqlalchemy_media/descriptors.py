@@ -22,7 +22,7 @@ class BaseDescriptor(object):
 
     .. seealso:: :class:`.AttachableDescriptor` to know how to use it.
 
-    .. versionadded:: 0.5.0
+    .. versionadded:: 0.5
 
        - ``min_length`` argument
 
@@ -213,7 +213,7 @@ class BaseDescriptor(object):
         :param check_length: Check the minimum length of the stream and :class:`MinimumLengthIsNotReachedError` mar
                              raised during close. default is `True`.
 
-        .. versionadded:: 0.7.0-dev.0
+        .. versionadded:: 0.8
 
             - `check_length`
 
@@ -312,7 +312,7 @@ class StreamDescriptor(BaseDescriptor):
     def prepare_to_read(self, backend: str= 'temp') -> None:
         """
 
-        .. versionadded:: 0.5.0
+        .. versionadded:: 0.5
 
         If the underlying file-object is not seekable, tries to store the underlying non-seekable file-like object as an
         instance of :class:`io.BytesIO`, :obj:`tempfile.NamedTemporaryFile` and :obj:`tempfile.TemporaryFile`.
@@ -359,7 +359,7 @@ class StreamDescriptor(BaseDescriptor):
     def replace(self, attachable: [io.BytesIO, io.FileIO], position=None, **kwargs):
         """
 
-        .. versionadded:: 0.5.0
+        .. versionadded:: 0.5
 
         Replace the underlying file-object with a seekable one.
 
