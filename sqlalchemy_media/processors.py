@@ -302,7 +302,7 @@ class ImageValidator(ContentTypeValidator):
         aspect_ratio = width / height
         if (self.min_aspect_ratio and self.min_aspect_ratio > aspect_ratio) or \
                 (self.max_aspect_ratio and self.max_aspect_ratio < aspect_ratio):
-            raise AspectRatioValidationError('Invalid aspect ration %s / %s = %s, accepted_range: %s - %s' % (
+            raise AspectRatioValidationError('Invalid aspect ratio %s / %s = %s, accepted_range: %s - %s' % (
                 width,
                 height,
                 aspect_ratio,

@@ -79,3 +79,5 @@ htmlcov
 practice
 /examples/cherrypy-demo/avatars
 /examples/cherrypy-demo/demo.db
+/examples/flask/demo.db
+/examples/flask/static/avatars/
