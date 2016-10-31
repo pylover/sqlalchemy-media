@@ -163,7 +163,7 @@ def encode_multipart_data(fields: dict=None, files: dict=None):  # pragma: no co
                 (key, filename))
             lines.append(
                 'Content-Type: %s' %
-                (guess_type(filename)[0] or 'application/octet-stream'))
+                (guess_type(filename) or 'application/octet-stream'))
             lines.append('')
             lines.append(open(file_path, 'rb').read())
 
