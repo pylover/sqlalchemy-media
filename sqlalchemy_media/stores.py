@@ -7,7 +7,8 @@ from sqlalchemy import event
 from sqlalchemy.util.langhelpers import symbol
 
 from sqlalchemy_media.context import get_id as get_context_id
-from sqlalchemy_media.exceptions import ContextError, DefaultStoreError
+from sqlalchemy_media.exceptions import ContextError, DefaultStoreError, \
+    S3Error
 from sqlalchemy_media.helpers import copy_stream
 from sqlalchemy_media.optionals import ensure_aws4auth
 from sqlalchemy_media.typing_ import FileLike
@@ -176,7 +177,8 @@ class S3Store(Store):
             'x-amz-storage-class': 'REDUCED_REDUNDANCY' if rrs else 'STANDARD'
         }
         res = requests.put(url, auth=auth, data=data, headers=headers)
-        return 200 <= res.status_code < 300
+        if not 200 <= res.status_code < 300:
+            raise S3Error(res.text)
 
     def put(self, filename: str, stream: FileLike):
         url = self._get_s3_url(filename)
@@ -191,7 +193,9 @@ class S3Store(Store):
 
         url = self._get_s3_url(filename)
         auth = AWS4Auth(self.access_key, self.secret_key, self.region, 's3')
-        requests.delete(url, auth=auth)
+        res = requests.delete(url, auth=auth)
+        if not 200 <= res.status_code < 300:
+            raise S3Error(res.text)
 
     def open(self, filename: str, mode: str='rb') -> FileLike:
         ensure_aws4auth()
@@ -201,6 +205,8 @@ class S3Store(Store):
         url = self._get_s3_url(filename)
         auth = AWS4Auth(self.access_key, self.secret_key, self.region, 's3')
         res = requests.get(url, auth=auth)
+        if not 200 <= res.status_code < 300:
+            raise S3Error(res.text)
         return BytesIO(res.content)
 
     def locate(self, attachment) -> str:

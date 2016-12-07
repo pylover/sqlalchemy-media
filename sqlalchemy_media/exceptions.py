@@ -136,3 +136,10 @@ class AspectRatioValidationError(ValidationError):
     Raises when the image aspect ratio is not valid.
 
     """
+
+
+class S3Error(SqlAlchemyMediaException):
+    """
+    Raises when the image upload or delete to s3.
+
+    """
