@@ -57,3 +57,22 @@ def ensure_wand():
 
     if wand is None:  # pragma: no cover
         raise OptionalPackageRequirementError('wand')
+
+
+# requests-aws4auth
+try:
+    # noinspection PyPackageRequirements
+    from requests_aws4auth import AWS4Auth
+except ImportError:  # pragma: no cover
+    AWS4Auth = None
+
+
+def ensure_aws4auth():
+    """
+
+    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``requests-aws4auth`` is not installed.
+
+    """
+
+    if AWS4Auth is None:  # pragma: no cover
+        raise OptionalPackageRequirementError('requests-aws4auth')
