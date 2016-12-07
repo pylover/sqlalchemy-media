@@ -171,11 +171,12 @@ class S3Store(Store):
 
         auth = AWS4Auth(self.access_key, self.secret_key, self.region, 's3')
         headers = {
-            'Content-Type': content_type,
             'Cache-Control': 'max-age=' + str(self.max_age),
             'x-amz-acl': acl,
             'x-amz-storage-class': 'REDUCED_REDUNDANCY' if rrs else 'STANDARD'
         }
+        if content_type:
+            headers['Content-Type'] = content_type
         res = requests.put(url, auth=auth, data=data, headers=headers)
         if not 200 <= res.status_code < 300:
             raise S3Error(res.text)
@@ -183,7 +184,7 @@ class S3Store(Store):
     def put(self, filename: str, stream: FileLike):
         url = self._get_s3_url(filename)
         data = stream.read()
-        self._upload_file(url, data, stream.content_type)
+        self._upload_file(url, data, getattr(stream, 'content_type', None))
         return len(data)
 
     def delete(self, filename: str):
