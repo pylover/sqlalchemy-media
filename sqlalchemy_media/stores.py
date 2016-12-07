@@ -1,16 +1,16 @@
-
-from typing import Iterable
+from io import BytesIO
 from os import makedirs, remove
 from os.path import abspath, join, dirname, exists
+from typing import Iterable
 
 from sqlalchemy import event
 from sqlalchemy.util.langhelpers import symbol
 
-from sqlalchemy_media.typing_ import FileLike
 from sqlalchemy_media.context import get_id as get_context_id
 from sqlalchemy_media.exceptions import ContextError, DefaultStoreError
 from sqlalchemy_media.helpers import copy_stream
-
+from sqlalchemy_media.optionals import ensure_aws4auth
+from sqlalchemy_media.typing_ import FileLike
 
 # Global variable to store contexts
 _context_stacks = {}
@@ -127,6 +127,84 @@ class FileSystemStore(Store):
 
     def locate(self, attachment) -> str:
         return '%s/%s' % (self.base_url, attachment.path)
+
+
+class S3Store(Store):
+    """
+    Store for dealing with s3 of aws
+
+    """
+    BASE_URL_FORMAT = 'https://{0}.s3.amazonaws.com'
+
+    DEFAULT_MAX_AGE = 60 * 60 * 24 * 365
+
+    def __init__(self, bucket: str, access_key: str, secret_key: str,
+                 region: str, max_age: int = DEFAULT_MAX_AGE, prefix: str = '',
+                 public_base_url=None):
+        self.bucket = bucket
+        self.access_key = access_key
+        self.secret_key = secret_key
+        self.region = region
+        self.max_age = max_age
+        self.prefix = prefix.strip()
+        if self.prefix.endswith('/'):
+            self.prefix = self.prefix.rstrip('/')
+        self.base_url = self.BASE_URL_FORMAT.format(bucket)
+        if public_base_url is None:
+            self.public_base_url = self.base_url
+        elif public_base_url.endswith('/'):
+            self.public_base_url = public_base_url.rstrip('/')
+        else:
+            self.public_base_url = public_base_url
+
+    def _get_s3_url(self, filename: str):
+        if self.prefix:
+            return '{0}/{1}/{2}'.format(self.base_url, self.prefix, filename)
+        return '{0}/{1}'.format(self.base_url, filename)
+
+    def _upload_file(self, url: str, data: str, content_type: str,
+                     rrs: bool = False, acl: str = 'private'):
+        ensure_aws4auth()
+        import requests
+        from requests_aws4auth import AWS4Auth
+
+        auth = AWS4Auth(self.access_key, self.secret_key, self.region, 's3')
+        headers = {
+            'Content-Type': content_type,
+            'Cache-Control': 'max-age=' + str(self.max_age),
+            'x-amz-acl': acl,
+            'x-amz-storage-class': 'REDUCED_REDUNDANCY' if rrs else 'STANDARD'
+        }
+        res = requests.put(url, auth=auth, data=data, headers=headers)
+        return 200 <= res.status_code < 300
+
+    def put(self, filename: str, stream: FileLike):
+        url = self._get_s3_url(filename)
+        data = stream.read()
+        self._upload_file(url, data, stream.content_type)
+        return len(data)
+
+    def delete(self, filename: str):
+        ensure_aws4auth()
+        import requests
+        from requests_aws4auth import AWS4Auth
+
+        url = self._get_s3_url(filename)
+        auth = AWS4Auth(self.access_key, self.secret_key, self.region, 's3')
+        requests.delete(url, auth=auth)
+
+    def open(self, filename: str, mode: str='rb') -> FileLike:
+        ensure_aws4auth()
+        import requests
+        from requests_aws4auth import AWS4Auth
+
+        url = self._get_s3_url(filename)
+        auth = AWS4Auth(self.access_key, self.secret_key, self.region, 's3')
+        res = requests.get(url, auth=auth)
+        return BytesIO(res.content)
+
+    def locate(self, attachment) -> str:
+        return '{0}/{1}'.format(self.public_base_url, attachment.path)
 
 
 class StoreManager(object):
