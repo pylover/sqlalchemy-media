@@ -17,11 +17,35 @@ TEST_BUCKET = '127'
 TEST_ACCESS_KEY = 'test_access_key'
 TEST_SECRET_KEY = 'test_secret_key'
 TEST_BASE_URL = 'http://{0}:{1}'.format(TEST_HOST, TEST_PORT)
+RUNNING = False
+
+
+def run_s3_mock_server():
+    global RUNNING
+
+    mock_app = DomainDispatcherApplication(create_backend_app, 's3')
+    mock_app.debug = False
+    log = logging.getLogger('werkzeug')
+    log.setLevel(logging.ERROR)
+
+    def run():
+        run_simple(TEST_HOST, TEST_PORT, mock_app, threaded=True)
+
+    t = threading.Thread(target=run)
+    t.daemon = True
+    t.start()
+    RUNNING = True
+
+    # create test bucket
+    res = requests.put(TEST_BASE_URL)
+    assert res.status_code == 200
 
 
 class S3StoreTestCase(unittest.TestCase):
 
     def setUp(self):
+        if not RUNNING:
+            run_s3_mock_server()
         self.base_url = 'http://static1.example.orm'
         self.this_dir = abspath(dirname(__file__))
         self.stuff_path = join(self.this_dir, 'stuff')
@@ -66,19 +90,4 @@ class S3StoreTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':  # pragma: no cover
-    mock_app = DomainDispatcherApplication(create_backend_app, 's3')
-    mock_app.debug = False
-    log = logging.getLogger('werkzeug')
-    log.setLevel(logging.ERROR)
-
-    def run():
-        run_simple(TEST_HOST, TEST_PORT, mock_app, threaded=True)
-
-    t = threading.Thread(target=run)
-    t.daemon = True
-    t.start()
-
-    # create test bucket
-    res = requests.put(TEST_BASE_URL)
-    assert res.status_code == 200
     unittest.main()
