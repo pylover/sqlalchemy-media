@@ -1,28 +1,35 @@
-import argparse
 import io
-import sys
+import logging
+import threading
 import unittest
 from os.path import join, dirname, abspath, getsize
 
+import requests
+from moto.server import DomainDispatcherApplication, create_backend_app, run_simple
+from werkzeug.serving import run_simple
+
 from sqlalchemy_media.exceptions import S3Error
 from sqlalchemy_media.stores import S3Store
+
+TEST_HOST = '127.0.0.1'
+TEST_PORT = 10002
+TEST_BUCKET = '127'
+TEST_ACCESS_KEY = 'test_access_key'
+TEST_SECRET_KEY = 'test_secret_key'
+TEST_BASE_URL = 'http://{0}:{1}'.format(TEST_HOST, TEST_PORT)
 
 
 class S3StoreTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.bucket = args.s3_bucket
-        self.access_key = args.s3_access_key
-        self.secret_key = args.s3_secret_key
-        self.region = args.s3_region
         self.base_url = 'http://static1.example.orm'
         self.this_dir = abspath(dirname(__file__))
         self.stuff_path = join(self.this_dir, 'stuff')
         self.sample_text_file1 = join(self.stuff_path, 'sample_text_file1.txt')
 
     def test_put_from_stream(self):
-        store = S3Store(self.bucket, self.access_key, self.secret_key,
-                        self.region)
+        store = S3Store(TEST_BUCKET, TEST_ACCESS_KEY, TEST_SECRET_KEY, '')
+        store.base_url = TEST_BASE_URL
         target_filename = 'test_put_from_stream/file_from_stream1.txt'
         content = b'Lorem ipsum dolor sit amet'
         stream = io.BytesIO(content)
@@ -31,8 +38,8 @@ class S3StoreTestCase(unittest.TestCase):
         self.assertIsInstance(store.open(target_filename), io.BytesIO)
 
     def test_delete(self):
-        store = S3Store(self.bucket, self.access_key, self.secret_key,
-                        self.region)
+        store = S3Store(TEST_BUCKET, TEST_ACCESS_KEY, TEST_SECRET_KEY, '')
+        store.base_url = TEST_BASE_URL
         target_filename = 'test_delete/sample_text_file1.txt'
         with open(self.sample_text_file1, 'rb') as f:
             length = store.put(target_filename, f)
@@ -44,8 +51,8 @@ class S3StoreTestCase(unittest.TestCase):
             store.open(target_filename)
 
     def test_open(self):
-        store = S3Store(self.bucket, self.access_key, self.secret_key,
-                        self.region)
+        store = S3Store(TEST_BUCKET, TEST_ACCESS_KEY, TEST_SECRET_KEY, '')
+        store.base_url = TEST_BASE_URL
         target_filename = 'test_delete/sample_text_file1.txt'
         with open(self.sample_text_file1, 'rb') as f:
             length = store.put(target_filename, f)
@@ -59,11 +66,19 @@ class S3StoreTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':  # pragma: no cover
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--s3-bucket', type=str, required=True)
-    parser.add_argument('--s3-access-key', type=str, required=True)
-    parser.add_argument('--s3-secret-key', type=str, required=True)
-    parser.add_argument('--s3-region', type=str, required=True)
-    args = parser.parse_args()
-    del sys.argv[1:]
+    mock_app = DomainDispatcherApplication(create_backend_app, 's3')
+    mock_app.debug = False
+    log = logging.getLogger('werkzeug')
+    log.setLevel(logging.ERROR)
+
+    def run():
+        run_simple(TEST_HOST, TEST_PORT, mock_app, threaded=True)
+
+    t = threading.Thread(target=run)
+    t.daemon = True
+    t.start()
+
+    # create test bucket
+    res = requests.put(TEST_BASE_URL)
+    assert res.status_code == 200
     unittest.main()
