@@ -18,6 +18,8 @@ sqlalchemy-media
 .. image:: https://img.shields.io/badge/license-MIT-brightgreen.svg
      :target: https://github.com/pylover/sqlalchemy-media/blob/master/LICENSE
 
+.. image:: https://img.shields.io/gitter/room/pylover/sqlalchemy-media.svg
+     :target: https://gitter.im/pylover/sqlalchemy-media
 
 Documentation
 -------------
