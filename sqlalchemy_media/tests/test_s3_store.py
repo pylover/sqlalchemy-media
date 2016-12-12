@@ -1,11 +1,11 @@
 import io
 import logging
-import threading
 import unittest
+from multiprocessing import Process
 from os.path import join, dirname, abspath, getsize
 
 import requests
-from moto.server import DomainDispatcherApplication, create_backend_app, run_simple
+from moto.server import DomainDispatcherApplication, create_backend_app
 from werkzeug.serving import run_simple
 
 from sqlalchemy_media.exceptions import S3Error
@@ -17,39 +17,35 @@ TEST_BUCKET = '127'
 TEST_ACCESS_KEY = 'test_access_key'
 TEST_SECRET_KEY = 'test_secret_key'
 TEST_BASE_URL = 'http://{0}:{1}'.format(TEST_HOST, TEST_PORT)
-RUNNING = False
 
 
-def run_s3_mock_server():
-    global RUNNING
-
+def run_s3_server():
     mock_app = DomainDispatcherApplication(create_backend_app, 's3')
     mock_app.debug = False
-    log = logging.getLogger('werkzeug')
-    log.setLevel(logging.ERROR)
-
-    def run():
-        run_simple(TEST_HOST, TEST_PORT, mock_app, threaded=True)
-
-    t = threading.Thread(target=run)
-    t.daemon = True
-    t.start()
-    RUNNING = True
-
-    # create test bucket
-    res = requests.put(TEST_BASE_URL)
-    assert res.status_code == 200
+    logger = logging.getLogger('werkzeug')
+    logger.setLevel(logging.ERROR)
+    [logger.removeHandler(h) for h in logger.handlers]
+    run_simple(TEST_HOST, TEST_PORT, mock_app, threaded=True)
 
 
 class S3StoreTestCase(unittest.TestCase):
 
     def setUp(self):
-        if not RUNNING:
-            run_s3_mock_server()
+        self.server_p = Process(target=run_s3_server)
+        self.server_p.daemon = True
+        self.server_p.start()
+
+        # create test bucket
+        res = requests.put(TEST_BASE_URL)
+        assert res.status_code == 200
+
         self.base_url = 'http://static1.example.orm'
         self.this_dir = abspath(dirname(__file__))
         self.stuff_path = join(self.this_dir, 'stuff')
         self.sample_text_file1 = join(self.stuff_path, 'sample_text_file1.txt')
+
+    def tearDown(self):
+        self.server_p.terminate()
 
     def test_put_from_stream(self):
         store = S3Store(TEST_BUCKET, TEST_ACCESS_KEY, TEST_SECRET_KEY, '')
