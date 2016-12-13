@@ -140,16 +140,13 @@ class S3Store(Store):
     DEFAULT_MAX_AGE = 60 * 60 * 24 * 365
 
     def __init__(self, bucket: str, access_key: str, secret_key: str,
-                 region: str, max_age: int = DEFAULT_MAX_AGE, prefix: str = '',
+                 region: str, max_age: int = DEFAULT_MAX_AGE,
                  public_base_url=None):
         self.bucket = bucket
         self.access_key = access_key
         self.secret_key = secret_key
         self.region = region
         self.max_age = max_age
-        self.prefix = prefix.strip()
-        if self.prefix.endswith('/'):
-            self.prefix = self.prefix.rstrip('/')
         self.base_url = self.BASE_URL_FORMAT.format(bucket)
         if public_base_url is None:
             self.public_base_url = self.base_url
@@ -159,8 +156,6 @@ class S3Store(Store):
             self.public_base_url = public_base_url
 
     def _get_s3_url(self, filename: str):
-        if self.prefix:
-            return '{0}/{1}/{2}'.format(self.base_url, self.prefix, filename)
         return '{0}/{1}'.format(self.base_url, filename)
 
     def _upload_file(self, url: str, data: str, content_type: str,
