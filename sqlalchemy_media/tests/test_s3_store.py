@@ -6,17 +6,30 @@ from os.path import join, dirname, abspath, getsize
 
 import requests
 from moto.server import DomainDispatcherApplication, create_backend_app
+from sqlalchemy import Column, Integer
 from werkzeug.serving import run_simple
 
+from sqlalchemy_media.attachments import File
 from sqlalchemy_media.exceptions import S3Error
 from sqlalchemy_media.stores import S3Store
+from sqlalchemy_media.stores import StoreManager
+from sqlalchemy_media.tests.helpers import Json, SqlAlchemyTestCase
 
 TEST_HOST = '127.0.0.1'
 TEST_PORT = 10002
 TEST_BUCKET = '127'
 TEST_ACCESS_KEY = 'test_access_key'
 TEST_SECRET_KEY = 'test_secret_key'
-TEST_BASE_URL = 'http://{0}:{1}'.format(TEST_HOST, TEST_PORT)
+TEST_REGION = 'ap-northeast-2'
+TEST_BASE_URL_FORMAT = 'http://{0}.%s:%d' % (TEST_HOST[4:], TEST_PORT)
+TEST_SERVER_URL = TEST_BASE_URL_FORMAT.format(TEST_BUCKET)
+
+
+def _get_s3_store(**kwargs):
+    S3Store.BASE_URL_FORMAT = TEST_BASE_URL_FORMAT
+    store = S3Store(TEST_BUCKET, TEST_ACCESS_KEY, TEST_SECRET_KEY, TEST_REGION,
+                    **kwargs)
+    return store
 
 
 def run_s3_server():
@@ -28,15 +41,16 @@ def run_s3_server():
     run_simple(TEST_HOST, TEST_PORT, mock_app, threaded=True)
 
 
-class S3StoreTestCase(unittest.TestCase):
+class S3StoreTestCase(SqlAlchemyTestCase):
 
     def setUp(self):
+        super(S3StoreTestCase, self).setUp()
         self.server_p = Process(target=run_s3_server)
         self.server_p.daemon = True
         self.server_p.start()
 
         # create test bucket
-        res = requests.put(TEST_BASE_URL)
+        res = requests.put(TEST_SERVER_URL)
         assert res.status_code == 200
 
         self.base_url = 'http://static1.example.orm'
@@ -45,11 +59,11 @@ class S3StoreTestCase(unittest.TestCase):
         self.sample_text_file1 = join(self.stuff_path, 'sample_text_file1.txt')
 
     def tearDown(self):
+        super(S3StoreTestCase, self).tearDown()
         self.server_p.terminate()
 
     def test_put_from_stream(self):
-        store = S3Store(TEST_BUCKET, TEST_ACCESS_KEY, TEST_SECRET_KEY, '')
-        store.base_url = TEST_BASE_URL
+        store = _get_s3_store()
         target_filename = 'test_put_from_stream/file_from_stream1.txt'
         content = b'Lorem ipsum dolor sit amet'
         stream = io.BytesIO(content)
@@ -58,8 +72,7 @@ class S3StoreTestCase(unittest.TestCase):
         self.assertIsInstance(store.open(target_filename), io.BytesIO)
 
     def test_delete(self):
-        store = S3Store(TEST_BUCKET, TEST_ACCESS_KEY, TEST_SECRET_KEY, '')
-        store.base_url = TEST_BASE_URL
+        store = _get_s3_store()
         target_filename = 'test_delete/sample_text_file1.txt'
         with open(self.sample_text_file1, 'rb') as f:
             length = store.put(target_filename, f)
@@ -67,12 +80,12 @@ class S3StoreTestCase(unittest.TestCase):
         self.assertIsInstance(store.open(target_filename), io.BytesIO)
 
         store.delete(target_filename)
+
         with self.assertRaises(S3Error):
             store.open(target_filename)
 
     def test_open(self):
-        store = S3Store(TEST_BUCKET, TEST_ACCESS_KEY, TEST_SECRET_KEY, '')
-        store.base_url = TEST_BASE_URL
+        store = _get_s3_store()
         target_filename = 'test_delete/sample_text_file1.txt'
         with open(self.sample_text_file1, 'rb') as f:
             length = store.put(target_filename, f)
@@ -84,6 +97,56 @@ class S3StoreTestCase(unittest.TestCase):
                 open(self.sample_text_file1, mode='rb') as original_file:
             self.assertEqual(stored_file.read(), original_file.read())
 
+    def test_locate(self):
+        StoreManager.register('s3', _get_s3_store, default=True)
+
+        class Person(self.Base):
+            __tablename__ = 'person'
+            id = Column(Integer, primary_key=True)
+            file = Column(File.as_mutable(Json))
+
+        session = self.create_all_and_get_session()
+
+        person1 = Person()
+        self.assertIsNone(person1.file)
+        sample_content = b'Simple text.'
+
+        with StoreManager(session):
+            person1 = Person()
+            person1.file = File.create_from(io.BytesIO(sample_content),
+                                            content_type='text/plain',
+                                            extension='.txt')
+            self.assertIsInstance(person1.file, File)
+            self.assertEqual(person1.file.locate(), '%s/%s?_ts=%s' % (
+                TEST_SERVER_URL, person1.file.path, person1.file.timestamp))
+
+    def test_public_base_url(self):
+        public_base_url = 'http://test.sqlalchemy.media'
+        StoreManager.register(
+            's3',
+            lambda: _get_s3_store(public_base_url=public_base_url),
+            default=True
+        )
+
+        class Person(self.Base):
+            __tablename__ = 'person'
+            id = Column(Integer, primary_key=True)
+            file = Column(File.as_mutable(Json))
+
+        session = self.create_all_and_get_session()
+
+        person1 = Person()
+        self.assertIsNone(person1.file)
+        sample_content = b'Simple text.'
+
+        with StoreManager(session):
+            person1 = Person()
+            person1.file = File.create_from(io.BytesIO(sample_content),
+                                            content_type='text/plain',
+                                            extension='.txt')
+            self.assertIsInstance(person1.file, File)
+            self.assertEqual(person1.file.locate(), '%s/%s?_ts=%s' % (
+                public_base_url, person1.file.path, person1.file.timestamp))
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
