@@ -32,7 +32,7 @@ def _get_s3_store(bucket=TEST_BUCKET, **kwargs):
     return store
 
 
-def run_s3_server():
+def run_s3_server():  # pragma: no cover
     mock_app = DomainDispatcherApplication(create_backend_app, 's3')
     mock_app.debug = False
     logger = logging.getLogger('werkzeug')
