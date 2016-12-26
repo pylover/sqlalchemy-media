@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.attachments &mdash; sqlalchemy-media 0.8.2 documentation</title>
+  <title>sqlalchemy_media.attachments &mdash; sqlalchemy-media 0.9.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.8.2 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.9.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.8
+                0.9
               </div>
             
           
@@ -335,7 +335,8 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">original_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Original file name, it may be provided by user within :attr:`cgi.FieldStorage.filename`, url or Physical filename.</span>
+<span class="sd">        Original file name, it may be provided by user within :attr:`cgi.FieldStorage.filename`, url or Physical</span>
+<span class="sd">        filename.</span>
 
 <span class="sd">        :type: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -532,7 +533,7 @@
         <span class="n">store</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_store</span><span class="p">()</span>
         <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">?_ts=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">store</span><span class="o">.</span><span class="n">locate</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Attachment.get_objects_to_delete"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Attachment.get_objects_to_delete">[docs]</a>    <span class="k">def</span> <span class="nf">get_objects_to_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">:</span>
+<div class="viewcode-block" id="Attachment.get_objects_to_delete"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Attachment.get_objects_to_delete">[docs]</a>    <span class="k">def</span> <span class="nf">get_objects_to_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the files to be deleted, if the attachment is marked for deletion.</span>
 
@@ -583,6 +584,8 @@
 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
                 <span class="n">result</span> <span class="o">=</span> <span class="n">cls</span><span class="p">()</span>
+
+                <span class="c1"># noinspection PyTypeChecker</span>
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
                     <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__item_type__</span><span class="o">.</span><span class="n">coerce</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
                 <span class="k">return</span> <span class="n">result</span>
@@ -843,6 +846,7 @@
         <span class="k">with</span> <span class="n">store</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">original_file</span><span class="p">:</span>
 
             <span class="c1"># generating thumbnail and storing in buffer</span>
+            <span class="c1"># noinspection PyTypeChecker</span>
             <span class="n">img</span> <span class="o">=</span> <span class="n">WandImage</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">original_file</span><span class="p">)</span>
             <span class="n">img</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="s1">&#39;jpg&#39;</span>
 
@@ -915,7 +919,7 @@
                 <span class="s1">&#39;Thumbnail is not available with these criteria: width=</span><span class="si">%s</span><span class="s1"> height=</span><span class="si">%s</span><span class="s1"> ration=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">ratio</span><span class="p">)</span>
             <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Image.get_objects_to_delete"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Image.get_objects_to_delete">[docs]</a>    <span class="k">def</span> <span class="nf">get_objects_to_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">:</span>
+<div class="viewcode-block" id="Image.get_objects_to_delete"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Image.get_objects_to_delete">[docs]</a>    <span class="k">def</span> <span class="nf">get_objects_to_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the files to be deleted, if the attachment is marked for deletion.</span>
 
@@ -957,7 +961,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.8.2',
+            VERSION:'0.9.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

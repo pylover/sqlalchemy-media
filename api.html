@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; sqlalchemy-media 0.8.2 documentation</title>
+  <title>API Reference &mdash; sqlalchemy-media 0.9.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.8.2 documentation" href="index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.9.0 documentation" href="index.html"/>
         <link rel="prev" title="Playing with Analyzers and Validators" href="tutorials/analyzers_and_validators.html"/> 
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.8
+                0.9
               </div>
             
           
@@ -172,7 +172,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/api.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -441,7 +441,7 @@ in <a class="reference internal" href="#sqlalchemy_media.stores.StoreManager" ti
 
 <dl class="method">
 <dt id="sqlalchemy_media.attachments.Attachment.get_objects_to_delete">
-<code class="descname">get_objects_to_delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; typing.Iterable<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Attachment.get_objects_to_delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.get_objects_to_delete" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_objects_to_delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Attachment.get_objects_to_delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.get_objects_to_delete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the files to be deleted, if the attachment is marked for deletion.</p>
 </dd></dl>
 
@@ -489,7 +489,8 @@ in <a class="reference internal" href="#sqlalchemy_media.stores.StoreManager" ti
 <dl class="attribute">
 <dt id="sqlalchemy_media.attachments.Attachment.original_filename">
 <code class="descname">original_filename</code><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.original_filename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Original file name, it may be provided by user within <code class="xref py py-attr docutils literal"><span class="pre">cgi.FieldStorage.filename</span></code>, url or Physical filename.</p>
+<dd><p>Original file name, it may be provided by user within <code class="xref py py-attr docutils literal"><span class="pre">cgi.FieldStorage.filename</span></code>, url or Physical
+filename.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -700,7 +701,7 @@ If available, else empty string (&#8216;&#8217;) will be returned.</p>
 <p>Base class for all images.</p>
 <dl class="method">
 <dt id="sqlalchemy_media.attachments.BaseImage.attach">
-<code class="descname">attach</code><span class="sig-paren">(</span><em>*args</em>, <em>*</em>, <em>dimension: typing.Tuple[int</em>, <em>int] = None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#BaseImage.attach"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.BaseImage.attach" title="Permalink to this definition">¶</a></dt>
+<code class="descname">attach</code><span class="sig-paren">(</span><em>*args</em>, <em>dimension: typing.Tuple[int</em>, <em>int] = None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#BaseImage.attach"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.BaseImage.attach" title="Permalink to this definition">¶</a></dt>
 <dd><p>A new overload for <a class="reference internal" href="#sqlalchemy_media.attachments.Attachment.attach" title="sqlalchemy_media.attachments.Attachment.attach"><code class="xref py py-meth docutils literal"><span class="pre">Attachment.attach()</span></code></a>, which accepts one additional argument: <code class="docutils literal"><span class="pre">dimension</span></code>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -791,7 +792,7 @@ lookup precision. default: 2.</li>
 
 <dl class="method">
 <dt id="sqlalchemy_media.attachments.Image.get_objects_to_delete">
-<code class="descname">get_objects_to_delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; typing.Iterable<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Image.get_objects_to_delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Image.get_objects_to_delete" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_objects_to_delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Image.get_objects_to_delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Image.get_objects_to_delete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the files to be deleted, if the attachment is marked for deletion.</p>
 </dd></dl>
 
@@ -1057,7 +1058,7 @@ this method should return the current position which counted internally.</p>
 <h3>StreamDescriptor<a class="headerlink" href="#streamdescriptor" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="sqlalchemy_media.descriptors.StreamDescriptor">
-<em class="property">class </em><code class="descclassname">sqlalchemy_media.descriptors.</code><code class="descname">StreamDescriptor</code><span class="sig-paren">(</span><em>stream: typing.Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO], **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#StreamDescriptor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.StreamDescriptor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.descriptors.</code><code class="descname">StreamDescriptor</code><span class="sig-paren">(</span><em>stream: typing.Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper], **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#StreamDescriptor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.StreamDescriptor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.descriptors.BaseDescriptor" title="sqlalchemy_media.descriptors.BaseDescriptor"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.descriptors.BaseDescriptor</span></code></a></p>
 <p>This class is used for describing a file-like object. so it&#8217;s just a proxy for file-like objects.
 The underlying file-object is not meant to be closed after calling the <a class="reference internal" href="#sqlalchemy_media.descriptors.StreamDescriptor.close" title="sqlalchemy_media.descriptors.StreamDescriptor.close"><code class="xref py py-meth docutils literal"><span class="pre">close()</span></code></a> method.</p>
@@ -1152,7 +1153,7 @@ retrieved by the <a class="reference internal" href="#sqlalchemy_media.descripto
 <h3>StreamCloserDescriptor<a class="headerlink" href="#streamcloserdescriptor" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="sqlalchemy_media.descriptors.StreamCloserDescriptor">
-<em class="property">class </em><code class="descclassname">sqlalchemy_media.descriptors.</code><code class="descname">StreamCloserDescriptor</code><span class="sig-paren">(</span><em>stream: typing.Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO], **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#StreamCloserDescriptor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.StreamCloserDescriptor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.descriptors.</code><code class="descname">StreamCloserDescriptor</code><span class="sig-paren">(</span><em>stream: typing.Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper], **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#StreamCloserDescriptor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.StreamCloserDescriptor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.descriptors.StreamDescriptor" title="sqlalchemy_media.descriptors.StreamDescriptor"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.descriptors.StreamDescriptor</span></code></a></p>
 <p>The same as the <a class="reference internal" href="#sqlalchemy_media.descriptors.StreamDescriptor" title="sqlalchemy_media.descriptors.StreamDescriptor"><code class="xref py py-class docutils literal"><span class="pre">StreamDescriptor</span></code></a>, the only difference is that this class tries to close the file-like
 object after calling the <a class="reference internal" href="#sqlalchemy_media.descriptors.StreamCloserDescriptor.close" title="sqlalchemy_media.descriptors.StreamCloserDescriptor.close"><code class="xref py py-meth docutils literal"><span class="pre">close()</span></code></a> method.</p>
@@ -1322,7 +1323,7 @@ If not overridden, no error will be raised.</p>
 
 <dl class="method">
 <dt id="sqlalchemy_media.stores.Store.open">
-<code class="descname">open</code><span class="sig-paren">(</span><em>filename: str</em>, <em>mode: str = 'rb'</em><span class="sig-paren">)</span> &rarr; typing.Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO]<a class="reference internal" href="_modules/sqlalchemy_media/stores.html#Store.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.open" title="Permalink to this definition">¶</a></dt>
+<code class="descname">open</code><span class="sig-paren">(</span><em>filename: str</em>, <em>mode: str = 'rb'</em><span class="sig-paren">)</span> &rarr; typing.Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]<a class="reference internal" href="_modules/sqlalchemy_media/stores.html#Store.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.open" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>[Abstract]</strong></p>
 <p>Should be overridden in inherited class and return a file-like object representing the file in the store.</p>
 <div class="admonition note">
@@ -1345,7 +1346,7 @@ If not overridden, no error will be raised.</p>
 
 <dl class="method">
 <dt id="sqlalchemy_media.stores.Store.put">
-<code class="descname">put</code><span class="sig-paren">(</span><em>filename: str, stream: typing.Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO]</em><span class="sig-paren">)</span> &rarr; int<a class="reference internal" href="_modules/sqlalchemy_media/stores.html#Store.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.put" title="Permalink to this definition">¶</a></dt>
+<code class="descname">put</code><span class="sig-paren">(</span><em>filename: str, stream: typing.Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]</em><span class="sig-paren">)</span> &rarr; int<a class="reference internal" href="_modules/sqlalchemy_media/stores.html#Store.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.put" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>[Abstract]</strong></p>
 <p>Should be overridden in inherited class and puts the file-like object as the given filename in the store.</p>
 <div class="versionchanged">
@@ -1766,7 +1767,7 @@ inserted info <code class="docutils literal"><span class="pre">context</span></c
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">This object currently setects <code class="docutils literal"><span class="pre">width</span></code>, <code class="docutils literal"><span class="pre">height</span></code> and <code class="docutils literal"><span class="pre">mimetype</span></code> of the image.</p>
+<p class="last">This object currently selects <code class="docutils literal"><span class="pre">width</span></code>, <code class="docutils literal"><span class="pre">height</span></code> and <code class="docutils literal"><span class="pre">mimetype</span></code> of the image.</p>
 </div>
 </dd></dl>
 
@@ -2126,6 +2127,15 @@ it&#8217;s version criteria to inform the user.</p>
 <p>Optional packages are not included in <code class="docutils literal"><span class="pre">setup.py</span></code>. So <a class="reference internal" href="#sqlalchemy_media.exceptions.OptionalPackageRequirementError" title="sqlalchemy_media.exceptions.OptionalPackageRequirementError"><code class="xref py py-exc docutils literal"><span class="pre">OptionalPackageRequirementError</span></code></a> will be raised if
 requested package is not provided.</p>
 <dl class="function">
+<dt id="sqlalchemy_media.optionals.ensure_aws4auth">
+<code class="descclassname">sqlalchemy_media.optionals.</code><code class="descname">ensure_aws4auth</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/optionals.html#ensure_aws4auth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.optionals.ensure_aws4auth" title="Permalink to this definition">¶</a></dt>
+<dd><div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last"><a class="reference internal" href="#sqlalchemy_media.exceptions.OptionalPackageRequirementError" title="sqlalchemy_media.exceptions.OptionalPackageRequirementError"><code class="xref py py-exc docutils literal"><span class="pre">OptionalPackageRequirementError</span></code></a> will be raised if <code class="docutils literal"><span class="pre">requests-aws4auth</span></code> is not installed.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
 <dt id="sqlalchemy_media.optionals.ensure_wand">
 <code class="descclassname">sqlalchemy_media.optionals.</code><code class="descname">ensure_wand</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/optionals.html#ensure_wand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.optionals.ensure_wand" title="Permalink to this definition">¶</a></dt>
 <dd><div class="admonition warning">
@@ -2212,7 +2222,7 @@ requested package is not provided.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.8.2',
+            VERSION:'0.9.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
