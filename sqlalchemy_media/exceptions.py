@@ -102,7 +102,8 @@ class OptionalPackageRequirementError(SqlAlchemyMediaException):
 
     __optional_packages__ = [
         'python-magic >= 0.4.12',
-        'wand >= 0.4.3'
+        'wand >= 0.4.3',
+        'requests-aws4auth >= 0.9'
     ]
 
     def __init__(self, package_name: str):
@@ -133,5 +134,12 @@ class DimensionValidationError(ValidationError):
 class AspectRatioValidationError(ValidationError):
     """
     Raises when the image aspect ratio is not valid.
+
+    """
+
+
+class S3Error(SqlAlchemyMediaException):
+    """
+    Raises when the image upload or delete to s3.
 
     """
