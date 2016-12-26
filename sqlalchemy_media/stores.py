@@ -207,7 +207,7 @@ class S3Store(Store):
         return BytesIO(res.content)
 
     def locate(self, attachment) -> str:
-        return '{0}/{1}'.format(self.public_base_url, attachment.path)
+        return '%s/%s' % (self.public_base_url, attachment.path)
 
 
 class StoreManager(object):
