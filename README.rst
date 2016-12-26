@@ -61,6 +61,8 @@ Overview
  - Analyzing files & images using ``magic`` and ``wand``.
  - Validating ``mimetype``, ``width``, ``height`` and image ``ratio``.
  - Automatically resize & reformat images before store.
+ - Thanks @YukSeungChan, for implementing the ``S3Store``.
+
 
 Quick Start
 -----------
@@ -215,6 +217,9 @@ Changelog
 ---------
 
 Here you can see the full list of changes made on each sqlalchemy-media release.
+
+0.9.0
+  - Aws S3 Store.
 
 0.8.0
   -  Automatically coerce `:obj:.Attachable` objects. So if True, you can set the models attribute by a `file`,
