@@ -143,6 +143,12 @@ FileSystemStore
 
 .. autoclass:: FileSystemStore
 
+S3Store
+^^^^^^^
+
+.. autoclass:: S3Store
+
+
 StoreManager
 ^^^^^^^^^^^^
 
