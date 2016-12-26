@@ -143,6 +143,8 @@ class S3Store(Store):
     """
     Store for dealing with s3 of aws
 
+    .. versionadded:: 0.9.0
+
     """
     BASE_URL_FORMAT = 'https://{0}.s3.amazonaws.com'
 
