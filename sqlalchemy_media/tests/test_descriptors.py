@@ -2,15 +2,13 @@
 import unittest
 import io
 import cgi
-import functools
 from os.path import dirname, abspath, join, split
 
 from sqlalchemy_media.helpers import copy_stream, md5sum
 from sqlalchemy_media.tests.helpers import simple_http_server, encode_multipart_data
 from sqlalchemy_media.descriptors import AttachableDescriptor, LocalFileSystemDescriptor, CgiFieldStorageDescriptor, \
     UrlDescriptor, StreamDescriptor
-from sqlalchemy_media.exceptions import MaximumLengthIsReachedError, MinimumLengthIsNotReachedError, \
-    DescriptorOperationError
+from sqlalchemy_media.exceptions import MaximumLengthIsReachedError, DescriptorOperationError
 
 
 class AttachableDescriptorsTestCase(unittest.TestCase):

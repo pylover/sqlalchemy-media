@@ -137,7 +137,7 @@ class WandAnalyzer(Analyzer):
             print(me.avatar.height)
             print(me.avatar.content_type)
 
-    .. note:: This object currently setects ``width``, ``height`` and ``mimetype`` of the image.
+    .. note:: This object currently selects ``width``, ``height`` and ``mimetype`` of the image.
 
     """
 
@@ -395,6 +395,7 @@ class ImageProcessor(Processor):
 
         # Copy the original info
         # generating thumbnail and storing in buffer
+        # noinspection PyTypeChecker
         img = WandImage(file=descriptor)
 
         if self.crop is None and (self.format is None or img.format == self.format) and (

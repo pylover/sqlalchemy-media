@@ -4,9 +4,14 @@ import unittest
 from multiprocessing import Process
 from os.path import join, dirname, abspath, getsize
 
+# noinspection PyPackageRequirements
 import requests
+
+# noinspection PyPackageRequirements
 from moto.server import DomainDispatcherApplication, create_backend_app
 from sqlalchemy import Column, Integer
+
+# noinspection PyPackageRequirements
 from werkzeug.serving import run_simple
 
 from sqlalchemy_media.attachments import File

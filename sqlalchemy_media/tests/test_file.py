@@ -157,7 +157,7 @@ class FileTestCase(TempStoreTestCase):
         self.assertRaises(TypeError, set_invalid_type)
         self.assertRaises(TypeError, set_invalid_type_via_constructor)
 
-    def test_attribute_type_coersion(self):
+    def test_attribute_type_coercion(self):
 
         class MyAttachmentType(File):
             __auto_coercion__ = True

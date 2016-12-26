@@ -1,11 +1,9 @@
 
-import io
 import unittest
 from os.path import dirname, abspath, join
 
 from sqlalchemy_media.descriptors import AttachableDescriptor
 from sqlalchemy_media.processors import ImageProcessor, WandAnalyzer
-from sqlalchemy_media.helpers import copy_stream
 
 
 class ImageProcessorTestCase(unittest.TestCase):

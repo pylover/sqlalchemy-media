@@ -41,7 +41,7 @@ class AnalyzerTestCase(unittest.TestCase):
         with AttachableDescriptor(self.cat_jpeg) as d:
             ctx = {}
             analyzer.process(d, ctx)
-            self.assertDictEqual(ctx,{
+            self.assertDictEqual(ctx, {
                 'width': 640,
                 'height': 480,
                 'content_type': 'image/jpeg'

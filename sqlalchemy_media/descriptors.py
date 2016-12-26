@@ -1,6 +1,5 @@
 
 import io
-import sys
 from sqlalchemy_media.mimetypes_ import guess_extension, guess_type
 from os.path import splitext
 from urllib.request import urlopen
@@ -112,6 +111,7 @@ class BaseDescriptor(object):
                 result = self.header.read(size)
 
         if self.max_length is not None and source_cursor + len(result) > self.max_length:
+            # noinspection PyTypeChecker
             raise MaximumLengthIsReachedError(self.max_length)
 
         return result
@@ -289,7 +289,7 @@ class StreamDescriptor(BaseDescriptor):
         self._file.seek(position)
 
     def seekable(self):
-        return hasattr(self._file, 'seekable') and  self._file.seekable()
+        return hasattr(self._file, 'seekable') and self._file.seekable()
 
     def close(self, **kw) -> None:
         """

@@ -13,13 +13,22 @@ from sqlalchemy_media.helpers import copy_stream
 from sqlalchemy_media.optionals import ensure_aws4auth
 from sqlalchemy_media.typing_ import FileLike
 
+# Importing optional stuff required by S3 store
+try:
+    # noinspection PyPackageRequirements
+    import requests
+    from requests_aws4auth import AWS4Auth
+except ImportError:
+    requests = None
+    AWS4Auth = None
+
 # Global variable to store contexts
 _context_stacks = {}
 
-# global variable to store store factories
+# Global variable to store store factories
 _factories = {}
 
-# global variable to store observing attributes
+# Global variable to store observing attributes
 _observing_attributes = set()
 
 
@@ -161,8 +170,6 @@ class S3Store(Store):
     def _upload_file(self, url: str, data: str, content_type: str,
                      rrs: bool = False, acl: str = 'private'):
         ensure_aws4auth()
-        import requests
-        from requests_aws4auth import AWS4Auth
 
         auth = AWS4Auth(self.access_key, self.secret_key, self.region, 's3')
         headers = {
@@ -184,9 +191,6 @@ class S3Store(Store):
 
     def delete(self, filename: str):
         ensure_aws4auth()
-        import requests
-        from requests_aws4auth import AWS4Auth
-
         url = self._get_s3_url(filename)
         auth = AWS4Auth(self.access_key, self.secret_key, self.region, 's3')
         res = requests.delete(url, auth=auth)
@@ -195,9 +199,6 @@ class S3Store(Store):
 
     def open(self, filename: str, mode: str='rb') -> FileLike:
         ensure_aws4auth()
-        import requests
-        from requests_aws4auth import AWS4Auth
-
         url = self._get_s3_url(filename)
         auth = AWS4Auth(self.access_key, self.secret_key, self.region, 's3')
         res = requests.get(url, auth=auth)
@@ -287,6 +288,7 @@ class StoreManager(object):
         """
         if self._stores is None:
             self._stores = {}
+        # noinspection PyTypeChecker
         return self._stores
 
     @classmethod

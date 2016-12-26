@@ -199,7 +199,8 @@ class Attachment(MutableDict):
     @property
     def original_filename(self) -> str:
         """
-        Original file name, it may be provided by user within :attr:`cgi.FieldStorage.filename`, url or Physical filename.
+        Original file name, it may be provided by user within :attr:`cgi.FieldStorage.filename`, url or Physical
+        filename.
 
         :type: str
         """
@@ -396,7 +397,7 @@ class Attachment(MutableDict):
         store = self.get_store()
         return '%s?_ts=%s' % (store.locate(self), self.timestamp)
 
-    def get_objects_to_delete(self) -> Iterable:
+    def get_objects_to_delete(self):
         """
         Returns the files to be deleted, if the attachment is marked for deletion.
 
@@ -447,6 +448,8 @@ class AttachmentList(AttachmentCollection, MutableList):
 
             if isinstance(value, Iterable):
                 result = cls()
+
+                # noinspection PyTypeChecker
                 for i in value:
                     result.append(cls.__item_type__.coerce(index, i))
                 return result
@@ -707,6 +710,7 @@ class Image(BaseImage):
         with store.open(self.path) as original_file:
 
             # generating thumbnail and storing in buffer
+            # noinspection PyTypeChecker
             img = WandImage(file=original_file)
             img.format = 'jpg'
 
@@ -779,7 +783,7 @@ class Image(BaseImage):
                 'Thumbnail is not available with these criteria: width=%s height=%s ration=%s' % (width, height, ratio)
             )
 
-    def get_objects_to_delete(self) -> Iterable:
+    def get_objects_to_delete(self):
         """
         Returns the files to be deleted, if the attachment is marked for deletion.
 
