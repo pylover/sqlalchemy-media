@@ -18,7 +18,7 @@ try:
     # noinspection PyPackageRequirements
     import requests
     from requests_aws4auth import AWS4Auth
-except ImportError:
+except ImportError:  # pragma: no cover
     requests = None
     AWS4Auth = None
 

@@ -791,4 +791,4 @@ class Image(BaseImage):
         yield from super().get_objects_to_delete()
         if self.thumbnails:
             for t in self.thumbnails:
-                yield t[3]
+                yield self.__thumbnail_type__(**t[3])

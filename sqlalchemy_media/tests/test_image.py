@@ -107,6 +107,37 @@ class ImageTestCase(TempStoreTestCase):
             self.assertFalse(exists(second_thumbnail_filename))
             self.assertFalse(exists(third_thumbnail_filename))
 
+    def test_thumbnail_delete(self):
+        class Person(self.Base):
+            __tablename__ = 'person'
+            id = Column(Integer, primary_key=True)
+            image = Column(Image.as_mutable(Json), nullable=True)
+
+        session = self.create_all_and_get_session()
+
+        # person1 = Person(name='person1')
+        person1 = Person()
+        self.assertIsNone(person1.image)
+
+        with StoreManager(session, delete_orphan=True):
+            person1.image = Image.create_from(self.dog_jpeg)
+            session.add(person1)
+            session.commit()
+
+            thumbnail = person1.image.get_thumbnail(width=100, auto_generate=True)
+            self.assertIsInstance(thumbnail, Thumbnail)
+
+            image_filename = join(self.temp_path, person1.image.path)
+            self.assertTrue(exists(image_filename))
+
+            first_thumbnail_filename = join(self.temp_path, thumbnail.path)
+            self.assertTrue(exists(first_thumbnail_filename))
+
+            session.delete(person1)
+            session.commit()
+            self.assertFalse(exists(image_filename))
+            self.assertFalse(exists(first_thumbnail_filename))
+
     def test_pre_process(self):
 
         class Banner(Image):
