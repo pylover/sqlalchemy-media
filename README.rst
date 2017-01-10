@@ -61,7 +61,7 @@ Overview
  - Analyzing files & images using ``magic`` and ``wand``.
  - Validating ``mimetype``, ``width``, ``height`` and image ``ratio``.
  - Automatically resize & reformat images before store.
- - Thanks @YukSeungChan, for implementing the ``S3Store``.
+ - Thanks `@YukSeungChan<https://github.com/YukSeungChan>`_, for implementing the ``S3Store``.
 
 
 Quick Start
@@ -217,6 +217,9 @@ Changelog
 ---------
 
 Here you can see the full list of changes made on each sqlalchemy-media release.
+
+0.9.5
+  - BUG-FIX: #68, #69
 
 0.9.4
   - BUG-FIX: Using `:class:Image.__thumbnail_type__` for creating thumbnails, it was missed: #67
