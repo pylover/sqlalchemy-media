@@ -733,7 +733,7 @@ class Image(BaseImage):
             self['thumbnails'] = []
 
         ratio = round(width / original_size[0], ratio_precision)
-        thumbnail = Thumbnail.create_from(
+        thumbnail = self.__thumbnail_type__.create_from(
             thumbnail_buffer,
             content_type='image/jpeg',
             extension='.jpg',

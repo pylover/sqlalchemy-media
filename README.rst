@@ -218,6 +218,9 @@ Changelog
 
 Here you can see the full list of changes made on each sqlalchemy-media release.
 
+0.9.4
+  - BUG-FIX: Using `:class:Image.__thumbnail_type__` for creating thumbnails, it was missed: #67
+
 0.9.0
   - Aws S3 Store.
 
