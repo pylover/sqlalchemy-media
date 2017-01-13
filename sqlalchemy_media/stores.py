@@ -152,13 +152,16 @@ class S3Store(Store):
 
     def __init__(self, bucket: str, access_key: str, secret_key: str,
                  region: str, max_age: int = DEFAULT_MAX_AGE,
-                 public_base_url=None):
+                 prefix: str = None, public_base_url: str = None):
         self.bucket = bucket
         self.access_key = access_key
         self.secret_key = secret_key
         self.region = region
         self.max_age = max_age
+        self.prefix = prefix
         self.base_url = self.BASE_URL_FORMAT.format(bucket)
+        if prefix:
+            self.base_url = '{0}/{1}'.format(self.base_url, prefix)
         if public_base_url is None:
             self.public_base_url = self.base_url
         elif public_base_url.endswith('/'):
