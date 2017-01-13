@@ -1,7 +1,6 @@
 import io
 import logging
 import unittest
-import functools
 from multiprocessing import Process
 from os.path import join, dirname, abspath, getsize
 
