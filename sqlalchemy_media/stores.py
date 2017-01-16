@@ -177,10 +177,14 @@ class S3Store(Store):
         ensure_aws4auth()
 
         auth = AWS4Auth(self.access_key, self.secret_key, self.region, 's3')
+        if rrs:
+            storage_class = 'REDUCED_REDUNDANCY'
+        else:
+            storage_class = 'STANDARD'
         headers = {
             'Cache-Control': 'max-age=' + str(self.max_age),
             'x-amz-acl': acl,
-            'x-amz-storage-class': 'REDUCED_REDUNDANCY' if rrs else 'STANDARD'
+            'x-amz-storage-class': storage_class
         }
         if content_type:
             headers['Content-Type'] = content_type
@@ -191,7 +195,9 @@ class S3Store(Store):
     def put(self, filename: str, stream: FileLike):
         url = self._get_s3_url(filename)
         data = stream.read()
-        self._upload_file(url, data, getattr(stream, 'content_type', None))
+        content_type = getattr(stream, 'content_type', None)
+        rrs = getattr(stream, 'reproducible', False)
+        self._upload_file(url, data, content_type, rrs=rrs)
         return len(data)
 
     def delete(self, filename: str):
