@@ -145,6 +145,10 @@ class S3Store(Store):
 
     .. versionadded:: 0.9.0
 
+    .. versionadded:: 0.9.6
+
+       - ``prefix``
+
     """
     BASE_URL_FORMAT = 'https://{0}.s3.amazonaws.com'
 

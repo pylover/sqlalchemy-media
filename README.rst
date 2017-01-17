@@ -218,6 +218,9 @@ Changelog
 
 Here you can see the full list of changes made on each sqlalchemy-media release.
 
+0.9.6
+  - Support rrs(ReducedRedundancyStorage) and  prefix of S3Store.
+
 0.9.5
   - BUG-FIX: #68, #69
 

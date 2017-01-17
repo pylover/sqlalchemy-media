@@ -38,6 +38,10 @@ class Attachment(MutableDict):
        - removed ``__analyzer__`` attribute, using ``__pre_processors__`` instead.
        - removed ``__validate__`` attribute, using ``__pre_processors__`` instead.
 
+    .. versionadded:: 0.9.6
+
+       - ``reproducible``
+
     """
 
     #: The directory name of the file.
