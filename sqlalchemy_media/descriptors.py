@@ -35,6 +35,7 @@ class BaseDescriptor(object):
     :param kwargs: Additional keyword arguments to set as attribute on descriptor instance.
     :param header_buffer_size: Amount of bytes to read and buffer from underlying file-like object for analysis purpose
                                if file-like object is not seekable.
+    :param reproducible: The reproducible of the file-like objects.
 
     """
 
@@ -53,8 +54,12 @@ class BaseDescriptor(object):
     #: Amount of bytes to cache from header on non-seekable file-like objects.
     header_buffer_size = 1024
 
+    #: The reproducible of the file-like objects.
+    reproducible = False
+
     def __init__(self, min_length: int=None, max_length: int=None, content_type: str=None, content_length: int=None,
-                 extension: str=None, original_filename: str=None, header_buffer_size=1024, **kwargs):
+                 extension: str=None, original_filename: str=None, header_buffer_size=1024,
+                 reproducible: bool=False, **kwargs):
 
         self.min_length = min_length
         self.max_length = max_length
@@ -81,6 +86,8 @@ class BaseDescriptor(object):
             self.extension = splitext(self.original_filename)[1]
         elif self.content_type:
             self.extension = guess_extension(self.content_type)
+
+        self.reproducible = reproducible
 
     def __enter__(self):
         return self

@@ -43,6 +43,7 @@ class FileTestCase(TempStoreTestCase):
                 'key': person1.cv.key,
                 'extension': '.txt',
                 'length': len(sample_content),
+                'reproducible': False,
                 'timestamp': person1.cv.timestamp
             })
             first_filename = join(self.temp_path, person1.cv.path)
@@ -70,6 +71,7 @@ class FileTestCase(TempStoreTestCase):
                 'key': person1.cv.key,
                 'extension': '.txt',
                 'length': len(sample_content),
+                'reproducible': False,
                 'timestamp': person1.cv.timestamp
             })
             third_filename = join(self.temp_path, person1.cv.path)

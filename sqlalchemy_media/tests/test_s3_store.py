@@ -14,7 +14,7 @@ from sqlalchemy import Column, Integer
 # noinspection PyPackageRequirements
 from werkzeug.serving import run_simple
 
-from sqlalchemy_media.attachments import File
+from sqlalchemy_media.attachments import File, Image as BaseImage, Thumbnail as BaseThumbnail
 from sqlalchemy_media.exceptions import S3Error
 from sqlalchemy_media.stores import S3Store
 from sqlalchemy_media.stores import StoreManager
@@ -47,6 +47,16 @@ def run_s3_server():  # pragma: no cover
 
 
 class S3StoreTestCase(SqlAlchemyTestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.this_dir = abspath(dirname(__file__))
+        cls.stuff_path = join(cls.this_dir, 'stuff')
+
+        # Pointing to some handy files.
+        cls.dog_jpeg = join(cls.stuff_path, 'dog.jpg')
+
+        super(S3StoreTestCase, cls).setUpClass()
 
     def setUp(self):
         super(S3StoreTestCase, self).setUp()
@@ -84,6 +94,38 @@ class S3StoreTestCase(SqlAlchemyTestCase):
 
         with self.assertRaises(S3Error):
             store.put(target_filename, stream)
+
+    def test_rrs_put(self):
+        StoreManager.register(
+            's3',
+            _get_s3_store,
+            default=True
+        )
+
+        class Thumbnail(BaseThumbnail):
+            __reproducible__ = True
+
+        class Image(BaseImage):
+            __thumbnail_type__ = Thumbnail
+
+        class Person(self.Base):
+            __tablename__ = 'person'
+            id = Column(Integer, primary_key=True)
+            image = Column(Image.as_mutable(Json))
+
+        session = self.create_all_and_get_session()
+
+        person1 = Person()
+        self.assertIsNone(person1.image)
+
+        with StoreManager(session):
+            person1 = Person()
+            person1.image = Image.create_from(self.dog_jpeg)
+            self.assertIsInstance(person1.image, Image)
+
+            thumbnail = person1.image.get_thumbnail(width=100, auto_generate=True)
+            self.assertIsInstance(thumbnail, Thumbnail)
+            self.assertTrue(thumbnail.reproducible, True)
 
     def test_delete(self):
         store = _get_s3_store()

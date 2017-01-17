@@ -59,6 +59,12 @@ class Attachment(MutableDict):
     # `filename` or :class:`cgi.FieldStorage`.
     __auto_coercion__ = False
 
+    #: The reproducible of the file.
+    __reproducible__ = False
+
+    #: It allows to customize the Descriptor.
+    __descriptor__ = AttachableDescriptor
+
     @classmethod
     def _listen_on_attribute(cls, attribute, coerce, parent_cls):
         StoreManager.observe_attribute(attribute)
@@ -228,6 +234,15 @@ class Attachment(MutableDict):
     def timestamp(self, v: [str, float]):
         self['timestamp'] = str(v) if not isinstance(v, str) else v
 
+    @property
+    def reproducible(self) -> bool:
+        """
+        The reproducible of the file.
+
+        :type: bool
+        """
+        return self.get('reproducible', False)
+
     def copy(self) -> 'Attachment':
         """
         Copy this object using deepcopy.
@@ -330,13 +345,14 @@ class Attachment(MutableDict):
         """
 
         # Wrap in AttachableDescriptor
-        descriptor = AttachableDescriptor(
+        descriptor = self.__descriptor__(
             attachable,
             content_type=content_type,
             original_filename=original_filename,
             extension=extension,
             max_length=self.__max_length__,
-            min_length=self.__min_length__
+            min_length=self.__min_length__,
+            reproducible=self.__reproducible__
         )
 
         try:
@@ -355,7 +371,8 @@ class Attachment(MutableDict):
                 extension=descriptor.extension,
                 content_type=descriptor.content_type,
                 length=descriptor.content_length,
-                store_id=store_id
+                store_id=store_id,
+                reproducible=descriptor.reproducible
             )
 
             # Pre-processing
