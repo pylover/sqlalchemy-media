@@ -218,6 +218,9 @@ Changelog
 
 Here you can see the full list of changes made on each sqlalchemy-media release.
 
+0.9.7
+  - Fixed: get_thumbnail() does not return a Thumbnail: #72
+
 0.9.6
   - Support rrs(ReducedRedundancyStorage) and  prefix of S3Store.
 

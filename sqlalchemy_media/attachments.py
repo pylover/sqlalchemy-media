@@ -794,7 +794,7 @@ class Image(BaseImage):
         if self.thumbnails is not None:
             for w, h, r, t in self.thumbnails:
                 if w == width or h == height or round(r, ratio_precision) == ratio:
-                    return t
+                    return self.__thumbnail_type__(t)
 
         # thumbnail not found
         if auto_generate:
