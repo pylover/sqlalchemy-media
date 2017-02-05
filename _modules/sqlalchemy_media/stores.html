@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.stores &mdash; sqlalchemy-media 0.9.6 documentation</title>
+  <title>sqlalchemy_media.stores &mdash; sqlalchemy-media 0.9.7 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.9.6 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.9.7 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -443,7 +443,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stores</span>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="StoreManager.get_current_store_manager"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.get_current_store_manager">[docs]</a>    <span class="k">def</span> <span class="nf">get_current_store_manager</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;StoreManager&#39;</span><span class="p">:</span>
+<div class="viewcode-block" id="StoreManager.get_current_store_manager"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.get_current_store_manager">[docs]</a>    <span class="k">def</span> <span class="nf">get_current_store_manager</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;StoreManager&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Find the current :class:`StoreManager` in context stack if any. else :exc:`.ContextError` will be raised.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -462,16 +462,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">stores</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="StoreManager.make_default"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.make_default">[docs]</a>    <span class="k">def</span> <span class="nf">make_default</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="StoreManager.make_default"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.make_default">[docs]</a>    <span class="k">def</span> <span class="nf">make_default</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Makes a pre-registered store as default.</span>
 
 <span class="sd">        :param key: the store id.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">cls</span><span class="o">.</span><span class="n">_default</span> <span class="o">=</span> <span class="n">key</span></div>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_default</span> <span class="o">=</span> <span class="n">key</span></div>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="StoreManager.register"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">store_factory</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="StoreManager.register"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">store_factory</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Registers the store factory into stores registry, use :meth:`unregister` to remove it.</span>
 
@@ -482,18 +482,18 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_factories</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">store_factory</span>
         <span class="k">if</span> <span class="n">default</span><span class="p">:</span>
-            <span class="n">cls</span><span class="o">.</span><span class="n">_default</span> <span class="o">=</span> <span class="n">key</span></div>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_default</span> <span class="o">=</span> <span class="n">key</span></div>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="StoreManager.unregister"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.unregister">[docs]</a>    <span class="k">def</span> <span class="nf">unregister</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Store</span><span class="p">:</span>
+<div class="viewcode-block" id="StoreManager.unregister"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.unregister">[docs]</a>    <span class="k">def</span> <span class="nf">unregister</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Store</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Opposite of :meth:`.register`. :exc:`.KeyError` may raised if key not found in registry.</span>
 
 <span class="sd">        :param key: The store key to remove from stores registry.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">cls</span><span class="o">.</span><span class="n">_default</span><span class="p">:</span>
-            <span class="n">cls</span><span class="o">.</span><span class="n">_default</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_default</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_default</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">_factories</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_factories</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
@@ -629,7 +629,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">register_to_delete_after_commit</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">attribute</span><span class="o">.</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span></div>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="StoreManager.observe_attribute"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.observe_attribute">[docs]</a>    <span class="k">def</span> <span class="nf">observe_attribute</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">collection</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="StoreManager.observe_attribute"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.observe_attribute">[docs]</a>    <span class="k">def</span> <span class="nf">observe_attribute</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">collection</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Attach some event handlers on sqlalchemy attribute to handle delete_orphan option.</span>
 
@@ -688,7 +688,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.9.6',
+            VERSION:'0.9.7',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

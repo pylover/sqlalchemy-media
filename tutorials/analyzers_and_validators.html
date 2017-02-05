@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Playing with Analyzers and Validators &mdash; sqlalchemy-media 0.9.6 documentation</title>
+  <title>Playing with Analyzers and Validators &mdash; sqlalchemy-media 0.9.7 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.9.6 documentation" href="../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.9.7 documentation" href="../index.html"/>
         <link rel="up" title="Tutorials" href="index.html"/>
         <link rel="next" title="API Reference" href="../api.html"/>
         <link rel="prev" title="Image &amp; Thumbnails" href="image.html"/> 
@@ -240,7 +240,7 @@ This is an optional package.</p>
     <span class="n">person1</span><span class="o">.</span><span class="n">cv</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="s1">&#39;../sqlalchemy_media/tests/stuff/cat.jpg&#39;</span><span class="p">)</span>  <span class="c1"># OK</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">person1</span><span class="o">.</span><span class="n">cv</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;Plain text&#39;</span><span class="p">))</span>
+        <span class="n">person1</span><span class="o">.</span><span class="n">cv</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Plain text&#39;</span><span class="p">))</span>
     <span class="k">except</span> <span class="p">(</span><span class="n">ContentTypeValidationError</span><span class="p">,</span> <span class="n">MinimumLengthIsNotReachedError</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ContentTypeValidationError is raised. It&#39;s so bad!&quot;</span><span class="p">)</span>
 </pre></div>
@@ -296,7 +296,7 @@ This is an optional package.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.9.6',
+            VERSION:'0.9.7',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
