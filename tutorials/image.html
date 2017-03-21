@@ -8,12 +8,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Image &amp; Thumbnails &mdash; sqlalchemy-media 0.9.7 documentation</title>
+  <title>Image &amp; Thumbnails &mdash; sqlalchemy-media 0.9.8 documentation</title>
   
 
   
   
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  
+  
   
 
   
@@ -35,7 +37,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.9.7 documentation" href="../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.9.8 documentation" href="../index.html"/>
         <link rel="up" title="Tutorials" href="index.html"/>
         <link rel="next" title="Playing with Analyzers and Validators" href="analyzers_and_validators.html"/>
         <link rel="prev" title="Tutorials" href="index.html"/> 
@@ -47,6 +49,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -87,7 +90,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../install.html">Installing</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorials</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Image &amp; Thumbnails</a><ul>
@@ -119,8 +125,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../index.html">sqlalchemy-media</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">sqlalchemy-media</a>
+        
       </nav>
 
 
@@ -129,25 +137,42 @@
         <div class="rst-content">
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
           <li><a href="index.html">Tutorials</a> &raquo;</li>
-      
-    <li>Image &amp; Thumbnails</li>
+        
+      <li>Image &amp; Thumbnails</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
+            
             <a href="../_sources/tutorials/image.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -333,7 +358,7 @@ files URL in store.</p>
 </div>
 <div class="section" id="overwriting">
 <h2>8. Overwriting<a class="headerlink" href="#overwriting" title="Permalink to this headline">¶</a></h2>
-<p>Overwriting a file is achieved by attaching an image by <a class="reference internal" href="../api.html#sqlalchemy_media.attachments.Attachment.attach" title="sqlalchemy_media.attachments.Attachment.attach"><code class="xref py py-meth docutils literal"><span class="pre">attach()</span></code></a></p>
+<p>Overwriting a file is achieved by attaching an image by <a class="reference internal" href="../api.html#sqlalchemy_media.attachments.BaseImage.attach" title="sqlalchemy_media.attachments.BaseImage.attach"><code class="xref py py-meth docutils literal"><span class="pre">attach()</span></code></a></p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">StoreManager</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
     <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="s1">&#39;https://www.python.org/static/img/python-logo.png&#39;</span><span class="p">)</span>
     <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
@@ -389,15 +414,18 @@ remaining in store for ever.</p>
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="analyzers_and_validators.html" class="btn btn-neutral float-right" title="Playing with Analyzers and Validators" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="analyzers_and_validators.html" class="btn btn-neutral float-right" title="Playing with Analyzers and Validators" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral" title="Tutorials" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral" title="Tutorials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -428,10 +456,11 @@ remaining in store for ever.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.9.7',
+            VERSION:'0.9.8',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="../_static/jquery.js"></script>
