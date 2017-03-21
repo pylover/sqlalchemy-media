@@ -385,6 +385,7 @@ class ImageProcessor(Processor):
         self.width = width
         self.height = height
         self.crop = crop
+        # self.crop = None if crop is None else {k: v if isinstance(v, str) else str(v) for k, v in crop.items()}
 
     def process(self, descriptor: StreamDescriptor, context: dict):
 
@@ -427,7 +428,8 @@ class ImageProcessor(Processor):
             if self.crop:
                 img.crop(**{
                     key: int(int(value[:-1]) / 100 * (img.width if key in ('width', 'left', 'right') else img.height))
-                    if key in ('left', 'top', 'right', 'bottom', 'width', 'height') and '%' in value else value
+                    if key in ('left', 'top', 'right', 'bottom', 'width', 'height')
+                    and isinstance(value, str) and '%' in value else value
                     for key, value in self.crop.items()
                     })
 

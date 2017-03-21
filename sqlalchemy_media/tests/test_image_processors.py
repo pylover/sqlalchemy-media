@@ -65,6 +65,22 @@ class ImageProcessorTestCase(unittest.TestCase):
                 }
             )
 
+        # With integer values
+        with AttachableDescriptor(self.cat_jpeg) as d:
+            # Checking when not modifying stream.
+            ctx = dict()
+            ImageProcessor(crop=dict(width=100)).process(d, ctx)
+            ctx = dict()
+            WandAnalyzer().process(d, ctx)
+            self.assertDictEqual(
+                ctx,
+                {
+                    'content_type': 'image/jpeg',
+                    'width': 100,
+                    'height': 480,
+                }
+            )
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
