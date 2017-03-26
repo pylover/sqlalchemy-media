@@ -76,3 +76,22 @@ def ensure_aws4auth():
 
     if AWS4Auth is None:  # pragma: no cover
         raise OptionalPackageRequirementError('requests-aws4auth')
+
+
+# requests-aliyun
+try:
+    # noinspection PyPackageRequirements
+    from aliyunauth import OssAuth as OS2Auth
+except ImportError:  # pragma: no cover
+    OS2Auth = None
+
+
+def ensure_os2auth():
+    """
+
+    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``requests-aliyun`` is not installed.
+
+    """
+
+    if OS2Auth is None:  # pragma: no cover
+        raise OptionalPackageRequirementError('requests-aliyun')

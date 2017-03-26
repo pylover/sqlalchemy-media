@@ -103,7 +103,8 @@ class OptionalPackageRequirementError(SqlAlchemyMediaException):
     __optional_packages__ = [
         'python-magic >= 0.4.12',
         'wand >= 0.4.3',
-        'requests-aws4auth >= 0.9'
+        'requests-aws4auth >= 0.9',
+        'requests-aliyun >= 0.2.4'
     ]
 
     def __init__(self, package_name: str):
@@ -141,5 +142,12 @@ class AspectRatioValidationError(ValidationError):
 class S3Error(SqlAlchemyMediaException):
     """
     Raises when the image upload or delete to s3.
+
+    """
+
+
+class OS2Error(SqlAlchemyMediaException):
+    """
+    Raises when the image upload or delete to os2.
 
     """
