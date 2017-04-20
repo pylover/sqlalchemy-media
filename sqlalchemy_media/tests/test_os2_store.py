@@ -1,24 +1,131 @@
+import errno
 import io
+import os
 import unittest
+from http.server import HTTPServer, BaseHTTPRequestHandler, HTTPStatus
+from multiprocessing import Process
 from os.path import join, dirname, abspath, getsize
 
-# noinspection PyPackageRequirements
 from sqlalchemy import Column, Integer
 
 from sqlalchemy_media.attachments import File
 from sqlalchemy_media.exceptions import OS2Error
+from sqlalchemy_media.helpers import copy_stream
 from sqlalchemy_media.stores import OS2Store
 from sqlalchemy_media.stores import StoreManager
 from sqlalchemy_media.tests.helpers import Json, SqlAlchemyTestCase
 
-TEST_BUCKET = ''
-TEST_ACCESS_KEY = ''
-TEST_SECRET_KEY = ''
-TEST_REGION = ''
+REAL_TEST = False
+
+TEST_BUCKET = 'sa-media-test'
+TEST_ACCESS_KEY = 'sa-media-ak'
+TEST_SECRET_KEY = 'sa-media-sk'
+TEST_REGION = 'sa-media'
+TEST_BIND = ('127.0.0.1', 12208)
 
 
 def _get_os2_store(bucket=TEST_BUCKET, **kwargs):
-    return OS2Store(bucket, TEST_ACCESS_KEY, TEST_SECRET_KEY, TEST_REGION, **kwargs)
+    base_headers = {}
+    if not REAL_TEST:
+        OS2Store.BASE_URL_FORMAT = 'http://{0}:{1}'.format(*TEST_BIND)
+        base_headers = {'HOST': '{0}.oss-{1}.{2}:{3}'.format(bucket, TEST_REGION, *TEST_BIND)}
+    return OS2Store(bucket, TEST_ACCESS_KEY, TEST_SECRET_KEY, TEST_REGION,
+                    base_headers=base_headers, **kwargs)
+
+
+def _mkdirs(path):
+    try:
+        os.makedirs(path)
+    except OSError as exc:
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else:  # pragma: no cover
+            raise
+
+
+def _create_test_bucket(temp_path, bucket=TEST_BUCKET):
+    _mkdirs(os.path.join(temp_path, bucket))
+
+
+def os2_server(temp_path, bind=TEST_BIND):
+
+    class SimpleHandler(BaseHTTPRequestHandler):  # pragma: no cover
+
+        def _validate_host(self):
+            host = self.headers['HOST']
+            try:
+                bucket, region, *_ = host.split('.')
+            except ValueError:
+                return self.send_error(400, 'BadRequest')
+            if region != 'oss-sa-media':
+                return self.send_error(400, 'BadRegionError')
+            if not os.path.exists(os.path.join(temp_path, bucket)):
+                return self.send_error(400, 'BadBucketError')
+            return bucket, region
+
+        # noinspection PyPep8Naming
+        def do_GET(self):
+            try:
+                bucket, _ = self._validate_host()
+            except TypeError:
+                return
+            if self.path == '/':
+                return self.send_error('400', 'BadObjectError')
+
+            filename = os.path.join(temp_path, bucket, self.path[1:])
+            if not os.path.exists(filename):
+                return self.send_error(404, 'NotFound')
+
+            self.send_response(HTTPStatus.OK)
+            with open(filename, 'rb') as f:
+                data = f.read()
+                self.send_header('Content-Length', len(data))
+                self.end_headers()
+                f.seek(0)
+                try:
+                    copy_stream(f, self.wfile)
+                except ConnectionResetError:
+                    pass
+
+        # noinspection PyPep8Naming
+        def do_PUT(self):
+            try:
+                bucket, _ = self._validate_host()
+            except TypeError:
+                return
+            if self.path == '/':
+                return self.send_error('400', 'BadObjectError')
+            filename = self.path[1:]
+            content_len = int(self.headers.get('content-length', 0))
+            content = self.rfile.read(content_len)
+            filename = os.path.join(temp_path, bucket, filename)
+            path = '/'.join(filename.split('/')[:-1])
+            _mkdirs(path)
+            with open(filename, 'wb') as f:
+                f.write(content)
+            self.send_response(HTTPStatus.OK)
+            self.send_header('Content-Type', "text/plain")
+            self.end_headers()
+
+        # noinspection PyPep8Naming
+        def do_DELETE(self):
+            try:
+                bucket, _ = self._validate_host()
+            except TypeError:
+                return
+            if self.path == '/':
+                return self.send_error('400', 'BadObjectError')
+
+            filename = os.path.join(temp_path, bucket, self.path[1:])
+            if not os.path.exists(filename):
+                return self.send_error(404, 'NotFound')
+
+            os.remove(filename)
+            self.send_response(HTTPStatus.OK)
+            self.send_header('Content-Type', "text/plain")
+            self.end_headers()
+
+    return HTTPServer(bind, SimpleHandler)
 
 
 class OS2StoreTestCase(SqlAlchemyTestCase):
@@ -31,11 +138,24 @@ class OS2StoreTestCase(SqlAlchemyTestCase):
         # Pointing to some handy files.
         cls.dog_jpeg = join(cls.stuff_path, 'dog.jpg')
 
+        # Mock Server
+        if not REAL_TEST:
+            temp_path = join(cls.this_dir, 'temp', cls.__name__)
+            _create_test_bucket(temp_path)
+            server = os2_server(temp_path)
+            cls.server_p = Process(target=server.serve_forever)
+            cls.server_p.daemon = True
+            cls.server_p.start()
+
         super(OS2StoreTestCase, cls).setUpClass()
+
+    @classmethod
+    def tearDownClass(cls):
+        if not REAL_TEST and hasattr(cls, 'server_p'):
+            cls.server_p.terminate()
 
     def setUp(self):
         super(OS2StoreTestCase, self).setUp()
-
         self.base_url = 'http://static1.example.orm'
         self.this_dir = abspath(dirname(__file__))
         self.stuff_path = join(self.this_dir, 'stuff')
