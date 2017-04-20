@@ -104,7 +104,7 @@ class OptionalPackageRequirementError(SqlAlchemyMediaException):
         'python-magic >= 0.4.12',
         'wand >= 0.4.3',
         'requests-aws4auth >= 0.9',
-        'requests-aliyun >= 0.2.4'
+        'requests-aliyun >= 0.2.5'
     ]
 
     def __init__(self, package_name: str):
