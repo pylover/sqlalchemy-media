@@ -36,10 +36,10 @@ def _get_os2_store(bucket=TEST_BUCKET, **kwargs):
 def _mkdirs(path):
     try:
         os.makedirs(path)
-    except OSError as exc:
+    except OSError as exc:  # pragma: no cover
         if exc.errno == errno.EEXIST and os.path.isdir(path):
             pass
-        else:  # pragma: no cover
+        else:
             raise
 
 
