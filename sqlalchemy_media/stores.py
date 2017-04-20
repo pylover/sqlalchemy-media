@@ -249,7 +249,7 @@ class OS2Store(Store):
 
     def __init__(self, bucket: str, access_key: str, secret_key: str,
                  region: str, max_age: int = DEFAULT_MAX_AGE,
-                 prefix: str = None, public_base_url: str = None):
+                 base_headers: dict = None, prefix: str = None, public_base_url: str = None):
         self.bucket = bucket
         self.access_key = access_key
         self.secret_key = secret_key
@@ -265,6 +265,7 @@ class OS2Store(Store):
             self.public_base_url = public_base_url.rstrip('/')
         else:
             self.public_base_url = public_base_url
+        self.base_headers = base_headers or {}
 
     def _get_os2_url(self, filename: str):
         return '{0}/{1}'.format(self.base_url, filename)
@@ -274,14 +275,14 @@ class OS2Store(Store):
         ensure_os2auth()
 
         auth = OS2Auth(self.bucket, self.access_key, self.secret_key)
-        headers = {
+        headers = self.base_headers.copy()
+        headers.update({
             'Cache-Control': 'max-age=' + str(self.max_age),
             'x-oss-object-acl': acl
-        }
+        })
         if content_type:
             headers['Content-Type'] = content_type
         res = requests.put(url, auth=auth, data=data, headers=headers)
-        print(res.request.headers)
         if not 200 <= res.status_code < 300:
             raise OS2Error(res.text)
 
@@ -296,7 +297,8 @@ class OS2Store(Store):
         ensure_os2auth()
         url = self._get_os2_url(filename)
         auth = OS2Auth(self.bucket, self.access_key, self.secret_key)
-        res = requests.delete(url, auth=auth)
+        headers = self.base_headers.copy()
+        res = requests.delete(url, auth=auth, headers=headers)
         if not 200 <= res.status_code < 300:
             raise OS2Error(res.text)
 
@@ -304,7 +306,8 @@ class OS2Store(Store):
         ensure_os2auth()
         url = self._get_os2_url(filename)
         auth = OS2Auth(self.bucket, self.access_key, self.secret_key)
-        res = requests.get(url, auth=auth)
+        headers = self.base_headers.copy()
+        res = requests.get(url, auth=auth, headers=headers)
         if not 200 <= res.status_code < 300:
             raise OS2Error(res.text)
         return BytesIO(res.content)
