@@ -237,6 +237,25 @@
 
     <span class="k">if</span> <span class="n">AWS4Auth</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
         <span class="k">raise</span> <span class="n">OptionalPackageRequirementError</span><span class="p">(</span><span class="s1">&#39;requests-aws4auth&#39;</span><span class="p">)</span></div>
+
+
+<span class="c1"># requests-aliyun</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="c1"># noinspection PyPackageRequirements</span>
+    <span class="kn">from</span> <span class="nn">aliyunauth</span> <span class="k">import</span> <span class="n">OssAuth</span> <span class="k">as</span> <span class="n">OS2Auth</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+    <span class="n">OS2Auth</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="ensure_os2auth"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.optionals.ensure_os2auth">[docs]</a><span class="k">def</span> <span class="nf">ensure_os2auth</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``requests-aliyun`` is not installed.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">OS2Auth</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">raise</span> <span class="n">OptionalPackageRequirementError</span><span class="p">(</span><span class="s1">&#39;requests-aliyun&#39;</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

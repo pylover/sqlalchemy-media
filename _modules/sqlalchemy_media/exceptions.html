@@ -264,7 +264,8 @@
     <span class="n">__optional_packages__</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s1">&#39;python-magic &gt;= 0.4.12&#39;</span><span class="p">,</span>
         <span class="s1">&#39;wand &gt;= 0.4.3&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;requests-aws4auth &gt;= 0.9&#39;</span>
+        <span class="s1">&#39;requests-aws4auth &gt;= 0.9&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;requests-aliyun &gt;= 0.2.5&#39;</span>
     <span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">package_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -302,6 +303,13 @@
 <span class="k">class</span> <span class="nc">S3Error</span><span class="p">(</span><span class="n">SqlAlchemyMediaException</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Raises when the image upload or delete to s3.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">OS2Error</span><span class="p">(</span><span class="n">SqlAlchemyMediaException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Raises when the image upload or delete to os2.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 </pre></div>
