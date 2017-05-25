@@ -581,7 +581,9 @@ class StoreManager(object):
         """
         for attribute in _observing_attributes:
             if isinstance(instance, attribute.class_):
-                self.register_to_delete_after_commit(getattr(instance, attribute.key).copy())
+                value = getattr(instance, attribute.key)
+                if value:
+                    self.register_to_delete_after_commit(value.copy())
 
     @classmethod
     def observe_attribute(cls, attr, collection=False):
