@@ -1,6 +1,7 @@
 import io
 import logging
 import unittest
+import time
 from multiprocessing import Process
 from os.path import join, dirname, abspath, getsize
 
@@ -63,6 +64,7 @@ class S3StoreTestCase(SqlAlchemyTestCase):
         self.server_p = Process(target=run_s3_server)
         self.server_p.daemon = True
         self.server_p.start()
+        time.sleep(2)
 
         # create test bucket
         res = requests.put(TEST_SERVER_URL)

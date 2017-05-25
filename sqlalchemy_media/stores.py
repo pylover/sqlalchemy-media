@@ -507,8 +507,12 @@ class StoreManager(object):
         be deleted from store after session commit.
 
         """
-        if self.delete_orphan:
-            self._files_orphaned.extend(attachments)
+        if not self.delete_orphan:
+            return
+
+        for attachment in attachments:
+            self._files_orphaned.append(attachment)
+            self._files_orphaned.extend(attachment.get_orphaned_objects())
 
     def adopted(self, *attachments) -> None:
         """

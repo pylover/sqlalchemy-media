@@ -425,6 +425,18 @@ class Attachment(MutableDict):
         """
         yield self
 
+    def get_orphaned_objects(self):
+        """
+        this method will be always called by the store when adding the ``self`` to the orphaned list. so subclasses 
+        of the :class:`.Attachment` has a chance to add other related objects into the orphaned list and schedule it 
+        for delete. for example the :class:`.Image` class can schedule it's thumbnails for deletion also.   
+        :return: An iterable of :class:`.Attachment` to mark as orphan.
+        
+        .. versionadded:: 0.11.0
+        
+        """
+        return iter([])
+
 
 class AttachmentCollection(object):
     """
@@ -813,3 +825,14 @@ class Image(BaseImage):
         if self.thumbnails:
             for t in self.thumbnails:
                 yield self.__thumbnail_type__(**t[3])
+
+    def get_orphaned_objects(self):
+        """
+        Mark thumbnails for deletion when the :class:`.Image` is being deleted.   
+        :return: An iterable of :class:`.Thumbnail` to mark as orphan.
+        
+        .. versionadded:: 0.11.0
+
+        """
+        for thumbnail in self.thumbnails:
+            yield self.__thumbnail_type__(thumbnail)
