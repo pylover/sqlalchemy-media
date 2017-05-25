@@ -143,7 +143,8 @@ class FileSystemStore(Store):
             )
 
     def delete(self, filename: str):
-        remove(self._get_physical_path(filename))
+        physical_path = self._get_physical_path(filename)
+        remove(physical_path)
 
     def open(self, filename: str, mode: str='rb') -> FileLike:
         return open(self._get_physical_path(filename), mode=mode)
