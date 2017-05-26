@@ -149,6 +149,7 @@ class WandAnalyzer(Analyzer):
         # This processor requires seekable stream.
         descriptor.prepare_to_read(backend='memory')
 
+        # noinspection PyUnresolvedReferences
         with WandImage(file=descriptor)as img:
             context.update(
                 width=img.width,
