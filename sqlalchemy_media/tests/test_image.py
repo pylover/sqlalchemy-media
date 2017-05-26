@@ -221,12 +221,12 @@ class ImageTestCase(TempStoreTestCase):
             self.assertFalse(exists(first_filename))
             self.assertTrue(exists(first_new_filename))
 
-            # person1 = session.query(Person).one()
-            # # Generating a thumbnail for the first image
-            # thumbnail = person1.images[0].get_thumbnail(width=10, auto_generate=True)
-            # session.commit()
-            # thumbnail_filename = join(self.temp_path, thumbnail.path)
-            # self.assertTrue(exists(thumbnail_filename))
+            person1 = session.query(Person).one()
+            # Generating a thumbnail for the first image
+            thumbnail = person1.images[0].get_thumbnail(width=10, auto_generate=True)
+            session.commit()
+            thumbnail_filename = join(self.temp_path, thumbnail.path)
+            self.assertTrue(exists(thumbnail_filename))
 
 
 if __name__ == '__main__':  # pragma: no cover

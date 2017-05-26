@@ -81,7 +81,7 @@ class Attachment(MutableDict):
 
         """
         if not isinstance(value, cls):
-            raise TypeError('Value type must be subclass of %s' % cls)
+            raise TypeError('Value type must be subclass of %s, but it\'s: %s' % (cls, type(value)))
 
     @classmethod
     def coerce(cls, key, value) -> 'Attachment':
@@ -474,11 +474,29 @@ class AttachmentList(AttachmentCollection, MutableList):
 
     """
 
+    def observe_item(self, item):
+        """
+        A simple monkeypatch to instruct the children to notify the parent if contents are changed:
+        
+        From `sqlalchemy mutable documentation:
+        <http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.MutableList>`_
+         
+            Note that MutableList does not apply mutable tracking to the values themselves inside the list. Therefore 
+            it is not a sufficient solution for the use case of tracking deep changes to a recursive mutable structure, 
+            such as a JSON structure. To support this use case, build a subclass of MutableList that provides 
+            appropriate coercion to the values placed in the dictionary so that they too are “mutable”, and emit events 
+            up to their parent structure.
+        
+        :param item: The item to observe
+        :return: 
+        """
+        item = self.__item_type__.coerce(None, item)
+        item._parents = self._parents
+        return item
+
     @classmethod
     def coerce(cls, index, value):
-
         if not isinstance(value, cls):
-
             if isinstance(value, Iterable):
                 result = cls()
 
@@ -486,14 +504,12 @@ class AttachmentList(AttachmentCollection, MutableList):
                 for i in value:
                     result.append(cls.__item_type__.coerce(index, i))
                 return result
-
             return super().coerce(index, value)
-
         else:
             return value
 
     def append(self, x):
-        super().append(x)
+        super().append(self.observe_item(x))
         StoreManager.get_current_store_manager().adopted(x)
 
     def remove(self, i):
@@ -507,11 +523,11 @@ class AttachmentList(AttachmentCollection, MutableList):
 
     def extend(self, x):
         StoreManager.get_current_store_manager().adopted(*x)
-        super().extend(x)
+        super().extend([self.observe_item(i) for i in x])
 
     def insert(self, i, x):
         StoreManager.get_current_store_manager().adopted(x)
-        super().insert(i, x)
+        super().insert(i, self.observe_item(x))
 
     def clear(self):
         StoreManager.get_current_store_manager().orphaned(*self)
@@ -522,13 +538,23 @@ class AttachmentList(AttachmentCollection, MutableList):
         super().__delitem__(index)
 
     def __setitem__(self, index, value):
-        old_value = self[index]
         store_manager = StoreManager.get_current_store_manager()
-        if old_value:
-            store_manager.orphaned(old_value)
+        if isinstance(index, slice):
+            for old_value in self[index]:
+                if old_value:
+                    store_manager.orphaned(old_value)
 
-        store_manager.adopted(value)
-        super().__setitem__(index, value)
+            for new_item in value:
+                store_manager.adopted(new_item)
+            super().__setitem__(index, [self.observe_item(i) for i in value])
+        else:
+            old_value = self[index]
+            if old_value:
+                store_manager.orphaned(old_value)
+
+            value = self.observe_item(value)
+            store_manager.adopted(value)
+            super().__setitem__(index, value)
 
 
 class AttachmentDict(AttachmentCollection, MutableDict):
