@@ -4,7 +4,7 @@ from os.path import join, exists
 
 from sqlalchemy import Column, Integer
 
-from sqlalchemy_media.attachments import Image, Thumbnail
+from sqlalchemy_media.attachments import Image, Thumbnail, ImageList
 from sqlalchemy_media.stores import StoreManager
 from sqlalchemy_media.tests.helpers import Json, TempStoreTestCase
 from sqlalchemy_media.exceptions import ThumbnailIsNotAvailableError
@@ -187,6 +187,46 @@ class ImageTestCase(TempStoreTestCase):
             self.assertTrue(person1.image.locate().startswith('http://static1.example.orm/images/image-'))
             thumbnail = person1.image.get_thumbnail(width=100)
             self.assertTrue(thumbnail.locate().startswith('http://static1.example.orm/thumbnails/thumbnail-'))
+
+    def test_image_list(self):
+
+        class Person(self.Base):
+            __tablename__ = 'person'
+            id = Column(Integer, primary_key=True)
+            images = Column(ImageList.as_mutable(Json))
+
+        session = self.create_all_and_get_session()
+
+        with StoreManager(session, delete_orphan=True):
+            person1 = Person()
+            person1.images = ImageList()
+            person1.images.append(Image.create_from(self.dog_jpeg))
+            person1.images.append(Image.create_from(self.cat_jpeg))
+            session.add(person1)
+            session.commit()
+
+            person1 = session.query(Person).one()
+            self.assertEqual(len(person1.images), 2)
+            for f in person1.images:
+                self.assertIsInstance(f, Image)
+                filename = join(self.temp_path, f.path)
+                self.assertTrue(exists(filename))
+                self.assertEqual(f.locate(), '%s/%s?_ts=%s' % (self.base_url, f.path, f.timestamp))
+
+            # Overwriting the first image
+            first_filename = join(self.temp_path, person1.images[0].path)
+            person1.images[0].attach(self.dog_png)
+            first_new_filename = join(self.temp_path, person1.images[0].path)
+            session.commit()
+            self.assertFalse(exists(first_filename))
+            self.assertTrue(exists(first_new_filename))
+
+            # person1 = session.query(Person).one()
+            # # Generating a thumbnail for the first image
+            # thumbnail = person1.images[0].get_thumbnail(width=10, auto_generate=True)
+            # session.commit()
+            # thumbnail_filename = join(self.temp_path, thumbnail.path)
+            # self.assertTrue(exists(thumbnail_filename))
 
 
 if __name__ == '__main__':  # pragma: no cover

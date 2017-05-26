@@ -836,3 +836,13 @@ class Image(BaseImage):
         """
         for thumbnail in self.thumbnails:
             yield self.__thumbnail_type__(thumbnail)
+
+
+class ImageList(AttachmentList):
+    """
+    Used to create a collection of :class:`.Image`es
+    
+    .. versionadded:: 0.11.0
+    """
+
+    __item_type__ = Image
