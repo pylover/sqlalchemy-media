@@ -47,9 +47,9 @@ Overview
 - Storing and locating any file, tracking it by sqlalchemy models.
 - Storage layer is completely separated from data model, with a simple api: (put, delete, open, locate)
 - Using any SqlAlchemy data type which interfaces Python dictionary. This is achieved by using the
-SqlAlchemyTypeDecorators_ and SqlAlchemyMutable_.
+  SqlAlchemyTypeDecorators_ and SqlAlchemyMutable_.
 - Offering ``delete_orphan`` flag to automatically delete files which orphaned via attribute set or delete from
-collections, or objects leaved in memory alone! by setting it's last pointer to None.
+  collections, or objects leaved in memory alone! by setting it's last pointer to None.
 - Attaching files from Url, LocalFileSystem and Streams.
 - Extracting the file's mimetype from the backend stream if possible, using ``magic`` module.
 - Limiting file size(min, max), to prevent DOS attacks.
