@@ -24,7 +24,7 @@ sqlalchemy-media
 Documentation
 -------------
 
-See the `documentation <http://sqlalchemy-media.dobisel.com>`_ for full description.
+See the documentation_ for full description.
 
 
 Why ?
@@ -36,32 +36,30 @@ Handling those jobs is not simple if you have to care about Security, High-Avail
 things you may have already been concerned. Accepting a file from public space, analysing, validating,
 processing(Normalizing) and making it available to public space again is the main goal of this project.
 
-Sql-Alchemy is the best platform for implementing this stuff. It has the
-`SqlAlchemy Mutable <http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html>`_ types facility to manipulate
-the objects with any type in-place. why not ?
+Sql-Alchemy is the best platform for implementing this stuff. It has the SqlAlchemyMutable_ types facility to
+manipulate the objects with any type in-place. why not ?
 
-.. note:: The main idea comes from `dahlia's SQLAlchemy-ImageAttach <https://github.com/dahlia/sqlalchemy-imageattach>`_.
+.. note:: The main idea comes from dahlia's SQLAlchemyImageAttach_.
 
 Overview
 --------
 
- - Storing and locating any file, tracking it by sqlalchemy models.
- - Storage layer is completely separated from data model, with a simple api: (put, delete, open, locate)
- - Using any SqlAlchemy data type which interfaces Python dictionary. This is achieved by using the
-   `SqlAlchemy Type Decorators <http://docs.sqlalchemy.org/en/latest/core/custom_types.html#typedecorator-recipes>`_ and
-   `SqlAlchemy Mutable <http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html>`_.
- - Offering ``delete_orphan`` flag to automatically delete files which orphaned via attribute set or delete from
-   collections, or objects leaved in memory alone! by setting it's last pointer to None.
- - Attaching files from Url, LocalFileSystem and Streams.
- - Extracting the file's mimetype from the backend stream if possible, using ``magic`` module.
- - Limiting file size(min, max), to prevent DOS attacks.
- - Adding timestamp in url to help caching.
- - Using python type hinting to annotate arguments. So currently python3.5 and higher is supported.
- - Auto generating thumbnails, using ``width``, ``height`` and or ``ratio``.
- - Analyzing files & images using ``magic`` and ``wand``.
- - Validating ``mimetype``, ``width``, ``height`` and image ``ratio``.
- - Automatically resize & reformat images before store.
- - Thanks `@YukSeungChan <https://github.com/YukSeungChan>`_, for implementing the ``S3Store`` and ``OS2Store``.
+- Storing and locating any file, tracking it by sqlalchemy models.
+- Storage layer is completely separated from data model, with a simple api: (put, delete, open, locate)
+- Using any SqlAlchemy data type which interfaces Python dictionary. This is achieved by using the
+SqlAlchemyTypeDecorators_ and SqlAlchemyMutable_.
+- Offering ``delete_orphan`` flag to automatically delete files which orphaned via attribute set or delete from
+collections, or objects leaved in memory alone! by setting it's last pointer to None.
+- Attaching files from Url, LocalFileSystem and Streams.
+- Extracting the file's mimetype from the backend stream if possible, using ``magic`` module.
+- Limiting file size(min, max), to prevent DOS attacks.
+- Adding timestamp in url to help caching.
+- Using python type hinting to annotate arguments. So currently python3.5 and higher is supported.
+- Auto generating thumbnails, using ``width``, ``height`` and or ``ratio``.
+- Analyzing files & images using ``magic`` and ``wand``.
+- Validating ``mimetype``, ``width``, ``height`` and image ``ratio``.
+- Automatically resize & reformat images before store.
+- Thanks `@YukSeungChan <https://github.com/YukSeungChan>`_, for implementing the ``S3Store`` and ``OS2Store``.
 
 
 Quick Start
@@ -235,14 +233,14 @@ Here you can see the full list of changes made on each sqlalchemy-media release.
   - BUG-FIX: #68, #69
 
 0.9.4
-  - BUG-FIX: Using `:class:Image.__thumbnail_type__` for creating thumbnails, it was missed: #67
+  - BUG-FIX: Using ``Image.__thumbnail_type__`` for creating thumbnails, it was missed: #67
 
 0.9.0
   - Aws S3 Store.
 
 0.8.0
-  -  Automatically coerce `:obj:.Attachable` objects. So if True, you can set the models attribute by a `file`,
-     `filename` or :class:`cgi.FieldStorage`.
+  -  Automatically coerce ``:obj:.Attachable`` objects. So if True, you can set the models attribute by a ``file``,
+     ``filename`` or ``cgi.FieldStorage``.
 
 0.6.2
   - Fixing a bug in ``optionals`` module.
@@ -254,7 +252,7 @@ Here you can see the full list of changes made on each sqlalchemy-media release.
   - Image crop feature: #16.
 
 0.5.0
-  - #17, #55. Merge analizers, validators and processors as processors. for simplicity.
+  - #17, #55. Merge analyzers, validators and processors as processors. for simplicity.
 
 0.4.1 (2016-10-06)
   - #54 Fixed.
@@ -268,7 +266,7 @@ Here you can see the full list of changes made on each sqlalchemy-media release.
   - Not using python's built-in mimetype module, due the bug: https://bugs.python.org/issue4963
 
 0.2.0 (2016-10-05)
-  - Added two tutorials in documentation
+  - Added two tutorials in documentation_.
   - Restricting Content-type: #28
   - MagicAnalyzer
   - Including all requirements*.txt in distribution: #49
@@ -280,3 +278,8 @@ Here you can see the full list of changes made on each sqlalchemy-media release.
 
 0.1.1 (2016-10-03)
   - Improving coverage
+
+.. _SqlAlchemyMutable: http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html
+.. _SqlAlchemyTypeDecorators: http://docs.sqlalchemy.org/en/latest/core/custom_types.html#typedecorator-recipes
+.. _SQLAlchemyImageAttach: https://github.com/dahlia/sqlalchemy-imageattach
+.. _documentation: http://sqlalchemy-media.dobisel.com
