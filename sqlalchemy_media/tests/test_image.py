@@ -228,6 +228,11 @@ class ImageTestCase(TempStoreTestCase):
             thumbnail_filename = join(self.temp_path, thumbnail.path)
             self.assertTrue(exists(thumbnail_filename))
 
+            # Removing the image should force to orphanage the thumbnails.
+            del person1.images[0]
+            session.commit()
+            self.assertFalse(exists(thumbnail_filename))
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

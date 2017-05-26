@@ -860,7 +860,7 @@ class Image(BaseImage):
         .. versionadded:: 0.11.0
 
         """
-        for thumbnail in self.thumbnails:
+        for width, height, ratio, thumbnail in self.thumbnails:
             yield self.__thumbnail_type__(thumbnail)
 
 
