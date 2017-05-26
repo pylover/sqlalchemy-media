@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; sqlalchemy-media 0.10.1 documentation</title>
+  <title>API Reference &mdash; sqlalchemy-media 0.11.0 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.10.1 documentation" href="index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.11.0 documentation" href="index.html"/>
         <link rel="prev" title="Playing with Analyzers and Validators" href="tutorials/analyzers_and_validators.html"/> 
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.10
+                0.11
               </div>
             
           
@@ -105,6 +105,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#filedict">FileDict</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#baseimage">BaseImage</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#image">Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#imagelist">ImageList</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#thumbnail">Thumbnail</a></li>
 </ul>
 </li>
@@ -273,7 +274,7 @@ All attachment types will be inherited from this class.</p>
 
 <dl class="method">
 <dt id="sqlalchemy_media.attachments.Attachment.attach">
-<code class="descname">attach</code><span class="sig-paren">(</span><em>attachable: typing.Union[typing.IO[_io.BytesIO], typing.Iterable[typing.Iterable[typing.Any]]], content_type: str = None, original_filename: str = None, extension: str = None, store_id: str = None, overwrite: bool = False, suppress_pre_process: bool = False, suppress_validation: bool = False, **kwargs</em><span class="sig-paren">)</span> &#x2192; sqlalchemy_media.attachments.Attachment<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Attachment.attach"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.attach" title="Permalink to this definition">¶</a></dt>
+<code class="descname">attach</code><span class="sig-paren">(</span><em>attachable: typing.Union[str, dict, typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper, typing.Iterable[typing.Iterable[typing.Any]]], content_type: str = None, original_filename: str = None, extension: str = None, store_id: str = None, overwrite: bool = False, suppress_pre_process: bool = False, suppress_validation: bool = False, **kwargs</em><span class="sig-paren">)</span> &#x2192; sqlalchemy_media.attachments.Attachment<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Attachment.attach"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.attach" title="Permalink to this definition">¶</a></dt>
 <dd><p>Attach a file. if the session is rolled-back, all operations will be rolled-back.
 The old file will be deleted after commit, if any.</p>
 <p>Workflow:</p>
@@ -478,6 +479,18 @@ in <a class="reference internal" href="#sqlalchemy_media.stores.StoreManager" ti
 </dd></dl>
 
 <dl class="method">
+<dt id="sqlalchemy_media.attachments.Attachment.get_orphaned_objects">
+<code class="descname">get_orphaned_objects</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Attachment.get_orphaned_objects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.get_orphaned_objects" title="Permalink to this definition">¶</a></dt>
+<dd><p>this method will be always called by the store when adding the <code class="docutils literal"><span class="pre">self</span></code> to the orphaned list. so subclasses 
+of the <a class="reference internal" href="#sqlalchemy_media.attachments.Attachment" title="sqlalchemy_media.attachments.Attachment"><code class="xref py py-class docutils literal"><span class="pre">Attachment</span></code></a> has a chance to add other related objects into the orphaned list and schedule it 
+for delete. for example the <a class="reference internal" href="#sqlalchemy_media.attachments.Image" title="sqlalchemy_media.attachments.Image"><code class="xref py py-class docutils literal"><span class="pre">Image</span></code></a> class can schedule it’s thumbnails for deletion also.   
+:return: An iterable of <a class="reference internal" href="#sqlalchemy_media.attachments.Attachment" title="sqlalchemy_media.attachments.Attachment"><code class="xref py py-class docutils literal"><span class="pre">Attachment</span></code></a> to mark as orphan.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.11.0.</span></p>
+</div>
+</dd></dl>
+
+<dl class="method">
 <dt id="sqlalchemy_media.attachments.Attachment.get_store">
 <code class="descname">get_store</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; sqlalchemy_media.stores.Store<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Attachment.get_store"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.get_store" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the <a class="reference internal" href="#sqlalchemy_media.stores.Store" title="sqlalchemy_media.stores.Store"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.stores.Store</span></code></a> instance, which this file is stored on.</p>
@@ -644,6 +657,29 @@ If available, else empty string (”) will be returned.</p>
 <span class="n">me</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">MyAttachment</span><span class="o">.</span><span class="n">create_from</span><span class="p">(</span><span class="n">any_file</span><span class="p">))</span>
 </pre></div>
 </div>
+<dl class="method">
+<dt id="sqlalchemy_media.attachments.AttachmentList.observe_item">
+<code class="descname">observe_item</code><span class="sig-paren">(</span><em>item</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#AttachmentList.observe_item"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.AttachmentList.observe_item" title="Permalink to this definition">¶</a></dt>
+<dd><p>A simple monkeypatch to instruct the children to notify the parent if contents are changed:</p>
+<p>From <a class="reference external" href="http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.MutableList">sqlalchemy mutable documentation:</a></p>
+<blockquote>
+<div>Note that MutableList does not apply mutable tracking to the values themselves inside the list. Therefore 
+it is not a sufficient solution for the use case of tracking deep changes to a recursive mutable structure, 
+such as a JSON structure. To support this use case, build a subclass of MutableList that provides 
+appropriate coercion to the values placed in the dictionary so that they too are “mutable”, and emit events 
+up to their parent structure.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>item</strong> – The item to observe</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -843,6 +879,16 @@ lookup precision. default: 2.</li>
 </dd></dl>
 
 <dl class="method">
+<dt id="sqlalchemy_media.attachments.Image.get_orphaned_objects">
+<code class="descname">get_orphaned_objects</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Image.get_orphaned_objects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Image.get_orphaned_objects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark thumbnails for deletion when the <a class="reference internal" href="#sqlalchemy_media.attachments.Image" title="sqlalchemy_media.attachments.Image"><code class="xref py py-class docutils literal"><span class="pre">Image</span></code></a> is being deleted.   
+:return: An iterable of <a class="reference internal" href="#sqlalchemy_media.attachments.Thumbnail" title="sqlalchemy_media.attachments.Thumbnail"><code class="xref py py-class docutils literal"><span class="pre">Thumbnail</span></code></a> to mark as orphan.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.11.0.</span></p>
+</div>
+</dd></dl>
+
+<dl class="method">
 <dt id="sqlalchemy_media.attachments.Image.get_thumbnail">
 <code class="descname">get_thumbnail</code><span class="sig-paren">(</span><em>width: int = None</em>, <em>height: int = None</em>, <em>ratio: float = None</em>, <em>ratio_precision: int = 2</em>, <em>auto_generate: bool = False</em><span class="sig-paren">)</span> &#x2192; sqlalchemy_media.attachments.Thumbnail<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Image.get_thumbnail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Image.get_thumbnail" title="Permalink to this definition">¶</a></dt>
 <dd><div class="versionadded">
@@ -883,6 +929,24 @@ thumbnails.</p>
 <dd><p>A <code class="docutils literal"><span class="pre">List[Tuple[int,</span> <span class="pre">int,</span> <span class="pre">float,</span> <span class="pre">Thumbnail]]</span></code>, to hold thumbnails.</p>
 <p>You may use <a class="reference internal" href="#sqlalchemy_media.attachments.Image.generate_thumbnail" title="sqlalchemy_media.attachments.Image.generate_thumbnail"><code class="xref py py-meth docutils literal"><span class="pre">generate_thumbnail()</span></code></a> and or <a class="reference internal" href="#sqlalchemy_media.attachments.Image.get_thumbnail" title="sqlalchemy_media.attachments.Image.get_thumbnail"><code class="xref py py-meth docutils literal"><span class="pre">get_thumbnail()</span></code></a> with <code class="docutils literal"><span class="pre">auto_generate=True</span></code> to fill it.</p>
 </dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="imagelist">
+<h3>ImageList<a class="headerlink" href="#imagelist" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.attachments.ImageList">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.attachments.</code><code class="descname">ImageList</code><a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#ImageList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.ImageList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.attachments.AttachmentList" title="sqlalchemy_media.attachments.AttachmentList"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.attachments.AttachmentList</span></code></a></p>
+<p>Used to create a collection of :class:<a href="#id1"><span class="problematic" id="id2">`</span></a>.Image`es</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.11.0.</span></p>
+</div>
+<dl class="attribute">
+<dt id="sqlalchemy_media.attachments.ImageList.__item_type__">
+<code class="descname">__item_type__</code><em class="property"> = &lt;class ‘sqlalchemy_media.attachments.Image’&gt;</em><a class="headerlink" href="#sqlalchemy_media.attachments.ImageList.__item_type__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -1630,13 +1694,13 @@ be deleted from store after session commit.</p>
 
 <dl class="method">
 <dt id="sqlalchemy_media.stores.StoreManager.register_to_delete_after_commit">
-<code class="descname">register_to_delete_after_commit</code><span class="sig-paren">(</span><em>*attachments: typing.Iterable[typing.Attachment]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/sqlalchemy_media/stores.html#StoreManager.register_to_delete_after_commit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.StoreManager.register_to_delete_after_commit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">register_to_delete_after_commit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores.html#StoreManager.register_to_delete_after_commit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.StoreManager.register_to_delete_after_commit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Schedules one or more attachment(s) to be deleted from store just after sqlalchemy session commit.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="sqlalchemy_media.stores.StoreManager.register_to_delete_after_rollback">
-<code class="descname">register_to_delete_after_rollback</code><span class="sig-paren">(</span><em>*files: typing.Iterable[typing.Attachment]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/sqlalchemy_media/stores.html#StoreManager.register_to_delete_after_rollback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.StoreManager.register_to_delete_after_rollback" title="Permalink to this definition">¶</a></dt>
+<code class="descname">register_to_delete_after_rollback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores.html#StoreManager.register_to_delete_after_rollback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.StoreManager.register_to_delete_after_rollback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Schedules one or more attachment(s) to be deleted from store just after sqlalchemy session rollback.</p>
 </dd></dl>
 
@@ -2306,7 +2370,7 @@ requested package is not provided.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.10.1',
+            VERSION:'0.11.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

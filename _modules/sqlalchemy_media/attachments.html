@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.attachments &mdash; sqlalchemy-media 0.10.1 documentation</title>
+  <title>sqlalchemy_media.attachments &mdash; sqlalchemy-media 0.11.0 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.10.1 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.11.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.10
+                0.11
               </div>
             
           
@@ -242,7 +242,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Value type must be subclass of </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">cls</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Value type must be subclass of </span><span class="si">%s</span><span class="s1">, but it</span><span class="se">\&#39;</span><span class="s1">s: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
 
 <div class="viewcode-block" id="Attachment.coerce"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Attachment.coerce">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">coerce</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Attachment&#39;</span><span class="p">:</span>
@@ -584,7 +584,19 @@
 <span class="sd">        Returns the files to be deleted, if the attachment is marked for deletion.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">yield</span> <span class="bp">self</span></div></div>
+        <span class="k">yield</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Attachment.get_orphaned_objects"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Attachment.get_orphaned_objects">[docs]</a>    <span class="k">def</span> <span class="nf">get_orphaned_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        this method will be always called by the store when adding the ``self`` to the orphaned list. so subclasses </span>
+<span class="sd">        of the :class:`.Attachment` has a chance to add other related objects into the orphaned list and schedule it </span>
+<span class="sd">        for delete. for example the :class:`.Image` class can schedule it&#39;s thumbnails for deletion also.   </span>
+<span class="sd">        :return: An iterable of :class:`.Attachment` to mark as orphan.</span>
+<span class="sd">        </span>
+<span class="sd">        .. versionadded:: 0.11.0</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">([])</span></div></div>
 
 
 <div class="viewcode-block" id="AttachmentCollection"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.AttachmentCollection">[docs]</a><span class="k">class</span> <span class="nc">AttachmentCollection</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -623,11 +635,29 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="AttachmentList.observe_item"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.AttachmentList.observe_item">[docs]</a>    <span class="k">def</span> <span class="nf">observe_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A simple monkeypatch to instruct the children to notify the parent if contents are changed:</span>
+<span class="sd">        </span>
+<span class="sd">        From `sqlalchemy mutable documentation:</span>
+<span class="sd">        &lt;http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.MutableList&gt;`_</span>
+<span class="sd">         </span>
+<span class="sd">            Note that MutableList does not apply mutable tracking to the values themselves inside the list. Therefore </span>
+<span class="sd">            it is not a sufficient solution for the use case of tracking deep changes to a recursive mutable structure, </span>
+<span class="sd">            such as a JSON structure. To support this use case, build a subclass of MutableList that provides </span>
+<span class="sd">            appropriate coercion to the values placed in the dictionary so that they too are “mutable”, and emit events </span>
+<span class="sd">            up to their parent structure.</span>
+<span class="sd">        </span>
+<span class="sd">        :param item: The item to observe</span>
+<span class="sd">        :return: </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__item_type__</span><span class="o">.</span><span class="n">coerce</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">_parents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parents</span>
+        <span class="k">return</span> <span class="n">item</span></div>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">coerce</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
-
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
                 <span class="n">result</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
 
@@ -635,14 +665,12 @@
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
                     <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__item_type__</span><span class="o">.</span><span class="n">coerce</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
                 <span class="k">return</span> <span class="n">result</span>
-
             <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">coerce</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">value</span>
 
     <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observe_item</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
         <span class="n">StoreManager</span><span class="o">.</span><span class="n">get_current_store_manager</span><span class="p">()</span><span class="o">.</span><span class="n">adopted</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
@@ -656,11 +684,11 @@
 
     <span class="k">def</span> <span class="nf">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="n">StoreManager</span><span class="o">.</span><span class="n">get_current_store_manager</span><span class="p">()</span><span class="o">.</span><span class="n">adopted</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">observe_item</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="n">StoreManager</span><span class="o">.</span><span class="n">get_current_store_manager</span><span class="p">()</span><span class="o">.</span><span class="n">adopted</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">observe_item</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">StoreManager</span><span class="o">.</span><span class="n">get_current_store_manager</span><span class="p">()</span><span class="o">.</span><span class="n">orphaned</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="p">)</span>
@@ -671,13 +699,23 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__delitem__</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="n">old_value</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
         <span class="n">store_manager</span> <span class="o">=</span> <span class="n">StoreManager</span><span class="o">.</span><span class="n">get_current_store_manager</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">old_value</span><span class="p">:</span>
-            <span class="n">store_manager</span><span class="o">.</span><span class="n">orphaned</span><span class="p">(</span><span class="n">old_value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">old_value</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="n">index</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">old_value</span><span class="p">:</span>
+                    <span class="n">store_manager</span><span class="o">.</span><span class="n">orphaned</span><span class="p">(</span><span class="n">old_value</span><span class="p">)</span>
 
-        <span class="n">store_manager</span><span class="o">.</span><span class="n">adopted</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+            <span class="k">for</span> <span class="n">new_item</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                <span class="n">store_manager</span><span class="o">.</span><span class="n">adopted</span><span class="p">(</span><span class="n">new_item</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">observe_item</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">value</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">old_value</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">old_value</span><span class="p">:</span>
+                <span class="n">store_manager</span><span class="o">.</span><span class="n">orphaned</span><span class="p">(</span><span class="n">old_value</span><span class="p">)</span>
+
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observe_item</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">store_manager</span><span class="o">.</span><span class="n">adopted</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="AttachmentDict"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.AttachmentDict">[docs]</a><span class="k">class</span> <span class="nc">AttachmentDict</span><span class="p">(</span><span class="n">AttachmentCollection</span><span class="p">,</span> <span class="n">MutableDict</span><span class="p">):</span>
@@ -973,7 +1011,28 @@
         <span class="k">yield from</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_objects_to_delete</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">thumbnails</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">thumbnails</span><span class="p">:</span>
-                <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">__thumbnail_type__</span><span class="p">(</span><span class="o">**</span><span class="n">t</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span></div></div>
+                <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">__thumbnail_type__</span><span class="p">(</span><span class="o">**</span><span class="n">t</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Image.get_orphaned_objects"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Image.get_orphaned_objects">[docs]</a>    <span class="k">def</span> <span class="nf">get_orphaned_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Mark thumbnails for deletion when the :class:`.Image` is being deleted.   </span>
+<span class="sd">        :return: An iterable of :class:`.Thumbnail` to mark as orphan.</span>
+<span class="sd">        </span>
+<span class="sd">        .. versionadded:: 0.11.0</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">thumbnail</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">thumbnails</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">__thumbnail_type__</span><span class="p">(</span><span class="n">thumbnail</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ImageList"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.ImageList">[docs]</a><span class="k">class</span> <span class="nc">ImageList</span><span class="p">(</span><span class="n">AttachmentList</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Used to create a collection of :class:`.Image`es</span>
+<span class="sd">    </span>
+<span class="sd">    .. versionadded:: 0.11.0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">__item_type__</span> <span class="o">=</span> <span class="n">Image</span></div>
 </pre></div>
 
            </div>
@@ -1010,7 +1069,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.10.1',
+            VERSION:'0.11.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

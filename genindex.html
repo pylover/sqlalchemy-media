@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; sqlalchemy-media 0.10.1 documentation</title>
+  <title>Index &mdash; sqlalchemy-media 0.11.0 documentation</title>
   
 
   
@@ -38,7 +38,7 @@
         <link rel="index" title="Index"
               href="#"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.10.1 documentation" href="index.html"/> 
+    <link rel="top" title="sqlalchemy-media 0.11.0 documentation" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.10
+                0.11
               </div>
             
           
@@ -204,6 +204,8 @@
         <li><a href="api.html#sqlalchemy_media.attachments.FileDict.__item_type__">(sqlalchemy_media.attachments.FileDict attribute)</a>
 </li>
         <li><a href="api.html#sqlalchemy_media.attachments.FileList.__item_type__">(sqlalchemy_media.attachments.FileList attribute)</a>
+</li>
+        <li><a href="api.html#sqlalchemy_media.attachments.ImageList.__item_type__">(sqlalchemy_media.attachments.ImageList attribute)</a>
 </li>
       </ul></li>
       <li><a href="api.html#sqlalchemy_media.attachments.Attachment.__max_length__">__max_length__ (sqlalchemy_media.attachments.Attachment attribute)</a>
@@ -408,12 +410,18 @@
 </li>
       <li><a href="api.html#sqlalchemy_media.descriptors.BaseDescriptor.get_header_buffer">get_header_buffer() (sqlalchemy_media.descriptors.BaseDescriptor method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#sqlalchemy_media.attachments.Attachment.get_objects_to_delete">get_objects_to_delete() (sqlalchemy_media.attachments.Attachment method)</a>
 
       <ul>
         <li><a href="api.html#sqlalchemy_media.attachments.Image.get_objects_to_delete">(sqlalchemy_media.attachments.Image method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#sqlalchemy_media.attachments.Attachment.get_orphaned_objects">get_orphaned_objects() (sqlalchemy_media.attachments.Attachment method)</a>
+
+      <ul>
+        <li><a href="api.html#sqlalchemy_media.attachments.Image.get_orphaned_objects">(sqlalchemy_media.attachments.Image method)</a>
 </li>
       </ul></li>
       <li><a href="api.html#sqlalchemy_media.attachments.Attachment.get_store">get_store() (sqlalchemy_media.attachments.Attachment method)</a>
@@ -439,6 +447,8 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#sqlalchemy_media.attachments.Image">Image (class in sqlalchemy_media.attachments)</a>
+</li>
+      <li><a href="api.html#sqlalchemy_media.attachments.ImageList">ImageList (class in sqlalchemy_media.attachments)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -503,6 +513,8 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#sqlalchemy_media.stores.StoreManager.observe_attribute">observe_attribute() (sqlalchemy_media.stores.StoreManager class method)</a>
+</li>
+      <li><a href="api.html#sqlalchemy_media.attachments.AttachmentList.observe_item">observe_item() (sqlalchemy_media.attachments.AttachmentList method)</a>
 </li>
       <li><a href="api.html#sqlalchemy_media.stores.StoreManager.on_commit">on_commit() (sqlalchemy_media.stores.StoreManager method)</a>
 </li>
@@ -715,7 +727,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.10.1',
+            VERSION:'0.11.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

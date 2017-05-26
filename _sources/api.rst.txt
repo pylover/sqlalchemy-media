@@ -78,6 +78,14 @@ Image
    .. autoattribute:: __min_length__
 
 
+ImageList
+^^^^^^^^^
+
+.. autoclass:: ImageList
+
+   .. autoattribute:: __item_type__
+
+
 Thumbnail
 ^^^^^^^^^
 

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.stores &mdash; sqlalchemy-media 0.10.1 documentation</title>
+  <title>sqlalchemy_media.stores &mdash; sqlalchemy-media 0.11.0 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.10.1 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.11.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.10
+                0.11
               </div>
             
           
@@ -304,7 +304,8 @@
             <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_physical_path</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+        <span class="n">physical_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_physical_path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">remove</span><span class="p">(</span><span class="n">physical_path</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileLike</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_physical_path</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
@@ -667,8 +668,12 @@
 <span class="sd">        be deleted from store after session commit.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">delete_orphan</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_files_orphaned</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">attachments</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">delete_orphan</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">for</span> <span class="n">attachment</span> <span class="ow">in</span> <span class="n">attachments</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_files_orphaned</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attachment</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_files_orphaned</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">attachment</span><span class="o">.</span><span class="n">get_orphaned_objects</span><span class="p">())</span></div>
 
 <div class="viewcode-block" id="StoreManager.adopted"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.adopted">[docs]</a>    <span class="k">def</span> <span class="nf">adopted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">attachments</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -742,7 +747,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">attribute</span> <span class="ow">in</span> <span class="n">_observing_attributes</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">attribute</span><span class="o">.</span><span class="n">class_</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">register_to_delete_after_commit</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">attribute</span><span class="o">.</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span></div>
+                <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">attribute</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">register_to_delete_after_commit</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span></div>
 
 <div class="viewcode-block" id="StoreManager.observe_attribute"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.observe_attribute">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">observe_attribute</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">collection</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -807,7 +814,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.10.1',
+            VERSION:'0.11.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
