@@ -218,6 +218,10 @@ Changelog
 
 Here you can see the full list of changes made on each sqlalchemy-media release.
 
+0.11.0
+  - ImageList
+  - Observe ``AttachmentList`` items for change.
+
 0.10.0
   - OS2 Store
 
