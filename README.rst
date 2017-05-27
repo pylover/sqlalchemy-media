@@ -61,6 +61,10 @@ Overview
 - Automatically resize & reformat images before store.
 - Thanks `@YukSeungChan <https://github.com/YukSeungChan>`_, for implementing the ``S3Store`` and ``OS2Store``.
 
+Roadmap
+-------
+
+The next two milestones which can develop simultaneously are, ``SSSHStore`` and ``Video Processing.``
 
 Quick Start
 -----------
