@@ -45,7 +45,7 @@ _factories = {}
 _observing_attributes = set()
 
 
-class Store(object):
+class Store:
     """
     The abstract base class for all stores.
     """
@@ -315,6 +315,28 @@ class OS2Store(Store):
 
     def locate(self, attachment) -> str:
         return '%s/%s' % (self.public_base_url, attachment.path)
+
+
+class SSHStore(Store):
+
+    def __init__(self, ):
+
+    def put(self, filename: str, stream: FileLike) -> int:
+        """
+        **[Abstract]**
+
+        Should be overridden in inherited class and puts the file-like object as the given filename in the store.
+
+        .. versionchanged:: 0.5
+
+           - ``min_length`` has been removed.
+           - ``max_length`` has been removed.
+
+        :param filename: the target filename.
+        :param stream: the source file-like object
+        :return: length of the stored file.
+        """
+        raise NotImplementedError()  # pragma: no cover
 
 
 class StoreManager(object):
