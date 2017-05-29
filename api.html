@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; sqlalchemy-media 0.11.3 documentation</title>
+  <title>API Reference &mdash; sqlalchemy-media 0.11.4 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.11.3 documentation" href="index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.11.4 documentation" href="index.html"/>
         <link rel="prev" title="Playing with Analyzers and Validators" href="tutorials/analyzers_and_validators.html"/> 
 
   
@@ -2074,39 +2074,39 @@ inserted info <code class="docutils literal"><span class="pre">context</span></c
 <a class="reference external" href="http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.BaseImage.crop">here</a>.</p>
 <p>Including you can
 use percent <code class="docutils literal"><span class="pre">%</span></code> sing to automatically calculate the values from original image dimension:</p>
-<pre class="literal-block">
-ImageProcessor(crop=dict(width=‘50%’, height=‘50%’, gravity=’center’))
-ImageProcessor(crop=dict(width=‘10%’, height=‘10%’, gravity=’south_east’))
-</pre>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ImageProcessor</span><span class="p">(</span><span class="n">crop</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="s1">&#39;50%&#39;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="s1">&#39;50%&#39;</span><span class="p">,</span> <span class="n">gravity</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">))</span>
+<span class="n">ImageProcessor</span><span class="p">(</span><span class="n">crop</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="s1">&#39;10%&#39;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="s1">&#39;10%&#39;</span><span class="p">,</span> <span class="n">gravity</span><span class="o">=</span><span class="s1">&#39;south_east&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
 <p>Or:</p>
-<pre class="literal-block">
-ImageProcessor(crop=dict(
-   top=‘10%’,
-   bottom=‘10%’,
-   left=‘10%’,
-   right=‘10%’,
-   width=‘80%’,
-   height=‘80%’
-))
-</pre>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ImageProcessor</span><span class="p">(</span><span class="n">crop</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+   <span class="n">top</span><span class="o">=</span><span class="s1">&#39;10%&#39;</span><span class="p">,</span>
+   <span class="n">bottom</span><span class="o">=</span><span class="s1">&#39;10%&#39;</span><span class="p">,</span>
+   <span class="n">left</span><span class="o">=</span><span class="s1">&#39;10%&#39;</span><span class="p">,</span>
+   <span class="n">right</span><span class="o">=</span><span class="s1">&#39;10%&#39;</span><span class="p">,</span>
+   <span class="n">width</span><span class="o">=</span><span class="s1">&#39;80%&#39;</span><span class="p">,</span>
+   <span class="n">height</span><span class="o">=</span><span class="s1">&#39;80%&#39;</span>
+<span class="p">))</span>
+</pre></div>
+</div>
 <p>Included from wand documentation:</p>
-<pre class="literal-block">
-+————————————————–+
-|              ^                         ^         |
-|              |                         |         |
-|             top                        |         |
-|              |                         |         |
-|              v                         |         |
-| &lt;– left –&gt; +——————-+  bottom       |
-|              |             ^     |     |         |
-|              | &lt;– width –|—&gt; |     |         |
-|              |           height  |     |         |
-|              |             |     |     |         |
-|              |             v     |     |         |
-|              +——————-+     v         |
-| &lt;————— right ———-&gt;               |
-+————————————————–+
-</pre>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">+--------------------------------------------------+</span>
+<span class="o">|</span>              <span class="o">^</span>                         <span class="o">^</span>         <span class="o">|</span>
+<span class="o">|</span>              <span class="o">|</span>                         <span class="o">|</span>         <span class="o">|</span>
+<span class="o">|</span>             <span class="n">top</span>                        <span class="o">|</span>         <span class="o">|</span>
+<span class="o">|</span>              <span class="o">|</span>                         <span class="o">|</span>         <span class="o">|</span>
+<span class="o">|</span>              <span class="n">v</span>                         <span class="o">|</span>         <span class="o">|</span>
+<span class="o">|</span> <span class="o">&lt;--</span> <span class="n">left</span> <span class="o">--&gt;</span> <span class="o">+-------------------+</span>  <span class="n">bottom</span>       <span class="o">|</span>
+<span class="o">|</span>              <span class="o">|</span>             <span class="o">^</span>     <span class="o">|</span>     <span class="o">|</span>         <span class="o">|</span>
+<span class="o">|</span>              <span class="o">|</span> <span class="o">&lt;--</span> <span class="n">width</span> <span class="o">--|---&gt;</span> <span class="o">|</span>     <span class="o">|</span>         <span class="o">|</span>
+<span class="o">|</span>              <span class="o">|</span>           <span class="n">height</span>  <span class="o">|</span>     <span class="o">|</span>         <span class="o">|</span>
+<span class="o">|</span>              <span class="o">|</span>             <span class="o">|</span>     <span class="o">|</span>     <span class="o">|</span>         <span class="o">|</span>
+<span class="o">|</span>              <span class="o">|</span>             <span class="n">v</span>     <span class="o">|</span>     <span class="o">|</span>         <span class="o">|</span>
+<span class="o">|</span>              <span class="o">+-------------------+</span>     <span class="n">v</span>         <span class="o">|</span>
+<span class="o">|</span> <span class="o">&lt;---------------</span> <span class="n">right</span> <span class="o">----------&gt;</span>               <span class="o">|</span>
+<span class="o">+--------------------------------------------------+</span>
+</pre></div>
+</div>
 </li>
 </ul>
 </td>
@@ -2370,7 +2370,7 @@ requested package is not provided.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.11.3',
+            VERSION:'0.11.4',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
