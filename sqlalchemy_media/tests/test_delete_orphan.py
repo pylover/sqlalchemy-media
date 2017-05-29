@@ -5,7 +5,7 @@ from os.path import join, exists
 
 from sqlalchemy import Column, Integer
 
-from sqlalchemy_media.attachments import File, FileList, FileDict
+from sqlalchemy_media.attachments import File, FileList, FileDict, Image
 from sqlalchemy_media.stores import StoreManager
 from sqlalchemy_media.tests.helpers import Json, TempStoreTestCase
 
@@ -211,6 +211,28 @@ class DeleteOrphanTestCase(TempStoreTestCase):
             session.commit()
             self.assertFalse(exists(first_filename))
             self.assertEqual(len(person1.files), 0)
+
+    def test_delete_orphan_image(self):
+        """
+        https://github.com/pylover/sqlalchemy-media/issues/81
+        """
+        class Person(self.Base):
+            __tablename__ = 'person'
+            id = Column(Integer, primary_key=True)
+            pic = Column(Image.as_mutable(Json), nullable=True)
+
+        session = self.create_all_and_get_session()
+
+        with StoreManager(session, delete_orphan=True):
+            person1 = Person()
+            person1.pic = Image.create_from(self.cat_jpeg)
+            first_filename = join(self.temp_path, person1.pic.path)
+            session.commit()
+            self.assertTrue(exists(first_filename))
+
+            person1.pic = Image.create_from(self.dog_jpeg)
+            session.commit()
+            self.assertFalse(exists(first_filename))
 
 
 if __name__ == '__main__':  # pragma: no cover
