@@ -51,22 +51,33 @@ class STFPClientTestCase(unittest.TestCase):
         stdin, stdout, stderr = client.exec_command('ls')
         self.assertIn(split(__file__)[1],  stdout.read().decode())
 
-    def test_put_file(self):
+    def test_put_delete_file(self):
         client = self.server.client('test')
         expected_content = 'TEST text'
+        client.sftp.chdir(self.here)
 
         try:
-            f = client.sftp.file('temp/a.txt', mode='w')
+            absolute_filename = join(self.tempdir, 'a.txt')
+            filename = 'temp/a.txt'
+
+            # Putting
+            f = client.sftp.file(filename, mode='w')
             f.write(expected_content.encode())
             f.close()
+
+            with open(absolute_filename, encoding='utf8') as f:
+                content = f.read()
+
+            self.assertEqual(content, expected_content)
+
+            # Deleting
+            client.remove(filename)
+            self.assertFalse(exists(absolute_filename))
 
         finally:
             client.sftp.close()
 
-        with open(join(self.tempdir, 'a.txt'), encoding='utf8') as f:
-            content = f.read()
 
-        self.assertEqual(content, expected_content)
 
 
 

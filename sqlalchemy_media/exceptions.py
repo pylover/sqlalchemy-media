@@ -151,3 +151,9 @@ class OS2Error(SqlAlchemyMediaException):
     Raises when the image upload or delete to os2.
 
     """
+
+
+class SSHError(SqlAlchemyMediaException):
+    """
+    Raises when the ssh command is failed.
+    """

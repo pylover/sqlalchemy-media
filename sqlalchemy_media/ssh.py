@@ -7,6 +7,9 @@ import paramiko
 from paramiko.config import SSHConfig, SSH_PORT
 
 
+from sqlalchemy_media.exceptions import SSHError
+
+
 logger = logging.getLogger('ssh')
 logger.addHandler(logging.NullHandler())
 
@@ -84,3 +87,9 @@ class SSHClient(paramiko.SSHClient):
         )
 
         self._sftp_client = self.open_sftp()
+
+    def remove(self, filename):
+        stdin, stdout, stderr = self.exec_command('rm "%s"' % filename)
+        err = stderr.read()
+        if err:
+            raise SSHError('Cannot remove %s\nDetails: %s' % (filename, err))
