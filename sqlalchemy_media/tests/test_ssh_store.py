@@ -22,14 +22,13 @@ class SSHStoreTestCase(MockupSSHTestCase):
         if exists(path):
             shutil.rmtree(self.temp_path)
         makedirs(path)
-        relative_path = join(self.relative_temp_path)
-        s = SSHStore(self.create_ssh_client(), relative_path, self.base_url)
-        time.sleep(3)
+        s = SSHStore(self.create_ssh_client(), self.temp_path, self.base_url)
         return s
 
     def test_put_from_stream(self):
         store = self.create_ssh_store()
-        target_filename = 'a/b/c/file_from_stream1.txt'
+        # target_filename = 'a/b/c/file_from_stream1.txt'
+        target_filename = 'file_from_stream1.txt'
         content = b'Lorem ipsum dolor sit amet'
         stream = io.BytesIO(content)
         length = store.put(target_filename, stream)

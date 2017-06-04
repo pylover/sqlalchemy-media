@@ -221,7 +221,6 @@ class MockupSSHTestCase(SqlAlchemyTestCase):
 
     def create_ssh_client(self):
         client = self.server.client('test')
-        time.sleep(2)
         return client
 
     def tearDown(self):

@@ -18,8 +18,7 @@ class SSHClientTestCase(MockupSSHTestCase):
         expected_content = 'TEST text'
 
         try:
-            absolute_filename = join(self.temp_path, 'a.txt')
-            filename = join(self.relative_temp_path, 'a.txt')
+            filename = join(self.temp_path, 'a.txt')
 
             # Putting
             f = client.sftp.file(filename, mode='w')
@@ -27,7 +26,7 @@ class SSHClientTestCase(MockupSSHTestCase):
             f.close()
 
             # Opening the file directly using os
-            with open(absolute_filename, encoding='utf8') as f:
+            with open(filename, encoding='utf8') as f:
                 content = f.read()
             self.assertEqual(content, expected_content)
 
@@ -38,7 +37,7 @@ class SSHClientTestCase(MockupSSHTestCase):
 
             # Deleting
             client.remove(filename)
-            self.assertFalse(exists(absolute_filename))
+            self.assertFalse(exists(filename))
 
         finally:
             client.sftp.close()
