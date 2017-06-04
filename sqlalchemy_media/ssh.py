@@ -89,7 +89,7 @@ class SSHClient(paramiko.SSHClient):
         self._sftp_client = self.open_sftp()
 
     def remove(self, filename):
-        stdin, stdout, stderr = self.exec_command('rm "%s"' % filename)
+        stdin, stdout, stderr = self.exec_command(b'rm "%s"' % filename.encode())
         err = stderr.read()
         if err:
             raise SSHError('Cannot remove %s\nDetails: %s' % (filename, err))

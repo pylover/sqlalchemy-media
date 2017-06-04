@@ -1,6 +1,6 @@
 
 import unittest
-from os.path import join, split, exists
+from os.path import join, exists
 
 
 from sqlalchemy_media.tests.helpers import MockupSSHTestCase

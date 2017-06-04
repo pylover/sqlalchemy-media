@@ -344,7 +344,7 @@ class SSHStore(Store):
     def put(self, filename: str, stream: FileLike) -> int:
         remote_filename = self._get_remote_path(filename)
         remote_directory = dirname(remote_filename)
-        self.ssh_client.exec_command('mkdir -p "%s"' % remote_directory)
+        self.ssh_client.exec_command(b'mkdir -p "%s"' % remote_directory.encode())
         result = self.ssh_client.sftp.putfo(stream, remote_filename)
         return result.st_size
 

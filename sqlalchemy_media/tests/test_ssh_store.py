@@ -1,4 +1,5 @@
 
+import time
 import unittest
 import io
 import shutil
@@ -22,7 +23,9 @@ class SSHStoreTestCase(MockupSSHTestCase):
             shutil.rmtree(self.temp_path)
         makedirs(path)
         relative_path = join(self.relative_temp_path)
-        return SSHStore(self.create_ssh_client(), relative_path, self.base_url)
+        s = SSHStore(self.create_ssh_client(), relative_path, self.base_url)
+        time.sleep(3)
+        return s
 
     def test_put_from_stream(self):
         store = self.create_ssh_store()
