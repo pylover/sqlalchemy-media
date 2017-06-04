@@ -1,4 +1,3 @@
-
 from typing import Tuple, AnyStr
 import unittest
 import threading
@@ -8,7 +7,7 @@ import json
 import shutil
 import io
 import base64
-from os import makedirs, urandom, mkdir
+from os import makedirs, urandom
 from os.path import join, dirname, abspath, exists, split
 from http.server import HTTPServer, BaseHTTPRequestHandler, HTTPStatus
 
@@ -26,13 +25,11 @@ from sqlalchemy_media.helpers import copy_stream
 from sqlalchemy_media.mimetypes_ import guess_type
 from sqlalchemy_media.ssh import SSHClient
 
-
 Address = Tuple[str, int]
 
 
 @contextlib.contextmanager
-def simple_http_server(content: bytes= b'Simple file content.', bind: Address=('', 0), content_type: str=None):
-
+def simple_http_server(content: bytes = b'Simple file content.', bind: Address = ('', 0), content_type: str = None):
     class SimpleHandler(BaseHTTPRequestHandler):  # pragma: no cover
 
         def serve_text(self):
@@ -92,7 +89,6 @@ class Json(TypeDecorator):  # pragma: no cover
 
 
 class SqlAlchemyTestCase(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls):
         cls.db_uri = 'sqlite:///:memory:'
@@ -114,7 +110,6 @@ class SqlAlchemyTestCase(unittest.TestCase):
 
 
 class TempStoreTestCase(SqlAlchemyTestCase):
-
     @classmethod
     def setUpClass(cls):
         cls.this_dir = abspath(dirname(__file__))
@@ -147,7 +142,7 @@ class TempStoreTestCase(SqlAlchemyTestCase):
         super().setUp()
 
 
-def encode_multipart_data(fields: dict=None, files: dict=None):  # pragma: no cover
+def encode_multipart_data(fields: dict = None, files: dict = None):  # pragma: no cover
     boundary = ''.join(['-----', base64.urlsafe_b64encode(urandom(27)).decode()])
     crlf = b'\r\n'
     lines = []
@@ -188,31 +183,35 @@ def encode_multipart_data(fields: dict=None, files: dict=None):  # pragma: no co
 
 
 class MockupSSHServer(mockssh.Server):
-
     def client(self, uid):
         private_key_path, _ = self._users[uid]
-        c = SSHClient()
-        host_keys = c.get_host_keys()
+        client = SSHClient()
+        host_keys = client.get_host_keys()
         key = paramiko.RSAKey.from_private_key_file(SERVER_KEY_PATH)
         host_keys.add(self.host, "ssh-rsa", key)
         host_keys.add("[%s]:%d" % (self.host, self.port), "ssh-rsa", key)
-        c.set_missing_host_key_policy(paramiko.RejectPolicy())
-        c.connect(hostname=self.host,
-                  port=self.port,
-                  username=uid,
-                  key_filename=private_key_path,
-                  allow_agent=False,
-                  look_for_keys=False)
-        return c
+        client.set_missing_host_key_policy(paramiko.RejectPolicy())
+        client.connect(
+            hostname=self.host,
+            port=self.port,
+            username=uid,
+            key_filename=private_key_path,
+            allow_agent=False,
+            look_for_keys=False
+        )
+        return client
 
 
 class MockupSSHTestCase(SqlAlchemyTestCase):
-
     def setUp(self):
         self.here = abspath(dirname(__file__))
-        self.temp_path = join(self.here, 'temp')
-        if not exists(self.temp_path):
-            mkdir(self.temp_path)
+        self.relative_temp_path = join('temp', self.__class__.__name__, self._testMethodName)
+        self.temp_path = join(self.here, self.relative_temp_path)
+        # Remove previous files, if any! to make a clean temp directory:
+        if exists(self.temp_path):  # pragma: no cover
+            shutil.rmtree(self.temp_path)
+
+        makedirs(self.temp_path)
 
         self.users = {
             'test': join(self.here, 'stuff', 'test-id_rsa')

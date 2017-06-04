@@ -320,7 +320,8 @@ class OS2Store(Store):
 
 class SSHStore(Store):
 
-    def __init__(self, hostname, base_url, ssh_config_file=None, **kwargs):
+    def __init__(self, hostname, root_path, base_url, ssh_config_file=None, **kwargs):
+        self.root_path = root_path
         self.base_url = base_url.rstrip('/')
         if isinstance(hostname, SSHClient):
             self.ssh_client = hostname
@@ -329,12 +330,21 @@ class SSHStore(Store):
             self.ssh_client.load_config_file(filename=ssh_config_file)
             self.ssh_client.connect(hostname, **kwargs)
 
-    def put(self, filename: str, stream: FileLike) -> int:
-        # Check if directory exists
-        directories, name = split(filename)
-        self.ssh_client.exec_command('mkdir -p "%s"' % directories)
+        self.ssh_client.sftp.chdir(None)
 
-        return self.ssh_client.sftp.putfo(stream, filename).st_size
+    def _get_remote_path(self, filename):
+        return join(self.root_path, filename)
+
+    def put(self, filename: str, stream: FileLike) -> int:
+        remote_filename = self._get_remote_path(filename)
+        remote_directory = dirname(remote_filename)
+        self.ssh_client.exec_command('mkdir -p "%s"' % remote_directory)
+        result = self.ssh_client.sftp.putfo(stream, remote_filename)
+        return result.st_size
+
+    def delete(self, filename: str) -> None:
+        remote_filename = self._get_remote_path(filename)
+        self.ssh_client.remove(remote_filename)
 
 
 class StoreManager(object):

@@ -16,11 +16,10 @@ class SSHClientTestCase(MockupSSHTestCase):
     def test_put_delete_open_file(self):
         client = self.create_ssh_client()
         expected_content = 'TEST text'
-        client.sftp.chdir(self.here)
 
         try:
             absolute_filename = join(self.temp_path, 'a.txt')
-            filename = 'temp/a.txt'
+            filename = join(self.relative_temp_path, 'a.txt')
 
             # Putting
             f = client.sftp.file(filename, mode='w')
