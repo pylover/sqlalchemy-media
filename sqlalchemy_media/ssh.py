@@ -11,7 +11,7 @@ logger = logging.getLogger('ssh')
 logger.addHandler(logging.NullHandler())
 
 
-class SFTPClient(paramiko.SSHClient):
+class SSHClient(paramiko.SSHClient):
     config = SSHConfig()
     _sftp_client = None
 
@@ -23,7 +23,7 @@ class SFTPClient(paramiko.SSHClient):
         filename = filename or self.config_file
         with open(filename) as f:
             self.config.parse(f)
-            
+
     @property
     def config_file(self):
         return '%s/config' % self.config_directory
@@ -56,7 +56,7 @@ class SFTPClient(paramiko.SSHClient):
             banner_timeout=None):
         options = self.config.lookup(hostname)
 
-        identity_file = options.get('identityfile', key_filename)
+        identity_file = options.get('identityfile', [key_filename])
         if identity_file:
             identity_file = identity_file[0]
         if identity_file and not identity_file.startswith('/'):

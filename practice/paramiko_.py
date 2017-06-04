@@ -1,8 +1,8 @@
 
-from sqlalchemy_media.ssh import SFTPClient
+from sqlalchemy_media.ssh import SSHClient
 
 if __name__ == '__main__':
-    ssh = SFTPClient()
+    ssh = SSHClient()
     ssh.load_config_file()
     ssh.connect('carrene-new')
     stdin, stdout, stderr = ssh.exec_command('ls')
