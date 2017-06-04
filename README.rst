@@ -221,6 +221,9 @@ Changelog
 
 Here you can see the full list of changes made on each sqlalchemy-media release.
 
+0.12.0
+  - SSH/SFTP Store
+
 0.11.0
   - ImageList
   - Observe ``AttachmentList`` items for change.
