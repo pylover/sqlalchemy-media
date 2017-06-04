@@ -40,7 +40,7 @@ class FileSystemStoreTestCase(unittest.TestCase):
 
     def test_open(self):
         store = FileSystemStore(self.temp_path, self.base_url)
-        target_filename = 'test_delete/sample_text_file1.txt'
+        target_filename = 'test_open/sample_text_file1.txt'
         with open(self.sample_text_file1, 'rb') as f:
             length = store.put(target_filename, f)
         self.assertEqual(length, getsize(self.sample_text_file1))

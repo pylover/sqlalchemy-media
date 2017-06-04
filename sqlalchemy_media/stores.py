@@ -346,6 +346,10 @@ class SSHStore(Store):
         remote_filename = self._get_remote_path(filename)
         self.ssh_client.remove(remote_filename)
 
+    def open(self, filename: str, mode: str='rb'):
+        remote_filename = self._get_remote_path(filename)
+        return self.ssh_client.sftp.open(remote_filename, mode=mode)
+
 
 class StoreManager(object):
     """
