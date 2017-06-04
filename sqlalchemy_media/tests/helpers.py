@@ -8,18 +8,23 @@ import json
 import shutil
 import io
 import base64
-from os import makedirs, urandom
+from os import makedirs, urandom, mkdir
 from os.path import join, dirname, abspath, exists, split
 from http.server import HTTPServer, BaseHTTPRequestHandler, HTTPStatus
 
 from sqlalchemy import Unicode, TypeDecorator, create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+# TODO: optionals
+import paramiko
+import mockssh
+from mockssh.server import SERVER_KEY_PATH
 
 from sqlalchemy_media import StoreManager, FileSystemStore
 from sqlalchemy_media.typing_ import FileLike
 from sqlalchemy_media.helpers import copy_stream
 from sqlalchemy_media.mimetypes_ import guess_type
+from sqlalchemy_media.ssh import SSHClient
 
 
 Address = Tuple[str, int]
@@ -182,14 +187,41 @@ def encode_multipart_data(fields: dict=None, files: dict=None):  # pragma: no co
     return content_type, body, length
 
 
-if __name__ == '__main__':  # pragma: no cover
-    ct, b, len_ = encode_multipart_data(dict(test1='TEST1VALUE'), files=dict(cat='stuff/cat.jpg'))
-    print(ct)
-    print(len_)
-    print(b.read())
+class MockupSSHServer(mockssh.Server):
 
-#    with simple_http_server(bind=('', 8080), content=b'simple text') as httpd:
-#     with simple_http_server(bind=('', 8080), content='stuff/cat.jpg') as httpd:
-#         target_url = 'http://%s:%s' % httpd.server_address
-#         print(target_url)
-#         time.sleep(1000)
+    def client(self, uid):
+        private_key_path, _ = self._users[uid]
+        c = SSHClient()
+        host_keys = c.get_host_keys()
+        key = paramiko.RSAKey.from_private_key_file(SERVER_KEY_PATH)
+        host_keys.add(self.host, "ssh-rsa", key)
+        host_keys.add("[%s]:%d" % (self.host, self.port), "ssh-rsa", key)
+        c.set_missing_host_key_policy(paramiko.RejectPolicy())
+        c.connect(hostname=self.host,
+                  port=self.port,
+                  username=uid,
+                  key_filename=private_key_path,
+                  allow_agent=False,
+                  look_for_keys=False)
+        return c
+
+
+class MockupSSHTestCase(SqlAlchemyTestCase):
+
+    def setUp(self):
+        self.here = abspath(dirname(__file__))
+        self.temp_path = join(self.here, 'temp')
+        if not exists(self.temp_path):
+            mkdir(self.temp_path)
+
+        self.users = {
+            'test': join(self.here, 'stuff', 'test-id_rsa')
+        }
+        self.server = MockupSSHServer(self.users)
+        self.server.__enter__()
+
+    def create_ssh_client(self):
+        return self.server.client('test')
+
+    def tearDown(self):
+        self.server.__exit__()

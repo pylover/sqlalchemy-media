@@ -1,6 +1,6 @@
 from io import BytesIO
 from os import makedirs, remove
-from os.path import abspath, join, dirname, exists
+from os.path import abspath, join, dirname, exists, split
 from typing import Iterable
 
 from sqlalchemy import event
@@ -12,6 +12,7 @@ from sqlalchemy_media.exceptions import ContextError, DefaultStoreError, \
 from sqlalchemy_media.helpers import copy_stream
 from sqlalchemy_media.optionals import ensure_aws4auth, ensure_os2auth
 from sqlalchemy_media.typing_ import FileLike
+from sqlalchemy_media.ssh import SSHClient
 
 # Importing optional stuff required by http based store
 try:
@@ -319,25 +320,21 @@ class OS2Store(Store):
 
 class SSHStore(Store):
 
-    def __init__(self, ):
-        pass
+    def __init__(self, hostname, base_url, ssh_config_file=None, **kwargs):
+        self.base_url = base_url.rstrip('/')
+        if isinstance(hostname, SSHClient):
+            self.ssh_client = hostname
+        else:
+            self.ssh_client = SSHClient()
+            self.ssh_client.load_config_file(filename=ssh_config_file)
+            self.ssh_client.connect(hostname, **kwargs)
 
     def put(self, filename: str, stream: FileLike) -> int:
-        """
-        **[Abstract]**
+        # Check if directory exists
+        directories, name = split(filename)
+        self.ssh_client.exec_command('mkdir -p "%s"' % directories)
 
-        Should be overridden in inherited class and puts the file-like object as the given filename in the store.
-
-        .. versionchanged:: 0.5
-
-           - ``min_length`` has been removed.
-           - ``max_length`` has been removed.
-
-        :param filename: the target filename.
-        :param stream: the source file-like object
-        :return: length of the stored file.
-        """
-        raise NotImplementedError()  # pragma: no cover
+        return self.ssh_client.sftp.putfo(stream, filename).st_size
 
 
 class StoreManager(object):
