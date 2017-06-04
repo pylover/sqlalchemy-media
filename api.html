@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; sqlalchemy-media 0.11.4 documentation</title>
+  <title>API Reference &mdash; sqlalchemy-media 0.12.0 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.11.4 documentation" href="index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.12.0 documentation" href="index.html"/>
         <link rel="prev" title="Playing with Analyzers and Validators" href="tutorials/analyzers_and_validators.html"/> 
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.11
+                0.12
               </div>
             
           
@@ -123,6 +123,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#store">Store</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#filesystemstore">FileSystemStore</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#s3store">S3Store</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#os2store">OS2Store</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sshstore">SSHStore</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#storemanager">StoreManager</a></li>
 </ul>
 </li>
@@ -1523,6 +1525,26 @@ If not overridden, no error will be raised.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="os2store">
+<h3>OS2Store<a class="headerlink" href="#os2store" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.stores.OS2Store">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.stores.</code><code class="descname">OS2Store</code><span class="sig-paren">(</span><em>bucket: str</em>, <em>access_key: str</em>, <em>secret_key: str</em>, <em>region: str</em>, <em>max_age: int = 31536000</em>, <em>base_headers: dict = None</em>, <em>prefix: str = None</em>, <em>public_base_url: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores.html#OS2Store"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.OS2Store" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.stores.Store" title="sqlalchemy_media.stores.Store"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.stores.Store</span></code></a></p>
+<p>Store for dealing with oss of aliyun</p>
+</dd></dl>
+
+</div>
+<div class="section" id="sshstore">
+<h3>SSHStore<a class="headerlink" href="#sshstore" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="sqlalchemy_media.stores.SSHStore">
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.stores.</code><code class="descname">SSHStore</code><span class="sig-paren">(</span><em>hostname</em>, <em>root_path</em>, <em>base_url</em>, <em>ssh_config_file=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores.html#SSHStore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.SSHStore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.stores.Store" title="sqlalchemy_media.stores.Store"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.stores.Store</span></code></a></p>
+<p>Store for SSH protocol. aka SFTP</p>
+</dd></dl>
+
+</div>
 <div class="section" id="storemanager">
 <h3>StoreManager<a class="headerlink" href="#storemanager" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
@@ -2281,6 +2303,15 @@ requested package is not provided.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="sqlalchemy_media.optionals.ensure_paramiko">
+<code class="descclassname">sqlalchemy_media.optionals.</code><code class="descname">ensure_paramiko</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/optionals.html#ensure_paramiko"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.optionals.ensure_paramiko" title="Permalink to this definition">¶</a></dt>
+<dd><div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last"><a class="reference internal" href="#sqlalchemy_media.exceptions.OptionalPackageRequirementError" title="sqlalchemy_media.exceptions.OptionalPackageRequirementError"><code class="xref py py-exc docutils literal"><span class="pre">OptionalPackageRequirementError</span></code></a> will be raised if <code class="docutils literal"><span class="pre">paramiko</span></code> is not installed.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
 <dt id="sqlalchemy_media.optionals.ensure_wand">
 <code class="descclassname">sqlalchemy_media.optionals.</code><code class="descname">ensure_wand</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/optionals.html#ensure_wand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.optionals.ensure_wand" title="Permalink to this definition">¶</a></dt>
 <dd><div class="admonition warning">
@@ -2370,7 +2401,7 @@ requested package is not provided.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.11.4',
+            VERSION:'0.12.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
