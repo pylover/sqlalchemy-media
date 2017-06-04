@@ -51,7 +51,7 @@ class STFPClientTestCase(unittest.TestCase):
         stdin, stdout, stderr = client.exec_command('ls')
         self.assertIn(split(__file__)[1],  stdout.read().decode())
 
-    def test_put_delete_file(self):
+    def test_put_delete_open_file(self):
         client = self.server.client('test')
         expected_content = 'TEST text'
         client.sftp.chdir(self.here)
@@ -65,9 +65,14 @@ class STFPClientTestCase(unittest.TestCase):
             f.write(expected_content.encode())
             f.close()
 
+            # Opening the file directly using os
             with open(absolute_filename, encoding='utf8') as f:
                 content = f.read()
+            self.assertEqual(content, expected_content)
 
+            # Opening via ssh client
+            with client.sftp.open(filename) as f:
+                content = f.read().decode()
             self.assertEqual(content, expected_content)
 
             # Deleting
