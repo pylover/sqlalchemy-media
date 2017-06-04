@@ -320,6 +320,7 @@ class OS2Store(Store):
 class SSHStore(Store):
 
     def __init__(self, ):
+        pass
 
     def put(self, filename: str, stream: FileLike) -> int:
         """

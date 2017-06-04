@@ -2,9 +2,16 @@ import asyncio
 import subprocess
 import uuid
 from os.path import dirname, join, basename
+import logging
 
 
-class SSSHClient(object):
+logger = logging.getLogger('ssh')
+logger.addHandler(logging.NullHandler())
+
+chunk_size = 1024
+
+
+class SubprocessSSHClient(object):
 
     def __init__(self, host, ssh_executable='/usr/bin/ssh', scp_executable='/usr/bin/scp -3', max_tries=5, debug=False):
         self.host = host
@@ -39,7 +46,7 @@ class SSSHClient(object):
             stderr=subprocess.PIPE,
             stdin=stdin,
         )
-        stdout, stderr = await cmd.communicate()
+        stdout, stderr = cmd.communicate()
         stdout, stderr = stdout.strip(), stderr.strip()
 
         if stderr:
@@ -53,13 +60,13 @@ class SSSHClient(object):
                 # retrying
                 if stdin is not None and stdin.can_seek():
                     stdin.seek(0)
-                return await self.execute_ssh_command(remote_command, stdin=None, retry_count=retry_count + 1)
+                return self.execute_ssh_command(remote_command, stdin=None, retry_count=retry_count + 1)
             else:
                 raise SshClientError(cmd_string, cmd.returncode, stderr)
 
         return stdout
 
-    async def execute_scp_command(self, args, retry_count=0, **kw):
+    def execute_scp_command(self, args, retry_count=0, **kw):
         cmd_string = ' '.join([
             self.scp_executable,
             args
@@ -67,13 +74,13 @@ class SSSHClient(object):
 
         logger.debug("Executing: %s" % cmd_string)
 
-        cmd = await asyncio.create_subprocess_shell(
+        cmd = asyncio.create_subprocess_shell(
             cmd_string,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             **kw
         )
-        stdout, stderr = await cmd.communicate()
+        stdout, stderr = cmd.communicate()
         stdout, stderr = stdout.strip(), stderr.strip()
 
         if stderr:
@@ -85,15 +92,15 @@ class SSSHClient(object):
         if cmd.returncode != 0:
             if retry_count <= self.max_tries:
                 # retrying
-                return await self.execute_scp_command(args, retry_count=retry_count+1, **kw)
+                return self.execute_scp_command(args, retry_count=retry_count+1, **kw)
             else:
                 raise SshClientError(cmd_string, cmd.returncode, stderr)
 
         return stdout
 
-    async def store_file(self, src_file, dest_path):
+    def store_file(self, src_file, dest_path):
         """
-        async feeding stdin
+        feeding stdin
         See http://stackoverflow.com/a/37710228/680372
         :param src_file:
         :param dest_path:
@@ -102,22 +109,22 @@ class SSSHClient(object):
         dir_name = dirname(dest_path)
         stdout, stderr = [], []
 
-        async def async_file_reader(f, buffer):
-            async for l in f:
+        def async_file_reader(f, buffer):
+            for l in f:
                 if l:
                     buffer.append(l.decode().strip())
                 else:
                     break
 
-        async def async_file_writer(source_file, target_file):
+        def async_file_writer(source_file, target_file):
             while True:
-                input_chunk = await source_file.read(settings.io.chunk_size)
+                input_chunk = source_file.read(chunk_size)
                 if input_chunk:
                     target_file.write(input_chunk)
                 else:
                     target_file.write_eof()
                     break
-            await target_file.drain()
+            target_file.drain()
 
         cmd_string = ' '.join([
             self.ssh_executable,
@@ -130,20 +137,20 @@ class SSSHClient(object):
 
         logger.debug("Executing: %s" % cmd_string)
 
-        cmd = await asyncio.create_subprocess_shell(
+        cmd = asyncio.create_subprocess_shell(
             cmd_string,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
 
-        await asyncio.gather(*[
+        asyncio.gather(*[
             async_file_reader(cmd.stdout, stdout),
             async_file_reader(cmd.stderr, stderr),
             async_file_writer(src_file, cmd.stdin)
         ])
 
-        status = await cmd.wait()
+        status = cmd.wait()
         stdout, stderr = '\n'.join(stdout), '\n'.join(stderr)
 
         if stderr:
@@ -155,30 +162,30 @@ class SSSHClient(object):
         if status != 0:
             raise SshClientError(cmd_string, cmd.returncode, stderr)
 
-    async def replicate(self, src_host, src_filename, dst_filename):
+    def replicate(self, src_host, src_filename, dst_filename):
         dst_dirname = dirname(dst_filename)
-        await self.execute_ssh_command('mkdir -p %s' % self.quote_filename_for_ssh(dst_dirname))
-        await self.execute_scp_command("-r %(src_host)s:'%(src_filename)s' %(dst_host)s:'%(dst_filename)s'" % dict(
+        self.execute_ssh_command('mkdir -p %s' % self.quote_filename_for_ssh(dst_dirname))
+        self.execute_scp_command("-r %(src_host)s:'%(src_filename)s' %(dst_host)s:'%(dst_filename)s'" % dict(
             src_host=src_host,
             src_filename=self.quote_filename_for_scp(src_filename),
             dst_host=self.host,
             dst_filename=self.quote_filename_for_scp(dst_filename)
         ))
 
-    async def move_file_to_trash(self, filename, destination_filename):
+    def move_file_to_trash(self, filename, destination_filename):
         destination_directory = dirname(destination_filename)
         destination_filename = join(destination_directory, '%s_%s' % (uuid.uuid1(), basename(filename)))
-        await self.execute_ssh_command('mkdir -p %s; mv %s %s' % (
+        self.execute_ssh_command('mkdir -p %s; mv %s %s' % (
             self.quote_filename_for_ssh(destination_directory),
             self.quote_filename_for_ssh(filename),
             self.quote_filename_for_ssh(destination_filename)
         ))
 
-    async def delete_file(self, filename):
-        await self.execute_ssh_command('rm %s' % self.quote_filename_for_ssh(filename))
+    def delete_file(self, filename):
+        self.execute_ssh_command('rm %s' % self.quote_filename_for_ssh(filename))
 
-    async def get_idle_time(self):
-        output = await self.execute_ssh_command(
+    def get_idle_time(self):
+        output = self.execute_ssh_command(
             "iostat -c | tail -n 2 | head -n 1 | awk '{ print $6 }'"
         )
         return float(output.strip())

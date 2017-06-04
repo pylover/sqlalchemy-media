@@ -76,7 +76,6 @@ docs/doctest
 docs/doctrees
 docs/html
 htmlcov
-practice
 /examples/cherrypy-demo/avatars
 /examples/cherrypy-demo/demo.db
 /examples/flask/demo.db
