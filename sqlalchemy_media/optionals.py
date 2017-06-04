@@ -95,3 +95,22 @@ def ensure_os2auth():
 
     if OS2Auth is None:  # pragma: no cover
         raise OptionalPackageRequirementError('requests-aliyun')
+
+
+# paramiko
+try:
+    # noinspection PyPackageRequirements
+    import paramiko
+except ImportError:  # pragma: no cover
+    paramiko = None
+
+
+def ensure_paramiko():
+    """
+
+    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``paramiko`` is not installed.
+
+    """
+
+    if paramiko is None:  # pragma: no cover
+        raise OptionalPackageRequirementError('paramiko')

@@ -10,9 +10,8 @@ from sqlalchemy_media.context import get_id as get_context_id
 from sqlalchemy_media.exceptions import ContextError, DefaultStoreError, \
     S3Error, OS2Error
 from sqlalchemy_media.helpers import copy_stream
-from sqlalchemy_media.optionals import ensure_aws4auth, ensure_os2auth
+from sqlalchemy_media.optionals import ensure_aws4auth, ensure_os2auth, ensure_paramiko
 from sqlalchemy_media.typing_ import FileLike
-from sqlalchemy_media.ssh import SSHClient
 
 # Importing optional stuff required by http based store
 try:
@@ -319,8 +318,15 @@ class OS2Store(Store):
 
 
 class SSHStore(Store):
+    """
+    Store for SSH protocol. aka SFTP
+
+    """
 
     def __init__(self, hostname, root_path, base_url, ssh_config_file=None, **kwargs):
+        ensure_paramiko()
+        from sqlalchemy_media.ssh import SSHClient
+
         self.root_path = root_path
         self.base_url = base_url.rstrip('/')
         if isinstance(hostname, SSHClient):
@@ -349,6 +355,9 @@ class SSHStore(Store):
     def open(self, filename: str, mode: str='rb'):
         remote_filename = self._get_remote_path(filename)
         return self.ssh_client.sftp.open(remote_filename, mode=mode)
+
+    def locate(self, attachment) -> str:
+        return '%s/%s' % (self.base_url, attachment.path)
 
 
 class StoreManager(object):

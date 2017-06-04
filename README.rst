@@ -60,6 +60,7 @@ Overview
 - Validating ``mimetype``, ``width``, ``height`` and image ``ratio``.
 - Automatically resize & reformat images before store.
 - Thanks `@YukSeungChan <https://github.com/YukSeungChan>`_, for implementing the ``S3Store`` and ``OS2Store``.
+- SSH/SFTP Store
 
 Roadmap
 -------

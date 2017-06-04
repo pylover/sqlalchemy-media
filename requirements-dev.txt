@@ -6,3 +6,4 @@ coveralls
 sphinx_rtd_theme
 flask
 moto
+mock-ssh-server

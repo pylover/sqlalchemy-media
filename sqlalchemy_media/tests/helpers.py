@@ -6,6 +6,7 @@ import contextlib
 import json
 import shutil
 import io
+import time
 import base64
 from os import makedirs, urandom
 from os.path import join, dirname, abspath, exists, split
@@ -14,7 +15,6 @@ from http.server import HTTPServer, BaseHTTPRequestHandler, HTTPStatus
 from sqlalchemy import Unicode, TypeDecorator, create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-# TODO: optionals
 import paramiko
 import mockssh
 from mockssh.server import SERVER_KEY_PATH
@@ -220,7 +220,9 @@ class MockupSSHTestCase(SqlAlchemyTestCase):
         self.server.__enter__()
 
     def create_ssh_client(self):
-        return self.server.client('test')
+        client = self.server.client('test')
+        time.sleep(2)
+        return client
 
     def tearDown(self):
         self.server.__exit__()

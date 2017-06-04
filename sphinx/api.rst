@@ -157,6 +157,18 @@ S3Store
 .. autoclass:: S3Store
 
 
+OS2Store
+^^^^^^^^
+
+.. autoclass:: OS2Store
+
+
+SSHStore
+^^^^^^^^
+
+.. autoclass:: SSHStore
+
+
 StoreManager
 ^^^^^^^^^^^^
 
