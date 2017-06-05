@@ -2,6 +2,7 @@ env:
   global:
     - ENCRYPTION_LABEL: 5d394e7a0b2a
     - COMMIT_AUTHOR_EMAIL: vahid@dobisel.com
+    - COVERALLS_REPO_TOKEN: EPmtPFA34H0pNb0bIeWVXagZ1EFmRck7Z
 
 language: python
 #sudo: required
