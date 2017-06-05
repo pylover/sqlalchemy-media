@@ -11,6 +11,9 @@ class FileSystemStore(Store):
     """
     Store for dealing with local file-system.
 
+    :param root_path: The path to a directory to store files.
+    :param base_url: The base url path to include at the beginning of the file's path to yield the access url.
+    :param chunk_size: Length of the chunks to read/write from/to files. default: 32768
     """
 
     def __init__(self, root_path: str, base_url: str, chunk_size: int=32768):

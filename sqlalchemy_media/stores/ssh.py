@@ -9,6 +9,15 @@ class SSHStore(Store):
     """
     Store for SSH protocol. aka SFTP
 
+    .. versionadded:: 0.12.0
+
+    :param hostname: The ssh server's hostname to connect to. It will be looked-up from ssh config file to find
+                     another options if given.
+                     An instance of the :class:`paramiko.SSHClient` may be passed instead of the hostname.
+    :param root_path: The path to a directory on the ssh server to store files.
+    :param base_url: The base url path to include at the beginning of the file's path to yield the access url.
+    :param ssh_config_file: The standard ssh config file. is not given, the file `$HOME/.ssh/config` will be tried.
+    :param kwargs: Additional keyword arguments to pass to the :class:`paramiko.SSHClient`
     """
 
     def __init__(self, hostname, root_path, base_url, ssh_config_file=None, **kwargs):
