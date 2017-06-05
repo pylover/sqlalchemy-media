@@ -151,7 +151,7 @@ class OS2StoreTestCase(SqlAlchemyTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        if not REAL_TEST and hasattr(cls, 'server_p'):
+        if not REAL_TEST and hasattr(cls, 'server_process'):
             cls.server_p.terminate()
 
     def setUp(self):

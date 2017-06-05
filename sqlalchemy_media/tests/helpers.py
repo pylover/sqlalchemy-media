@@ -29,9 +29,17 @@ Address = Tuple[str, int]
 
 
 @contextlib.contextmanager
-def simple_http_server(content: bytes = b'Simple file content.', bind: Address = ('', 0), content_type: str = None):
-    class SimpleHandler(BaseHTTPRequestHandler):  # pragma: no cover
+def simple_http_server(handler: BaseHTTPRequestHandler, bind: Address = ('', 0)):
+    http_server = HTTPServer(bind, handler)
+    thread = threading.Thread(target=http_server.serve_forever, name='sa-media test server.', daemon=True)
+    thread.start()
+    yield http_server
+    http_server.shutdown()
+    thread.join()
 
+
+def mockup_http_static_server(content: bytes = b'Simple file content.', content_type: str = None, **kwargs):
+    class StaticMockupHandler(BaseHTTPRequestHandler):  # pragma: no cover
         def serve_text(self):
             self.send_header('Content-Type', "text/plain")
             self.send_header('Content-Length', str(len(content)))
@@ -66,12 +74,7 @@ def simple_http_server(content: bytes = b'Simple file content.', bind: Address =
                 # noinspection PyTypeChecker
                 self.serve_stream(content)
 
-    http_server = HTTPServer(bind, SimpleHandler)
-    thread = threading.Thread(target=http_server.serve_forever, name='sa-media test server.', daemon=True)
-    thread.start()
-    yield http_server
-    http_server.shutdown()
-    thread.join()
+    return simple_http_server(StaticMockupHandler, **kwargs)
 
 
 # noinspection PyAbstractClass

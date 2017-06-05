@@ -2,7 +2,7 @@ import io
 import logging
 import unittest
 import time
-from multiprocessing import Process
+from multiprocessing import Process, Event
 from os.path import join, dirname, abspath, getsize
 
 # noinspection PyPackageRequirements
@@ -61,9 +61,9 @@ class S3StoreTestCase(SqlAlchemyTestCase):
 
     def setUp(self):
         super(S3StoreTestCase, self).setUp()
-        self.server_p = Process(target=run_s3_server)
-        self.server_p.daemon = True
-        self.server_p.start()
+        self.server_process = Process(target=run_s3_server)
+        self.server_process.daemon = True
+        self.server_process.start()
         time.sleep(2)
 
         # create test bucket
@@ -77,7 +77,7 @@ class S3StoreTestCase(SqlAlchemyTestCase):
 
     def tearDown(self):
         super(S3StoreTestCase, self).tearDown()
-        self.server_p.terminate()
+        self.server_process.terminate()
 
     def test_put_from_stream(self):
         store = _get_s3_store()

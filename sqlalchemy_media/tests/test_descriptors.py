@@ -5,7 +5,7 @@ import cgi
 from os.path import dirname, abspath, join, split
 
 from sqlalchemy_media.helpers import copy_stream, md5sum
-from sqlalchemy_media.tests.helpers import simple_http_server, encode_multipart_data
+from sqlalchemy_media.tests.helpers import mockup_http_static_server, encode_multipart_data
 from sqlalchemy_media.descriptors import AttachableDescriptor, LocalFileSystemDescriptor, CgiFieldStorageDescriptor, \
     UrlDescriptor, StreamDescriptor
 from sqlalchemy_media.exceptions import MaximumLengthIsReachedError, DescriptorOperationError
@@ -99,7 +99,7 @@ class AttachableDescriptorsTestCase(unittest.TestCase):
 
     def test_url(self):
 
-        with simple_http_server(self.cat_jpeg) as http_server:
+        with mockup_http_static_server(self.cat_jpeg) as http_server:
             url = 'http://%s:%s' % http_server.server_address
             descriptor = AttachableDescriptor(url)
 
@@ -131,7 +131,7 @@ class AttachableDescriptorsTestCase(unittest.TestCase):
 
     def test_force_seekable(self):
 
-        with simple_http_server(self.cat_jpeg) as http_server:
+        with mockup_http_static_server(self.cat_jpeg) as http_server:
             url = 'http://%s:%s' % http_server.server_address
             original_sum = md5sum(self.cat_jpeg)
 
