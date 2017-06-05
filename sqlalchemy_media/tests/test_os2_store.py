@@ -50,15 +50,15 @@ class OS2StoreTestCase(SqlAlchemyTestCase):
             length = store.put(target_filename, stream)
             self.assertEqual(length, len(content))
             self.assertIsInstance(store.open(target_filename), io.BytesIO)
-    #
-    # def test_put_error(self):
-    #     store = _get_os2_store(bucket='{0}-2'.format(TEST_BUCKET))
-    #     target_filename = 'test_put_from_stream/file_from_stream1.txt'
-    #     content = b'Lorem ipsum dolor sit amet'
-    #     stream = io.BytesIO(content)
-    #
-    #     with self.assertRaises(OS2Error):
-    #         store.put(target_filename, stream)
+
+    def test_put_error(self):
+        with mockup_os2_server(self.temp_path, TEST_BUCKET) as (server, url):
+            store = create_os2_store(server, bucket=TEST_BUCKET[:-2], base_url=url)
+            target_filename = 'test_put_from_stream/file_from_stream1.txt'
+            content = b'Lorem ipsum dolor sit amet'
+            stream = io.BytesIO(content)
+            with self.assertRaises(OS2Error):
+                store.put(target_filename, stream)
     #
     # def test_delete(self):
     #     store = _get_os2_store()
