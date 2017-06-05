@@ -5,13 +5,14 @@ env:
     - COVERALLS_REPO_TOKEN: EPmtPFA34H0pNb0bIeWVXagZ1EFmRck7Z
 
 language: python
-#sudo: required
+sudo: required
 
 python:
   - 3.5
   - 3.5-dev
 
 before_install:
+  - sudo apt-get install libyaml-dev
   - pip install -U pip setuptools wheel
   - pip install -r requirements-dev.txt
 
