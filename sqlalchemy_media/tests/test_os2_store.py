@@ -74,19 +74,20 @@ class OS2StoreTestCase(SqlAlchemyTestCase):
 
             with self.assertRaises(OS2Error):
                 store.open(target_filename)
-    #
-    # def test_delete_error(self):
-    #     store = _get_os2_store()
-    #     wrong_store = _get_os2_store(bucket='{0}-2'.format(TEST_BUCKET))
-    #     target_filename = 'test_delete/sample_text_file1.txt'
-    #     with open(self.sample_text_file1, 'rb') as f:
-    #         length = store.put(target_filename, f)
-    #     self.assertEqual(length, getsize(self.sample_text_file1))
-    #     self.assertIsInstance(store.open(target_filename), io.BytesIO)
-    #
-    #     with self.assertRaises(OS2Error):
-    #         wrong_store.delete(target_filename)
-    #
+
+    def test_delete_error(self):
+        with mockup_os2_server(self.temp_path, TEST_BUCKET) as (server, url):
+            store = create_os2_store(server, base_url=url)
+            wrong_store = create_os2_store(server, base_url=url, bucket=TEST_BUCKET[:-2])
+            target_filename = 'test_delete/sample_text_file1.txt'
+            with open(self.sample_text_file1, 'rb') as f:
+                length = store.put(target_filename, f)
+            self.assertEqual(length, getsize(self.sample_text_file1))
+            self.assertIsInstance(store.open(target_filename), io.BytesIO)
+
+            with self.assertRaises(OS2Error):
+                wrong_store.delete(target_filename)
+
     # def test_open(self):
     #     store = _get_os2_store()
     #     target_filename = 'test_delete/sample_text_file1.txt'
