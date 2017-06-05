@@ -39,13 +39,14 @@ class OS2Store(Store):
         self.region = region
         self.max_age = max_age
         self.prefix = prefix
-        self.base_url = self.base_url.format(bucket, region)
 
         if base_url:
             self.base_url = base_url
+        else:
+            self.base_url = self.base_url.format(bucket, region)
 
         if prefix:
-            self.base_url = '{0}/{1}'.format(self.base_url, prefix)
+            self.base_url = '%s/%s' % (self.base_url, prefix)
 
         if self.base_url.endswith('/'):
             self.base_url = self.base_url.rstrip('/')
