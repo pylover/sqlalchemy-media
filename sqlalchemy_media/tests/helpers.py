@@ -6,11 +6,12 @@ import contextlib
 import json
 import shutil
 import io
-import time
+from socketserver import TCPServer
 import base64
 from os import makedirs, urandom
 from os.path import join, dirname, abspath, exists, split
 from http.server import HTTPServer, BaseHTTPRequestHandler, HTTPStatus
+from wsgiref.simple_server import WSGIRequestHandler, WSGIServer
 
 from sqlalchemy import Unicode, TypeDecorator, create_engine
 from sqlalchemy.orm import sessionmaker
@@ -29,12 +30,14 @@ Address = Tuple[str, int]
 
 
 @contextlib.contextmanager
-def simple_http_server(handler: BaseHTTPRequestHandler, bind: Address = ('', 0)):
-    http_server = HTTPServer(bind, handler)
-    thread = threading.Thread(target=http_server.serve_forever, name='sa-media test server.', daemon=True)
+def simple_http_server(handler_class, server_class=HTTPServer, app=None, bind: Address = ('', 0)):
+    server = server_class(bind, handler_class)
+    if app:
+        server.set_app(app)
+    thread = threading.Thread(target=server.serve_forever, name='sa-media test server.', daemon=True)
     thread.start()
-    yield http_server
-    http_server.shutdown()
+    yield server
+    server.shutdown()
     thread.join()
 
 
@@ -75,6 +78,13 @@ def mockup_http_static_server(content: bytes = b'Simple file content.', content_
                 self.serve_stream(content)
 
     return simple_http_server(StaticMockupHandler, **kwargs)
+
+
+def mockup_s3_server(**kwargs):
+    from moto.server import DomainDispatcherApplication, create_backend_app
+    mock_app = DomainDispatcherApplication(create_backend_app, 's3')
+    mock_app.debug = False
+    return simple_http_server(WSGIRequestHandler,  server_class=WSGIServer, app=mock_app,**kwargs)
 
 
 # noinspection PyAbstractClass

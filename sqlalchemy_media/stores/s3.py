@@ -21,6 +21,9 @@ from sqlalchemy_media.typing_ import FileLike
 from .base import Store
 
 
+DEFAULT_MAX_AGE = 60 * 60 * 24 * 365
+
+
 class S3Store(Store):
     """
     Store for dealing with s3 of aws
@@ -32,28 +35,25 @@ class S3Store(Store):
        - ``prefix``
 
     """
-    BASE_URL_FORMAT = 'https://{0}.s3.amazonaws.com'
-
-    DEFAULT_MAX_AGE = 60 * 60 * 24 * 365
+    base_url = 'https://{0}.s3.amazonaws.com'
 
     def __init__(self, bucket: str, access_key: str, secret_key: str,
                  region: str, max_age: int = DEFAULT_MAX_AGE,
-                 prefix: str = None, public_base_url: str = None):
+                 prefix: str = None, base_url: str = None):
         self.bucket = bucket
         self.access_key = access_key
         self.secret_key = secret_key
         self.region = region
         self.max_age = max_age
         self.prefix = prefix
-        self.base_url = self.BASE_URL_FORMAT.format(bucket)
+        self.base_url = self.base_url.format(bucket)
         if prefix:
             self.base_url = '{0}/{1}'.format(self.base_url, prefix)
-        if public_base_url is None:
-            self.public_base_url = self.base_url
-        elif public_base_url.endswith('/'):
-            self.public_base_url = public_base_url.rstrip('/')
-        else:
-            self.public_base_url = public_base_url
+        if base_url:
+            self.base_url = base_url
+
+        if self.base_url.endswith('/'):
+            self.base_url = self.base_url.rstrip('/')
 
     def _get_s3_url(self, filename: str):
         return '{0}/{1}'.format(self.base_url, filename)
@@ -104,4 +104,4 @@ class S3Store(Store):
         return BytesIO(res.content)
 
     def locate(self, attachment) -> str:
-        return '%s/%s' % (self.public_base_url, attachment.path)
+        return '%s/%s' % (self.base_url, attachment.path)
