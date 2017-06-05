@@ -1,26 +1,16 @@
 import io
-import logging
 import unittest
-import time
-from multiprocessing import Process, Event
 from os.path import join, dirname, abspath, getsize
 import functools
 
-# noinspection PyPackageRequirements
-import requests
-
-# noinspection PyPackageRequirements
-from moto.server import DomainDispatcherApplication, create_backend_app
 from sqlalchemy import Column, Integer
-
-# noinspection PyPackageRequirements
-from werkzeug.serving import run_simple
 
 from sqlalchemy_media.attachments import File, Image as BaseImage, Thumbnail as BaseThumbnail
 from sqlalchemy_media.exceptions import S3Error
 from sqlalchemy_media.stores import S3Store
 from sqlalchemy_media.stores import StoreManager
 from sqlalchemy_media.tests.helpers import Json, SqlAlchemyTestCase, mockup_s3_server
+
 
 TEST_BUCKET = 'test-bucket'
 TEST_ACCESS_KEY = 'test_access_key'
