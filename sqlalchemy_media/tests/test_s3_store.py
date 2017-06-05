@@ -122,19 +122,20 @@ class S3StoreTestCase(SqlAlchemyTestCase):
 
             with self.assertRaises(S3Error):
                 wrong_store.delete(target_filename)
-    #
-    # def test_open(self):
-    #     store = _get_s3_store()
-    #     target_filename = 'test_delete/sample_text_file1.txt'
-    #     with open(self.sample_text_file1, 'rb') as f:
-    #         length = store.put(target_filename, f)
-    #     self.assertEqual(length, getsize(self.sample_text_file1))
-    #     self.assertIsInstance(store.open(target_filename), io.BytesIO)
-    #
-    #     # Reading
-    #     with store.open(target_filename, mode='rb') as stored_file, \
-    #             open(self.sample_text_file1, mode='rb') as original_file:
-    #         self.assertEqual(stored_file.read(), original_file.read())
+
+    def test_open(self):
+        with mockup_s3_server(TEST_BUCKET) as (server, uri):
+            store = create_s3_store(base_url=uri)
+            target_filename = 'test_delete/sample_text_file1.txt'
+            with open(self.sample_text_file1, 'rb') as f:
+                length = store.put(target_filename, f)
+            self.assertEqual(length, getsize(self.sample_text_file1))
+            self.assertIsInstance(store.open(target_filename), io.BytesIO)
+
+            # Reading
+            with store.open(target_filename, mode='rb') as stored_file, \
+                    open(self.sample_text_file1, mode='rb') as original_file:
+                self.assertEqual(stored_file.read(), original_file.read())
     #
     # def test_locate(self):
     #     StoreManager.register('s3', _get_s3_store, default=True)
