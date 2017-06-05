@@ -5,14 +5,14 @@ env:
     - COVERALLS_REPO_TOKEN: EPmtPFA34H0pNb0bIeWVXagZ1EFmRck7Z
 
 language: python
-sudo: required
 
 python:
   - 3.5
-  - 3.5-dev
+  - 3.6
 
 before_install:
-  - sudo apt-get install libyaml-dev
+  - sudo apt-get uninstall coveralls coveralls[yaml]
+  - sudo apt-get -U --nocache install coveralls[yaml]
   - pip install -U pip setuptools wheel
   - pip install -r requirements-dev.txt
 
@@ -20,7 +20,7 @@ install: pip install -e .
 
 script: coverage run --source sqlalchemy_media $(which nosetests)
 
-after_success: coveralls
+after_success: if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then coveralls -v ; fi
 
 after_deploy: if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then ./travis-gh-pages.sh ; fi
 
