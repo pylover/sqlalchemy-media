@@ -18,7 +18,7 @@ install: pip install -e .
 
 script: coverage run --source sqlalchemy_media $(which nosetests)
 
-after_success: if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then coveralls -v ; fi
+after_success: if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then travis_retry coveralls ; fi
 after_deploy: if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then ./travis-gh-pages.sh ; fi
 
 deploy:
