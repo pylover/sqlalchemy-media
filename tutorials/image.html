@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Image &amp; Thumbnails &mdash; sqlalchemy-media 0.12.2 documentation</title>
+  <title>Image &amp; Thumbnails &mdash; sqlalchemy-media 0.12.3 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.12.2 documentation" href="../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.12.3 documentation" href="../index.html"/>
         <link rel="up" title="Tutorials" href="index.html"/>
         <link rel="next" title="Playing with Analyzers and Validators" href="analyzers_and_validators.html"/>
         <link rel="prev" title="Tutorials" href="index.html"/> 
@@ -358,7 +358,7 @@ files URL in store.</p>
 </div>
 <div class="section" id="overwriting">
 <h2>8. Overwriting<a class="headerlink" href="#overwriting" title="Permalink to this headline">¶</a></h2>
-<p>Overwriting a file is achieved by attaching an image by <a class="reference internal" href="../api.html#sqlalchemy_media.attachments.BaseImage.attach" title="sqlalchemy_media.attachments.BaseImage.attach"><code class="xref py py-meth docutils literal"><span class="pre">attach()</span></code></a></p>
+<p>Overwriting a file is achieved by attaching an image by <a class="reference internal" href="../api.html#sqlalchemy_media.attachments.Attachment.attach" title="sqlalchemy_media.attachments.Attachment.attach"><code class="xref py py-meth docutils literal"><span class="pre">attach()</span></code></a></p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">StoreManager</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
     <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="s1">&#39;https://www.python.org/static/img/python-logo.png&#39;</span><span class="p">)</span>
     <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
@@ -456,7 +456,7 @@ remaining in store for ever.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.12.2',
+            VERSION:'0.12.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
