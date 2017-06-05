@@ -95,19 +95,20 @@ class S3StoreTestCase(SqlAlchemyTestCase):
                 thumbnail = person1.image.get_thumbnail(width=100, auto_generate=True)
                 self.assertIsInstance(thumbnail, Thumbnail)
                 self.assertTrue(thumbnail.reproducible, True)
-    #
-    # def test_delete(self):
-    #     store = _get_s3_store()
-    #     target_filename = 'test_delete/sample_text_file1.txt'
-    #     with open(self.sample_text_file1, 'rb') as f:
-    #         length = store.put(target_filename, f)
-    #     self.assertEqual(length, getsize(self.sample_text_file1))
-    #     self.assertIsInstance(store.open(target_filename), io.BytesIO)
-    #
-    #     store.delete(target_filename)
-    #
-    #     with self.assertRaises(S3Error):
-    #         store.open(target_filename)
+
+    def test_delete(self):
+        with mockup_s3_server(TEST_BUCKET) as (server, uri):
+            store = create_s3_store(base_url=uri)
+            target_filename = 'test_delete/sample_text_file1.txt'
+            with open(self.sample_text_file1, 'rb') as f:
+                length = store.put(target_filename, f)
+            self.assertEqual(length, getsize(self.sample_text_file1))
+            self.assertIsInstance(store.open(target_filename), io.BytesIO)
+
+            store.delete(target_filename)
+
+            with self.assertRaises(S3Error):
+                store.open(target_filename)
     #
     # def test_delete_error(self):
     #     store = _get_s3_store()
