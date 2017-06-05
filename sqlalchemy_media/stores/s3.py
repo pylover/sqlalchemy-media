@@ -47,10 +47,12 @@ class S3Store(Store):
         self.max_age = max_age
         self.prefix = prefix
         self.base_url = self.base_url.format(bucket)
-        if prefix:
-            self.base_url = '{0}/{1}'.format(self.base_url, prefix)
+
         if base_url:
             self.base_url = base_url
+
+        if prefix:
+            self.base_url = '{0}/{1}'.format(self.base_url, prefix)
 
         if self.base_url.endswith('/'):
             self.base_url = self.base_url.rstrip('/')

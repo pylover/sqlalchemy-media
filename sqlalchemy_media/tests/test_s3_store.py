@@ -158,37 +158,42 @@ class S3StoreTestCase(SqlAlchemyTestCase):
                                                 content_type='text/plain',
                                                 extension='.txt')
                 self.assertIsInstance(person1.file, File)
-                self.assertEqual(person1.file.locate(), '%s/%s?_ts=%s' % (
-                    uri, person1.file.path, person1.file.timestamp))
-    #
-    # def test_prefix(self):
-    #     prefix = 'test'
-    #     StoreManager.register(
-    #         's3',
-    #         lambda: _get_s3_store(prefix=prefix),
-    #         default=True
-    #     )
-    #
-    #     class Person(self.Base):
-    #         __tablename__ = 'person'
-    #         id = Column(Integer, primary_key=True)
-    #         file = Column(File.as_mutable(Json))
-    #
-    #     session = self.create_all_and_get_session()
-    #
-    #     person1 = Person()
-    #     self.assertIsNone(person1.file)
-    #     sample_content = b'Simple text.'
-    #
-    #     with StoreManager(session):
-    #         person1 = Person()
-    #         person1.file = File.create_from(io.BytesIO(sample_content),
-    #                                         content_type='text/plain',
-    #                                         extension='.txt')
-    #         self.assertIsInstance(person1.file, File)
-    #         self.assertEqual(person1.file.locate(), '%s/%s/%s?_ts=%s' % (
-    #             TEST_SERVER_URL, prefix, person1.file.path, person1.file.timestamp))
-    #
+                self.assertEqual(
+                    person1.file.locate(),
+                    '%s/%s?_ts=%s' % (
+                        uri, person1.file.path, person1.file.timestamp
+                    )
+                )
+
+    def test_prefix(self):
+        with mockup_s3_server(TEST_BUCKET) as (server, uri):
+            prefix = 'test'
+            StoreManager.register('s3', functools.partial(create_s3_store, base_url=uri, prefix=prefix), default=True)
+
+            class Person(self.Base):
+                __tablename__ = 'person'
+                id = Column(Integer, primary_key=True)
+                file = Column(File.as_mutable(Json))
+
+            session = self.create_all_and_get_session()
+
+            person1 = Person()
+            self.assertIsNone(person1.file)
+            sample_content = b'Simple text.'
+
+            with StoreManager(session):
+                person1 = Person()
+                person1.file = File.create_from(io.BytesIO(sample_content),
+                                                content_type='text/plain',
+                                                extension='.txt')
+                self.assertIsInstance(person1.file, File)
+                self.assertEqual(
+                    person1.file.locate(),
+                    '%s/%s/%s?_ts=%s' % (
+                        uri, prefix, person1.file.path, person1.file.timestamp
+                    )
+                )
+
     # def test_public_base_url(self):
     #     base_url = 'http://test.sqlalchemy.media'
     #     StoreManager.register(
