@@ -88,18 +88,19 @@ class OS2StoreTestCase(SqlAlchemyTestCase):
             with self.assertRaises(OS2Error):
                 wrong_store.delete(target_filename)
 
-    # def test_open(self):
-    #     store = _get_os2_store()
-    #     target_filename = 'test_delete/sample_text_file1.txt'
-    #     with open(self.sample_text_file1, 'rb') as f:
-    #         length = store.put(target_filename, f)
-    #     self.assertEqual(length, getsize(self.sample_text_file1))
-    #     self.assertIsInstance(store.open(target_filename), io.BytesIO)
-    #
-    #     # Reading
-    #     with store.open(target_filename, mode='rb') as stored_file, \
-    #             open(self.sample_text_file1, mode='rb') as original_file:
-    #         self.assertEqual(stored_file.read(), original_file.read())
+    def test_open(self):
+        with mockup_os2_server(self.temp_path, TEST_BUCKET) as (server, url):
+            store = create_os2_store(server, base_url=url)
+            target_filename = 'test_delete/sample_text_file1.txt'
+            with open(self.sample_text_file1, 'rb') as f:
+                length = store.put(target_filename, f)
+            self.assertEqual(length, getsize(self.sample_text_file1))
+            self.assertIsInstance(store.open(target_filename), io.BytesIO)
+
+            # Reading
+            with store.open(target_filename, mode='rb') as stored_file, \
+                    open(self.sample_text_file1, mode='rb') as original_file:
+                self.assertEqual(stored_file.read(), original_file.read())
     #
     # def test_locate(self):
     #     store = _get_os2_store()
