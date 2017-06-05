@@ -6,13 +6,13 @@ import contextlib
 import json
 import shutil
 import io
-from socketserver import TCPServer
 import base64
 from os import makedirs, urandom
 from os.path import join, dirname, abspath, exists, split
 from http.server import HTTPServer, BaseHTTPRequestHandler, HTTPStatus
 from wsgiref.simple_server import WSGIRequestHandler, WSGIServer
 
+import requests
 from sqlalchemy import Unicode, TypeDecorator, create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -80,11 +80,18 @@ def mockup_http_static_server(content: bytes = b'Simple file content.', content_
     return simple_http_server(StaticMockupHandler, **kwargs)
 
 
-def mockup_s3_server(**kwargs):
+@contextlib.contextmanager
+def mockup_s3_server(bucket, **kwargs):
     from moto.server import DomainDispatcherApplication, create_backend_app
     mock_app = DomainDispatcherApplication(create_backend_app, 's3')
     mock_app.debug = False
-    return simple_http_server(WSGIRequestHandler,  server_class=WSGIServer, app=mock_app,**kwargs)
+    with simple_http_server(WSGIRequestHandler,  server_class=WSGIServer, app=mock_app, **kwargs) as server:
+        url = 'http://localhost:%s' % server.server_address[1]
+        # Create the bucket
+        bucket_uri = '%s/%s' % (url, bucket)
+        res = requests.put(bucket_uri)
+        assert res.status_code == 200
+        yield server, bucket_uri
 
 
 # noinspection PyAbstractClass

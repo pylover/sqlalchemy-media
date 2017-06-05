@@ -4,6 +4,7 @@ import unittest
 import time
 from multiprocessing import Process, Event
 from os.path import join, dirname, abspath, getsize
+import functools
 
 # noinspection PyPackageRequirements
 import requests
@@ -43,14 +44,8 @@ class S3StoreTestCase(SqlAlchemyTestCase):
         cls.sample_text_file1 = join(cls.stuff_path, 'sample_text_file1.txt')
 
     def test_put_from_stream(self):
-        with mockup_s3_server() as s3_server:
-            url = 'http://%s:%s' % s3_server.server_address
-
-            # Create test bucket
-            res = requests.put('%s/%s/' % (url, TEST_BUCKET))
-            assert res.status_code == 200
-
-            store = create_s3_store(base_url=url)
+        with mockup_s3_server(TEST_BUCKET) as (server, uri):
+            store = create_s3_store(base_url=uri)
             target_filename = 'test_put_from_stream/file_from_stream1.txt'
             content = b'Lorem ipsum dolor sit amet'
             stream = io.BytesIO(content)
@@ -58,46 +53,48 @@ class S3StoreTestCase(SqlAlchemyTestCase):
             self.assertEqual(length, len(content))
             self.assertIsInstance(store.open(target_filename), io.BytesIO)
 
-    # def test_put_error(self):
-    #     store = _get_s3_store(bucket='{0}-2'.format(TEST_BUCKET))
-    #     target_filename = 'test_put_from_stream/file_from_stream1.txt'
-    #     content = b'Lorem ipsum dolor sit amet'
-    #     stream = io.BytesIO(content)
-    #
-    #     with self.assertRaises(S3Error):
-    #         store.put(target_filename, stream)
-    #
-    # def test_rrs_put(self):
-    #     StoreManager.register(
-    #         's3',
-    #         _get_s3_store,
-    #         default=True
-    #     )
-    #
-    #     class Thumbnail(BaseThumbnail):
-    #         __reproducible__ = True
-    #
-    #     class Image(BaseImage):
-    #         __thumbnail_type__ = Thumbnail
-    #
-    #     class Person(self.Base):
-    #         __tablename__ = 'person'
-    #         id = Column(Integer, primary_key=True)
-    #         image = Column(Image.as_mutable(Json))
-    #
-    #     session = self.create_all_and_get_session()
-    #
-    #     person1 = Person()
-    #     self.assertIsNone(person1.image)
-    #
-    #     with StoreManager(session):
-    #         person1 = Person()
-    #         person1.image = Image.create_from(self.dog_jpeg)
-    #         self.assertIsInstance(person1.image, Image)
-    #
-    #         thumbnail = person1.image.get_thumbnail(width=100, auto_generate=True)
-    #         self.assertIsInstance(thumbnail, Thumbnail)
-    #         self.assertTrue(thumbnail.reproducible, True)
+    def test_put_error(self):
+        with mockup_s3_server(TEST_BUCKET) as (server, uri):
+            store = create_s3_store(base_url=uri[:-2])
+            target_filename = 'test_put_from_stream/file_from_stream1.txt'
+            content = b'Lorem ipsum dolor sit amet'
+            stream = io.BytesIO(content)
+
+            with self.assertRaises(S3Error):
+                store.put(target_filename, stream)
+
+    def test_rrs_put(self):
+        with mockup_s3_server(TEST_BUCKET) as (server, uri):
+            StoreManager.register(
+                's3',
+                functools.partial(create_s3_store, base_url=uri),
+                default=True
+            )
+
+            class Thumbnail(BaseThumbnail):
+                __reproducible__ = True
+
+            class Image(BaseImage):
+                __thumbnail_type__ = Thumbnail
+
+            class Person(self.Base):
+                __tablename__ = 'person'
+                id = Column(Integer, primary_key=True)
+                image = Column(Image.as_mutable(Json))
+
+            session = self.create_all_and_get_session()
+
+            person1 = Person()
+            self.assertIsNone(person1.image)
+
+            with StoreManager(session):
+                person1 = Person()
+                person1.image = Image.create_from(self.dog_jpeg)
+                self.assertIsInstance(person1.image, Image)
+
+                thumbnail = person1.image.get_thumbnail(width=100, auto_generate=True)
+                self.assertIsInstance(thumbnail, Thumbnail)
+                self.assertTrue(thumbnail.reproducible, True)
     #
     # def test_delete(self):
     #     store = _get_s3_store()
