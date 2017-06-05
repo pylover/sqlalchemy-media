@@ -15,7 +15,7 @@ before_install:
   - pip install -U pip setuptools wheel
   - pip install -r requirements-dev.txt
 
-install: pip install -ve .
+install: pip install -e .
 
 script: coverage run --source sqlalchemy_media $(which nosetests)
 
