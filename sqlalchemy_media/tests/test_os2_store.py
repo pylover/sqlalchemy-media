@@ -1,3 +1,4 @@
+import functools
 import errno
 import io
 import os
@@ -101,31 +102,35 @@ class OS2StoreTestCase(SqlAlchemyTestCase):
             with store.open(target_filename, mode='rb') as stored_file, \
                     open(self.sample_text_file1, mode='rb') as original_file:
                 self.assertEqual(stored_file.read(), original_file.read())
-    #
-    # def test_locate(self):
-    #     store = _get_os2_store()
-    #     StoreManager.register('s3', lambda: store, default=True)
-    #
-    #     class Person(self.Base):
-    #         __tablename__ = 'person'
-    #         id = Column(Integer, primary_key=True)
-    #         file = Column(File.as_mutable(Json))
-    #
-    #     session = self.create_all_and_get_session()
-    #
-    #     person1 = Person()
-    #     self.assertIsNone(person1.file)
-    #     sample_content = b'Simple text.'
-    #
-    #     with StoreManager(session):
-    #         person1 = Person()
-    #         person1.file = File.create_from(io.BytesIO(sample_content),
-    #                                         content_type='text/plain',
-    #                                         extension='.txt')
-    #         self.assertIsInstance(person1.file, File)
-    #         self.assertEqual(person1.file.locate(), '%s/%s?_ts=%s' % (
-    #             store.public_base_url, person1.file.path, person1.file.timestamp))
-    #
+
+    def test_locate(self):
+        with mockup_os2_server(self.temp_path, TEST_BUCKET) as (server, url):
+            StoreManager.register('s3', functools.partial(create_os2_store, server, base_url=url), default=True)
+
+            class Person(self.Base):
+                __tablename__ = 'person'
+                id = Column(Integer, primary_key=True)
+                file = Column(File.as_mutable(Json))
+
+            session = self.create_all_and_get_session()
+
+            person1 = Person()
+            self.assertIsNone(person1.file)
+            sample_content = b'Simple text.'
+
+            with StoreManager(session):
+                person1 = Person()
+                person1.file = File.create_from(io.BytesIO(sample_content), content_type='text/plain', extension='.txt')
+                self.assertIsInstance(person1.file, File)
+                self.assertEqual(
+                    person1.file.locate(),
+                    '%s/%s?_ts=%s' % (
+                        url,
+                        person1.file.path,
+                        person1.file.timestamp
+                    )
+                )
+
     # def test_prefix(self):
     #     prefix = 'test'
     #     store = _get_os2_store(prefix=prefix)
