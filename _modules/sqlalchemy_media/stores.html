@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.stores &mdash; sqlalchemy-media 0.12.0 documentation</title>
+  <title>sqlalchemy_media.stores &mdash; sqlalchemy-media 0.12.1 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.12.0 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.12.1 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -159,41 +159,19 @@
            <div itemprop="articleBody">
             
   <h1>Source code for sqlalchemy_media.stores</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="n">BytesIO</span>
-<span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">makedirs</span><span class="p">,</span> <span class="n">remove</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">abspath</span><span class="p">,</span> <span class="n">join</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">exists</span><span class="p">,</span> <span class="n">split</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Iterable</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Iterable</span>
 
 <span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="k">import</span> <span class="n">event</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.util.langhelpers</span> <span class="k">import</span> <span class="n">symbol</span>
 
 <span class="kn">from</span> <span class="nn">sqlalchemy_media.context</span> <span class="k">import</span> <span class="n">get_id</span> <span class="k">as</span> <span class="n">get_context_id</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.exceptions</span> <span class="k">import</span> <span class="n">ContextError</span><span class="p">,</span> <span class="n">DefaultStoreError</span><span class="p">,</span> \
-    <span class="n">S3Error</span><span class="p">,</span> <span class="n">OS2Error</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.helpers</span> <span class="k">import</span> <span class="n">copy_stream</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.optionals</span> <span class="k">import</span> <span class="n">ensure_aws4auth</span><span class="p">,</span> <span class="n">ensure_os2auth</span><span class="p">,</span> <span class="n">ensure_paramiko</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.typing_</span> <span class="k">import</span> <span class="n">FileLike</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.exceptions</span> <span class="k">import</span> <span class="n">ContextError</span><span class="p">,</span> <span class="n">DefaultStoreError</span>
 
-<span class="c1"># Importing optional stuff required by http based store</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="c1"># noinspection PyPackageRequirements</span>
-    <span class="kn">import</span> <span class="nn">requests</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
-    <span class="n">requests</span> <span class="o">=</span> <span class="kc">None</span>
-
-<span class="c1"># Importing optional stuff required by S3 store</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="c1"># noinspection PyPackageRequirements</span>
-    <span class="kn">from</span> <span class="nn">requests_aws4auth</span> <span class="k">import</span> <span class="n">AWS4Auth</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
-    <span class="n">AWS4Auth</span> <span class="o">=</span> <span class="kc">None</span>
-
-<span class="c1"># Importing optional stuff required by OS2 store</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="c1"># noinspection PyPackageRequirements</span>
-    <span class="kn">from</span> <span class="nn">aliyunauth</span> <span class="k">import</span> <span class="n">OssAuth</span> <span class="k">as</span> <span class="n">OS2Auth</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
-    <span class="n">OS2Auth</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="k">import</span> <span class="n">Store</span>
+<span class="kn">from</span> <span class="nn">.filesystem</span> <span class="k">import</span> <span class="n">FileSystemStore</span>
+<span class="kn">from</span> <span class="nn">.os2</span> <span class="k">import</span> <span class="n">OS2Store</span>
+<span class="kn">from</span> <span class="nn">.s3</span> <span class="k">import</span> <span class="n">S3Store</span>
+<span class="kn">from</span> <span class="nn">.ssh</span> <span class="k">import</span> <span class="n">SSHStore</span>
 
 
 <span class="c1"># Global variable to store contexts</span>
@@ -204,321 +182,6 @@
 
 <span class="c1"># Global variable to store observing attributes</span>
 <span class="n">_observing_attributes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-
-
-<div class="viewcode-block" id="Store"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.Store">[docs]</a><span class="k">class</span> <span class="nc">Store</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    The abstract base class for all stores.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="c1"># noinspection PyMethodMayBeStatic</span>
-<div class="viewcode-block" id="Store.cleanup"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.Store.cleanup">[docs]</a>    <span class="k">def</span> <span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        In derived class should cleanup all dirty stuff created while storing and deleting file.</span>
-<span class="sd">        If not overridden, no error will be raised.</span>
-
-<span class="sd">        .. seealso:: :meth:`.StoreManager.cleanup`</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">pass</span></div>
-
-<div class="viewcode-block" id="Store.put"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.Store.put">[docs]</a>    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">FileLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        **[Abstract]**</span>
-
-<span class="sd">        Should be overridden in inherited class and puts the file-like object as the given filename in the store.</span>
-
-<span class="sd">        .. versionchanged:: 0.5</span>
-
-<span class="sd">           - ``min_length`` has been removed.</span>
-<span class="sd">           - ``max_length`` has been removed.</span>
-
-<span class="sd">        :param filename: the target filename.</span>
-<span class="sd">        :param stream: the source file-like object</span>
-<span class="sd">        :return: length of the stored file.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>  <span class="c1"># pragma: no cover</span></div>
-
-<div class="viewcode-block" id="Store.delete"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.Store.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        **[Abstract]**</span>
-
-<span class="sd">        Should be overridden in inherited class and deletes the given file.</span>
-
-<span class="sd">        :param filename: The filename to delete</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>  <span class="c1"># pragma: no cover</span></div>
-
-<div class="viewcode-block" id="Store.open"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.Store.open">[docs]</a>    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileLike</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        **[Abstract]**</span>
-
-<span class="sd">        Should be overridden in inherited class and return a file-like object representing the file in the store.</span>
-
-<span class="sd">        .. note:: Caller of this method is responsible to close the file-like object.</span>
-
-<span class="sd">        :param filename: The filename to open.</span>
-<span class="sd">        :param mode: same as the `mode` in famous :func:`.open` function.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>  <span class="c1"># pragma: no cover</span></div>
-
-<div class="viewcode-block" id="Store.locate"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.Store.locate">[docs]</a>    <span class="k">def</span> <span class="nf">locate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attachment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        **[Abstract]**</span>
-
-<span class="sd">        If overridden in the inherited class, should locates the file&#39;s url to share in public space.</span>
-
-<span class="sd">        :param attachment: The :class:`.Attachment` object to</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>  <span class="c1"># pragma: no cover</span></div></div>
-
-
-<div class="viewcode-block" id="FileSystemStore"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.FileSystemStore">[docs]</a><span class="k">class</span> <span class="nc">FileSystemStore</span><span class="p">(</span><span class="n">Store</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Store for dealing with local file-system.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">base_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">32768</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">root_path</span> <span class="o">=</span> <span class="n">abspath</span><span class="p">(</span><span class="n">root_path</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">=</span> <span class="n">base_url</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">chunk_size</span> <span class="o">=</span> <span class="n">chunk_size</span>
-
-    <span class="k">def</span> <span class="nf">_get_physical_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root_path</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">FileLike</span><span class="p">):</span>
-        <span class="n">physical_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_physical_path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="n">physical_directory</span> <span class="o">=</span> <span class="n">dirname</span><span class="p">(</span><span class="n">physical_path</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">physical_directory</span><span class="p">):</span>
-            <span class="n">makedirs</span><span class="p">(</span><span class="n">physical_directory</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">physical_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">target_file</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">copy_stream</span><span class="p">(</span>
-                <span class="n">stream</span><span class="p">,</span>
-                <span class="n">target_file</span><span class="p">,</span>
-                <span class="n">chunk_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chunk_size</span>
-            <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">physical_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_physical_path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="n">remove</span><span class="p">(</span><span class="n">physical_path</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileLike</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_physical_path</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">locate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attachment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="n">attachment</span><span class="o">.</span><span class="n">path</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="S3Store"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.S3Store">[docs]</a><span class="k">class</span> <span class="nc">S3Store</span><span class="p">(</span><span class="n">Store</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Store for dealing with s3 of aws</span>
-
-<span class="sd">    .. versionadded:: 0.9.0</span>
-
-<span class="sd">    .. versionadded:: 0.9.6</span>
-
-<span class="sd">       - ``prefix``</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">BASE_URL_FORMAT</span> <span class="o">=</span> <span class="s1">&#39;https://</span><span class="si">{0}</span><span class="s1">.s3.amazonaws.com&#39;</span>
-
-    <span class="n">DEFAULT_MAX_AGE</span> <span class="o">=</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">365</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bucket</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">access_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">secret_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                 <span class="n">region</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_age</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_MAX_AGE</span><span class="p">,</span>
-                 <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">public_base_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bucket</span> <span class="o">=</span> <span class="n">bucket</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">access_key</span> <span class="o">=</span> <span class="n">access_key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">secret_key</span> <span class="o">=</span> <span class="n">secret_key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">region</span> <span class="o">=</span> <span class="n">region</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">max_age</span> <span class="o">=</span> <span class="n">max_age</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">BASE_URL_FORMAT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bucket</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">prefix</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">/</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="n">prefix</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">public_base_url</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">public_base_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span>
-        <span class="k">elif</span> <span class="n">public_base_url</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">public_base_url</span> <span class="o">=</span> <span class="n">public_base_url</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">public_base_url</span> <span class="o">=</span> <span class="n">public_base_url</span>
-
-    <span class="k">def</span> <span class="nf">_get_s3_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">/</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_upload_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                     <span class="n">rrs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">acl</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;private&#39;</span><span class="p">):</span>
-        <span class="n">ensure_aws4auth</span><span class="p">()</span>
-
-        <span class="n">auth</span> <span class="o">=</span> <span class="n">AWS4Auth</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">access_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">secret_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">region</span><span class="p">,</span> <span class="s1">&#39;s3&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">rrs</span><span class="p">:</span>
-            <span class="n">storage_class</span> <span class="o">=</span> <span class="s1">&#39;REDUCED_REDUNDANCY&#39;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">storage_class</span> <span class="o">=</span> <span class="s1">&#39;STANDARD&#39;</span>
-        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;Cache-Control&#39;</span><span class="p">:</span> <span class="s1">&#39;max-age=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_age</span><span class="p">),</span>
-            <span class="s1">&#39;x-amz-acl&#39;</span><span class="p">:</span> <span class="n">acl</span><span class="p">,</span>
-            <span class="s1">&#39;x-amz-storage-class&#39;</span><span class="p">:</span> <span class="n">storage_class</span>
-        <span class="p">}</span>
-        <span class="k">if</span> <span class="n">content_type</span><span class="p">:</span>
-            <span class="n">headers</span><span class="p">[</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">content_type</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="mi">200</span> <span class="o">&lt;=</span> <span class="n">res</span><span class="o">.</span><span class="n">status_code</span> <span class="o">&lt;</span> <span class="mi">300</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">S3Error</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">FileLike</span><span class="p">):</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_s3_url</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-        <span class="n">content_type</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="s1">&#39;content_type&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">rrs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="s1">&#39;reproducible&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_upload_file</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">content_type</span><span class="p">,</span> <span class="n">rrs</span><span class="o">=</span><span class="n">rrs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">ensure_aws4auth</span><span class="p">()</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_s3_url</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="n">auth</span> <span class="o">=</span> <span class="n">AWS4Auth</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">access_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">secret_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">region</span><span class="p">,</span> <span class="s1">&#39;s3&#39;</span><span class="p">)</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="mi">200</span> <span class="o">&lt;=</span> <span class="n">res</span><span class="o">.</span><span class="n">status_code</span> <span class="o">&lt;</span> <span class="mi">300</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">S3Error</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileLike</span><span class="p">:</span>
-        <span class="n">ensure_aws4auth</span><span class="p">()</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_s3_url</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="n">auth</span> <span class="o">=</span> <span class="n">AWS4Auth</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">access_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">secret_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">region</span><span class="p">,</span> <span class="s1">&#39;s3&#39;</span><span class="p">)</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="mi">200</span> <span class="o">&lt;=</span> <span class="n">res</span><span class="o">.</span><span class="n">status_code</span> <span class="o">&lt;</span> <span class="mi">300</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">S3Error</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">BytesIO</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">locate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attachment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">public_base_url</span><span class="p">,</span> <span class="n">attachment</span><span class="o">.</span><span class="n">path</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="OS2Store"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.OS2Store">[docs]</a><span class="k">class</span> <span class="nc">OS2Store</span><span class="p">(</span><span class="n">Store</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Store for dealing with oss of aliyun</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">BASE_URL_FORMAT</span> <span class="o">=</span> <span class="s1">&#39;https://</span><span class="si">{0}</span><span class="s1">.oss-</span><span class="si">{1}</span><span class="s1">.aliyuncs.com&#39;</span>
-
-    <span class="n">DEFAULT_MAX_AGE</span> <span class="o">=</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">365</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bucket</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">access_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">secret_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                 <span class="n">region</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_age</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_MAX_AGE</span><span class="p">,</span>
-                 <span class="n">base_headers</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">public_base_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bucket</span> <span class="o">=</span> <span class="n">bucket</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">access_key</span> <span class="o">=</span> <span class="n">access_key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">secret_key</span> <span class="o">=</span> <span class="n">secret_key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">region</span> <span class="o">=</span> <span class="n">region</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">max_age</span> <span class="o">=</span> <span class="n">max_age</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">BASE_URL_FORMAT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bucket</span><span class="p">,</span> <span class="n">region</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">prefix</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">/</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="n">prefix</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">public_base_url</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">public_base_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span>
-        <span class="k">elif</span> <span class="n">public_base_url</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">public_base_url</span> <span class="o">=</span> <span class="n">public_base_url</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">public_base_url</span> <span class="o">=</span> <span class="n">public_base_url</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">base_headers</span> <span class="o">=</span> <span class="n">base_headers</span> <span class="ow">or</span> <span class="p">{}</span>
-
-    <span class="k">def</span> <span class="nf">_get_os2_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">/</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_upload_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                     <span class="n">acl</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;private&#39;</span><span class="p">):</span>
-        <span class="n">ensure_os2auth</span><span class="p">()</span>
-
-        <span class="n">auth</span> <span class="o">=</span> <span class="n">OS2Auth</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bucket</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">access_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">secret_key</span><span class="p">)</span>
-        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_headers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-            <span class="s1">&#39;Cache-Control&#39;</span><span class="p">:</span> <span class="s1">&#39;max-age=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_age</span><span class="p">),</span>
-            <span class="s1">&#39;x-oss-object-acl&#39;</span><span class="p">:</span> <span class="n">acl</span>
-        <span class="p">})</span>
-        <span class="k">if</span> <span class="n">content_type</span><span class="p">:</span>
-            <span class="n">headers</span><span class="p">[</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">content_type</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="mi">200</span> <span class="o">&lt;=</span> <span class="n">res</span><span class="o">.</span><span class="n">status_code</span> <span class="o">&lt;</span> <span class="mi">300</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">OS2Error</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">FileLike</span><span class="p">):</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_os2_url</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-        <span class="n">content_type</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="s1">&#39;content_type&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_upload_file</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">content_type</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">ensure_os2auth</span><span class="p">()</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_os2_url</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="n">auth</span> <span class="o">=</span> <span class="n">OS2Auth</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bucket</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">access_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">secret_key</span><span class="p">)</span>
-        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_headers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="mi">200</span> <span class="o">&lt;=</span> <span class="n">res</span><span class="o">.</span><span class="n">status_code</span> <span class="o">&lt;</span> <span class="mi">300</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">OS2Error</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileLike</span><span class="p">:</span>
-        <span class="n">ensure_os2auth</span><span class="p">()</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_os2_url</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="n">auth</span> <span class="o">=</span> <span class="n">OS2Auth</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bucket</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">access_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">secret_key</span><span class="p">)</span>
-        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_headers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="mi">200</span> <span class="o">&lt;=</span> <span class="n">res</span><span class="o">.</span><span class="n">status_code</span> <span class="o">&lt;</span> <span class="mi">300</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">OS2Error</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">BytesIO</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">locate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attachment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">public_base_url</span><span class="p">,</span> <span class="n">attachment</span><span class="o">.</span><span class="n">path</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="SSHStore"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.SSHStore">[docs]</a><span class="k">class</span> <span class="nc">SSHStore</span><span class="p">(</span><span class="n">Store</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Store for SSH protocol. aka SFTP</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hostname</span><span class="p">,</span> <span class="n">root_path</span><span class="p">,</span> <span class="n">base_url</span><span class="p">,</span> <span class="n">ssh_config_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">ensure_paramiko</span><span class="p">()</span>
-        <span class="kn">from</span> <span class="nn">sqlalchemy_media.ssh</span> <span class="k">import</span> <span class="n">SSHClient</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">root_path</span> <span class="o">=</span> <span class="n">root_path</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">=</span> <span class="n">base_url</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hostname</span><span class="p">,</span> <span class="n">SSHClient</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ssh_client</span> <span class="o">=</span> <span class="n">hostname</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ssh_client</span> <span class="o">=</span> <span class="n">SSHClient</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ssh_client</span><span class="o">.</span><span class="n">load_config_file</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">ssh_config_file</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ssh_client</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">hostname</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">ssh_client</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_get_remote_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root_path</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">FileLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="n">remote_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_remote_path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="n">remote_directory</span> <span class="o">=</span> <span class="n">dirname</span><span class="p">(</span><span class="n">remote_filename</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ssh_client</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;mkdir -p &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="n">remote_directory</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ssh_client</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">putfo</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">remote_filename</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">st_size</span>
-
-    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">remote_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_remote_path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ssh_client</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">remote_filename</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">):</span>
-        <span class="n">remote_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_remote_path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ssh_client</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">remote_filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">locate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attachment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="n">attachment</span><span class="o">.</span><span class="n">path</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="StoreManager"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager">[docs]</a><span class="k">class</span> <span class="nc">StoreManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -857,7 +520,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.12.0',
+            VERSION:'0.12.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

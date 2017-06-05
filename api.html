@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; sqlalchemy-media 0.12.0 documentation</title>
+  <title>API Reference &mdash; sqlalchemy-media 0.12.1 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.12.0 documentation" href="index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.12.1 documentation" href="index.html"/>
         <link rel="prev" title="Playing with Analyzers and Validators" href="tutorials/analyzers_and_validators.html"/> 
 
   
@@ -494,7 +494,7 @@ for delete. for example the <a class="reference internal" href="#sqlalchemy_medi
 
 <dl class="method">
 <dt id="sqlalchemy_media.attachments.Attachment.get_store">
-<code class="descname">get_store</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; sqlalchemy_media.stores.Store<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Attachment.get_store"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.get_store" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_store</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; sqlalchemy_media.stores.base.Store<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Attachment.get_store"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.get_store" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the <a class="reference internal" href="#sqlalchemy_media.stores.Store" title="sqlalchemy_media.stores.Store"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.stores.Store</span></code></a> instance, which this file is stored on.</p>
 </dd></dl>
 
@@ -1396,12 +1396,12 @@ object after calling the <a class="reference internal" href="#sqlalchemy_media.d
 <h3>Store<a class="headerlink" href="#store" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="sqlalchemy_media.stores.Store">
-<em class="property">class </em><code class="descclassname">sqlalchemy_media.stores.</code><code class="descname">Store</code><a class="reference internal" href="_modules/sqlalchemy_media/stores.html#Store"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.stores.</code><code class="descname">Store</code><a class="reference internal" href="_modules/sqlalchemy_media/stores/base.html#Store"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.5/library/functions.html#object" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>The abstract base class for all stores.</p>
 <dl class="method">
 <dt id="sqlalchemy_media.stores.Store.cleanup">
-<code class="descname">cleanup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores.html#Store.cleanup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.cleanup" title="Permalink to this definition">¶</a></dt>
+<code class="descname">cleanup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores/base.html#Store.cleanup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.cleanup" title="Permalink to this definition">¶</a></dt>
 <dd><p>In derived class should cleanup all dirty stuff created while storing and deleting file.
 If not overridden, no error will be raised.</p>
 <div class="admonition seealso">
@@ -1412,7 +1412,7 @@ If not overridden, no error will be raised.</p>
 
 <dl class="method">
 <dt id="sqlalchemy_media.stores.Store.delete">
-<code class="descname">delete</code><span class="sig-paren">(</span><em>filename: str</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/sqlalchemy_media/stores.html#Store.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.delete" title="Permalink to this definition">¶</a></dt>
+<code class="descname">delete</code><span class="sig-paren">(</span><em>filename: str</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/sqlalchemy_media/stores/base.html#Store.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.delete" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>[Abstract]</strong></p>
 <p>Should be overridden in inherited class and deletes the given file.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1427,7 +1427,7 @@ If not overridden, no error will be raised.</p>
 
 <dl class="method">
 <dt id="sqlalchemy_media.stores.Store.locate">
-<code class="descname">locate</code><span class="sig-paren">(</span><em>attachment</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/sqlalchemy_media/stores.html#Store.locate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.locate" title="Permalink to this definition">¶</a></dt>
+<code class="descname">locate</code><span class="sig-paren">(</span><em>attachment</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/sqlalchemy_media/stores/base.html#Store.locate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.locate" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>[Abstract]</strong></p>
 <p>If overridden in the inherited class, should locates the file’s url to share in public space.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1442,7 +1442,7 @@ If not overridden, no error will be raised.</p>
 
 <dl class="method">
 <dt id="sqlalchemy_media.stores.Store.open">
-<code class="descname">open</code><span class="sig-paren">(</span><em>filename: str</em>, <em>mode: str = ‘rb’</em><span class="sig-paren">)</span> &#x2192; typing.Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]<a class="reference internal" href="_modules/sqlalchemy_media/stores.html#Store.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.open" title="Permalink to this definition">¶</a></dt>
+<code class="descname">open</code><span class="sig-paren">(</span><em>filename: str</em>, <em>mode: str = ‘rb’</em><span class="sig-paren">)</span> &#x2192; typing.Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]<a class="reference internal" href="_modules/sqlalchemy_media/stores/base.html#Store.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.open" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>[Abstract]</strong></p>
 <p>Should be overridden in inherited class and return a file-like object representing the file in the store.</p>
 <div class="admonition note">
@@ -1465,7 +1465,7 @@ If not overridden, no error will be raised.</p>
 
 <dl class="method">
 <dt id="sqlalchemy_media.stores.Store.put">
-<code class="descname">put</code><span class="sig-paren">(</span><em>filename: str, stream: typing.Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]</em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/sqlalchemy_media/stores.html#Store.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.put" title="Permalink to this definition">¶</a></dt>
+<code class="descname">put</code><span class="sig-paren">(</span><em>filename: str, stream: typing.Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]</em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/sqlalchemy_media/stores/base.html#Store.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.put" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>[Abstract]</strong></p>
 <p>Should be overridden in inherited class and puts the file-like object as the given filename in the store.</p>
 <div class="versionchanged">
@@ -1500,9 +1500,22 @@ If not overridden, no error will be raised.</p>
 <h3>FileSystemStore<a class="headerlink" href="#filesystemstore" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="sqlalchemy_media.stores.FileSystemStore">
-<em class="property">class </em><code class="descclassname">sqlalchemy_media.stores.</code><code class="descname">FileSystemStore</code><span class="sig-paren">(</span><em>root_path: str</em>, <em>base_url: str</em>, <em>chunk_size: int = 32768</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores.html#FileSystemStore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.FileSystemStore" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.stores.Store" title="sqlalchemy_media.stores.Store"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.stores.Store</span></code></a></p>
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.stores.</code><code class="descname">FileSystemStore</code><span class="sig-paren">(</span><em>root_path: str</em>, <em>base_url: str</em>, <em>chunk_size: int = 32768</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores/filesystem.html#FileSystemStore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.FileSystemStore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.stores.base.Store</span></code></p>
 <p>Store for dealing with local file-system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>root_path</strong> – The path to a directory to store files.</li>
+<li><strong>base_url</strong> – The base url path to include at the beginning of the file’s path to yield the access url.</li>
+<li><strong>chunk_size</strong> – Length of the chunks to read/write from/to files. default: 32768</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -1510,8 +1523,8 @@ If not overridden, no error will be raised.</p>
 <h3>S3Store<a class="headerlink" href="#s3store" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="sqlalchemy_media.stores.S3Store">
-<em class="property">class </em><code class="descclassname">sqlalchemy_media.stores.</code><code class="descname">S3Store</code><span class="sig-paren">(</span><em>bucket: str</em>, <em>access_key: str</em>, <em>secret_key: str</em>, <em>region: str</em>, <em>max_age: int = 31536000</em>, <em>prefix: str = None</em>, <em>public_base_url: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores.html#S3Store"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.S3Store" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.stores.Store" title="sqlalchemy_media.stores.Store"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.stores.Store</span></code></a></p>
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.stores.</code><code class="descname">S3Store</code><span class="sig-paren">(</span><em>bucket: str</em>, <em>access_key: str</em>, <em>secret_key: str</em>, <em>region: str</em>, <em>max_age: int = 31536000</em>, <em>prefix: str = None</em>, <em>public_base_url: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores/s3.html#S3Store"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.S3Store" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.stores.base.Store</span></code></p>
 <p>Store for dealing with s3 of aws</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 0.9.0.</span></p>
@@ -1529,8 +1542,8 @@ If not overridden, no error will be raised.</p>
 <h3>OS2Store<a class="headerlink" href="#os2store" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="sqlalchemy_media.stores.OS2Store">
-<em class="property">class </em><code class="descclassname">sqlalchemy_media.stores.</code><code class="descname">OS2Store</code><span class="sig-paren">(</span><em>bucket: str</em>, <em>access_key: str</em>, <em>secret_key: str</em>, <em>region: str</em>, <em>max_age: int = 31536000</em>, <em>base_headers: dict = None</em>, <em>prefix: str = None</em>, <em>public_base_url: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores.html#OS2Store"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.OS2Store" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.stores.Store" title="sqlalchemy_media.stores.Store"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.stores.Store</span></code></a></p>
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.stores.</code><code class="descname">OS2Store</code><span class="sig-paren">(</span><em>bucket: str</em>, <em>access_key: str</em>, <em>secret_key: str</em>, <em>region: str</em>, <em>max_age: int = 31536000</em>, <em>base_headers: dict = None</em>, <em>prefix: str = None</em>, <em>public_base_url: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores/os2.html#OS2Store"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.OS2Store" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.stores.base.Store</span></code></p>
 <p>Store for dealing with oss of aliyun</p>
 </dd></dl>
 
@@ -1539,9 +1552,29 @@ If not overridden, no error will be raised.</p>
 <h3>SSHStore<a class="headerlink" href="#sshstore" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="sqlalchemy_media.stores.SSHStore">
-<em class="property">class </em><code class="descclassname">sqlalchemy_media.stores.</code><code class="descname">SSHStore</code><span class="sig-paren">(</span><em>hostname</em>, <em>root_path</em>, <em>base_url</em>, <em>ssh_config_file=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores.html#SSHStore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.SSHStore" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.stores.Store" title="sqlalchemy_media.stores.Store"><code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.stores.Store</span></code></a></p>
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.stores.</code><code class="descname">SSHStore</code><span class="sig-paren">(</span><em>hostname</em>, <em>root_path</em>, <em>base_url</em>, <em>ssh_config_file=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores/ssh.html#SSHStore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.SSHStore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sqlalchemy_media.stores.base.Store</span></code></p>
 <p>Store for SSH protocol. aka SFTP</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.12.0.</span></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>hostname</strong> – The ssh server’s hostname to connect to. It will be looked-up from ssh config file to find
+another options if given.
+An instance of the <code class="xref py py-class docutils literal"><span class="pre">paramiko.SSHClient</span></code> may be passed instead of the hostname.</li>
+<li><strong>root_path</strong> – The path to a directory on the ssh server to store files.</li>
+<li><strong>base_url</strong> – The base url path to include at the beginning of the file’s path to yield the access url.</li>
+<li><strong>ssh_config_file</strong> – The standard ssh config file. is not given, the file <cite>$HOME/.ssh/config</cite> will be tried.</li>
+<li><strong>kwargs</strong> – Additional keyword arguments to pass to the <code class="xref py py-class docutils literal"><span class="pre">paramiko.SSHClient</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -1629,7 +1662,7 @@ If not overridden, no error will be raised.</p>
 
 <dl class="method">
 <dt id="sqlalchemy_media.stores.StoreManager.get">
-<code class="descname">get</code><span class="sig-paren">(</span><em>key=None</em><span class="sig-paren">)</span> &#x2192; sqlalchemy_media.stores.Store<a class="reference internal" href="_modules/sqlalchemy_media/stores.html#StoreManager.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.StoreManager.get" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get</code><span class="sig-paren">(</span><em>key=None</em><span class="sig-paren">)</span> &#x2192; sqlalchemy_media.stores.base.Store<a class="reference internal" href="_modules/sqlalchemy_media/stores.html#StoreManager.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.StoreManager.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Lookup the store in available instance cache, and instantiate a new one using registered factory function,
 if not found.</p>
 <p>If the key is <a class="reference external" href="https://docs.python.org/3.5/library/constants.html#None" title="(in Python v3.5)"><code class="xref py py-data docutils literal"><span class="pre">None</span></code></a>, the default store will be instantiated(if required) and returned.</p>
@@ -1758,7 +1791,7 @@ be deleted from store after session commit.</p>
 
 <dl class="classmethod">
 <dt id="sqlalchemy_media.stores.StoreManager.unregister">
-<em class="property">classmethod </em><code class="descname">unregister</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span> &#x2192; sqlalchemy_media.stores.Store<a class="reference internal" href="_modules/sqlalchemy_media/stores.html#StoreManager.unregister"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.StoreManager.unregister" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">unregister</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span> &#x2192; sqlalchemy_media.stores.base.Store<a class="reference internal" href="_modules/sqlalchemy_media/stores.html#StoreManager.unregister"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.StoreManager.unregister" title="Permalink to this definition">¶</a></dt>
 <dd><p>Opposite of <a class="reference internal" href="#sqlalchemy_media.stores.StoreManager.register" title="sqlalchemy_media.stores.StoreManager.register"><code class="xref py py-meth docutils literal"><span class="pre">register()</span></code></a>. <a class="reference external" href="https://docs.python.org/3.5/library/exceptions.html#KeyError" title="(in Python v3.5)"><code class="xref py py-exc docutils literal"><span class="pre">KeyError</span></code></a> may raised if key not found in registry.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2401,7 +2434,7 @@ requested package is not provided.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.12.0',
+            VERSION:'0.12.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
