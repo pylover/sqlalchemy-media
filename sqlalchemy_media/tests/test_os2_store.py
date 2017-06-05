@@ -1,22 +1,16 @@
 import functools
-import errno
 import io
-import os
 import unittest
-from http.server import HTTPServer, BaseHTTPRequestHandler, HTTPStatus
-from multiprocessing import Process
 from os.path import join, dirname, abspath, getsize
 
 from sqlalchemy import Column, Integer
 
 from sqlalchemy_media.attachments import File
 from sqlalchemy_media.exceptions import OS2Error
-from sqlalchemy_media.helpers import copy_stream
 from sqlalchemy_media.stores import OS2Store
 from sqlalchemy_media.stores import StoreManager
-from sqlalchemy_media.tests.helpers import Json, SqlAlchemyTestCase
+from sqlalchemy_media.tests.helpers import Json, SqlAlchemyTestCase, mockup_os2_server
 
-from sqlalchemy_media.tests.helpers import mockup_os2_server
 
 TEST_BUCKET = 'sa-media-test'
 TEST_ACCESS_KEY = 'sa-media-ak'
@@ -36,7 +30,6 @@ class OS2StoreTestCase(SqlAlchemyTestCase):
         super(OS2StoreTestCase, cls).setUpClass()
         cls.this_dir = abspath(dirname(__file__))
         cls.stuff_path = join(cls.this_dir, 'stuff')
-        # Pointing to some handy files.
         cls.dog_jpeg = join(cls.stuff_path, 'dog.jpg')
         cls.temp_path = join(cls.this_dir, 'temp', cls.__name__)
         cls.base_url = 'http://static1.example.orm'
