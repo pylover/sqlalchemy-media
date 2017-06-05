@@ -11,8 +11,8 @@ python:
   - 3.6
 
 before_install:
-  - sudo apt-get uninstall coveralls coveralls[yaml]
-  - sudo apt-get -U --nocache install coveralls[yaml]
+  - pip uninstall coveralls coveralls[yaml]
+  - pip install -U --nocache coveralls[yaml]
   - pip install -U pip setuptools wheel
   - pip install -r requirements-dev.txt
 
