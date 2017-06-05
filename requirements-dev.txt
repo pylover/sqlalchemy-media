@@ -2,7 +2,7 @@
 nose
 coverage
 sphinx
-coveralls
+coveralls[yaml]
 sphinx_rtd_theme
 flask
 moto
