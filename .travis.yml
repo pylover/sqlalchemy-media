@@ -4,6 +4,7 @@ env:
     - COMMIT_AUTHOR_EMAIL: vahid@dobisel.com
 
 language: python
+#sudo: required
 
 python:
   - 3.5
