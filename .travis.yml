@@ -11,8 +11,6 @@ python:
   - 3.6
 
 before_install:
-  - pip uninstall coveralls coveralls[yaml]
-  - pip install -U --nocache coveralls[yaml]
   - pip install -U pip setuptools wheel
   - pip install -r requirements-dev.txt
 
@@ -21,7 +19,6 @@ install: pip install -e .
 script: coverage run --source sqlalchemy_media $(which nosetests)
 
 after_success: if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then coveralls -v ; fi
-
 after_deploy: if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then ./travis-gh-pages.sh ; fi
 
 deploy:
