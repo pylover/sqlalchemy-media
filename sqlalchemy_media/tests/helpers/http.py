@@ -5,6 +5,7 @@ import base64
 from os import urandom
 from os.path import split
 from http.server import HTTPServer
+from wsgiref.simple_server import WSGIServer
 
 from sqlalchemy_media.mimetypes_ import guess_type
 
@@ -13,6 +14,7 @@ from sqlalchemy_media.mimetypes_ import guess_type
 def simple_http_server(handler_class, server_class=HTTPServer, app=None, bind=('', 0)):
     server = server_class(bind, handler_class)
     if app:
+        assert issubclass(server_class, WSGIServer)
         server.set_app(app)
     thread = threading.Thread(target=server.serve_forever, name='sa-media test server.', daemon=True)
     thread.start()
