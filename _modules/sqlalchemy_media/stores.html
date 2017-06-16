@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.stores &mdash; sqlalchemy-media 0.12.4 documentation</title>
+  <title>sqlalchemy_media.stores &mdash; sqlalchemy-media 0.12.5 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.12.4 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.12.5 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -378,8 +378,14 @@
             <span class="k">return</span>
 
         <span class="k">for</span> <span class="n">attachment</span> <span class="ow">in</span> <span class="n">attachments</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">attachment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files_orphaned</span><span class="p">:</span>
+                <span class="k">continue</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_files_orphaned</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attachment</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_files_orphaned</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">attachment</span><span class="o">.</span><span class="n">get_orphaned_objects</span><span class="p">())</span></div>
+
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">attachment</span><span class="o">.</span><span class="n">get_orphaned_objects</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files_orphaned</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_files_orphaned</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="StoreManager.adopted"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.adopted">[docs]</a>    <span class="k">def</span> <span class="nf">adopted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">attachments</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -520,7 +526,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.12.4',
+            VERSION:'0.12.5',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
