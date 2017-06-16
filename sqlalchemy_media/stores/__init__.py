@@ -217,8 +217,14 @@ class StoreManager(object):
             return
 
         for attachment in attachments:
+            if attachment in self._files_orphaned:
+                continue
             self._files_orphaned.append(attachment)
-            self._files_orphaned.extend(attachment.get_orphaned_objects())
+
+            for child in attachment.get_orphaned_objects():
+                if child in self._files_orphaned:
+                    continue
+                self._files_orphaned.append(child)
 
     def adopted(self, *attachments) -> None:
         """
