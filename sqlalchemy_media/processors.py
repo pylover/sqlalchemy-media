@@ -4,7 +4,8 @@ from typing import Iterable
 
 from sqlalchemy_media.typing_ import Dimension
 from sqlalchemy_media.mimetypes_ import guess_extension
-from sqlalchemy_media.exceptions import ContentTypeValidationError, DimensionValidationError, AspectRatioValidationError
+from sqlalchemy_media.exceptions import ContentTypeValidationError, DimensionValidationError, \
+    AspectRatioValidationError, AnalyzeError
 from sqlalchemy_media.helpers import validate_width_height_ratio
 from sqlalchemy_media.descriptors import StreamDescriptor
 from sqlalchemy_media.optionals import magic_mime_from_buffer, ensure_wand
@@ -145,17 +146,22 @@ class WandAnalyzer(Analyzer):
         ensure_wand()
         # noinspection PyPackageRequirements
         from wand.image import Image as WandImage
+        from wand.exceptions import WandException
 
         # This processor requires seekable stream.
         descriptor.prepare_to_read(backend='memory')
 
-        # noinspection PyUnresolvedReferences
-        with WandImage(file=descriptor)as img:
-            context.update(
-                width=img.width,
-                height=img.height,
-                content_type=img.mimetype
-            )
+        try:
+            # noinspection PyUnresolvedReferences
+            with WandImage(file=descriptor)as img:
+                context.update(
+                    width=img.width,
+                    height=img.height,
+                    content_type=img.mimetype
+                )
+
+        except WandException:
+            raise AnalyzeError(str(WandException))
 
         # prepare for next processor, calling this method is not bad.
         descriptor.prepare_to_read(backend='memory')
