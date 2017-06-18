@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.processors &mdash; sqlalchemy-media 0.12.6 documentation</title>
+  <title>sqlalchemy_media.processors &mdash; sqlalchemy-media 0.12.7 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.12.6 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.12.7 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -165,7 +165,8 @@
 
 <span class="kn">from</span> <span class="nn">sqlalchemy_media.typing_</span> <span class="k">import</span> <span class="n">Dimension</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy_media.mimetypes_</span> <span class="k">import</span> <span class="n">guess_extension</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.exceptions</span> <span class="k">import</span> <span class="n">ContentTypeValidationError</span><span class="p">,</span> <span class="n">DimensionValidationError</span><span class="p">,</span> <span class="n">AspectRatioValidationError</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.exceptions</span> <span class="k">import</span> <span class="n">ContentTypeValidationError</span><span class="p">,</span> <span class="n">DimensionValidationError</span><span class="p">,</span> \
+    <span class="n">AspectRatioValidationError</span><span class="p">,</span> <span class="n">AnalyzeError</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy_media.helpers</span> <span class="k">import</span> <span class="n">validate_width_height_ratio</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy_media.descriptors</span> <span class="k">import</span> <span class="n">StreamDescriptor</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy_media.optionals</span> <span class="k">import</span> <span class="n">magic_mime_from_buffer</span><span class="p">,</span> <span class="n">ensure_wand</span>
@@ -306,17 +307,22 @@
         <span class="n">ensure_wand</span><span class="p">()</span>
         <span class="c1"># noinspection PyPackageRequirements</span>
         <span class="kn">from</span> <span class="nn">wand.image</span> <span class="k">import</span> <span class="n">Image</span> <span class="k">as</span> <span class="n">WandImage</span>
+        <span class="kn">from</span> <span class="nn">wand.exceptions</span> <span class="k">import</span> <span class="n">WandException</span>
 
         <span class="c1"># This processor requires seekable stream.</span>
         <span class="n">descriptor</span><span class="o">.</span><span class="n">prepare_to_read</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="s1">&#39;memory&#39;</span><span class="p">)</span>
 
-        <span class="c1"># noinspection PyUnresolvedReferences</span>
-        <span class="k">with</span> <span class="n">WandImage</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">descriptor</span><span class="p">)</span><span class="k">as</span> <span class="n">img</span><span class="p">:</span>
-            <span class="n">context</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                <span class="n">width</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">width</span><span class="p">,</span>
-                <span class="n">height</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">height</span><span class="p">,</span>
-                <span class="n">content_type</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">mimetype</span>
-            <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># noinspection PyUnresolvedReferences</span>
+            <span class="k">with</span> <span class="n">WandImage</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">descriptor</span><span class="p">)</span><span class="k">as</span> <span class="n">img</span><span class="p">:</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                    <span class="n">width</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">width</span><span class="p">,</span>
+                    <span class="n">height</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">height</span><span class="p">,</span>
+                    <span class="n">content_type</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">mimetype</span>
+                <span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">WandException</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">AnalyzeError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">WandException</span><span class="p">))</span>
 
         <span class="c1"># prepare for next processor, calling this method is not bad.</span>
         <span class="n">descriptor</span><span class="o">.</span><span class="n">prepare_to_read</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="s1">&#39;memory&#39;</span><span class="p">)</span></div>
@@ -642,7 +648,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.12.6',
+            VERSION:'0.12.7',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
