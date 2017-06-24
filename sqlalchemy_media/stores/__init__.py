@@ -1,3 +1,4 @@
+import functools
 from typing import Iterable
 
 from sqlalchemy import event
@@ -329,3 +330,17 @@ class StoreManager(object):
                             store_manager.orphaned(old_value)
 
             event.listen(attr, 'set', on_set_attr, propagate=True)
+
+
+def store_manager(session, delete_orphan=True):
+
+    def decorator(func):
+
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            with StoreManager(session, delete_orphan=delete_orphan):
+                return func(*args, **kwargs)
+
+        return wrapper
+
+    return decorator
