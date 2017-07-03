@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; sqlalchemy-media 0.12.7 documentation</title>
+  <title>API Reference &mdash; sqlalchemy-media 0.14.0 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.12.7 documentation" href="index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.14.0 documentation" href="index.html"/>
         <link rel="prev" title="Playing with Analyzers and Validators" href="tutorials/analyzers_and_validators.html"/> 
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.12
+                0.14
               </div>
             
           
@@ -246,13 +246,13 @@ All attachment types will be inherited from this class.</p>
 </div>
 <dl class="attribute">
 <dt id="sqlalchemy_media.attachments.Attachment.__directory__">
-<code class="descname">__directory__</code><em class="property"> = ‘attachments’</em><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.__directory__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__directory__</code><em class="property"> = 'attachments'</em><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.__directory__" title="Permalink to this definition">¶</a></dt>
 <dd><p>The directory name of the file.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="sqlalchemy_media.attachments.Attachment.__prefix__">
-<code class="descname">__prefix__</code><em class="property"> = ‘attachment’</em><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.__prefix__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__prefix__</code><em class="property"> = 'attachment'</em><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.__prefix__" title="Permalink to this definition">¶</a></dt>
 <dd><p>The prefix to be prepended an the name of the file.</p>
 </dd></dl>
 
@@ -595,7 +595,7 @@ filename.</p>
 <dt id="sqlalchemy_media.attachments.Attachment.suffix">
 <code class="descname">suffix</code><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.suffix" title="Permalink to this definition">¶</a></dt>
 <dd><p>The same as the <a class="reference internal" href="#sqlalchemy_media.attachments.Attachment.original_filename" title="sqlalchemy_media.attachments.Attachment.original_filename"><code class="xref py py-meth docutils literal"><span class="pre">sqlalchemy_media.attachments.Attachment.original_filename()</span></code></a> plus a leading minus(-)
-If available, else empty string (”) will be returned.</p>
+If available, else empty string (‘’) will be returned.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -632,7 +632,7 @@ If available, else empty string (”) will be returned.</p>
 <p>Mixin to make a mutable iterator as a collection of <a class="reference internal" href="#sqlalchemy_media.attachments.Attachment" title="sqlalchemy_media.attachments.Attachment"><code class="xref py py-class docutils literal"><span class="pre">Attachment</span></code></a>.</p>
 <dl class="attribute">
 <dt id="sqlalchemy_media.attachments.AttachmentCollection.__item_type__">
-<code class="descname">__item_type__</code><em class="property"> = &lt;class ‘sqlalchemy_media.attachments.Attachment’&gt;</em><a class="headerlink" href="#sqlalchemy_media.attachments.AttachmentCollection.__item_type__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__item_type__</code><em class="property"> = &lt;class 'sqlalchemy_media.attachments.Attachment'&gt;</em><a class="headerlink" href="#sqlalchemy_media.attachments.AttachmentCollection.__item_type__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Type of items</p>
 </dd></dl>
 
@@ -717,12 +717,12 @@ up to their parent structure.</div></blockquote>
 <p>Representing an attached file. Normally if you want to store any file, this class is the best choice.</p>
 <dl class="attribute">
 <dt id="sqlalchemy_media.attachments.File.__directory__">
-<code class="descname">__directory__</code><em class="property"> = ‘files’</em><a class="headerlink" href="#sqlalchemy_media.attachments.File.__directory__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__directory__</code><em class="property"> = 'files'</em><a class="headerlink" href="#sqlalchemy_media.attachments.File.__directory__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="sqlalchemy_media.attachments.File.__prefix__">
-<code class="descname">__prefix__</code><em class="property"> = ‘file’</em><a class="headerlink" href="#sqlalchemy_media.attachments.File.__prefix__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__prefix__</code><em class="property"> = 'file'</em><a class="headerlink" href="#sqlalchemy_media.attachments.File.__prefix__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -751,7 +751,7 @@ up to their parent structure.</div></blockquote>
 </div>
 <dl class="attribute">
 <dt id="sqlalchemy_media.attachments.FileList.__item_type__">
-<code class="descname">__item_type__</code><em class="property"> = &lt;class ‘sqlalchemy_media.attachments.File’&gt;</em><a class="headerlink" href="#sqlalchemy_media.attachments.FileList.__item_type__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__item_type__</code><em class="property"> = &lt;class 'sqlalchemy_media.attachments.File'&gt;</em><a class="headerlink" href="#sqlalchemy_media.attachments.FileList.__item_type__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -770,7 +770,7 @@ up to their parent structure.</div></blockquote>
 </div>
 <dl class="attribute">
 <dt id="sqlalchemy_media.attachments.FileDict.__item_type__">
-<code class="descname">__item_type__</code><em class="property"> = &lt;class ‘sqlalchemy_media.attachments.File’&gt;</em><a class="headerlink" href="#sqlalchemy_media.attachments.FileDict.__item_type__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__item_type__</code><em class="property"> = &lt;class 'sqlalchemy_media.attachments.File'&gt;</em><a class="headerlink" href="#sqlalchemy_media.attachments.FileDict.__item_type__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -824,12 +824,12 @@ up to their parent structure.</div></blockquote>
 </div>
 <dl class="attribute">
 <dt id="sqlalchemy_media.attachments.Image.__directory__">
-<code class="descname">__directory__</code><em class="property"> = ‘images’</em><a class="headerlink" href="#sqlalchemy_media.attachments.Image.__directory__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__directory__</code><em class="property"> = 'images'</em><a class="headerlink" href="#sqlalchemy_media.attachments.Image.__directory__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="sqlalchemy_media.attachments.Image.__prefix__">
-<code class="descname">__prefix__</code><em class="property"> = ‘image’</em><a class="headerlink" href="#sqlalchemy_media.attachments.Image.__prefix__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__prefix__</code><em class="property"> = 'image'</em><a class="headerlink" href="#sqlalchemy_media.attachments.Image.__prefix__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -947,7 +947,7 @@ thumbnails.</p>
 </div>
 <dl class="attribute">
 <dt id="sqlalchemy_media.attachments.ImageList.__item_type__">
-<code class="descname">__item_type__</code><em class="property"> = &lt;class ‘sqlalchemy_media.attachments.Image’&gt;</em><a class="headerlink" href="#sqlalchemy_media.attachments.ImageList.__item_type__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__item_type__</code><em class="property"> = &lt;class 'sqlalchemy_media.attachments.Image'&gt;</em><a class="headerlink" href="#sqlalchemy_media.attachments.ImageList.__item_type__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1207,7 +1207,7 @@ The underlying file-object is not meant to be closed after calling the <a class=
 
 <dl class="method">
 <dt id="sqlalchemy_media.descriptors.StreamDescriptor.prepare_to_read">
-<code class="descname">prepare_to_read</code><span class="sig-paren">(</span><em>backend: str = ‘temp’</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#StreamDescriptor.prepare_to_read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.StreamDescriptor.prepare_to_read" title="Permalink to this definition">¶</a></dt>
+<code class="descname">prepare_to_read</code><span class="sig-paren">(</span><em>backend: str = 'temp'</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#StreamDescriptor.prepare_to_read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.StreamDescriptor.prepare_to_read" title="Permalink to this definition">¶</a></dt>
 <dd><div class="versionadded">
 <p><span class="versionmodified">New in version 0.5.</span></p>
 </div>
@@ -1245,7 +1245,7 @@ retrieved by the <a class="reference internal" href="#sqlalchemy_media.descripto
 
 <dl class="method">
 <dt id="sqlalchemy_media.descriptors.StreamDescriptor.replace">
-<code class="descname">replace</code><span class="sig-paren">(</span><em>attachable: [&lt;class ‘_io.BytesIO’&gt;, &lt;class ‘_io.FileIO’&gt;], position=None, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#StreamDescriptor.replace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.StreamDescriptor.replace" title="Permalink to this definition">¶</a></dt>
+<code class="descname">replace</code><span class="sig-paren">(</span><em>attachable: [&lt;class '_io.BytesIO'&gt;, &lt;class '_io.FileIO'&gt;], position=None, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#StreamDescriptor.replace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.StreamDescriptor.replace" title="Permalink to this definition">¶</a></dt>
 <dd><div class="versionadded">
 <p><span class="versionmodified">New in version 0.5.</span></p>
 </div>
@@ -1442,7 +1442,7 @@ If not overridden, no error will be raised.</p>
 
 <dl class="method">
 <dt id="sqlalchemy_media.stores.Store.open">
-<code class="descname">open</code><span class="sig-paren">(</span><em>filename: str</em>, <em>mode: str = ‘rb’</em><span class="sig-paren">)</span> &#x2192; typing.Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]<a class="reference internal" href="_modules/sqlalchemy_media/stores/base.html#Store.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.open" title="Permalink to this definition">¶</a></dt>
+<code class="descname">open</code><span class="sig-paren">(</span><em>filename: str</em>, <em>mode: str = 'rb'</em><span class="sig-paren">)</span> &#x2192; typing.Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]<a class="reference internal" href="_modules/sqlalchemy_media/stores/base.html#Store.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.open" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>[Abstract]</strong></p>
 <p>Should be overridden in inherited class and return a file-like object representing the file in the store.</p>
 <div class="admonition note">
@@ -2434,7 +2434,7 @@ requested package is not provided.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.12.7',
+            VERSION:'0.14.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
