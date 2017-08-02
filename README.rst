@@ -65,7 +65,7 @@ Overview
 Roadmap
 -------
 
-The next two milestones which can develop simultaneously are, ``SSSHStore`` and ``Video Processing.``
+The next two milestones which can develop simultaneously are, ``SSHStore`` and ``Video Processing.``
 
 Quick Start
 -----------
