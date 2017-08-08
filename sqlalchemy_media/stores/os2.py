@@ -31,14 +31,17 @@ class OS2Store(Store):
 
     DEFAULT_MAX_AGE = 60 * 60 * 24 * 365
 
-    def __init__(self, bucket: str, access_key: str, secret_key: str, region: str, max_age: int = DEFAULT_MAX_AGE,
-                 base_headers: dict = None, prefix: str = None, base_url: str = None):
+    def __init__(self, bucket: str, access_key: str, secret_key: str,
+                 region: str, max_age: int = DEFAULT_MAX_AGE,
+                 base_headers: dict = None, prefix: str = None,
+                 base_url: str = None, acl: str = 'private'):
         self.bucket = bucket
         self.access_key = access_key
         self.secret_key = secret_key
         self.region = region
         self.max_age = max_age
         self.prefix = prefix
+        self.acl = acl
 
         if base_url:
             self.base_url = base_url
@@ -56,15 +59,14 @@ class OS2Store(Store):
     def _get_os2_url(self, filename: str):
         return '{0}/{1}'.format(self.base_url, filename)
 
-    def _upload_file(self, url: str, data: str, content_type: str,
-                     acl: str = 'private'):
+    def _upload_file(self, url: str, data: str, content_type: str):
         ensure_os2auth()
 
         auth = OS2Auth(self.bucket, self.access_key, self.secret_key)
         headers = self.base_headers.copy()
         headers.update({
             'Cache-Control': 'max-age=' + str(self.max_age),
-            'x-oss-object-acl': acl
+            'x-oss-object-acl': self.acl
         })
         if content_type:
             headers['Content-Type'] = content_type

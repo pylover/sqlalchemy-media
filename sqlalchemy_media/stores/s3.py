@@ -39,7 +39,7 @@ class S3Store(Store):
 
     def __init__(self, bucket: str, access_key: str, secret_key: str,
                  region: str, max_age: int = DEFAULT_MAX_AGE,
-                 prefix: str = None, base_url: str = None):
+                 prefix: str = None, base_url: str = None, acl: str = 'private'):
         self.bucket = bucket
         self.access_key = access_key
         self.secret_key = secret_key
@@ -47,6 +47,7 @@ class S3Store(Store):
         self.max_age = max_age
         self.prefix = prefix
         self.base_url = self.base_url.format(bucket)
+        self.acl = acl
 
         if base_url:
             self.base_url = base_url
@@ -61,7 +62,7 @@ class S3Store(Store):
         return '{0}/{1}'.format(self.base_url, filename)
 
     def _upload_file(self, url: str, data: str, content_type: str,
-                     rrs: bool = False, acl: str = 'private'):
+                     rrs: bool = False):
         ensure_aws4auth()
 
         auth = AWS4Auth(self.access_key, self.secret_key, self.region, 's3')
@@ -71,7 +72,7 @@ class S3Store(Store):
             storage_class = 'STANDARD'
         headers = {
             'Cache-Control': 'max-age=' + str(self.max_age),
-            'x-amz-acl': acl,
+            'x-amz-acl': self.acl,
             'x-amz-storage-class': storage_class
         }
         if content_type:
