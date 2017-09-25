@@ -31,14 +31,19 @@ class OS2Store(Store):
 
     DEFAULT_MAX_AGE = 60 * 60 * 24 * 365
 
-    def __init__(self, bucket: str, access_key: str, secret_key: str, region: str, max_age: int = DEFAULT_MAX_AGE,
-                 base_headers: dict = None, prefix: str = None, base_url: str = None):
+    def __init__(self, bucket: str, access_key: str, secret_key: str,
+                 region: str, max_age: int = DEFAULT_MAX_AGE,
+                 base_headers: dict = None, prefix: str = None,
+                 base_url: str = None, cdn_url: str = None, cdn_prefix_ignore: bool = False,
+                 acl: str = 'private'):
         self.bucket = bucket
         self.access_key = access_key
         self.secret_key = secret_key
         self.region = region
         self.max_age = max_age
         self.prefix = prefix
+        self.acl = acl
+        self.base_headers = base_headers or {}
 
         if base_url:
             self.base_url = base_url
@@ -47,24 +52,27 @@ class OS2Store(Store):
 
         if prefix:
             self.base_url = '%s/%s' % (self.base_url, prefix)
+            if cdn_url and not cdn_prefix_ignore:
+                cdn_url = '%s/%s' % (cdn_url, prefix)
 
         if self.base_url.endswith('/'):
             self.base_url = self.base_url.rstrip('/')
+        if cdn_url and cdn_url.endswith('/'):
+            cdn_url = cdn_url.rstrip('/')
 
-        self.base_headers = base_headers or {}
+        self.cdn_url = cdn_url
 
     def _get_os2_url(self, filename: str):
         return '{0}/{1}'.format(self.base_url, filename)
 
-    def _upload_file(self, url: str, data: str, content_type: str,
-                     acl: str = 'private'):
+    def _upload_file(self, url: str, data: str, content_type: str):
         ensure_os2auth()
 
         auth = OS2Auth(self.bucket, self.access_key, self.secret_key)
         headers = self.base_headers.copy()
         headers.update({
             'Cache-Control': 'max-age=' + str(self.max_age),
-            'x-oss-object-acl': acl
+            'x-oss-object-acl': self.acl
         })
         if content_type:
             headers['Content-Type'] = content_type
@@ -99,4 +107,8 @@ class OS2Store(Store):
         return BytesIO(res.content)
 
     def locate(self, attachment) -> str:
-        return '%s/%s' % (self.base_url, attachment.path)
+        if self.cdn_url:
+            base_url = self.cdn_url
+        else:
+            base_url = self.base_url
+        return '%s/%s' % (base_url, attachment.path)

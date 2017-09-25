@@ -39,29 +39,38 @@ class S3Store(Store):
 
     def __init__(self, bucket: str, access_key: str, secret_key: str,
                  region: str, max_age: int = DEFAULT_MAX_AGE,
-                 prefix: str = None, base_url: str = None):
+                 prefix: str = None, base_url: str = None,
+                 cdn_url: str = None, cdn_prefix_ignore: bool = False, acl: str = 'private'):
         self.bucket = bucket
         self.access_key = access_key
         self.secret_key = secret_key
         self.region = region
         self.max_age = max_age
         self.prefix = prefix
-        self.base_url = self.base_url.format(bucket)
+        self.acl = acl
 
         if base_url:
             self.base_url = base_url
+        else:
+            self.base_url = self.base_url.format(bucket)
 
         if prefix:
             self.base_url = '{0}/{1}'.format(self.base_url, prefix)
+            if cdn_url and not cdn_prefix_ignore:
+                cdn_url = '%s/%s' % (cdn_url, prefix)
 
         if self.base_url.endswith('/'):
             self.base_url = self.base_url.rstrip('/')
+        if cdn_url and cdn_url.endswith('/'):
+            cdn_url = cdn_url.rstrip('/')
+
+        self.cdn_url = cdn_url
 
     def _get_s3_url(self, filename: str):
         return '{0}/{1}'.format(self.base_url, filename)
 
     def _upload_file(self, url: str, data: str, content_type: str,
-                     rrs: bool = False, acl: str = 'private'):
+                     rrs: bool = False):
         ensure_aws4auth()
 
         auth = AWS4Auth(self.access_key, self.secret_key, self.region, 's3')
@@ -71,7 +80,7 @@ class S3Store(Store):
             storage_class = 'STANDARD'
         headers = {
             'Cache-Control': 'max-age=' + str(self.max_age),
-            'x-amz-acl': acl,
+            'x-amz-acl': self.acl,
             'x-amz-storage-class': storage_class
         }
         if content_type:
@@ -106,4 +115,8 @@ class S3Store(Store):
         return BytesIO(res.content)
 
     def locate(self, attachment) -> str:
-        return '%s/%s' % (self.base_url, attachment.path)
+        if self.cdn_url:
+            base_url = self.cdn_url
+        else:
+            base_url = self.base_url
+        return '%s/%s' % (base_url, attachment.path)

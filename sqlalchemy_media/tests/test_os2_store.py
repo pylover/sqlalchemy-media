@@ -32,7 +32,6 @@ class OS2StoreTestCase(SqlAlchemyTestCase):
         cls.stuff_path = join(cls.this_dir, 'stuff')
         cls.dog_jpeg = join(cls.stuff_path, 'dog.jpg')
         cls.temp_path = join(cls.this_dir, 'temp', cls.__name__)
-        cls.base_url = 'http://static1.example.orm'
         cls.sample_text_file1 = join(cls.stuff_path, 'sample_text_file1.txt')
 
     def test_put_from_stream(self):
@@ -159,11 +158,16 @@ class OS2StoreTestCase(SqlAlchemyTestCase):
                     person1.file.timestamp
                 ))
 
-    def test_public_base_url(self):
+    def test_default_base_url(self):
+        store = OS2Store(TEST_BUCKET, TEST_ACCESS_KEY, TEST_SECRET_KEY, TEST_REGION)
+        assert store.base_url == 'https://%s.oss-%s.aliyuncs.com' % (TEST_BUCKET, TEST_REGION)
+
+    def test_public_base_url_strip(self):
         with mockup_os2_server(self.temp_path, TEST_BUCKET) as (server, url):
+            base_url = '%s/' % url
             StoreManager.register(
                 'os2',
-                functools.partial(create_os2_store, server, base_url=url),
+                functools.partial(create_os2_store, server, base_url=base_url),
                 default=True
             )
 
@@ -184,14 +188,21 @@ class OS2StoreTestCase(SqlAlchemyTestCase):
                                                 content_type='text/plain',
                                                 extension='.txt')
                 self.assertIsInstance(person1.file, File)
-                self.assertEqual(person1.file.locate(), '%s/%s?_ts=%s' % (
-                    url, person1.file.path, person1.file.timestamp))
+                self.assertEqual(
+                    person1.file.locate(),
+                    '%s%s?_ts=%s' % (
+                        base_url,
+                        person1.file.path,
+                        person1.file.timestamp
+                    )
+                )
 
-    def test_public_base_url_strip(self):
+    def test_cdn_url(self):
+        cdn_url = 'http//test.sqlalchemy-media.com'
         with mockup_os2_server(self.temp_path, TEST_BUCKET) as (server, url):
             StoreManager.register(
                 'os2',
-                functools.partial(create_os2_store, server, base_url=url),
+                functools.partial(create_os2_store, server, base_url=url, cdn_url=cdn_url),
                 default=True
             )
 
@@ -215,12 +226,121 @@ class OS2StoreTestCase(SqlAlchemyTestCase):
                 self.assertEqual(
                     person1.file.locate(),
                     '%s/%s?_ts=%s' % (
-                        url.rstrip('/'),
+                        cdn_url,
                         person1.file.path,
                         person1.file.timestamp
                     )
                 )
 
+    def test_cdn_url_strip(self):
+        cdn_url = 'http//test.sqlalchemy-media.com/'
+        with mockup_os2_server(self.temp_path, TEST_BUCKET) as (server, url):
+            StoreManager.register(
+                'os2',
+                functools.partial(create_os2_store, server, base_url=url, cdn_url=cdn_url),
+                default=True
+            )
+
+            class Person(self.Base):
+                __tablename__ = 'person'
+                id = Column(Integer, primary_key=True)
+                file = Column(File.as_mutable(Json))
+
+            session = self.create_all_and_get_session()
+
+            person1 = Person()
+            self.assertIsNone(person1.file)
+            sample_content = b'Simple text.'
+
+            with StoreManager(session):
+                person1 = Person()
+                person1.file = File.create_from(io.BytesIO(sample_content),
+                                                content_type='text/plain',
+                                                extension='.txt')
+                self.assertIsInstance(person1.file, File)
+                self.assertEqual(
+                    person1.file.locate(),
+                    '%s%s?_ts=%s' % (
+                        cdn_url,
+                        person1.file.path,
+                        person1.file.timestamp
+                    )
+                )
+
+    def test_cdn_url_with_prefix(self):
+        prefix = 'media'
+        cdn_url = 'http//test.sqlalchemy-media.com'
+        with mockup_os2_server(self.temp_path, TEST_BUCKET) as (server, url):
+            StoreManager.register(
+                'os2',
+                functools.partial(create_os2_store, server, prefix=prefix, base_url=url,
+                                  cdn_url=cdn_url),
+                default=True
+            )
+
+            class Person(self.Base):
+                __tablename__ = 'person'
+                id = Column(Integer, primary_key=True)
+                file = Column(File.as_mutable(Json))
+
+            session = self.create_all_and_get_session()
+
+            person1 = Person()
+            self.assertIsNone(person1.file)
+            sample_content = b'Simple text.'
+
+            with StoreManager(session):
+                person1 = Person()
+                person1.file = File.create_from(io.BytesIO(sample_content),
+                                                content_type='text/plain',
+                                                extension='.txt')
+                self.assertIsInstance(person1.file, File)
+                self.assertEqual(
+                    person1.file.locate(),
+                    '%s/%s/%s?_ts=%s' % (
+                        cdn_url,
+                        prefix,
+                        person1.file.path,
+                        person1.file.timestamp
+                    )
+                )
+
+    def test_cdn_url_with_ignore_prefix(self):
+        prefix = 'media'
+        cdn_url = 'http//test.sqlalchemy-media.com'
+        with mockup_os2_server(self.temp_path, TEST_BUCKET) as (server, url):
+            StoreManager.register(
+                'os2',
+                functools.partial(create_os2_store, server, prefix=prefix, base_url=url,
+                                  cdn_url=cdn_url, cdn_prefix_ignore=True),
+                default=True
+            )
+
+            class Person(self.Base):
+                __tablename__ = 'person'
+                id = Column(Integer, primary_key=True)
+                file = Column(File.as_mutable(Json))
+
+            session = self.create_all_and_get_session()
+
+            person1 = Person()
+            self.assertIsNone(person1.file)
+            sample_content = b'Simple text.'
+
+            with StoreManager(session):
+                person1 = Person()
+                person1.file = File.create_from(io.BytesIO(sample_content),
+                                                content_type='text/plain',
+                                                extension='.txt')
+                self.assertIsInstance(person1.file, File)
+                self.assertEqual(
+                    person1.file.locate(),
+                    '%s/%s?_ts=%s' % (
+                        cdn_url,
+                        person1.file.path,
+                        person1.file.timestamp
+                    )
+                )
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
