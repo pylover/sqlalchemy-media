@@ -1,4 +1,5 @@
 
+import os
 import unittest
 import io
 import cgi
@@ -27,6 +28,8 @@ class AttachableDescriptorsTestCase(unittest.TestCase):
         self.assertEqual(descriptor.content_type, 'text/plain')
         descriptor.seek(2)
         self.assertEqual(descriptor.tell(), 2)
+        descriptor.seek(0, os.SEEK_END)
+        self.assertEqual(descriptor.tell(), 11)
 
         # guess extension from original filename
         descriptor = AttachableDescriptor(io.BytesIO(b'Simple text'), original_filename='letter.pdf')
