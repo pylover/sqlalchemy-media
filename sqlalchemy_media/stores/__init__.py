@@ -12,7 +12,7 @@ from .filesystem import FileSystemStore
 from .os2 import OS2Store
 from .s3 import S3Store
 from .ssh import SSHStore
-
+from .ftp import FTPStore
 
 # Global variable to store contexts
 _context_stacks = {}
