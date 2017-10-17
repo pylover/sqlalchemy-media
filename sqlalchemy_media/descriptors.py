@@ -259,7 +259,7 @@ class BaseDescriptor(object):
         """
         raise NotImplementedError()  # pragma: no cover
 
-    def seek(self, position: int) -> None:
+    def seek(self, position: int, whence: int = 0) -> None:
         """
         Seek the file at the given position.
 
@@ -267,6 +267,7 @@ class BaseDescriptor(object):
         :meth:`.seekable`.
 
         :param position: the position to seek on.
+        :param whence: optional whence argument.
         
         """
         raise NotImplementedError('Seek operation is not supported by this object: %r' % self)  # pragma: no cover
@@ -292,8 +293,8 @@ class StreamDescriptor(BaseDescriptor):
     def _read_source(self, size: int) -> bytes:
         return self._file.read(size)
 
-    def seek(self, position: int):
-        self._file.seek(position)
+    def seek(self, position: int, whence: int = 0):
+        self._file.seek(position, whence)
 
     def seekable(self):
         return hasattr(self._file, 'seekable') and self._file.seekable()
