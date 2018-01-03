@@ -99,7 +99,7 @@ class WandAnalyzer(Analyzer):
 
     Analyze an image using ``wand``.
 
-    .. warning:: You should install the ``wand`` in order, to use this class. otherwise, an
+    .. warning:: Installing ``wand`` is required for using this class. otherwise, an
                  :exc:`.OptionalPackageRequirementError` will be raised.
 
     Use it as follow
