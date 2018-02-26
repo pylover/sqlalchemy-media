@@ -206,6 +206,12 @@ WandAnalyzer
 .. autoclass:: WandAnalyzer
 
 
+PILAnalyzer
+^^^^^^^^^^^
+
+.. autoclass:: PILAnalyzer
+
+
 Validator
 ^^^^^^^^^
 
@@ -227,6 +233,12 @@ ImageProcessor
 ^^^^^^^^^^^^^^
 
 .. autoclass:: ImageProcessor
+
+
+PILImageProcessor
+^^^^^^^^^^^^^^^^^
+
+.. autoclass:: PILImageProcessor
 
 
 exceptions Module

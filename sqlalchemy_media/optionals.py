@@ -59,6 +59,26 @@ def ensure_wand():
         raise OptionalPackageRequirementError('wand')
 
 
+# PIL / Pillow
+
+try:
+    # noinspection PyPackageRequirements
+    import PIL
+except ImportError:  # pragma: no cover
+    PIL = None
+
+
+def ensure_pil():
+    """
+
+    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``Pillow`` is not installed.
+
+    """
+
+    if PIL is None:  # pragma: no cover
+        raise OptionalPackageRequirementError('Pillow')
+
+
 # requests-aws4auth
 try:
     # noinspection PyPackageRequirements

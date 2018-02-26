@@ -8,7 +8,7 @@ from sqlalchemy_media.exceptions import ContentTypeValidationError, DimensionVal
     AspectRatioValidationError, AnalyzeError
 from sqlalchemy_media.helpers import validate_width_height_ratio
 from sqlalchemy_media.descriptors import StreamDescriptor
-from sqlalchemy_media.optionals import magic_mime_from_buffer, ensure_wand
+from sqlalchemy_media.optionals import magic_mime_from_buffer, ensure_wand, ensure_pil
 
 
 class Processor(object):
@@ -162,6 +162,82 @@ class WandAnalyzer(Analyzer):
 
         except WandException:
             raise AnalyzeError(str(WandException))
+
+        # prepare for next processor, calling this method is not bad.
+        descriptor.prepare_to_read(backend='memory')
+
+
+class PILAnalyzer(Analyzer):
+    """
+
+    .. versionadded:: 0.16
+
+    Analyze an image using ``PIL`` (actually `Pillow`__).
+
+    __ https://pillow.readthedocs.io/en/latest/index.html
+
+    .. warning:: Installing ``Pillow`` is required for using this class. otherwise, an
+                 :exc:`.OptionalPackageRequirementError` will be raised.
+
+    Use it as follow
+
+    ..  testcode::
+
+        from sqlalchemy import TypeDecorator, Unicode, Column, Integer
+        from sqlalchemy.ext.declarative import declarative_base
+        from sqlalchemy.dialects.postgresql import JSONB
+
+        from sqlalchemy_media import Image, PILAnalyzer
+
+
+        class ProfileImage(Image):
+           __pre_processors__ = PILAnalyzer()
+
+        Base = declarative_base()
+
+        class Member(Base):
+            __tablename__ = 'person'
+
+            id = Column(Integer, primary_key=True)
+            avatar = Column(ProfileImage.as_mutable(JSONB))
+
+    The use it inside :class:`.ContextManager` context:
+
+    ::
+
+        from sqlalchemy_media import ContextManager
+
+        session = <....>
+
+        with ContextManager(session):
+            me = Member(avatar=ProfileImage.create_from('donkey.jpg'))
+            print(me.avatar.width)
+            print(me.avatar.height)
+            print(me.avatar.content_type)
+
+    .. note:: This object currently selects ``width``, ``height`` and ``content_type`` of the image.
+
+    """
+
+    def process(self, descriptor: StreamDescriptor, context: dict):
+        ensure_pil()
+        # noinspection PyPackageRequirements
+        from PIL import Image as PILImage
+
+        # This processor requires seekable stream.
+        descriptor.prepare_to_read(backend='memory')
+
+        try:
+            # noinspection PyUnresolvedReferences
+            img = PILImage.open(descriptor)
+            context.update(
+                width=img.width,
+                height=img.height,
+                content_type=PILImage.MIME[img.format]
+            )
+
+        except OSError as e:
+            raise AnalyzeError(str(e))
 
         # prepare for next processor, calling this method is not bad.
         descriptor.prepare_to_read(backend='memory')
@@ -447,6 +523,77 @@ class ImageProcessor(Processor):
                 width=img.width,
                 height=img.height,
                 extension=guess_extension(img.mimetype)
+            )
+
+        output_buffer.seek(0)
+        descriptor.replace(output_buffer, position=0, **context)
+
+
+class PILImageProcessor(Processor):
+    """
+
+    .. versionadded:: 0.16
+
+    Used to re-sampling, resizing, reformatting bitmaps.
+
+    .. warning::
+
+       - If ``width`` or ``height`` is given with ``crop``, cropping will be processed after the resize.
+       - If you pass both ``width`` and ``height``, aspect ratio may not be preserved.
+
+    """
+
+    def __init__(self, fmt: str = None, width: int = None, height: int = None, crop=None):
+        self.format = fmt.upper() if fmt else None
+        self.width = width
+        self.height = height
+        self.crop = crop
+        # self.crop = None if crop is None else {k: v if isinstance(v, str) else str(v) for k, v in crop.items()}
+
+    def process(self, descriptor: StreamDescriptor, context: dict):
+
+        # Ensuring the PIL package is installed.
+        ensure_pil()
+        # noinspection PyPackageRequirements
+        from PIL import Image as PILImage
+
+        # Copy the original info
+        # generating thumbnail and storing in buffer
+        # noinspection PyTypeChecker
+        img = PILImage.open(descriptor)
+
+        if self.crop is None and (self.format is None or img.format == self.format) and (
+                    (self.width is None or img.width == self.width) and
+                    (self.height is None or img.height == self.height)):
+            descriptor.prepare_to_read(backend='memory')
+            return
+
+        if 'length' in context:
+            del context['length']
+
+        # opening the original file
+        output_buffer = io.BytesIO()
+        with img:
+            # Changing format if required.
+            format = self.format or img.format
+
+            # Changing dimension if required.
+            if self.width or self.height:
+                width, height, _ = validate_width_height_ratio(self.width, self.height, None)
+                img.thumbnail((width(img.size) if callable(width) else width,
+                               height(img.size) if callable(height) else height))
+
+            # Cropping
+            if self.crop:
+                img = img.crop(self.crop)
+
+            img.save(output_buffer, format)
+
+            context.update(
+                content_type=PILImage.MIME[format],
+                width=img.width,
+                height=img.height,
+                extension='.' + format.lower()
             )
 
         output_buffer.seek(0)
