@@ -106,6 +106,7 @@ class ImageTestCase(TempStoreTestCase):
             self.assertFalse(exists(first_thumbnail_filename))
             self.assertFalse(exists(second_thumbnail_filename))
             self.assertFalse(exists(third_thumbnail_filename))
+            self.assertFalse(person1.image.thumbnails)
 
     def test_thumbnail_delete(self):
         class Person(self.Base):
