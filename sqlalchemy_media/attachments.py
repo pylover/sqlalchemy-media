@@ -401,6 +401,7 @@ class Attachment(MutableDict):
 
             if old_attachment:
                 store_manager.register_to_delete_after_commit(old_attachment)
+                self.pop('thumbnails', None)
 
         except:
             descriptor.close(check_length=False)
