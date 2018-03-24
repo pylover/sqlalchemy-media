@@ -75,15 +75,6 @@ class Attachment(MutableDict):
         super()._listen_on_attribute(attribute, coerce, parent_cls)
 
     @classmethod
-    def _assert_type(cls, value) -> None:
-        """
-        Checking attachment type, raising :exc:`TypeError` if the value is not derived from :class:`.Attachment`.
-
-        """
-        if not isinstance(value, cls):
-            raise TypeError('Value type must be subclass of %s, but it\'s: %s' % (cls, type(value)))
-
-    @classmethod
     def coerce(cls, key, value) -> 'Attachment':
         """
         Converts plain dictionary to instance of this class.
@@ -91,15 +82,19 @@ class Attachment(MutableDict):
         .. seealso:: :meth:`sqlalchemy.ext.mutable.MutableDict.coerce`
 
         """
-        if value is not None and not isinstance(value, dict):
-            try:
-                cls._assert_type(value)
-            except TypeError:
-                if cls.__auto_coercion__:
-                    return cls.create_from(value)
-                raise
+        if value is None or isinstance(value, (cls, dict)):
+            return super().coerce(key, value)
 
-        return super().coerce(key, value)
+        if cls.__auto_coercion__:
+            if not isinstance(value, (tuple, list)):
+                value = (value, )
+
+            return cls.create_from(*value)
+
+        raise TypeError(
+            'Value type must be subclass of %s or a tuple(file, mime, [filename]),'
+            'but it\'s: %s' % (cls, type(value))
+        )
 
     @classmethod
     def create_from(cls, *args, **kwargs):
@@ -168,7 +163,7 @@ class Attachment(MutableDict):
     def filename(self) -> str:
         """
         The filename used to store the attachment in the storage with this format::
-            
+
             '{self.__prefix__}-{self.key}{self.suffix}{if self.extension else ''}'
 
         :type: str
@@ -250,14 +245,14 @@ class Attachment(MutableDict):
     def copy(self) -> 'Attachment':
         """
         Copy this object using deepcopy.
-        
+
         """
         return self.__class__(copy.deepcopy(self))
 
     def get_store(self) -> Store:
         """
         Returns the :class:`sqlalchemy_media.stores.Store` instance, which this file is stored on.
-        
+
         """
         store_manager = StoreManager.get_current_store_manager()
         return store_manager.get(self.store_id)
@@ -269,7 +264,7 @@ class Attachment(MutableDict):
         .. warning:: This operation can not be roll-backed.So if you want to delete a file, just set it to
                      :const:`None` or set it by new :class:`.Attachment` instance, while passed ``delete_orphan=True``
                      in :class:`.StoreManager`.
-                     
+
         """
         self.get_store().delete(self.path)
 
@@ -319,7 +314,7 @@ class Attachment(MutableDict):
 
         :param attachable: file-like object, filename or URL to attach.
         :param content_type: If given, the content-detection is suppressed.
-        :param original_filename: Original name of the file, if available, to append to the end of the the filename, 
+        :param original_filename: Original name of the file, if available, to append to the end of the the filename,
                                   useful for SEO, and readability.
         :param extension: The file's extension, is available.else, tries to guess it by content_type
         :param store_id: The store id to store this file on. Stores must be registered with appropriate id via
@@ -428,13 +423,13 @@ class Attachment(MutableDict):
 
     def get_orphaned_objects(self):
         """
-        this method will be always called by the store when adding the ``self`` to the orphaned list. so subclasses 
-        of the :class:`.Attachment` has a chance to add other related objects into the orphaned list and schedule it 
-        for delete. for example the :class:`.Image` class can schedule it's thumbnails for deletion also.   
+        this method will be always called by the store when adding the ``self`` to the orphaned list. so subclasses
+        of the :class:`.Attachment` has a chance to add other related objects into the orphaned list and schedule it
+        for delete. for example the :class:`.Image` class can schedule it's thumbnails for deletion also.
         :return: An iterable of :class:`.Attachment` to mark as orphan.
-        
+
         .. versionadded:: 0.11.0
-        
+
         """
         return iter([])
 
@@ -478,18 +473,18 @@ class AttachmentList(AttachmentCollection, MutableList):
     def observe_item(self, item):
         """
         A simple monkeypatch to instruct the children to notify the parent if contents are changed:
-        
+
         From `sqlalchemy mutable documentation:
         <http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.MutableList>`_
-         
-            Note that MutableList does not apply mutable tracking to the values themselves inside the list. Therefore 
-            it is not a sufficient solution for the use case of tracking deep changes to a recursive mutable structure, 
-            such as a JSON structure. To support this use case, build a subclass of MutableList that provides 
-            appropriate coercion to the values placed in the dictionary so that they too are “mutable”, and emit events 
+
+            Note that MutableList does not apply mutable tracking to the values themselves inside the list. Therefore
+            it is not a sufficient solution for the use case of tracking deep changes to a recursive mutable structure,
+            such as a JSON structure. To support this use case, build a subclass of MutableList that provides
+            appropriate coercion to the values placed in the dictionary so that they too are “mutable”, and emit events
             up to their parent structure.
-        
+
         :param item: The item to observe
-        :return: 
+        :return:
         """
         item = self.__item_type__.coerce(None, item)
         item._parents = self._parents
@@ -575,7 +570,7 @@ class AttachmentDict(AttachmentCollection, MutableDict):
         me = Person()
         me.files = MyDict()
         me.files['original'] = MyAttachment.create_from(any_file)
-        
+
     """
 
     @classmethod
@@ -628,7 +623,7 @@ class AttachmentDict(AttachmentCollection, MutableDict):
 class File(Attachment):
     """
     Representing an attached file. Normally if you want to store any file, this class is the best choice.
-    
+
     """
 
     __directory__ = 'files'
@@ -676,7 +671,7 @@ class BaseImage(File):
         :param kwargs: The same as the: :meth:`.Attachment.attach`.
 
         :return: The same as the: :meth:`.Attachment.attach`.
-        
+
         """
         if dimension:
             kwargs['width'], kwargs['height'] = dimension
@@ -855,9 +850,9 @@ class Image(BaseImage):
 
     def get_orphaned_objects(self):
         """
-        Mark thumbnails for deletion when the :class:`.Image` is being deleted.   
+        Mark thumbnails for deletion when the :class:`.Image` is being deleted.
         :return: An iterable of :class:`.Thumbnail` to mark as orphan.
-        
+
         .. versionadded:: 0.11.0
 
         """
@@ -871,7 +866,7 @@ class Image(BaseImage):
 class ImageList(AttachmentList):
     """
     Used to create a collection of :class:`.Image`es
-    
+
     .. versionadded:: 0.11.0
     """
 
