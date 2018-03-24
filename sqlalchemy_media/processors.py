@@ -1,14 +1,13 @@
 import io
-
 from typing import Iterable
 
-from sqlalchemy_media.typing_ import Dimension
-from sqlalchemy_media.mimetypes_ import guess_extension
+from sqlalchemy_media.descriptors import StreamDescriptor
 from sqlalchemy_media.exceptions import ContentTypeValidationError, DimensionValidationError, \
     AspectRatioValidationError, AnalyzeError
 from sqlalchemy_media.helpers import validate_width_height_ratio
-from sqlalchemy_media.descriptors import StreamDescriptor
+from sqlalchemy_media.mimetypes_ import guess_extension
 from sqlalchemy_media.optionals import magic_mime_from_buffer, ensure_wand
+from sqlalchemy_media.typing_ import Dimension
 
 
 class Processor(object):
@@ -451,3 +450,4 @@ class ImageProcessor(Processor):
 
         output_buffer.seek(0)
         descriptor.replace(output_buffer, position=0, **context)
+
