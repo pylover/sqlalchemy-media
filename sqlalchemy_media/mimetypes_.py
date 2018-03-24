@@ -377,7 +377,7 @@ _db = {
     'text/html': ('.html', '.htm', '.shtml',),
     'text/iuls': ('.uls',),
     'text/mathml': ('.mml',),
-    'text/plain': ('.asc', '.txt', '.text', '.pot', '.brf', '.srt',),
+    'text/plain': ('.txt', '.text', '.asc', '.pot', '.brf', '.srt',),
     'text/richtext': ('.rtx',),
     'text/scriptlet': ('.sct', '.wsc',),
     'text/texmacs': ('.tm',),
