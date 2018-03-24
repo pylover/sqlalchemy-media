@@ -17,6 +17,9 @@ Attachment
    .. autoattribute:: __max_length__
    .. autoattribute:: __min_length__
    .. autoattribute:: __pre_processors__
+   .. autoattribute:: __auto_coercion__
+   .. autoattribute:: __reproducible__
+   .. autoattribute:: __descriptor__
 
 
 AttachmentCollection

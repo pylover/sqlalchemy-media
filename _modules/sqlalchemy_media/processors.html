@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.processors &mdash; sqlalchemy-media 0.15.0 documentation</title>
+  <title>sqlalchemy_media.processors &mdash; sqlalchemy-media 0.15.2 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.15.0 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.15.2 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -242,10 +242,10 @@
 <span class="sd">                 :exc:`.OptionalPackageRequirementError` will be raised.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">:</span> <span class="n">StreamDescriptor</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<div class="viewcode-block" id="MagicAnalyzer.process"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.processors.MagicAnalyzer.process">[docs]</a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">:</span> <span class="n">StreamDescriptor</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">context</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
             <span class="n">content_type</span><span class="o">=</span><span class="n">magic_mime_from_buffer</span><span class="p">(</span><span class="n">descriptor</span><span class="o">.</span><span class="n">get_header_buffer</span><span class="p">())</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="WandAnalyzer"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.processors.WandAnalyzer">[docs]</a><span class="k">class</span> <span class="nc">WandAnalyzer</span><span class="p">(</span><span class="n">Analyzer</span><span class="p">):</span>
@@ -260,7 +260,7 @@
 
 <span class="sd">    Analyze an image using ``wand``.</span>
 
-<span class="sd">    .. warning:: You should install the ``wand`` in order, to use this class. otherwise, an</span>
+<span class="sd">    .. warning:: Installing ``wand`` is required for using this class. otherwise, an</span>
 <span class="sd">                 :exc:`.OptionalPackageRequirementError` will be raised.</span>
 
 <span class="sd">    Use it as follow</span>
@@ -303,7 +303,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">:</span> <span class="n">StreamDescriptor</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<div class="viewcode-block" id="WandAnalyzer.process"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.processors.WandAnalyzer.process">[docs]</a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">:</span> <span class="n">StreamDescriptor</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">ensure_wand</span><span class="p">()</span>
         <span class="c1"># noinspection PyPackageRequirements</span>
         <span class="kn">from</span> <span class="nn">wand.image</span> <span class="k">import</span> <span class="n">Image</span> <span class="k">as</span> <span class="n">WandImage</span>
@@ -325,7 +325,7 @@
             <span class="k">raise</span> <span class="n">AnalyzeError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">WandException</span><span class="p">))</span>
 
         <span class="c1"># prepare for next processor, calling this method is not bad.</span>
-        <span class="n">descriptor</span><span class="o">.</span><span class="n">prepare_to_read</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="s1">&#39;memory&#39;</span><span class="p">)</span></div>
+        <span class="n">descriptor</span><span class="o">.</span><span class="n">prepare_to_read</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="s1">&#39;memory&#39;</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="Validator"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.processors.Validator">[docs]</a><span class="k">class</span> <span class="nc">Validator</span><span class="p">(</span><span class="n">Processor</span><span class="p">):</span>
@@ -375,12 +375,12 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content_types</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">content_types</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">content_types</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">:</span> <span class="n">StreamDescriptor</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<div class="viewcode-block" id="ContentTypeValidator.process"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.processors.ContentTypeValidator.process">[docs]</a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">:</span> <span class="n">StreamDescriptor</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="k">if</span> <span class="s1">&#39;content_type&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">context</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">ContentTypeValidationError</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">context</span><span class="p">[</span><span class="s1">&#39;content_type&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">content_types</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">ContentTypeValidationError</span><span class="p">(</span><span class="n">context</span><span class="p">[</span><span class="s1">&#39;content_type&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">content_types</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="n">ContentTypeValidationError</span><span class="p">(</span><span class="n">context</span><span class="p">[</span><span class="s1">&#39;content_type&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">content_types</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="ImageValidator"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.processors.ImageValidator">[docs]</a><span class="k">class</span> <span class="nc">ImageValidator</span><span class="p">(</span><span class="n">ContentTypeValidator</span><span class="p">):</span>
@@ -433,7 +433,7 @@
         <span class="k">if</span> <span class="n">content_types</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">content_types</span><span class="o">=</span><span class="n">content_types</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">:</span> <span class="n">StreamDescriptor</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="ImageValidator.process"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.processors.ImageValidator.process">[docs]</a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">:</span> <span class="n">StreamDescriptor</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;content_types&#39;</span><span class="p">):</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">descriptor</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
 
@@ -476,7 +476,7 @@
                 <span class="n">aspect_ratio</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">min_aspect_ratio</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">max_aspect_ratio</span>
-            <span class="p">))</span></div>
+            <span class="p">))</span></div></div>
 
 
 <div class="viewcode-block" id="ImageProcessor"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.processors.ImageProcessor">[docs]</a><span class="k">class</span> <span class="nc">ImageProcessor</span><span class="p">(</span><span class="n">Processor</span><span class="p">):</span>
@@ -555,7 +555,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">crop</span> <span class="o">=</span> <span class="n">crop</span>
         <span class="c1"># self.crop = None if crop is None else {k: v if isinstance(v, str) else str(v) for k, v in crop.items()}</span>
 
-    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">:</span> <span class="n">StreamDescriptor</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageProcessor.process"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.processors.ImageProcessor.process">[docs]</a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">:</span> <span class="n">StreamDescriptor</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 
         <span class="c1"># Ensuring the wand package is installed.</span>
         <span class="n">ensure_wand</span><span class="p">()</span>
@@ -611,7 +611,7 @@
             <span class="p">)</span>
 
         <span class="n">output_buffer</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">descriptor</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">output_buffer</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">context</span><span class="p">)</span></div>
+        <span class="n">descriptor</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">output_buffer</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">context</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
@@ -626,7 +626,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017, Vahid Mardani.
+        &copy; Copyright 2018, Vahid Mardani.
 
     </p>
   </div>
@@ -648,7 +648,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.15.0',
+            VERSION:'0.15.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

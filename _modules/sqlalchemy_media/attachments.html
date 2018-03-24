@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.attachments &mdash; sqlalchemy-media 0.15.0 documentation</title>
+  <title>sqlalchemy_media.attachments &mdash; sqlalchemy-media 0.15.2 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.15.0 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.15.2 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -235,15 +235,6 @@
         <span class="n">StoreManager</span><span class="o">.</span><span class="n">observe_attribute</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_listen_on_attribute</span><span class="p">(</span><span class="n">attribute</span><span class="p">,</span> <span class="n">coerce</span><span class="p">,</span> <span class="n">parent_cls</span><span class="p">)</span>
 
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_assert_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Checking attachment type, raising :exc:`TypeError` if the value is not derived from :class:`.Attachment`.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Value type must be subclass of </span><span class="si">%s</span><span class="s1">, but it</span><span class="se">\&#39;</span><span class="s1">s: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
-
 <div class="viewcode-block" id="Attachment.coerce"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Attachment.coerce">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">coerce</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Attachment&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -252,15 +243,19 @@
 <span class="sd">        .. seealso:: :meth:`sqlalchemy.ext.mutable.MutableDict.coerce`</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="bp">cls</span><span class="o">.</span><span class="n">_assert_type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__auto_coercion__</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create_from</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-                <span class="k">raise</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">coerce</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">coerce</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__auto_coercion__</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">)</span>
+
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create_from</span><span class="p">(</span><span class="o">*</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="s1">&#39;Value type must be subclass of </span><span class="si">%s</span><span class="s1"> or a tuple(file, mime, [filename]),&#39;</span>
+            <span class="s1">&#39;but it</span><span class="se">\&#39;</span><span class="s1">s: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Attachment.create_from"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Attachment.create_from">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_from</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -329,7 +324,7 @@
     <span class="k">def</span> <span class="nf">filename</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The filename used to store the attachment in the storage with this format::</span>
-<span class="sd">            </span>
+
 <span class="sd">            &#39;{self.__prefix__}-{self.key}{self.suffix}{if self.extension else &#39;&#39;}&#39;</span>
 
 <span class="sd">        :type: str</span>
@@ -411,14 +406,14 @@
 <div class="viewcode-block" id="Attachment.copy"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Attachment.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Attachment&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Copy this object using deepcopy.</span>
-<span class="sd">        </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="Attachment.get_store"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Attachment.get_store">[docs]</a>    <span class="k">def</span> <span class="nf">get_store</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Store</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the :class:`sqlalchemy_media.stores.Store` instance, which this file is stored on.</span>
-<span class="sd">        </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">store_manager</span> <span class="o">=</span> <span class="n">StoreManager</span><span class="o">.</span><span class="n">get_current_store_manager</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">store_manager</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">store_id</span><span class="p">)</span></div>
@@ -430,7 +425,7 @@
 <span class="sd">        .. warning:: This operation can not be roll-backed.So if you want to delete a file, just set it to</span>
 <span class="sd">                     :const:`None` or set it by new :class:`.Attachment` instance, while passed ``delete_orphan=True``</span>
 <span class="sd">                     in :class:`.StoreManager`.</span>
-<span class="sd">                     </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">get_store</span><span class="p">()</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span></div>
 
@@ -480,7 +475,7 @@
 
 <span class="sd">        :param attachable: file-like object, filename or URL to attach.</span>
 <span class="sd">        :param content_type: If given, the content-detection is suppressed.</span>
-<span class="sd">        :param original_filename: Original name of the file, if available, to append to the end of the the filename, </span>
+<span class="sd">        :param original_filename: Original name of the file, if available, to append to the end of the the filename,</span>
 <span class="sd">                                  useful for SEO, and readability.</span>
 <span class="sd">        :param extension: The file&#39;s extension, is available.else, tries to guess it by content_type</span>
 <span class="sd">        :param store_id: The store id to store this file on. Stores must be registered with appropriate id via</span>
@@ -562,6 +557,7 @@
 
             <span class="k">if</span> <span class="n">old_attachment</span><span class="p">:</span>
                 <span class="n">store_manager</span><span class="o">.</span><span class="n">register_to_delete_after_commit</span><span class="p">(</span><span class="n">old_attachment</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;thumbnails&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="k">except</span><span class="p">:</span>
             <span class="n">descriptor</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">check_length</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -588,13 +584,13 @@
 
 <div class="viewcode-block" id="Attachment.get_orphaned_objects"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Attachment.get_orphaned_objects">[docs]</a>    <span class="k">def</span> <span class="nf">get_orphaned_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        this method will be always called by the store when adding the ``self`` to the orphaned list. so subclasses </span>
-<span class="sd">        of the :class:`.Attachment` has a chance to add other related objects into the orphaned list and schedule it </span>
-<span class="sd">        for delete. for example the :class:`.Image` class can schedule it&#39;s thumbnails for deletion also.   </span>
+<span class="sd">        this method will be always called by the store when adding the ``self`` to the orphaned list. so subclasses</span>
+<span class="sd">        of the :class:`.Attachment` has a chance to add other related objects into the orphaned list and schedule it</span>
+<span class="sd">        for delete. for example the :class:`.Image` class can schedule it&#39;s thumbnails for deletion also.</span>
 <span class="sd">        :return: An iterable of :class:`.Attachment` to mark as orphan.</span>
-<span class="sd">        </span>
+
 <span class="sd">        .. versionadded:: 0.11.0</span>
-<span class="sd">        </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">iter</span><span class="p">([])</span></div></div>
 
@@ -638,24 +634,24 @@
 <div class="viewcode-block" id="AttachmentList.observe_item"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.AttachmentList.observe_item">[docs]</a>    <span class="k">def</span> <span class="nf">observe_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A simple monkeypatch to instruct the children to notify the parent if contents are changed:</span>
-<span class="sd">        </span>
+
 <span class="sd">        From `sqlalchemy mutable documentation:</span>
 <span class="sd">        &lt;http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.MutableList&gt;`_</span>
-<span class="sd">         </span>
-<span class="sd">            Note that MutableList does not apply mutable tracking to the values themselves inside the list. Therefore </span>
-<span class="sd">            it is not a sufficient solution for the use case of tracking deep changes to a recursive mutable structure, </span>
-<span class="sd">            such as a JSON structure. To support this use case, build a subclass of MutableList that provides </span>
-<span class="sd">            appropriate coercion to the values placed in the dictionary so that they too are “mutable”, and emit events </span>
+
+<span class="sd">            Note that MutableList does not apply mutable tracking to the values themselves inside the list. Therefore</span>
+<span class="sd">            it is not a sufficient solution for the use case of tracking deep changes to a recursive mutable structure,</span>
+<span class="sd">            such as a JSON structure. To support this use case, build a subclass of MutableList that provides</span>
+<span class="sd">            appropriate coercion to the values placed in the dictionary so that they too are “mutable”, and emit events</span>
 <span class="sd">            up to their parent structure.</span>
-<span class="sd">        </span>
+
 <span class="sd">        :param item: The item to observe</span>
-<span class="sd">        :return: </span>
+<span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__item_type__</span><span class="o">.</span><span class="n">coerce</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
         <span class="n">item</span><span class="o">.</span><span class="n">_parents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parents</span>
         <span class="k">return</span> <span class="n">item</span></div>
 
-    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="AttachmentList.coerce"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.AttachmentList.coerce">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">coerce</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
@@ -667,32 +663,32 @@
                 <span class="k">return</span> <span class="n">result</span>
             <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">coerce</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">value</span>
+            <span class="k">return</span> <span class="n">value</span></div>
 
-    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="AttachmentList.append"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.AttachmentList.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observe_item</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
-        <span class="n">StoreManager</span><span class="o">.</span><span class="n">get_current_store_manager</span><span class="p">()</span><span class="o">.</span><span class="n">adopted</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">StoreManager</span><span class="o">.</span><span class="n">get_current_store_manager</span><span class="p">()</span><span class="o">.</span><span class="n">adopted</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+<div class="viewcode-block" id="AttachmentList.remove"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.AttachmentList.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-        <span class="n">StoreManager</span><span class="o">.</span><span class="n">get_current_store_manager</span><span class="p">()</span><span class="o">.</span><span class="n">orphaned</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">StoreManager</span><span class="o">.</span><span class="n">get_current_store_manager</span><span class="p">()</span><span class="o">.</span><span class="n">orphaned</span><span class="p">(</span><span class="n">i</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="AttachmentList.pop"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.AttachmentList.pop">[docs]</a>    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="n">i</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
         <span class="n">StoreManager</span><span class="o">.</span><span class="n">get_current_store_manager</span><span class="p">()</span><span class="o">.</span><span class="n">orphaned</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">i</span>
+        <span class="k">return</span> <span class="n">i</span></div>
 
-    <span class="k">def</span> <span class="nf">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="AttachmentList.extend"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.AttachmentList.extend">[docs]</a>    <span class="k">def</span> <span class="nf">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="n">StoreManager</span><span class="o">.</span><span class="n">get_current_store_manager</span><span class="p">()</span><span class="o">.</span><span class="n">adopted</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">observe_item</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x</span><span class="p">])</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">observe_item</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x</span><span class="p">])</span></div>
 
-    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="AttachmentList.insert"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.AttachmentList.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="n">StoreManager</span><span class="o">.</span><span class="n">get_current_store_manager</span><span class="p">()</span><span class="o">.</span><span class="n">adopted</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">observe_item</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">observe_item</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div>
 
-    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AttachmentList.clear"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.AttachmentList.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">StoreManager</span><span class="o">.</span><span class="n">get_current_store_manager</span><span class="p">()</span><span class="o">.</span><span class="n">orphaned</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="n">StoreManager</span><span class="o">.</span><span class="n">get_current_store_manager</span><span class="p">()</span><span class="o">.</span><span class="n">orphaned</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
@@ -735,10 +731,10 @@
 <span class="sd">        me = Person()</span>
 <span class="sd">        me.files = MyDict()</span>
 <span class="sd">        me.files[&#39;original&#39;] = MyAttachment.create_from(any_file)</span>
-<span class="sd">        </span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="AttachmentDict.coerce"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.AttachmentDict.coerce">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">coerce</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
@@ -752,29 +748,29 @@
             <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">coerce</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">value</span>
+            <span class="k">return</span> <span class="n">value</span></div>
 
-    <span class="k">def</span> <span class="nf">setdefault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="AttachmentDict.setdefault"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.AttachmentDict.setdefault">[docs]</a>    <span class="k">def</span> <span class="nf">setdefault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="n">StoreManager</span><span class="o">.</span><span class="n">get_current_store_manager</span><span class="p">()</span><span class="o">.</span><span class="n">adopted</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+<div class="viewcode-block" id="AttachmentDict.update"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.AttachmentDict.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
         <span class="n">StoreManager</span><span class="o">.</span><span class="n">get_current_store_manager</span><span class="p">()</span><span class="o">.</span><span class="n">adopted</span><span class="p">(</span><span class="n">kw</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="AttachmentDict.pop"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.AttachmentDict.pop">[docs]</a>    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="n">i</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
         <span class="n">StoreManager</span><span class="o">.</span><span class="n">get_current_store_manager</span><span class="p">()</span><span class="o">.</span><span class="n">orphaned</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">i</span>
+        <span class="k">return</span> <span class="n">i</span></div>
 
-    <span class="k">def</span> <span class="nf">popitem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AttachmentDict.popitem"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.AttachmentDict.popitem">[docs]</a>    <span class="k">def</span> <span class="nf">popitem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">popitem</span><span class="p">()</span>
         <span class="n">StoreManager</span><span class="o">.</span><span class="n">get_current_store_manager</span><span class="p">()</span><span class="o">.</span><span class="n">orphaned</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span>
+        <span class="k">return</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span></div>
 
-    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AttachmentDict.clear"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.AttachmentDict.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">StoreManager</span><span class="o">.</span><span class="n">get_current_store_manager</span><span class="p">()</span><span class="o">.</span><span class="n">orphaned</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="n">StoreManager</span><span class="o">.</span><span class="n">get_current_store_manager</span><span class="p">()</span><span class="o">.</span><span class="n">orphaned</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
@@ -788,7 +784,7 @@
 <div class="viewcode-block" id="File"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.File">[docs]</a><span class="k">class</span> <span class="nc">File</span><span class="p">(</span><span class="n">Attachment</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Representing an attached file. Normally if you want to store any file, this class is the best choice.</span>
-<span class="sd">    </span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">__directory__</span> <span class="o">=</span> <span class="s1">&#39;files&#39;</span>
@@ -836,7 +832,7 @@
 <span class="sd">        :param kwargs: The same as the: :meth:`.Attachment.attach`.</span>
 
 <span class="sd">        :return: The same as the: :meth:`.Attachment.attach`.</span>
-<span class="sd">        </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">dimension</span><span class="p">:</span>
             <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">],</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dimension</span>
@@ -1015,9 +1011,9 @@
 
 <div class="viewcode-block" id="Image.get_orphaned_objects"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Image.get_orphaned_objects">[docs]</a>    <span class="k">def</span> <span class="nf">get_orphaned_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Mark thumbnails for deletion when the :class:`.Image` is being deleted.   </span>
+<span class="sd">        Mark thumbnails for deletion when the :class:`.Image` is being deleted.</span>
 <span class="sd">        :return: An iterable of :class:`.Thumbnail` to mark as orphan.</span>
-<span class="sd">        </span>
+
 <span class="sd">        .. versionadded:: 0.11.0</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1031,7 +1027,7 @@
 <div class="viewcode-block" id="ImageList"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.ImageList">[docs]</a><span class="k">class</span> <span class="nc">ImageList</span><span class="p">(</span><span class="n">AttachmentList</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Used to create a collection of :class:`.Image`es</span>
-<span class="sd">    </span>
+
 <span class="sd">    .. versionadded:: 0.11.0</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -1050,7 +1046,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017, Vahid Mardani.
+        &copy; Copyright 2018, Vahid Mardani.
 
     </p>
   </div>
@@ -1072,7 +1068,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.15.0',
+            VERSION:'0.15.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

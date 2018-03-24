@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Image &amp; Thumbnails &mdash; sqlalchemy-media 0.15.0 documentation</title>
+  <title>Image &amp; Thumbnails &mdash; sqlalchemy-media 0.15.2 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.15.0 documentation" href="../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.15.2 documentation" href="../index.html"/>
         <link rel="up" title="Tutorials" href="index.html"/>
         <link rel="next" title="Playing with Analyzers and Validators" href="analyzers_and_validators.html"/>
         <link rel="prev" title="Tutorials" href="index.html"/> 
@@ -180,40 +180,40 @@
             
   <div class="section" id="image-thumbnails">
 <h1>Image &amp; Thumbnails<a class="headerlink" href="#image-thumbnails" title="Permalink to this headline">¶</a></h1>
-<p>This is how to attach image file to sqlalchemy model using the <a class="reference internal" href="../api.html#sqlalchemy_media.stores.FileSystemStore" title="sqlalchemy_media.stores.FileSystemStore"><code class="xref py py-class docutils literal"><span class="pre">FileSystemStore</span></code></a>.</p>
+<p>This is how to attach image file to sqlalchemy model using the <a class="reference internal" href="../api.html#sqlalchemy_media.stores.FileSystemStore" title="sqlalchemy_media.stores.FileSystemStore"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileSystemStore</span></code></a>.</p>
 <div class="section" id="prerequisites">
 <h2>0. Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
-<p>Thumbnail generation required the <code class="docutils literal"><span class="pre">wand</span></code>, and content type detection required <code class="docutils literal"><span class="pre">magic</span></code> package.
+<p>Thumbnail generation required the <code class="docutils literal notranslate"><span class="pre">wand</span></code>, and content type detection required <code class="docutils literal notranslate"><span class="pre">magic</span></code> package.
 These are optional packages. so you have to install them:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install wand python-magic
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install wand python-magic
 </pre></div>
 </div>
 </div>
 <div class="section" id="creating-workbench">
 <h2>1. Creating workbench<a class="headerlink" href="#creating-workbench" title="Permalink to this headline">¶</a></h2>
-<p>Setting up and <code class="docutils literal"><span class="pre">engine</span></code> along-side the <code class="docutils literal"><span class="pre">session_factory</span></code>. And creating a constant for the directory to store files.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="k">import</span> <span class="n">create_engine</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="k">import</span> <span class="n">sessionmaker</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.ext.declarative</span> <span class="k">import</span> <span class="n">declarative_base</span>
+<p>Setting up and <code class="docutils literal notranslate"><span class="pre">engine</span></code> along-side the <code class="docutils literal notranslate"><span class="pre">session_factory</span></code>. And creating a constant for the directory to store files.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">create_engine</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">sessionmaker</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.ext.declarative</span> <span class="kn">import</span> <span class="n">declarative_base</span>
 
 <span class="n">TEMP_PATH</span> <span class="o">=</span> <span class="s1">&#39;/tmp/sqlalchemy-media&#39;</span>
 <span class="n">Base</span> <span class="o">=</span> <span class="n">declarative_base</span><span class="p">()</span>
-<span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="s1">&#39;sqlite:///:memory:&#39;</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="s1">&#39;sqlite:///:memory:&#39;</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 <span class="n">session_factory</span> <span class="o">=</span> <span class="n">sessionmaker</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="storage">
 <h2>2. Storage<a class="headerlink" href="#storage" title="Permalink to this headline">¶</a></h2>
-<p>Registering a default factory for <a class="reference internal" href="../api.html#sqlalchemy_media.stores.FileSystemStore" title="sqlalchemy_media.stores.FileSystemStore"><code class="xref py py-class docutils literal"><span class="pre">FileSystemStore</span></code></a> class. the <a class="reference internal" href="../api.html#sqlalchemy_media.stores.StoreManager" title="sqlalchemy_media.stores.StoreManager"><code class="xref py py-class docutils literal"><span class="pre">StoreManager</span></code></a> will call it when needed.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">functools</span>
+<p>Registering a default factory for <a class="reference internal" href="../api.html#sqlalchemy_media.stores.FileSystemStore" title="sqlalchemy_media.stores.FileSystemStore"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileSystemStore</span></code></a> class. the <a class="reference internal" href="../api.html#sqlalchemy_media.stores.StoreManager" title="sqlalchemy_media.stores.StoreManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">StoreManager</span></code></a> will call it when needed.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">functools</span>
 
-<span class="kn">from</span> <span class="nn">sqlalchemy_media</span> <span class="k">import</span> <span class="n">StoreManager</span><span class="p">,</span> <span class="n">FileSystemStore</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media</span> <span class="kn">import</span> <span class="n">StoreManager</span><span class="p">,</span> <span class="n">FileSystemStore</span>
 
 <span class="n">StoreManager</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
     <span class="s1">&#39;fs&#39;</span><span class="p">,</span>
     <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">FileSystemStore</span><span class="p">,</span> <span class="n">TEMP_PATH</span><span class="p">,</span> <span class="s1">&#39;http://static.example.org/&#39;</span><span class="p">),</span>
-    <span class="n">default</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">default</span><span class="o">=</span><span class="bp">True</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -223,9 +223,9 @@ These are optional packages. so you have to install them:</p>
 <p>We are using the sqlite’s memory db in this tutorial, because it’s so handy. but it’s not supporting the JSON data type,
 So, this is how to emulate a type using the
 <a class="reference external" href="http://docs.sqlalchemy.org/en/latest/core/custom_types.html#typedecorator-recipes">SqlAlchemy Type Decorators</a>.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
 
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="k">import</span> <span class="n">TypeDecorator</span><span class="p">,</span> <span class="n">Unicode</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">TypeDecorator</span><span class="p">,</span> <span class="n">Unicode</span>
 
 <span class="k">class</span> <span class="nc">Json</span><span class="p">(</span><span class="n">TypeDecorator</span><span class="p">):</span>
     <span class="n">impl</span> <span class="o">=</span> <span class="n">Unicode</span>
@@ -234,26 +234,26 @@ So, this is how to emulate a type using the
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">process_result_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">engine</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
 
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">You can use any type to store dictionary and list as described on top, but the postgreSql <code class="docutils literal"><span class="pre">HStore</span></code> and
-<code class="docutils literal"><span class="pre">JSON</span></code> are preferred.</p>
+<p class="last">You can use any type to store dictionary and list as described on top, but the postgreSql <code class="docutils literal notranslate"><span class="pre">HStore</span></code> and
+<code class="docutils literal notranslate"><span class="pre">JSON</span></code> are preferred.</p>
 </div>
 </div>
 <div class="section" id="defining-the-model">
 <h2>4. Defining The Model<a class="headerlink" href="#defining-the-model" title="Permalink to this headline">¶</a></h2>
 <p>As described in
 <a class="reference external" href="http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.Mutable.as_mutable">Sqlalchemy’s documentation</a>,
-the <code class="docutils literal"><span class="pre">as_mutable</span></code> method is used to make a type mutable.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="k">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Integer</span>
+the <code class="docutils literal notranslate"><span class="pre">as_mutable</span></code> method is used to make a type mutable.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Integer</span>
 
-<span class="kn">from</span> <span class="nn">sqlalchemy_media</span> <span class="k">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">WandAnalyzer</span><span class="p">,</span> <span class="n">ImageValidator</span><span class="p">,</span> <span class="n">ImageProcessor</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">WandAnalyzer</span><span class="p">,</span> <span class="n">ImageValidator</span><span class="p">,</span> <span class="n">ImageProcessor</span>
 
 <span class="k">class</span> <span class="nc">ProfileImage</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
     <span class="n">__pre_processors__</span> <span class="o">=</span> <span class="p">[</span>
@@ -279,39 +279,39 @@ the <code class="docutils literal"><span class="pre">as_mutable</span></code> me
 <span class="k">class</span> <span class="nc">Person</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
     <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;person&#39;</span>
 
-    <span class="nb">id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Unicode</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span>
     <span class="n">image</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">ProfileImage</span><span class="o">.</span><span class="n">as_mutable</span><span class="p">(</span><span class="n">Json</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;&lt;</span><span class="si">%s</span><span class="s2"> id=</span><span class="si">%s</span><span class="s2">&gt;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="db-schema">
 <h2>5. DB Schema<a class="headerlink" href="#db-schema" title="Permalink to this headline">¶</a></h2>
-<p>Making database objects using the famous function <code class="docutils literal"><span class="pre">create_all</span></code>, and creating a session instance to interact with
+<p>Making database objects using the famous function <code class="docutils literal notranslate"><span class="pre">create_all</span></code>, and creating a session instance to interact with
 database.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="n">checkfirst</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="n">checkfirst</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">session</span> <span class="o">=</span> <span class="n">session_factory</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="action">
 <h2>6. Action !<a class="headerlink" href="#action" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">StoreManager</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">StoreManager</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
     <span class="n">person1</span> <span class="o">=</span> <span class="n">Person</span><span class="p">()</span>
     <span class="n">person1</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">ProfileImage</span><span class="o">.</span><span class="n">create_from</span><span class="p">(</span><span class="s1">&#39;https://www.python.org/static/img/python-logo@2x.png&#39;</span><span class="p">)</span>
     <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">person1</span><span class="p">)</span>
     <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Content type:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">content_type</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Extension:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">extension</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Length:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Original filename:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">original_filename</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Content type:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">content_type</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Extension:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">extension</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Length:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Original filename:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">original_filename</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-none"><div class="highlight"><pre><span></span>Content type: image/jpeg
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Content type: image/jpeg
 Extension: .jpg
 Length: 2020
 Original filename: https://www.python.org/static/img/python-logo@2x.png
@@ -320,16 +320,16 @@ Original filename: https://www.python.org/static/img/python-logo@2x.png
 </div>
 <div class="section" id="thumbnails">
 <h2>7. Thumbnails<a class="headerlink" href="#thumbnails" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">exists</span><span class="p">,</span> <span class="n">join</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">exists</span><span class="p">,</span> <span class="n">join</span>
 
 <span class="k">with</span> <span class="n">StoreManager</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
-    <span class="n">thumbnail</span> <span class="o">=</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">get_thumbnail</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">auto_generate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">thumbnail</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+    <span class="n">thumbnail</span> <span class="o">=</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">get_thumbnail</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">auto_generate</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">thumbnail</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">exists</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">TEMP_PATH</span><span class="p">,</span> <span class="n">thumbnail</span><span class="o">.</span><span class="n">path</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>The thumbnail height is:</p>
-<div class="highlight-none"><div class="highlight"><pre><span></span>8
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>8
 </pre></div>
 </div>
 <div class="admonition note">
@@ -338,38 +338,38 @@ Original filename: https://www.python.org/static/img/python-logo@2x.png
 </div>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">Remember to commit the sqlalchemy’s <code class="docutils literal"><span class="pre">session</span></code> after thumbnail generation to store the info, it’s also
+<p class="last">Remember to commit the sqlalchemy’s <code class="docutils literal notranslate"><span class="pre">session</span></code> after thumbnail generation to store the info, it’s also
 can rollbacks the operation if transaction failed.</p>
 </div>
-<p>Generating thumbnail with <code class="docutils literal"><span class="pre">ratio</span></code></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">exists</span><span class="p">,</span> <span class="n">join</span>
+<p>Generating thumbnail with <code class="docutils literal notranslate"><span class="pre">ratio</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">exists</span><span class="p">,</span> <span class="n">join</span>
 
 <span class="k">with</span> <span class="n">StoreManager</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
-    <span class="n">thumbnail</span> <span class="o">=</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">get_thumbnail</span><span class="p">(</span><span class="n">ratio</span><span class="o">=.</span><span class="mi">3</span><span class="p">,</span> <span class="n">auto_generate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">thumbnail</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="n">thumbnail</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+    <span class="n">thumbnail</span> <span class="o">=</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">get_thumbnail</span><span class="p">(</span><span class="n">ratio</span><span class="o">=.</span><span class="mi">3</span><span class="p">,</span> <span class="n">auto_generate</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">thumbnail</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="n">thumbnail</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">exists</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">TEMP_PATH</span><span class="p">,</span> <span class="n">thumbnail</span><span class="o">.</span><span class="n">path</span><span class="p">))</span>
 </pre></div>
 </div>
-<div class="highlight-none"><div class="highlight"><pre><span></span>28 7
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>28 7
 </pre></div>
 </div>
-<p>Call <code class="docutils literal"><span class="pre">person1.image.locate()</span></code> or <code class="docutils literal"><span class="pre">person1.image.get_thumbnail(width=32,</span> <span class="pre">auto_generate=True).locate()</span></code> to get the
+<p>Call <code class="docutils literal notranslate"><span class="pre">person1.image.locate()</span></code> or <code class="docutils literal notranslate"><span class="pre">person1.image.get_thumbnail(width=32,</span> <span class="pre">auto_generate=True).locate()</span></code> to get the
 files URL in store.</p>
 </div>
 <div class="section" id="overwriting">
 <h2>8. Overwriting<a class="headerlink" href="#overwriting" title="Permalink to this headline">¶</a></h2>
-<p>Overwriting a file is achieved by attaching an image by <a class="reference internal" href="../api.html#sqlalchemy_media.attachments.BaseImage.attach" title="sqlalchemy_media.attachments.BaseImage.attach"><code class="xref py py-meth docutils literal"><span class="pre">attach()</span></code></a></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">StoreManager</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
+<p>Overwriting a file is achieved by attaching an image by <a class="reference internal" href="../api.html#sqlalchemy_media.attachments.BaseImage.attach" title="sqlalchemy_media.attachments.BaseImage.attach"><code class="xref py py-meth docutils literal notranslate"><span class="pre">attach()</span></code></a></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">StoreManager</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
     <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="s1">&#39;https://www.python.org/static/img/python-logo.png&#39;</span><span class="p">)</span>
     <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Content type:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">content_type</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Extension:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">extension</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Length:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Original filename:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">original_filename</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Content type:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">content_type</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Extension:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">extension</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Length:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Original filename:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">original_filename</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-none"><div class="highlight"><pre><span></span>Content type: image/jpeg
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Content type: image/jpeg
 Extension: .jpg
 Length: 2080
 Original filename: https://www.python.org/static/img/python-logo.png
@@ -378,27 +378,27 @@ Original filename: https://www.python.org/static/img/python-logo.png
 </div>
 <div class="section" id="deleting-delete-orphan">
 <h2>9. Deleting &amp; Delete Orphan<a class="headerlink" href="#deleting-delete-orphan" title="Permalink to this headline">¶</a></h2>
-<p>Set the model’s attribute to <a class="reference external" href="https://docs.python.org/3.5/library/constants.html#None" title="(in Python v3.5)"><code class="xref py py-data docutils literal"><span class="pre">None</span></code></a>, while <code class="docutils literal"><span class="pre">delete_orphan=True</span></code> passed to <a class="reference internal" href="../api.html#sqlalchemy_media.stores.StoreManager" title="sqlalchemy_media.stores.StoreManager"><code class="xref py py-class docutils literal"><span class="pre">StoreManager</span></code></a>.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">StoreManager</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">delete_orphan</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<p>Set the model’s attribute to <a class="reference external" href="https://docs.python.org/3.5/library/constants.html#None" title="(in Python v3.5)"><code class="xref py py-data docutils literal notranslate"><span class="pre">None</span></code></a>, while <code class="docutils literal notranslate"><span class="pre">delete_orphan=True</span></code> passed to <a class="reference internal" href="../api.html#sqlalchemy_media.stores.StoreManager" title="sqlalchemy_media.stores.StoreManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">StoreManager</span></code></a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">StoreManager</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">delete_orphan</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="n">deleted_filename</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">TEMP_PATH</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
-    <span class="n">person1</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">person1</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">deleted_filename</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Another way is to re-set the attribute using new instance:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">StoreManager</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">delete_orphan</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">StoreManager</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">delete_orphan</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="n">person1</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">ProfileImage</span><span class="o">.</span><span class="n">create_from</span><span class="p">(</span><span class="s1">&#39;https://www.python.org/static/img/python-logo.png&#39;</span><span class="p">)</span>
     <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Content type:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">content_type</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Extension:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">extension</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Length:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Original filename:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">original_filename</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Content type:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">content_type</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Extension:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">extension</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Length:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Original filename:&#39;</span><span class="p">,</span> <span class="n">person1</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">original_filename</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-none"><div class="highlight"><pre><span></span>Content type: image/jpeg
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Content type: image/jpeg
 Extension: .jpg
 Length: 2080
 Original filename: https://www.python.org/static/img/python-logo.png
@@ -406,7 +406,7 @@ Original filename: https://www.python.org/static/img/python-logo.png
 </div>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">Setting SqlAlchemy model’s attribute without enabling <code class="docutils literal"><span class="pre">delete_orphan</span></code> will cause the orphaned files
+<p class="last">Setting SqlAlchemy model’s attribute without enabling <code class="docutils literal notranslate"><span class="pre">delete_orphan</span></code> will cause the orphaned files
 remaining in store for ever.</p>
 </div>
 </div>
@@ -434,7 +434,7 @@ remaining in store for ever.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017, Vahid Mardani.
+        &copy; Copyright 2018, Vahid Mardani.
 
     </p>
   </div>
@@ -456,7 +456,7 @@ remaining in store for ever.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.15.0',
+            VERSION:'0.15.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Playing with Analyzers and Validators &mdash; sqlalchemy-media 0.15.0 documentation</title>
+  <title>Playing with Analyzers and Validators &mdash; sqlalchemy-media 0.15.2 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.15.0 documentation" href="../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.15.2 documentation" href="../index.html"/>
         <link rel="up" title="Tutorials" href="index.html"/>
         <link rel="next" title="API Reference" href="../api.html"/>
         <link rel="prev" title="Image &amp; Thumbnails" href="image.html"/> 
@@ -178,17 +178,17 @@
 <p>The following tutorial is going to describe how to use restrictions on attached filed:</p>
 <div class="section" id="prerequisites">
 <h2>0. Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
-<p>Mimetype detection from file’s content required the <code class="docutils literal"><span class="pre">magic</span></code> package to be installed.
+<p>Mimetype detection from file’s content required the <code class="docutils literal notranslate"><span class="pre">magic</span></code> package to be installed.
 This is an optional package.</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install python-magic
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install python-magic
 </pre></div>
 </div>
 </div>
 <div class="section" id="cv">
 <h2>1. CV<a class="headerlink" href="#cv" title="Permalink to this headline">¶</a></h2>
-<p>For the first, let to create a type called <code class="docutils literal"><span class="pre">CV</span></code></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy_media</span> <span class="k">import</span> <span class="n">File</span><span class="p">,</span> <span class="n">MagicAnalyzer</span><span class="p">,</span> <span class="n">ContentTypeValidator</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.constants</span> <span class="k">import</span> <span class="n">MB</span><span class="p">,</span> <span class="n">KB</span>
+<p>For the first, let to create a type called <code class="docutils literal notranslate"><span class="pre">CV</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy_media</span> <span class="kn">import</span> <span class="n">File</span><span class="p">,</span> <span class="n">MagicAnalyzer</span><span class="p">,</span> <span class="n">ContentTypeValidator</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.constants</span> <span class="kn">import</span> <span class="n">MB</span><span class="p">,</span> <span class="n">KB</span>
 
 <span class="k">class</span> <span class="nc">CV</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
     <span class="n">__pre_processors__</span> <span class="o">=</span> <span class="p">[</span>
@@ -202,32 +202,32 @@ This is an optional package.</p>
 </div>
 <div class="section" id="creating-workbench">
 <h2>2. Creating workbench<a class="headerlink" href="#creating-workbench" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">functools</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">functools</span>
 
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="k">import</span> <span class="n">create_engine</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="k">import</span> <span class="n">sessionmaker</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.ext.declarative</span> <span class="k">import</span> <span class="n">declarative_base</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">create_engine</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">sessionmaker</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.ext.declarative</span> <span class="kn">import</span> <span class="n">declarative_base</span>
 
-<span class="kn">from</span> <span class="nn">sqlalchemy_media</span> <span class="k">import</span> <span class="n">StoreManager</span><span class="p">,</span> <span class="n">FileSystemStore</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media</span> <span class="kn">import</span> <span class="n">StoreManager</span><span class="p">,</span> <span class="n">FileSystemStore</span>
 
 <span class="n">TEMP_PATH</span> <span class="o">=</span> <span class="s1">&#39;/tmp/sqlalchemy-media&#39;</span>
 <span class="n">Base</span> <span class="o">=</span> <span class="n">declarative_base</span><span class="p">()</span>
-<span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="s1">&#39;sqlite:///:memory:&#39;</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="s1">&#39;sqlite:///:memory:&#39;</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 <span class="n">session_factory</span> <span class="o">=</span> <span class="n">sessionmaker</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
 
 <span class="n">StoreManager</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
     <span class="s1">&#39;fs&#39;</span><span class="p">,</span>
     <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">FileSystemStore</span><span class="p">,</span> <span class="n">TEMP_PATH</span><span class="p">,</span> <span class="s1">&#39;http://static.example.org/&#39;</span><span class="p">),</span>
-    <span class="n">default</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">default</span><span class="o">=</span><span class="bp">True</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="model">
 <h2>3. Model<a class="headerlink" href="#model" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
 
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="k">import</span> <span class="n">TypeDecorator</span><span class="p">,</span> <span class="n">Unicode</span><span class="p">,</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Integer</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">TypeDecorator</span><span class="p">,</span> <span class="n">Unicode</span><span class="p">,</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Integer</span>
 
 <span class="k">class</span> <span class="nc">Json</span><span class="p">(</span><span class="n">TypeDecorator</span><span class="p">):</span>
     <span class="n">impl</span> <span class="o">=</span> <span class="n">Unicode</span>
@@ -236,28 +236,28 @@ This is an optional package.</p>
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">process_result_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">engine</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">Person</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
     <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;person&#39;</span>
 
-    <span class="nb">id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
     <span class="n">cv</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">CV</span><span class="o">.</span><span class="n">as_mutable</span><span class="p">(</span><span class="n">Json</span><span class="p">))</span>
 
 
-<span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="n">checkfirst</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="n">checkfirst</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">session</span> <span class="o">=</span> <span class="n">session_factory</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="submitting-files">
 <h2>4. Submitting files<a class="headerlink" href="#submitting-files" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">io</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">io</span>
 
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.exceptions</span> <span class="k">import</span> <span class="n">ContentTypeValidationError</span><span class="p">,</span> \
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.exceptions</span> <span class="kn">import</span> <span class="n">ContentTypeValidationError</span><span class="p">,</span> \
     <span class="n">MinimumLengthIsNotReachedError</span>
 
 <span class="n">person1</span> <span class="o">=</span> <span class="n">Person</span><span class="p">(</span><span class="n">cv</span><span class="o">=</span><span class="n">CV</span><span class="p">())</span>
@@ -267,15 +267,15 @@ This is an optional package.</p>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">person1</span><span class="o">.</span><span class="n">cv</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Plain text&#39;</span><span class="p">))</span>
     <span class="k">except</span> <span class="p">(</span><span class="n">ContentTypeValidationError</span><span class="p">,</span> <span class="n">MinimumLengthIsNotReachedError</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ContentTypeValidationError is raised. It&#39;s so bad!&quot;</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;ContentTypeValidationError is raised. It&#39;s so bad!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-none"><div class="highlight"><pre><span></span>ContentTypeValidationError is raised. It&#39;s so bad!
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>ContentTypeValidationError is raised. It&#39;s so bad!
 </pre></div>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="../api.html#sqlalchemy_media.processors.WandAnalyzer" title="sqlalchemy_media.processors.WandAnalyzer"><code class="xref py py-class docutils literal"><span class="pre">WandAnalyzer</span></code></a>, <a class="reference internal" href="../api.html#sqlalchemy_media.processors.ImageValidator" title="sqlalchemy_media.processors.ImageValidator"><code class="xref py py-class docutils literal"><span class="pre">ImageValidator</span></code></a> amd <a class="reference internal" href="../api.html#sqlalchemy_media.processors.ImageProcessor" title="sqlalchemy_media.processors.ImageProcessor"><code class="xref py py-class docutils literal"><span class="pre">ImageProcessor</span></code></a></p>
+<p class="last"><a class="reference internal" href="../api.html#sqlalchemy_media.processors.WandAnalyzer" title="sqlalchemy_media.processors.WandAnalyzer"><code class="xref py py-class docutils literal notranslate"><span class="pre">WandAnalyzer</span></code></a>, <a class="reference internal" href="../api.html#sqlalchemy_media.processors.ImageValidator" title="sqlalchemy_media.processors.ImageValidator"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImageValidator</span></code></a> amd <a class="reference internal" href="../api.html#sqlalchemy_media.processors.ImageProcessor" title="sqlalchemy_media.processors.ImageProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImageProcessor</span></code></a></p>
 </div>
 </div>
 </div>
@@ -302,7 +302,7 @@ This is an optional package.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017, Vahid Mardani.
+        &copy; Copyright 2018, Vahid Mardani.
 
     </p>
   </div>
@@ -324,7 +324,7 @@ This is an optional package.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.15.0',
+            VERSION:'0.15.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
