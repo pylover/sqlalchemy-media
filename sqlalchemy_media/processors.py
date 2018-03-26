@@ -8,7 +8,7 @@ from sqlalchemy_media.helpers import validate_width_height_ratio, deprecated
 from sqlalchemy_media.mimetypes_ import guess_extension
 from sqlalchemy_media.optionals import magic_mime_from_buffer, ensure_wand
 from sqlalchemy_media.typing_ import Dimension
-from sqlalchemy_media.imaginglibs import ImagingLibrary
+from sqlalchemy_media.imaginglibs import get_image_factory
 
 
 class Processor(object):
@@ -401,6 +401,7 @@ class ImageProcessor(Processor):
         # Ensuring the wand package is installed.
         ensure_wand()
         # noinspection PyPackageRequirements
+        from .imaginglibs import get_image_factory
         from wand.image import Image as WandImage
 
         # Copy the original info
@@ -472,7 +473,7 @@ class ImageAnalyzer(Analyzer):
 
     def process(self, descriptor: StreamDescriptor, context: dict):
 
-        Image = ImagingLibrary.get_image_factory()
+        Image = get_image_factory()
 
         # This processor requires seekable stream.
         descriptor.prepare_to_read(backend='memory')
