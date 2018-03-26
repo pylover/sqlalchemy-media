@@ -15,6 +15,7 @@ from sqlalchemy_media.constants import MB, KB
 from sqlalchemy_media.optionals import ensure_wand
 from sqlalchemy_media.helpers import validate_width_height_ratio
 from sqlalchemy_media.exceptions import ThumbnailIsNotAvailableError
+from sqlalchemy_media.imaginglibs import get_image_factory
 
 
 class Attachment(MutableDict):
@@ -754,11 +755,7 @@ class Image(BaseImage):
         # Validating parameters
         width, height, ratio = validate_width_height_ratio(width, height, ratio)
 
-        # Ensuring the wand package is installed.
-        ensure_wand()
-        # noinspection PyPackageRequirements
-        from wand.image import Image as WandImage
-
+        CompatibleImage = get_image_factory()
         # opening the original file
         thumbnail_buffer = io.BytesIO()
         store = self.get_store()
@@ -766,7 +763,7 @@ class Image(BaseImage):
 
             # generating thumbnail and storing in buffer
             # noinspection PyTypeChecker
-            img = WandImage(file=original_file)
+            img = CompatibleImage(file=original_file)
             img.format = 'jpg'
 
             with img:
