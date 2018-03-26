@@ -329,10 +329,12 @@ class ImageProcessor(Processor):
 
     .. warning::
 
-       - If ``width`` or ``height`` is given with ``crop``, Cropping will be processed after the resize.
+       - If ``width`` or ``height`` is given with ``crop``, Cropping will be processed after the
+         resize.
        - If you pass both ``width`` and ``height``, aspect ratio may not be preserved.
 
-    :param fmt: This argument will be directly passing to ``wand``. so, for list of available choices, see:
+    :param fmt: This argument will be directly passing to ``Wand`` or ``Pillow``. so, for list of
+                available choices, see:
                 `ImageMagic Documentation <http://www.imagemagick.org/script/formats.php>`_
 
     :param width: The new image width.
@@ -343,8 +345,6 @@ class ImageProcessor(Processor):
 
                  The crop dimension as a dictionary containing the keys described
                  `here <http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.BaseImage.crop>`_.
-
-
 
                  Including you can
                  use percent ``%`` sing to automatically calculate the values from original image dimension::
@@ -398,16 +398,13 @@ class ImageProcessor(Processor):
 
     def process(self, descriptor: StreamDescriptor, context: dict):
 
-        # Ensuring the wand package is installed.
-        ensure_wand()
-        # noinspection PyPackageRequirements
         from .imaginglibs import get_image_factory
-        from wand.image import Image as WandImage
 
+        Image = get_image_factory()
         # Copy the original info
         # generating thumbnail and storing in buffer
         # noinspection PyTypeChecker
-        img = WandImage(file=descriptor)
+        img = Image(file=descriptor)
 
         if self.crop is None and (self.format is None or img.format == self.format) and (
                     (self.width is None or img.width == self.width) and
