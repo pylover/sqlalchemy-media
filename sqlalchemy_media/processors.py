@@ -472,12 +472,17 @@ class ImageAnalyzer(Analyzer):
 
     def process(self, descriptor: StreamDescriptor, context: dict):
 
-        imaginglib = ImagingLibrary.get_available()
+        Image = ImagingLibrary.get_image_factory()
 
         # This processor requires seekable stream.
         descriptor.prepare_to_read(backend='memory')
 
-        context.update(imaginglib.analyze(descriptor))
+        with Image(file=descriptor)as img:
+            context.update(
+                width=img.width,
+                height=img.height,
+                content_type=img.mimetype
+            )
 
         # prepare for next processor, calling this method is not bad and just uses the memory
         # temporary.
