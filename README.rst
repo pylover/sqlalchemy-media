@@ -82,7 +82,7 @@ Here is a simple example to see how to use this library:
   from sqlalchemy.orm import sessionmaker
   from sqlalchemy.ext.declarative import declarative_base
 
-  from sqlalchemy_media import StoreManager, FileSystemStore, Image, WandAnalyzer, ImageValidator, ImageProcessor
+  from sqlalchemy_media import StoreManager, FileSystemStore, Image, ImageAnalyzer, ImageValidator, ImageProcessor
 
 
   TEMP_PATH = '/tmp/sqlalchemy-media'
@@ -113,7 +113,7 @@ Here is a simple example to see how to use this library:
 
   class ProfileImage(Image):
       __pre_processors__ = [
-          WandAnalyzer(),
+          ImageAnalyzer(),
           ImageValidator(
               minimum=(80, 80),
               maximum=(800, 600),
