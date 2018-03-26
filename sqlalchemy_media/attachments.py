@@ -871,3 +871,4 @@ class ImageList(AttachmentList):
     """
 
     __item_type__ = Image
+

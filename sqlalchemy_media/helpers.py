@@ -107,3 +107,4 @@ def deprecated(func):  # pragma: no cover
         return func(*args, **kwargs)
 
     return new_func
+
