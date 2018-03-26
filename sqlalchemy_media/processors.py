@@ -8,6 +8,7 @@ from sqlalchemy_media.helpers import validate_width_height_ratio, deprecated
 from sqlalchemy_media.mimetypes_ import guess_extension
 from sqlalchemy_media.optionals import magic_mime_from_buffer, ensure_wand
 from sqlalchemy_media.typing_ import Dimension
+from sqlalchemy_media.imaginglibs import ImagingLibrary
 
 
 class Processor(object):
@@ -89,6 +90,7 @@ class MagicAnalyzer(Analyzer):
 @deprecated
 class WandAnalyzer(Analyzer):
     """
+    .. deprecated:: 0.16
 
     .. versionadded:: 0.4
 
@@ -252,12 +254,12 @@ class ImageValidator(ContentTypeValidator):
 
     ..  testcode::
 
-        from sqlalchemy_media import Image, WandAnalyzer, ImageValidator
+        from sqlalchemy_media import Image, ImageAnalyzer, ImageValidator
 
 
         class ProfileImage(Image):
             __pre_processors__ = [
-                WandAnalyzer(),
+                ImageAnalyzer(),
                 ImageValidator((64, 48), (128, 96), content_types=['image/jpeg', 'image/png'])
             ]
 
@@ -451,4 +453,33 @@ class ImageProcessor(Processor):
 
         output_buffer.seek(0)
         descriptor.replace(output_buffer, position=0, **context)
+
+
+class ImageAnalyzer(Analyzer):
+    """
+
+    .. versionadded:: 0.16
+
+    Analyze an image using available image library by calling the
+    :classmethod:`.imaging.ImagingLibrary.get_available()
+
+    .. warning:: If none of ``Wand`` or ``Pillow`` are installed the
+                 :exc:`.OptionalPackageRequirementError` will be raised.
+
+    .. note:: This object currently selects ``width``, ``height`` and ``mimetype`` of an image.
+
+    """
+
+    def process(self, descriptor: StreamDescriptor, context: dict):
+
+        imaginglib = ImagingLibrary.get_available()
+
+        # This processor requires seekable stream.
+        descriptor.prepare_to_read(backend='memory')
+
+        context.update(imaginglib.analyze(descriptor))
+
+        # prepare for next processor, calling this method is not bad and just uses the memory
+        # temporary.
+        descriptor.prepare_to_read(backend='memory')
 
