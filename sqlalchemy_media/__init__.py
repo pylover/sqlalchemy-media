@@ -9,6 +9,6 @@ from .processors import Processor, ImageProcessor, Analyzer, MagicAnalyzer, Wand
     ContentTypeValidator, ImageValidator, ImageAnalyzer
 
 
-__version__ = '0.16.0-dev'
+__version__ = '0.16.0'
 
 
