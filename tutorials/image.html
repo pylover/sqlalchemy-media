@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Image &amp; Thumbnails &mdash; sqlalchemy-media 0.15.4 documentation</title>
+  <title>Image &amp; Thumbnails &mdash; sqlalchemy-media 0.16.0 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.15.4 documentation" href="../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.16.0 documentation" href="../index.html"/>
         <link rel="up" title="Tutorials" href="index.html"/>
         <link rel="next" title="Playing with Analyzers and Validators" href="analyzers_and_validators.html"/>
         <link rel="prev" title="Tutorials" href="index.html"/> 
@@ -69,7 +69,7 @@
             
             
               <div class="version">
-                0.15
+                0.16
               </div>
             
           
@@ -253,11 +253,11 @@ So, this is how to emulate a type using the
 the <code class="docutils literal notranslate"><span class="pre">as_mutable</span></code> method is used to make a type mutable.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Integer</span>
 
-<span class="kn">from</span> <span class="nn">sqlalchemy_media</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">WandAnalyzer</span><span class="p">,</span> <span class="n">ImageValidator</span><span class="p">,</span> <span class="n">ImageProcessor</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">ImageAnalizer</span><span class="p">,</span> <span class="n">ImageValidator</span><span class="p">,</span> <span class="n">ImageProcessor</span>
 
 <span class="k">class</span> <span class="nc">ProfileImage</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
     <span class="n">__pre_processors__</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">WandAnalyzer</span><span class="p">(),</span>
+        <span class="n">ImageAnalizer</span><span class="p">(),</span>
         <span class="n">ImageValidator</span><span class="p">(</span>
             <span class="n">minimum</span><span class="o">=</span><span class="p">(</span><span class="mi">80</span><span class="p">,</span> <span class="mi">80</span><span class="p">),</span>
             <span class="n">maximum</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">),</span>
@@ -456,7 +456,7 @@ remaining in store for ever.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.15.4',
+            VERSION:'0.16.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

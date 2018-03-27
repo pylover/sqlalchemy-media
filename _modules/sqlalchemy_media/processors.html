@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.processors &mdash; sqlalchemy-media 0.15.4 documentation</title>
+  <title>sqlalchemy_media.processors &mdash; sqlalchemy-media 0.16.0 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.15.4 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.16.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.15
+                0.16
               </div>
             
           
@@ -160,16 +160,16 @@
             
   <h1>Source code for sqlalchemy_media.processors</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">io</span>
-
 <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Iterable</span>
 
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.typing_</span> <span class="k">import</span> <span class="n">Dimension</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.mimetypes_</span> <span class="k">import</span> <span class="n">guess_extension</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.descriptors</span> <span class="k">import</span> <span class="n">StreamDescriptor</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy_media.exceptions</span> <span class="k">import</span> <span class="n">ContentTypeValidationError</span><span class="p">,</span> <span class="n">DimensionValidationError</span><span class="p">,</span> \
     <span class="n">AspectRatioValidationError</span><span class="p">,</span> <span class="n">AnalyzeError</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.helpers</span> <span class="k">import</span> <span class="n">validate_width_height_ratio</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.descriptors</span> <span class="k">import</span> <span class="n">StreamDescriptor</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.helpers</span> <span class="k">import</span> <span class="n">validate_width_height_ratio</span><span class="p">,</span> <span class="n">deprecated</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.mimetypes_</span> <span class="k">import</span> <span class="n">guess_extension</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy_media.optionals</span> <span class="k">import</span> <span class="n">magic_mime_from_buffer</span><span class="p">,</span> <span class="n">ensure_wand</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.typing_</span> <span class="k">import</span> <span class="n">Dimension</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.imaginglibs</span> <span class="k">import</span> <span class="n">get_image_factory</span>
 
 
 <div class="viewcode-block" id="Processor"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.processors.Processor">[docs]</a><span class="k">class</span> <span class="nc">Processor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -248,14 +248,16 @@
         <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="WandAnalyzer"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.processors.WandAnalyzer">[docs]</a><span class="k">class</span> <span class="nc">WandAnalyzer</span><span class="p">(</span><span class="n">Analyzer</span><span class="p">):</span>
+<div class="viewcode-block" id="WandAnalyzer"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.processors.WandAnalyzer">[docs]</a><span class="nd">@deprecated</span>
+<span class="k">class</span> <span class="nc">WandAnalyzer</span><span class="p">(</span><span class="n">Analyzer</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. deprecated:: 0.16</span>
 
 <span class="sd">    .. versionadded:: 0.4</span>
 
 <span class="sd">    .. versionchanged:: 0.5</span>
 
-<span class="sd">       - Inherited from :class:`.Processor`</span>
+<span class="sd">       - Inherited from :class:`.Analyzer`</span>
 <span class="sd">       - The ``analyze`` method renamed to ``process`` to override the parent method.</span>
 
 <span class="sd">    Analyze an image using ``wand``.</span>
@@ -303,7 +305,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="WandAnalyzer.process"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.processors.WandAnalyzer.process">[docs]</a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">:</span> <span class="n">StreamDescriptor</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">:</span> <span class="n">StreamDescriptor</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">ensure_wand</span><span class="p">()</span>
         <span class="c1"># noinspection PyPackageRequirements</span>
         <span class="kn">from</span> <span class="nn">wand.image</span> <span class="k">import</span> <span class="n">Image</span> <span class="k">as</span> <span class="n">WandImage</span>
@@ -325,7 +327,7 @@
             <span class="k">raise</span> <span class="n">AnalyzeError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">WandException</span><span class="p">))</span>
 
         <span class="c1"># prepare for next processor, calling this method is not bad.</span>
-        <span class="n">descriptor</span><span class="o">.</span><span class="n">prepare_to_read</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="s1">&#39;memory&#39;</span><span class="p">)</span></div></div>
+        <span class="n">descriptor</span><span class="o">.</span><span class="n">prepare_to_read</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="s1">&#39;memory&#39;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Validator"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.processors.Validator">[docs]</a><span class="k">class</span> <span class="nc">Validator</span><span class="p">(</span><span class="n">Processor</span><span class="p">):</span>
@@ -413,12 +415,12 @@
 
 <span class="sd">    ..  testcode::</span>
 
-<span class="sd">        from sqlalchemy_media import Image, WandAnalyzer, ImageValidator</span>
+<span class="sd">        from sqlalchemy_media import Image, ImageAnalyzer, ImageValidator</span>
 
 
 <span class="sd">        class ProfileImage(Image):</span>
 <span class="sd">            __pre_processors__ = [</span>
-<span class="sd">                WandAnalyzer(),</span>
+<span class="sd">                ImageAnalyzer(),</span>
 <span class="sd">                ImageValidator((64, 48), (128, 96), content_types=[&#39;image/jpeg&#39;, &#39;image/png&#39;])</span>
 <span class="sd">            ]</span>
 
@@ -488,10 +490,12 @@
 
 <span class="sd">    .. warning::</span>
 
-<span class="sd">       - If ``width`` or ``height`` is given with ``crop``, Cropping will be processed after the resize.</span>
+<span class="sd">       - If ``width`` or ``height`` is given with ``crop``, Cropping will be processed after the</span>
+<span class="sd">         resize.</span>
 <span class="sd">       - If you pass both ``width`` and ``height``, aspect ratio may not be preserved.</span>
 
-<span class="sd">    :param fmt: This argument will be directly passing to ``wand``. so, for list of available choices, see:</span>
+<span class="sd">    :param fmt: This argument will be directly passing to ``Wand`` or ``Pillow``. so, for list of</span>
+<span class="sd">                available choices, see:</span>
 <span class="sd">                `ImageMagic Documentation &lt;http://www.imagemagick.org/script/formats.php&gt;`_</span>
 
 <span class="sd">    :param width: The new image width.</span>
@@ -502,8 +506,6 @@
 
 <span class="sd">                 The crop dimension as a dictionary containing the keys described</span>
 <span class="sd">                 `here &lt;http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.BaseImage.crop&gt;`_.</span>
-
-
 
 <span class="sd">                 Including you can</span>
 <span class="sd">                 use percent ``%`` sing to automatically calculate the values from original image dimension::</span>
@@ -557,15 +559,13 @@
 
 <div class="viewcode-block" id="ImageProcessor.process"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.processors.ImageProcessor.process">[docs]</a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">:</span> <span class="n">StreamDescriptor</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 
-        <span class="c1"># Ensuring the wand package is installed.</span>
-        <span class="n">ensure_wand</span><span class="p">()</span>
-        <span class="c1"># noinspection PyPackageRequirements</span>
-        <span class="kn">from</span> <span class="nn">wand.image</span> <span class="k">import</span> <span class="n">Image</span> <span class="k">as</span> <span class="n">WandImage</span>
+        <span class="kn">from</span> <span class="nn">.imaginglibs</span> <span class="k">import</span> <span class="n">get_image_factory</span>
 
+        <span class="n">Image</span> <span class="o">=</span> <span class="n">get_image_factory</span><span class="p">()</span>
         <span class="c1"># Copy the original info</span>
         <span class="c1"># generating thumbnail and storing in buffer</span>
         <span class="c1"># noinspection PyTypeChecker</span>
-        <span class="n">img</span> <span class="o">=</span> <span class="n">WandImage</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">descriptor</span><span class="p">)</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">descriptor</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">crop</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">format</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">img</span><span class="o">.</span><span class="n">format</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
                     <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">img</span><span class="o">.</span><span class="n">width</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)</span> <span class="ow">and</span>
@@ -612,6 +612,41 @@
 
         <span class="n">output_buffer</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">descriptor</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">output_buffer</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">context</span><span class="p">)</span></div></div>
+
+
+<span class="k">class</span> <span class="nc">ImageAnalyzer</span><span class="p">(</span><span class="n">Analyzer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    .. versionadded:: 0.16</span>
+
+<span class="sd">    Analyze an image using available image library by calling the</span>
+<span class="sd">    :classmethod:`.imaging.ImagingLibrary.get_available()</span>
+
+<span class="sd">    .. warning:: If none of ``Wand`` or ``Pillow`` are installed the</span>
+<span class="sd">                 :exc:`.OptionalPackageRequirementError` will be raised.</span>
+
+<span class="sd">    .. note:: This object currently selects ``width``, ``height`` and ``mimetype`` of an image.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">:</span> <span class="n">StreamDescriptor</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+
+        <span class="n">Image</span> <span class="o">=</span> <span class="n">get_image_factory</span><span class="p">()</span>
+
+        <span class="c1"># This processor requires seekable stream.</span>
+        <span class="n">descriptor</span><span class="o">.</span><span class="n">prepare_to_read</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="s1">&#39;memory&#39;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">Image</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">descriptor</span><span class="p">)</span><span class="k">as</span> <span class="n">img</span><span class="p">:</span>
+            <span class="n">context</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="n">width</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">width</span><span class="p">,</span>
+                <span class="n">height</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">height</span><span class="p">,</span>
+                <span class="n">content_type</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">mimetype</span>
+            <span class="p">)</span>
+
+        <span class="c1"># prepare for next processor, calling this method is not bad and just uses the memory</span>
+        <span class="c1"># temporary.</span>
+        <span class="n">descriptor</span><span class="o">.</span><span class="n">prepare_to_read</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="s1">&#39;memory&#39;</span><span class="p">)</span>
+
 </pre></div>
 
            </div>
@@ -648,7 +683,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.15.4',
+            VERSION:'0.16.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

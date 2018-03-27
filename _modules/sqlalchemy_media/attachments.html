@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.attachments &mdash; sqlalchemy-media 0.15.4 documentation</title>
+  <title>sqlalchemy_media.attachments &mdash; sqlalchemy-media 0.16.0 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.15.4 documentation" href="../../index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.16.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.15
+                0.16
               </div>
             
           
@@ -176,6 +176,7 @@
 <span class="kn">from</span> <span class="nn">sqlalchemy_media.optionals</span> <span class="k">import</span> <span class="n">ensure_wand</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy_media.helpers</span> <span class="k">import</span> <span class="n">validate_width_height_ratio</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy_media.exceptions</span> <span class="k">import</span> <span class="n">ThumbnailIsNotAvailableError</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.imaginglibs</span> <span class="k">import</span> <span class="n">get_image_factory</span>
 
 
 <div class="viewcode-block" id="Attachment"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Attachment">[docs]</a><span class="k">class</span> <span class="nc">Attachment</span><span class="p">(</span><span class="n">MutableDict</span><span class="p">):</span>
@@ -915,11 +916,7 @@
         <span class="c1"># Validating parameters</span>
         <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">ratio</span> <span class="o">=</span> <span class="n">validate_width_height_ratio</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">ratio</span><span class="p">)</span>
 
-        <span class="c1"># Ensuring the wand package is installed.</span>
-        <span class="n">ensure_wand</span><span class="p">()</span>
-        <span class="c1"># noinspection PyPackageRequirements</span>
-        <span class="kn">from</span> <span class="nn">wand.image</span> <span class="k">import</span> <span class="n">Image</span> <span class="k">as</span> <span class="n">WandImage</span>
-
+        <span class="n">CompatibleImage</span> <span class="o">=</span> <span class="n">get_image_factory</span><span class="p">()</span>
         <span class="c1"># opening the original file</span>
         <span class="n">thumbnail_buffer</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
         <span class="n">store</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_store</span><span class="p">()</span>
@@ -927,7 +924,7 @@
 
             <span class="c1"># generating thumbnail and storing in buffer</span>
             <span class="c1"># noinspection PyTypeChecker</span>
-            <span class="n">img</span> <span class="o">=</span> <span class="n">WandImage</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">original_file</span><span class="p">)</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">CompatibleImage</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">original_file</span><span class="p">)</span>
             <span class="n">img</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="s1">&#39;jpg&#39;</span>
 
             <span class="k">with</span> <span class="n">img</span><span class="p">:</span>
@@ -1032,6 +1029,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">__item_type__</span> <span class="o">=</span> <span class="n">Image</span></div>
+
 </pre></div>
 
            </div>
@@ -1068,7 +1066,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.15.4',
+            VERSION:'0.16.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

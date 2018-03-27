@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; sqlalchemy-media 0.15.4 documentation</title>
+  <title>API Reference &mdash; sqlalchemy-media 0.16.0 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.15.4 documentation" href="index.html"/>
+    <link rel="top" title="sqlalchemy-media 0.16.0 documentation" href="index.html"/>
         <link rel="prev" title="Playing with Analyzers and Validators" href="tutorials/analyzers_and_validators.html"/> 
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.15
+                0.16
               </div>
             
           
@@ -2374,13 +2374,15 @@ inserted info <code class="docutils literal notranslate"><span class="pre">conte
 <dl class="class">
 <dt id="sqlalchemy_media.processors.WandAnalyzer">
 <em class="property">class </em><code class="descclassname">sqlalchemy_media.processors.</code><code class="descname">WandAnalyzer</code><a class="reference internal" href="_modules/sqlalchemy_media/processors.html#WandAnalyzer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.processors.WandAnalyzer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.processors.Analyzer" title="sqlalchemy_media.processors.Analyzer"><code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy_media.processors.Analyzer</span></code></a></p>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.16.</span></p>
+</div>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 0.4.</span></p>
 </div>
 <div class="versionchanged">
 <ul>
-<span class="versionmodified">Changed in version 0.5: </span><li><p class="first">Inherited from <a class="reference internal" href="#sqlalchemy_media.processors.Processor" title="sqlalchemy_media.processors.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Processor</span></code></a></p>
+<span class="versionmodified">Changed in version 0.5: </span><li><p class="first">Inherited from <a class="reference internal" href="#sqlalchemy_media.processors.Analyzer" title="sqlalchemy_media.processors.Analyzer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Analyzer</span></code></a></p>
 </li>
 <li><p class="first">The <code class="docutils literal notranslate"><span class="pre">analyze</span></code> method renamed to <code class="docutils literal notranslate"><span class="pre">process</span></code> to override the parent method.</p>
 </li>
@@ -2428,16 +2430,6 @@ inserted info <code class="docutils literal notranslate"><span class="pre">conte
 <p class="first admonition-title">Note</p>
 <p class="last">This object currently selects <code class="docutils literal notranslate"><span class="pre">width</span></code>, <code class="docutils literal notranslate"><span class="pre">height</span></code> and <code class="docutils literal notranslate"><span class="pre">mimetype</span></code> of the image.</p>
 </div>
-<dl class="method">
-<dt id="sqlalchemy_media.processors.WandAnalyzer.process">
-<code class="descname">process</code><span class="sig-paren">(</span><em>descriptor: sqlalchemy_media.descriptors.StreamDescriptor</em>, <em>context: dict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/processors.html#WandAnalyzer.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.processors.WandAnalyzer.process" title="Permalink to this definition">¶</a></dt>
-<dd><p>Should be overridden in inherited class and analyzes the given <a class="reference internal" href="#sqlalchemy_media.descriptors.BaseDescriptor" title="sqlalchemy_media.descriptors.BaseDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDescriptor</span></code></a> instance.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">An instance of <a class="reference internal" href="#sqlalchemy_media.exceptions.AnalyzeError" title="sqlalchemy_media.exceptions.AnalyzeError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">AnalyzeError</span></code></a> or sub-types may raised</p>
-</div>
-</dd></dl>
-
 </dd></dl>
 
 </div>
@@ -2587,12 +2579,12 @@ inserted info <code class="docutils literal notranslate"><span class="pre">conte
 <p class="last"><a class="reference internal" href="#sqlalchemy_media.exceptions.DimensionValidationError" title="sqlalchemy_media.exceptions.DimensionValidationError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">DimensionValidationError</span></code></a> may be raised during validation.</p>
 </div>
 <p>Use it as follow</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy_media</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">WandAnalyzer</span><span class="p">,</span> <span class="n">ImageValidator</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy_media</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">ImageAnalyzer</span><span class="p">,</span> <span class="n">ImageValidator</span>
 
 
 <span class="k">class</span> <span class="nc">ProfileImage</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
     <span class="n">__pre_processors__</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">WandAnalyzer</span><span class="p">(),</span>
+        <span class="n">ImageAnalyzer</span><span class="p">(),</span>
         <span class="n">ImageValidator</span><span class="p">((</span><span class="mi">64</span><span class="p">,</span> <span class="mi">48</span><span class="p">),</span> <span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">96</span><span class="p">),</span> <span class="n">content_types</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;image/jpeg&#39;</span><span class="p">,</span> <span class="s1">&#39;image/png&#39;</span><span class="p">])</span>
     <span class="p">]</span>
 </pre></div>
@@ -2640,7 +2632,8 @@ inserted info <code class="docutils literal notranslate"><span class="pre">conte
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <ul class="last simple">
-<li>If <code class="docutils literal notranslate"><span class="pre">width</span></code> or <code class="docutils literal notranslate"><span class="pre">height</span></code> is given with <code class="docutils literal notranslate"><span class="pre">crop</span></code>, Cropping will be processed after the resize.</li>
+<li>If <code class="docutils literal notranslate"><span class="pre">width</span></code> or <code class="docutils literal notranslate"><span class="pre">height</span></code> is given with <code class="docutils literal notranslate"><span class="pre">crop</span></code>, Cropping will be processed after the
+resize.</li>
 <li>If you pass both <code class="docutils literal notranslate"><span class="pre">width</span></code> and <code class="docutils literal notranslate"><span class="pre">height</span></code>, aspect ratio may not be preserved.</li>
 </ul>
 </div>
@@ -2649,7 +2642,8 @@ inserted info <code class="docutils literal notranslate"><span class="pre">conte
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>fmt</strong> – This argument will be directly passing to <code class="docutils literal notranslate"><span class="pre">wand</span></code>. so, for list of available choices, see:
+<li><strong>fmt</strong> – This argument will be directly passing to <code class="docutils literal notranslate"><span class="pre">Wand</span></code> or <code class="docutils literal notranslate"><span class="pre">Pillow</span></code>. so, for list of
+available choices, see:
 <a class="reference external" href="http://www.imagemagick.org/script/formats.php">ImageMagic Documentation</a></li>
 <li><strong>width</strong> – The new image width.</li>
 <li><strong>height</strong> – The new image height.</li>
@@ -2987,7 +2981,7 @@ requested package is not provided.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.15.4',
+            VERSION:'0.16.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
