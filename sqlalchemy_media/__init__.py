@@ -6,9 +6,11 @@ from .stores import Store, FileSystemStore, S3Store, OS2Store, StoreManager, sto
 from .descriptors import BaseDescriptor, StreamDescriptor, StreamCloserDescriptor, LocalFileSystemDescriptor, \
     UrlDescriptor, CgiFieldStorageDescriptor, AttachableDescriptor
 from .processors import Processor, ImageProcessor, Analyzer, MagicAnalyzer, WandAnalyzer, Validator, \
+
     ContentTypeValidator, ImageValidator, PILAnalyzer, PILImageProcessor
 
 
-__version__ = '0.15.0'
+
+__version__ = '0.16.0'
 
 

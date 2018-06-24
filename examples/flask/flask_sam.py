@@ -6,7 +6,8 @@ from os import path, mkdir, getcwd
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import TypeDecorator, Unicode
-from sqlalchemy_media import Image, ImageValidator, ImageProcessor, WandAnalyzer, StoreManager, FileSystemStore
+from sqlalchemy_media import Image, ImageValidator, ImageProcessor, ImageAnalyzer, StoreManager, \
+    FileSystemStore
 from sqlalchemy_media.constants import MB, KB
 
 
@@ -59,7 +60,7 @@ class Json(TypeDecorator):
 class Avatar(Image):
     __auto_coercion__ = True
     __pre_processors__ = [
-        WandAnalyzer(),
+        ImageAnalyzer(),
         ImageValidator(
             minimum=(10, 10),
             maximum=(3840, 3840),

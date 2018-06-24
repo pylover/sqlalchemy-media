@@ -80,3 +80,5 @@ htmlcov
 /examples/cherrypy-demo/demo.db
 /examples/flask/demo.db
 /examples/flask/static/avatars/
+
+.ropeproject

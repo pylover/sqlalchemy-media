@@ -5,7 +5,7 @@ from sqlalchemy import TypeDecorator, Unicode, Column, Integer
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy_media import Image, ImageValidator, ImageProcessor, WandAnalyzer
+from sqlalchemy_media import Image, ImageValidator, ImageProcessor, ImageAnalyzer
 from sqlalchemy_media.constants import MB, KB
 
 
@@ -29,7 +29,7 @@ class Json(TypeDecorator):
 class Avatar(Image):
     __auto_coercion__ = True
     __pre_processors__ = [
-        WandAnalyzer(),
+        ImageAnalyzer(),
         ImageValidator(
             minimum=(10, 10),
             maximum=(3840, 3840),

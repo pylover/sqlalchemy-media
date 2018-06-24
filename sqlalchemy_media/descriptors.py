@@ -140,7 +140,7 @@ class BaseDescriptor(object):
         """
         Get the current position of the file-like object. Even if the underlying file-object is not :meth:`.seekable`,
         this method should return the current position which counted internally.
-        
+
         """
         source_cursor = self.tell_source()
         if self.seekable() or self.header is None:
@@ -244,7 +244,7 @@ class BaseDescriptor(object):
         **[Abstract]**
 
         Should be overridden in inherited class and return the underlying file-object's current position.
-        
+
         """
         raise NotImplementedError()  # pragma: no cover
 
@@ -268,7 +268,7 @@ class BaseDescriptor(object):
 
         :param position: the position to seek on.
         :param whence: optional whence argument.
-        
+
         """
         raise NotImplementedError('Seek operation is not supported by this object: %r' % self)  # pragma: no cover
 
@@ -280,7 +280,7 @@ class StreamDescriptor(BaseDescriptor):
 
     :param stream: File-like object to wrap.
     :param kwargs: the same as the :class:`.BaseDescriptor`
-    
+
     """
 
     def __init__(self, stream: FileLike, **kwargs):
@@ -391,13 +391,13 @@ class StreamCloserDescriptor(StreamDescriptor):
     """
     The same as the :class:`.StreamDescriptor`, the only difference is that this class tries to close the file-like
     object after calling the :meth:`.close` method.
-    
+
     """
 
     def close(self, **kw) -> None:
         """
         Overridden to close the underlying file-object.
-        
+
         """
         super().close(**kw)
         self._file.close()
@@ -496,3 +496,4 @@ class AttachableDescriptor(BaseDescriptor):
             return_type = StreamDescriptor
 
         return return_type(attachable, **kwargs)
+

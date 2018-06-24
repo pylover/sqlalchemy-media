@@ -31,4 +31,4 @@ deploy:
     tags: true
     distributions: sdist bdist_wheel
     repo: pylover/sqlalchemy-media
-    all_branches: true
+    condition: $TRAVIS_PYTHON_VERSION = 3.5

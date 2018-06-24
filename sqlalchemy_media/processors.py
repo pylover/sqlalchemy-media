@@ -1,14 +1,14 @@
 import io
-
 from typing import Iterable
 
-from sqlalchemy_media.typing_ import Dimension
-from sqlalchemy_media.mimetypes_ import guess_extension
+from sqlalchemy_media.descriptors import StreamDescriptor
 from sqlalchemy_media.exceptions import ContentTypeValidationError, DimensionValidationError, \
     AspectRatioValidationError, AnalyzeError
+
 from sqlalchemy_media.helpers import validate_width_height_ratio
 from sqlalchemy_media.descriptors import StreamDescriptor
 from sqlalchemy_media.optionals import magic_mime_from_buffer, ensure_wand, ensure_pil
+
 
 
 class Processor(object):
@@ -87,14 +87,16 @@ class MagicAnalyzer(Analyzer):
         )
 
 
+@deprecated
 class WandAnalyzer(Analyzer):
     """
+    .. deprecated:: 0.16
 
     .. versionadded:: 0.4
 
     .. versionchanged:: 0.5
 
-       - Inherited from :class:`.Processor`
+       - Inherited from :class:`.Analyzer`
        - The ``analyze`` method renamed to ``process`` to override the parent method.
 
     Analyze an image using ``wand``.
@@ -328,12 +330,12 @@ class ImageValidator(ContentTypeValidator):
 
     ..  testcode::
 
-        from sqlalchemy_media import Image, WandAnalyzer, ImageValidator
+        from sqlalchemy_media import Image, ImageAnalyzer, ImageValidator
 
 
         class ProfileImage(Image):
             __pre_processors__ = [
-                WandAnalyzer(),
+                ImageAnalyzer(),
                 ImageValidator((64, 48), (128, 96), content_types=['image/jpeg', 'image/png'])
             ]
 
@@ -403,10 +405,12 @@ class ImageProcessor(Processor):
 
     .. warning::
 
-       - If ``width`` or ``height`` is given with ``crop``, Cropping will be processed after the resize.
+       - If ``width`` or ``height`` is given with ``crop``, Cropping will be processed after the
+         resize.
        - If you pass both ``width`` and ``height``, aspect ratio may not be preserved.
 
-    :param fmt: This argument will be directly passing to ``wand``. so, for list of available choices, see:
+    :param fmt: This argument will be directly passing to ``Wand`` or ``Pillow``. so, for list of
+                available choices, see:
                 `ImageMagic Documentation <http://www.imagemagick.org/script/formats.php>`_
 
     :param width: The new image width.
@@ -417,8 +421,6 @@ class ImageProcessor(Processor):
 
                  The crop dimension as a dictionary containing the keys described
                  `here <http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.BaseImage.crop>`_.
-
-
 
                  Including you can
                  use percent ``%`` sing to automatically calculate the values from original image dimension::
@@ -472,15 +474,13 @@ class ImageProcessor(Processor):
 
     def process(self, descriptor: StreamDescriptor, context: dict):
 
-        # Ensuring the wand package is installed.
-        ensure_wand()
-        # noinspection PyPackageRequirements
-        from wand.image import Image as WandImage
+        from .imaginglibs import get_image_factory
 
+        Image = get_image_factory()
         # Copy the original info
         # generating thumbnail and storing in buffer
         # noinspection PyTypeChecker
-        img = WandImage(file=descriptor)
+        img = Image(file=descriptor)
 
         if self.crop is None and (self.format is None or img.format == self.format) and (
                     (self.width is None or img.width == self.width) and
@@ -529,10 +529,12 @@ class ImageProcessor(Processor):
         descriptor.replace(output_buffer, position=0, **context)
 
 
+
 class PILImageProcessor(Processor):
-    """
+
 
     .. versionadded:: 0.16
+
 
     Used to re-sampling, resizing, reformatting bitmaps.
 
@@ -598,3 +600,4 @@ class PILImageProcessor(Processor):
 
         output_buffer.seek(0)
         descriptor.replace(output_buffer, position=0, **context)
+

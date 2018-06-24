@@ -3,8 +3,10 @@ import unittest
 from os.path import dirname, abspath, join
 
 from sqlalchemy_media.descriptors import AttachableDescriptor
+
 from sqlalchemy_media.processors import ImageProcessor, WandAnalyzer
 from sqlalchemy_media.processors import PILImageProcessor, PILAnalyzer
+
 
 
 class ImageProcessorTestCase(unittest.TestCase):
@@ -89,7 +91,7 @@ class ImageProcessorTestCase(unittest.TestCase):
             ctx = dict()
             ImageProcessor(crop=dict(width='50%', height='50%', gravity='center')).process(d, ctx)
             ctx = dict()
-            WandAnalyzer().process(d, ctx)
+            ImageAnalyzer().process(d, ctx)
             self.assertDictEqual(
                 ctx,
                 {
@@ -105,7 +107,7 @@ class ImageProcessorTestCase(unittest.TestCase):
             ctx = dict()
             ImageProcessor(crop=dict(width=100)).process(d, ctx)
             ctx = dict()
-            WandAnalyzer().process(d, ctx)
+            ImageAnalyzer().process(d, ctx)
             self.assertDictEqual(
                 ctx,
                 {
