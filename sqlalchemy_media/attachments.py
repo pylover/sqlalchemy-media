@@ -12,7 +12,6 @@ from sqlalchemy_media.stores import StoreManager, Store
 from sqlalchemy_media.typing_ import Attachable, Dimension
 from sqlalchemy_media.descriptors import AttachableDescriptor
 from sqlalchemy_media.constants import MB, KB
-from sqlalchemy_media.optionals import ensure_wand
 from sqlalchemy_media.helpers import validate_width_height_ratio
 from sqlalchemy_media.exceptions import ThumbnailIsNotAvailableError
 from sqlalchemy_media.imaginglibs import get_image_factory
@@ -730,7 +729,7 @@ class Image(BaseImage):
         You may use :meth:`.generate_thumbnail` and or :meth:`.get_thumbnail` with ``auto_generate=True`` to fill it.
 
         """
-        return self.get('thumbnails')
+        return self.get('thumbnails', [])
 
     def generate_thumbnail(self, width: int=None, height: int=None, ratio: float=None, ratio_precision: int=5) \
             -> Thumbnail:
@@ -781,8 +780,6 @@ class Image(BaseImage):
                 img.save(file=thumbnail_buffer)
 
         thumbnail_buffer.seek(0)
-        if self.thumbnails is None:
-            self['thumbnails'] = []
 
         ratio = round(width / original_size[0], ratio_precision)
         thumbnail = self.__thumbnail_type__.create_from(
@@ -822,10 +819,9 @@ class Image(BaseImage):
         if ratio:
             ratio = round(ratio, ratio_precision)
 
-        if self.thumbnails is not None:
-            for w, h, r, t in self.thumbnails:
-                if w == width or h == height or round(r, ratio_precision) == ratio:
-                    return self.__thumbnail_type__(t)
+        for w, h, r, t in self.thumbnails:
+            if w == width or h == height or round(r, ratio_precision) == ratio:
+                return self.__thumbnail_type__(t)
 
         # thumbnail not found
         if auto_generate:
@@ -841,9 +837,8 @@ class Image(BaseImage):
 
         """
         yield from super().get_objects_to_delete()
-        if self.thumbnails:
-            for t in self.thumbnails:
-                yield self.__thumbnail_type__(**t[3])
+        for t in self.thumbnails:
+            yield self.__thumbnail_type__(**t[3])
 
     def get_orphaned_objects(self):
         """
@@ -853,9 +848,6 @@ class Image(BaseImage):
         .. versionadded:: 0.11.0
 
         """
-        if not self.thumbnails:
-            return
-
         for width, height, ratio, thumbnail in self.thumbnails:
             yield self.__thumbnail_type__(thumbnail)
 
