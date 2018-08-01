@@ -832,7 +832,7 @@ class Image(BaseImage):
             return self.generate_thumbnail(width, height, ratio)
         else:
             raise ThumbnailIsNotAvailableError(
-                'Thumbnail is not available with these criteria: width=%s height=%s ration=%s' % (width, height, ratio)
+                'Thumbnail is not available with these criteria: width=%s height=%s ratio=%s' % (width, height, ratio)
             )
 
     def get_objects_to_delete(self):
@@ -868,4 +868,3 @@ class ImageList(AttachmentList):
     """
 
     __item_type__ = Image
-
