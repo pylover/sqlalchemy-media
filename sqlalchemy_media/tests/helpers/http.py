@@ -16,7 +16,8 @@ def simple_http_server(handler_class, server_class=HTTPServer, app=None, bind=('
     if app:
         assert issubclass(server_class, WSGIServer)
         server.set_app(app)
-    thread = threading.Thread(target=server.serve_forever, name='sa-media test server.', daemon=True)
+    thread = threading.Thread(target=server.serve_forever, name='sa-media test server.',
+                              daemon=True)
     thread.start()
     yield server
     server.shutdown()

@@ -1,14 +1,14 @@
 import io
 from typing import Iterable
 
-from sqlalchemy_media.descriptors import StreamDescriptor
-from sqlalchemy_media.exceptions import ContentTypeValidationError, DimensionValidationError, \
+from .descriptors import StreamDescriptor
+from .exceptions import ContentTypeValidationError, DimensionValidationError, \
     AspectRatioValidationError, AnalyzeError
-from sqlalchemy_media.helpers import validate_width_height_ratio, deprecated
-from sqlalchemy_media.mimetypes_ import guess_extension
-from sqlalchemy_media.optionals import magic_mime_from_buffer, ensure_wand
-from sqlalchemy_media.typing_ import Dimension
-from sqlalchemy_media.imaginglibs import get_image_factory
+from .helpers import validate_width_height_ratio, deprecated
+from .mimetypes_ import guess_extension
+from .optionals import magic_mime_from_buffer, ensure_wand
+from .typing_ import Dimension
+from .imaginglibs import get_image_factory
 
 
 class Processor(object):
@@ -27,12 +27,12 @@ class Processor(object):
         **[Abstract]**
 
 
-        Should be overridden in inherited class and apply the process on the file-like object. the result may be
-        inserted info ``context`` argument.
+        Should be overridden in inherited class and apply the process on the file-like object.
+        The result may be inserted info ``context`` argument.
 
         :param descriptor: The :class:`.BaseDescriptor` instance, to read the blob info from.
-        :param context: A dictionary to put and get the info about the attachment. which as ``content_type``, ``width``,
-                       ``height``, ``length`` and etc ...
+        :param context: A dictionary to put and get the info about the attachment.
+                        Which as ``content_type``, ``width``, ``height``, ``length`` and etc ...
 
         """
         raise NotImplementedError()  # pragma: no cover
@@ -55,7 +55,8 @@ class Analyzer(Processor):
 
     def process(self, descriptor: StreamDescriptor, context: dict):
         """
-        Should be overridden in inherited class and analyzes the given :class:`.BaseDescriptor` instance.
+        Should be overridden in inherited class and analyzes the given :class:`.BaseDescriptor`
+        instance.
 
         .. note:: An instance of :exc:`.AnalyzeError` or sub-types may raised
 
@@ -189,7 +190,8 @@ class Validator(Processor):
 
         Should be overridden in inherited class and validate the validate the ``context``.
 
-        .. note:: It should be appended after the :class:`.Analyzer` to the :attr:`Attachment.__pre_processors__`.
+        .. note:: It should be appended after the :class:`.Analyzer` to
+                  the :attr:`Attachment.__pre_processors__`.
 
         .. note:: An instance of :exc:`.ValidationError` or sub-types may raised
 
@@ -285,39 +287,27 @@ class ImageValidator(ContentTypeValidator):
             raise DimensionValidationError('width and height are not found in analyze_result.')
 
         if self.min_width and self.min_width > width:
-            raise DimensionValidationError('Minimum allowed width is: %d, but the %d is given.' % (
-                self.min_width,
-                width
-            ))
+            raise DimensionValidationError(
+                f'Minimum allowed width is: {self.min_width: d}, but the {width: d} is given.')
 
         if self.min_height and self.min_height > height:
-            raise DimensionValidationError('Minimum allowed height is: %d, but the %d is given.' % (
-                self.min_height,
-                height
-            ))
+            raise DimensionValidationError(
+                f'Minimum allowed height is: {self.min_height: d}, but the {height: d} is given.')
 
         if self.max_width and self.max_width < width:
-            raise DimensionValidationError('Maximum allowed width is: %d, but the %d is given.' % (
-                self.max_width,
-                width
-            ))
+            raise DimensionValidationError(
+                f'Maximum allowed width is: {self.max_width: d}, but the {width: d} is given.')
 
         if self.max_height and self.max_height < height:
-            raise DimensionValidationError('Maximum allowed height is: %d, but the %d is given.' % (
-                self.max_height,
-                height
-            ))
+            raise DimensionValidationError(
+                f'Maximum allowed height is: {self.max_height: d}, but the {height: d} is given.')
 
         aspect_ratio = width / height
         if (self.min_aspect_ratio and self.min_aspect_ratio > aspect_ratio) or \
                 (self.max_aspect_ratio and self.max_aspect_ratio < aspect_ratio):
-            raise AspectRatioValidationError('Invalid aspect ratio %s / %s = %s, accepted_range: %s - %s' % (
-                width,
-                height,
-                aspect_ratio,
-                self.min_aspect_ratio,
-                self.max_aspect_ratio
-            ))
+            raise AspectRatioValidationError(
+                f'Invalid aspect ratio {width} / {height} = {aspect_ratio},'
+                f'accepted_range: {self.min_aspect_ratio} - {self.max_aspect_ratio}')
 
 
 class ImageProcessor(Processor):
@@ -341,49 +331,49 @@ class ImageProcessor(Processor):
     :param height: The new image height.
     :param crop: Used to crop the image.
 
-                 .. versionadded:: 0.6
+    .. versionadded:: 0.6
 
-                 The crop dimension as a dictionary containing the keys described
-                 `here <http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.BaseImage.crop>`_.
+    The crop dimension as a dictionary containing the keys described
+    `here <http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.BaseImage.crop>`_.
 
-                 Including you can
-                 use percent ``%`` sing to automatically calculate the values from original image dimension::
+    Including you can
+    use percent ``%`` sing to automatically calculate the values from original image dimension::
 
-                     ImageProcessor(crop=dict(width='50%', height='50%', gravity='center'))
-                     ImageProcessor(crop=dict(width='10%', height='10%', gravity='south_east'))
+        ImageProcessor(crop=dict(width='50%', height='50%', gravity='center'))
+        ImageProcessor(crop=dict(width='10%', height='10%', gravity='south_east'))
 
-                 Or::
+    Or::
 
-                     ImageProcessor(crop=dict(
-                        top='10%',
-                        bottom='10%',
-                        left='10%',
-                        right='10%',
-                        width='80%',
-                        height='80%'
-                     ))
+        ImageProcessor(crop=dict(
+        top='10%',
+        bottom='10%',
+        left='10%',
+        right='10%',
+        width='80%',
+        height='80%'
+        ))
 
-                 Included from wand documentation::
+    Included from wand documentation::
 
-                     +--------------------------------------------------+
-                     |              ^                         ^         |
-                     |              |                         |         |
-                     |             top                        |         |
-                     |              |                         |         |
-                     |              v                         |         |
-                     | <-- left --> +-------------------+  bottom       |
-                     |              |             ^     |     |         |
-                     |              | <-- width --|---> |     |         |
-                     |              |           height  |     |         |
-                     |              |             |     |     |         |
-                     |              |             v     |     |         |
-                     |              +-------------------+     v         |
-                     | <--------------- right ---------->               |
-                     +--------------------------------------------------+
+        +--------------------------------------------------+
+        |              ^                         ^         |
+        |              |                         |         |
+        |             top                        |         |
+        |              |                         |         |
+        |              v                         |         |
+        | <-- left --> +-------------------+  bottom       |
+        |              |             ^     |     |         |
+        |              | <-- width --|---> |     |         |
+        |              |           height  |     |         |
+        |              |             |     |     |         |
+        |              |             v     |     |         |
+        |              +-------------------+     v         |
+        | <--------------- right ---------->               |
+        +--------------------------------------------------+
 
     .. seealso::
 
-       - ``crop`` `method <http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.BaseImage.crop>`_.
+       - ``crop`` `method <http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.BaseImage.crop>`_.  # noqa
        - ``gravity`` `argument <http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.GRAVITY_TYPES>`_.
        - `Wand <http://docs.wand-py.org/>`_
 
@@ -394,7 +384,9 @@ class ImageProcessor(Processor):
         self.width = width
         self.height = height
         self.crop = crop
-        # self.crop = None if crop is None else {k: v if isinstance(v, str) else str(v) for k, v in crop.items()}
+        # self.crop = None if crop is None else {
+        #   k: v if isinstance(v, str) else str(v) for k, v in crop.items()
+        # }
 
     def process(self, descriptor: StreamDescriptor, context: dict):
 
@@ -406,9 +398,13 @@ class ImageProcessor(Processor):
         # noinspection PyTypeChecker
         img = Image(file=descriptor)
 
-        if self.crop is None and (self.format is None or img.format == self.format) and (
-                    (self.width is None or img.width == self.width) and
-                    (self.height is None or img.height == self.height)):
+        is_invalid_format = self.format is None or img.format == self.format
+        is_invalid_size = (
+            (self.width is None or img.width == self.width) and
+            (self.height is None or img.height == self.height)
+        )
+
+        if self.crop is None and is_invalid_format and is_invalid_size:
             img.close()
             descriptor.prepare_to_read(backend='memory')
             return
@@ -433,12 +429,20 @@ class ImageProcessor(Processor):
 
             # Cropping
             if self.crop:
+                def get_key_for_crop_item(key, value):
+                    crop_width_keys = ('width', 'left', 'right')
+                    crop_keys = ('left', 'top', 'right', 'bottom', 'width', 'height')
+
+                    if key in crop_keys and isinstance(value, str) and '%' in value:
+                        return int(int(value[:-1]) / 100 * (
+                            img.width if key in crop_width_keys else img.height))
+
+                    return value
+
                 img.crop(**{
-                    key: int(int(value[:-1]) / 100 * (img.width if key in ('width', 'left', 'right') else img.height))
-                    if key in ('left', 'top', 'right', 'bottom', 'width', 'height')
-                    and isinstance(value, str) and '%' in value else value
+                    key: get_key_for_crop_item(key, value)
                     for key, value in self.crop.items()
-                    })
+                })
 
             img.save(file=output_buffer)
 
@@ -485,4 +489,3 @@ class ImageAnalyzer(Analyzer):
         # prepare for next processor, calling this method is not bad and just uses the memory
         # temporary.
         descriptor.prepare_to_read(backend='memory')
-

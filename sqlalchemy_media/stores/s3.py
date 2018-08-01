@@ -105,7 +105,7 @@ class S3Store(Store):
         if not 200 <= res.status_code < 300:
             raise S3Error(res.text)
 
-    def open(self, filename: str, mode: str='rb') -> FileLike:
+    def open(self, filename: str, mode: str = 'rb') -> FileLike:
         ensure_aws4auth()
         url = self._get_s3_url(filename)
         auth = AWS4Auth(self.access_key, self.secret_key, self.region, 's3')

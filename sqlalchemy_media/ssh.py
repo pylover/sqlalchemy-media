@@ -1,4 +1,3 @@
-
 import logging
 import os
 from os.path import join
@@ -6,8 +5,8 @@ from os.path import join
 import paramiko
 from paramiko.config import SSHConfig, SSH_PORT
 
-from sqlalchemy_media.exceptions import SSHError
-from sqlalchemy_media.optionals import ensure_paramiko
+from .exceptions import SSHError
+from .optionals import ensure_paramiko
 
 ensure_paramiko()
 logger = logging.getLogger('ssh')

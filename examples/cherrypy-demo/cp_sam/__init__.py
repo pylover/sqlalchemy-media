@@ -38,4 +38,3 @@ def main():
     }
 
     cherrypy.quickstart(Root(), config=conf)
-

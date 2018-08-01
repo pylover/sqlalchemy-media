@@ -11,12 +11,15 @@ class SSHStore(Store):
 
     .. versionadded:: 0.12.0
 
-    :param hostname: The ssh server's hostname to connect to. It will be looked-up from ssh config file to find
-                     another options if given.
-                     An instance of the :class:`paramiko.SSHClient` may be passed instead of the hostname.
+    :param hostname: The ssh server's hostname to connect to. It will be looked-up from
+                     ssh config file to find another options if given.
+                     An instance of the :class:`paramiko.SSHClient` may be passed instead
+                     of the hostname.
     :param root_path: The path to a directory on the ssh server to store files.
-    :param base_url: The base url path to include at the beginning of the file's path to yield the access url.
-    :param ssh_config_file: The standard ssh config file. is not given, the file `$HOME/.ssh/config` will be tried.
+    :param base_url: The base url path to include at the beginning of the file's path to yield
+                     the access url.
+    :param ssh_config_file: The standard ssh config file. is not given,
+                            the file `$HOME/.ssh/config` will be tried.
     :param kwargs: Additional keyword arguments to pass to the :class:`paramiko.SSHClient`
     """
 
@@ -49,7 +52,7 @@ class SSHStore(Store):
         remote_filename = self._get_remote_path(filename)
         self.ssh_client.remove(remote_filename)
 
-    def open(self, filename: str, mode: str='rb'):
+    def open(self, filename: str, mode: str = 'rb'):
         remote_filename = self._get_remote_path(filename)
         return self.ssh_client.sftp.open(remote_filename, mode=mode)
 

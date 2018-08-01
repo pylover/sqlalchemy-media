@@ -70,8 +70,8 @@ class Avatar(Image):
         ),
         ImageProcessor(fmt='jpeg', width=128)
     ]
-    __max_length__ = 6*MB
-    __min_length__ = 10*KB
+    __max_length__ = 6 * MB
+    __min_length__ = 10 * KB
 
 
 class Person(db.Model):

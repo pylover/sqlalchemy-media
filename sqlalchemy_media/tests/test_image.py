@@ -77,12 +77,12 @@ class ImageTestCase(TempStoreTestCase):
             self.assertIsNotNone(person1.image.get_thumbnail(height=20))
 
             # Generate thumbnail with ratio
-            thumbnail = person1.image.generate_thumbnail(ratio=1/3)
+            thumbnail = person1.image.generate_thumbnail(ratio=1 / 3)
             self.assertEqual(thumbnail.width, 213)
             self.assertEqual(thumbnail.height, 160)
             third_thumbnail_filename = join(self.temp_path, thumbnail.path)
             self.assertTrue(exists(third_thumbnail_filename))
-            self.assertIsNotNone(person1.image.get_thumbnail(ratio=1/3))
+            self.assertIsNotNone(person1.image.get_thumbnail(ratio=1 / 3))
             self.assertIsNotNone(person1.image.get_thumbnail(width=213))
             self.assertIsNotNone(person1.image.get_thumbnail(height=160))
 

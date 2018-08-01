@@ -10,18 +10,20 @@ class FTPStore(Store):
     Store for FTP protocol.
 
     .. versionadded:: 0.16.0
-    :param hostname: FTP server hostname or instance of :class:`ftplib.FTP`. 
+    :param hostname: FTP server hostname or instance of :class:`ftplib.FTP`.
                      Note if pass the instance of :class:`ftplib.FTP` do not need to
                      set `username`, `password`, `passive`, `secure`, `kwargs` arguments.
     :param root_path: Root working directory path on FTP server.
-    :param base_url: First part of URL that using to locate file access URL. 
+    :param base_url: First part of URL that using to locate file access URL.
     :param username: FTP server username.
     :param password: FTP server password.
-    :param passive: Enable passive FTP mode. 
-                    (How it works? https://www.ietf.org/rfc/rfc959.txt, http://slacksite.com/other/ftp.html)
+    :param passive: Enable passive FTP mode.
+                    (How it works? https://www.ietf.org/rfc/rfc959.txt,
+                                   http://slacksite.com/other/ftp.html)
     :param secure: Enable secure TLS connection.
-    :param kwargs: Additional arguments to FTP client 
-                   (for :class:`ftplib.FTP` or :class:`ftplib.FTP_TLS` based on `secure` argument status) 
+    :param kwargs: Additional arguments to FTP client
+                   (for :class:`ftplib.FTP` or :class:`ftplib.FTP_TLS` based
+                   on `secure` argument status)
     """
 
     def __init__(self, hostname, root_path, base_url,
@@ -77,7 +79,7 @@ class FTPStore(Store):
         remote_filename = self._get_remote_path(filename)
         self.ftp_client.delete(remote_filename)
 
-    def open(self, filename: str, mode: str='rb'):
+    def open(self, filename: str, mode: str = 'rb'):
         remote_filename = self._get_remote_path(filename)
         file_bytes = BytesIO()
         self.ftp_client.retrbinary("RETR %s" % remote_filename, file_bytes.write)

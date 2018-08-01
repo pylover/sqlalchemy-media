@@ -94,6 +94,6 @@ def mockup_os2_server(temp_path, bucket, **kwargs):
 
     # Ensure bucket
     makedirs(join(temp_path, bucket), exist_ok=True)
-    with simple_http_server(OS2Handler,  server_class=WSGIServer, **kwargs) as server:
+    with simple_http_server(OS2Handler, server_class=WSGIServer, **kwargs) as server:
         url = 'http://localhost:%s' % server.server_address[1]
         yield server, url

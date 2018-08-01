@@ -42,7 +42,5 @@ class AutoCoercionTestCase(TempStoreTestCase):
             self.assertTrue(exists(join(self.temp_path, person1.cv.path)))
 
 
-
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
-

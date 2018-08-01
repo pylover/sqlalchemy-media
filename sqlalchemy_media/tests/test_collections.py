@@ -160,5 +160,6 @@ class CollectionsTestCase(TempStoreTestCase):
             person1.files.clear()
             self.assertEqual(len(person1.files), 0)
 
+
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

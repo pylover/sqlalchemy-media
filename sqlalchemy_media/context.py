@@ -1,4 +1,3 @@
-
 try:
     import _thread
 except ImportError:  # pragma: no cover
@@ -27,4 +26,3 @@ elif stackless is not None:  # pragma: no cover
     get_id = stackless.getcurrent
 else:
     get_id = _thread.get_ident
-
