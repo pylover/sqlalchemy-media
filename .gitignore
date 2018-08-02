@@ -82,3 +82,6 @@ htmlcov
 /examples/flask/static/avatars/
 
 .ropeproject
+
+# vim
+.*.sw[op]
