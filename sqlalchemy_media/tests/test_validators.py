@@ -3,11 +3,11 @@ import unittest
 import io
 from os.path import dirname, abspath, join
 
-from sqlalchemy_media.processors import MagicAnalyzer, ImageAnalyzer, ContentTypeValidator, \
-    ImageValidator
+from sqlalchemy_media.processors import MagicAnalyzer, ImageAnalyzer, \
+    ContentTypeValidator, ImageValidator
 from sqlalchemy_media.descriptors import AttachableDescriptor
-from sqlalchemy_media.exceptions import ContentTypeValidationError, DimensionValidationError, \
-    AspectRatioValidationError
+from sqlalchemy_media.exceptions import ContentTypeValidationError, \
+    DimensionValidationError, AspectRatioValidationError
 
 
 class ValidatorTestCase(unittest.TestCase):
@@ -58,7 +58,11 @@ class ValidatorTestCase(unittest.TestCase):
         with AttachableDescriptor(self.dog_jpg) as d:
             ctx = {}
             analyzer.process(d, ctx)
-            ImageValidator((10, 10), (250, 250), content_types=['image/jpeg']).process(d, ctx)
+            ImageValidator(
+                (10, 10),
+                (250, 250),
+                content_types=['image/jpeg']
+            ).process(d, ctx)
             ImageValidator((10, 0), (0, 250)).process(d, ctx)
             ImageValidator((0, 0), (0, 250)).process(d, ctx)
             ImageValidator((0, 0), (0, 0)).process(d, ctx)

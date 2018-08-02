@@ -8,6 +8,7 @@ from paramiko.config import SSHConfig, SSH_PORT
 from .exceptions import SSHError
 from .optionals import ensure_paramiko
 
+
 ensure_paramiko()
 logger = logging.getLogger('ssh')
 logger.addHandler(logging.NullHandler())
@@ -88,7 +89,8 @@ class SSHClient(paramiko.SSHClient):
         self._sftp_client = self.open_sftp()
 
     def remove(self, filename):
-        stdin, stdout, stderr = self.exec_command(b'rm "%s"' % filename.encode())
+        stdin, stdout, stderr = \
+            self.exec_command(b'rm "%s"' % filename.encode())
         err = stderr.read()
         if err:
             raise SSHError('Cannot remove %s\nDetails: %s' % (filename, err))

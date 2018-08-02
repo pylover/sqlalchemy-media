@@ -29,7 +29,11 @@ class DeleteOrphanTestCase(TempStoreTestCase):
 
         with StoreManager(session, delete_orphan=True):
             # First file before commit
-            person1.cv = File.create_from(BytesIO(b'Simple text.'), content_type='text/plain', extension='.txt')
+            person1.cv = File.create_from(
+                BytesIO(b'Simple text.'),
+                content_type='text/plain',
+                extension='.txt'
+            )
             self.assertIsInstance(person1.cv, File)
             first_filename = join(self.temp_path, person1.cv.path)
             self.assertTrue(exists(first_filename))
@@ -55,7 +59,11 @@ class DeleteOrphanTestCase(TempStoreTestCase):
         with StoreManager(session):
 
             # First file before commit
-            person1.cv = File.create_from(BytesIO(b'Simple text.'), content_type='text/plain', extension='.txt')
+            person1.cv = File.create_from(
+                BytesIO(b'Simple text.'),
+                content_type='text/plain',
+                extension='.txt'
+            )
             first_filename = join(self.temp_path, person1.cv.path)
             person1.cv = File.create_from(BytesIO(b'Second simple text.'))
             second_filename = join(self.temp_path, person1.cv.path)
@@ -75,7 +83,9 @@ class DeleteOrphanTestCase(TempStoreTestCase):
         with StoreManager(session, delete_orphan=True):
             person1 = Person()
             person1.files = FileList([
-                File.create_from(BytesIO(b'simple text %d' % i)) for i in range(2)
+                File.create_from(
+                    BytesIO(b'simple text %d' % i)
+                ) for i in range(2)
             ])
 
             # Removing the first file
@@ -83,7 +93,9 @@ class DeleteOrphanTestCase(TempStoreTestCase):
             second_filename = join(self.temp_path, person1.files[1].path)
 
             person1.files = FileList([
-                File.create_from(BytesIO(b'New test file: %d' % i)) for i in range(2)
+                File.create_from(
+                    BytesIO(b'New test file: %d' % i)
+                ) for i in range(2)
             ])
 
             session.add(person1)
@@ -117,7 +129,6 @@ class DeleteOrphanTestCase(TempStoreTestCase):
             session.add(person1)
             session.commit()
             self.assertFalse(exists(first_filename))
-            # noinspection PyTypeChecker
             self.assertEqual(len(person1.files), 2)
 
             # Loading from db
@@ -137,8 +148,11 @@ class DeleteOrphanTestCase(TempStoreTestCase):
             self.assertFalse(exists(first_filename))
             self.assertEqual(len(person1.files), 1)
 
-            old_attachment_filename = join(self.temp_path, person1.files[0].path)
-            attachment = person1.files[0].attach(BytesIO(b'Changed inside nested mutable!'))
+            old_attachment_filename = \
+                join(self.temp_path, person1.files[0].path)
+            attachment = person1.files[0].attach(
+                BytesIO(b'Changed inside nested mutable!')
+            )
             attachment_filename = join(self.temp_path, attachment.path)
             self.assertTrue(exists(old_attachment_filename))
             self.assertTrue(exists(attachment_filename))
@@ -157,7 +171,9 @@ class DeleteOrphanTestCase(TempStoreTestCase):
         with StoreManager(session, delete_orphan=True):
             person1 = Person()
             person1.files = FileDict({
-                str(i): File.create_from(BytesIO(b'simple text %d' % i)) for i in range(2)
+                str(i): File.create_from(
+                    BytesIO(b'simple text %d' % i)
+                ) for i in range(2)
             })
 
             # Removing the first file
@@ -165,7 +181,9 @@ class DeleteOrphanTestCase(TempStoreTestCase):
             second_filename = join(self.temp_path, person1.files['1'].path)
 
             person1.files = FileDict({
-                str(i): File.create_from(BytesIO(b'New Text File %d' % i)) for i in range(2)
+                str(i): File.create_from(
+                    BytesIO(b'New Text File %d' % i)
+                ) for i in range(2)
             })
 
             session.add(person1)
@@ -189,7 +207,9 @@ class DeleteOrphanTestCase(TempStoreTestCase):
         with StoreManager(session, delete_orphan=True):
             person1 = Person()
             person1.files = FileDict({
-                str(i): File.create_from(BytesIO(b'simple text %d' % i)) for i in range(2)
+                str(i): File.create_from(
+                    BytesIO(b'simple text %d' % i)
+                ) for i in range(2)
             })
 
             # Removing the first file
@@ -198,7 +218,6 @@ class DeleteOrphanTestCase(TempStoreTestCase):
             session.add(person1)
             session.commit()
             self.assertFalse(exists(first_filename))
-            # noinspection PyTypeChecker
             self.assertEqual(len(person1.files), 1)
 
             # Loading from db

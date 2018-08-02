@@ -29,12 +29,12 @@ class StoreManager(object):
 
     This is an context manager.
 
-    Before using you must register at least one store factory function as default with-in store
-    registry with
-    :meth:`register` by passing `default=true` during registration.
+    Before using you must register at least one store factory function as
+    default with-in store registry with :meth:`register` by passing
+    `default=true` during registration.
 
-    This object will call the registered factory functions to instantiate one per
-    :func:`sqlalchemy_media.context.get_id`.
+    This object will call the registered factory functions to instantiate one
+    per :func:`sqlalchemy_media.context.get_id`.
 
     .. testcode::
 
@@ -44,10 +44,15 @@ class StoreManager(object):
 
         from sqlalchemy_media import StoreManager, FileSystemStore
 
-        StoreManager.register('fs',
-            functools.partial(FileSystemStore, '/tmp/sa_temp_fs', 'http'), default=True)
-        StoreManager.register('fs2',
-            functools.partial(FileSystemStore, '/tmp/sa_temp_fs2', 'http'))
+        StoreManager.register(
+            'fs',
+            functools.partial(FileSystemStore, '/tmp/sa_temp_fs', 'http'),
+            default=True
+        )
+        StoreManager.register(
+            'fs2',
+            functools.partial(FileSystemStore, '/tmp/sa_temp_fs2', 'http')
+        )
 
         with StoreManager(Session) as store_manager:
             assert StoreManager.get_current_store_manager() == store_manager
@@ -70,7 +75,8 @@ class StoreManager(object):
     _files_to_delete_after_rollback = None
     _files_orphaned = None
 
-    #: If :data:`.True` the orphaned attachments will be gathered and deleted after session commit.
+    #: If :data:`.True` the orphaned attachments will be gathered and deleted
+    #  after session commit.
     delete_orphan = False
 
     def __init__(self, session, delete_orphan=False):
@@ -90,7 +96,8 @@ class StoreManager(object):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """
-        Destroy the context, pop itself from context stack and unbind all events.
+        Destroy the context, pop itself from context stack and unbind all
+        events.
         """
         _context_stacks.setdefault(get_context_id(), []).pop()
         self.unbind_events()
@@ -105,7 +112,6 @@ class StoreManager(object):
         """
         if self._stores is None:
             self._stores = {}
-        # noinspection PyTypeChecker
         return self._stores
 
     @classmethod
@@ -140,12 +146,15 @@ class StoreManager(object):
     @classmethod
     def register(cls, key: str, store_factory, default: bool = False):
         """
-        Registers the store factory into stores registry, use :meth:`unregister` to remove it.
+        Registers the store factory into stores registry, use
+        :meth:`unregister` to remove it.
 
         :param key: The unique key for store.
-        :param store_factory: A callable that returns an instance of :class:`.Store`.
-        :param default: If :data:`True` the given store will be marked as default also. in
-                        addition you can use :meth:`.make_default` to mark a store as default.
+        :param store_factory: A callable that returns an instance of
+                              :class:`.Store`.
+        :param default: If :data:`True` the given store will be marked as
+                        default also. in addition you can use
+                        :meth:`.make_default` to mark a store as default.
         """
         _factories[key] = store_factory
         if default:
@@ -154,7 +163,8 @@ class StoreManager(object):
     @classmethod
     def unregister(cls, key) -> Store:
         """
-        Opposite of :meth:`.register`. :exc:`.KeyError` may raised if key not found in registry.
+        Opposite of :meth:`.register`. :exc:`.KeyError` may raised if key not
+        found in registry.
 
         :param key: The store key to remove from stores registry.
 
@@ -169,11 +179,11 @@ class StoreManager(object):
 
     def get(self, key=None) -> Store:
         """
-        Lookup the store in available instance cache, and instantiate a new one using registered
-        factory function, if not found.
+        Lookup the store in available instance cache, and instantiate a new
+        one using registered factory function, if not found.
 
-        If the key is :data:`.None`, the default store will be instantiated(if required)
-        and returned.
+        If the key is :data:`.None`, the default store will be
+        instantiated(if required) and returned.
 
         :param key: the store unique id to lookup.
         """
@@ -197,7 +207,8 @@ class StoreManager(object):
 
     def bind_events(self) -> None:
         """
-        Binds the required event on sqlalchemy session. to handle commit & rollback.
+        Binds the required event on sqlalchemy session. to handle
+        commit & rollback.
 
         """
         event.listen(self.session, 'after_commit', self.on_commit)
@@ -215,8 +226,9 @@ class StoreManager(object):
 
     def orphaned(self, *attachments) -> None:
         """
-        Mark one or more attachment(s) orphaned, So if :attr:`delete_orphan` is :data:`.True`,
-        the attachment(s) will be deleted from store after session commit.
+        Mark one or more attachment(s) orphaned, So if :attr:`delete_orphan`
+        is :data:`.True`, the attachment(s) will be deleted from store after
+        session commit.
 
         """
         if not self.delete_orphan:
@@ -244,28 +256,33 @@ class StoreManager(object):
             if f in self._files_orphaned:
                 self._files_orphaned.remove(f)
 
-    # noinspection PyUnresolvedReferences
-    def register_to_delete_after_commit(self, *attachments: Iterable['Attachment']) -> None:
+    def register_to_delete_after_commit(self,
+                                        *attachments: Iterable['Attachment']
+                                        ) -> None:
         """
-        Schedules one or more attachment(s) to be deleted from store just after sqlalchemy session
-        commit.
+        Schedules one or more attachment(s) to be deleted from store just
+        after sqlalchemy session commit.
 
         """
         for attachment in attachments:
-            self._files_to_delete_after_commit.extend(attachment.get_objects_to_delete())
+            self._files_to_delete_after_commit.extend(
+                attachment.get_objects_to_delete()
+            )
 
-    # noinspection PyUnresolvedReferences
-    def register_to_delete_after_rollback(self, *files: Iterable['Attachment']) -> None:
+    def register_to_delete_after_rollback(self,
+                                          *files: Iterable['Attachment']
+                                          ) -> None:
         """
-        Schedules one or more attachment(s) to be deleted from store just after sqlalchemy session
-        rollback.
+        Schedules one or more attachment(s) to be deleted from store just after
+        sqlalchemy session rollback.
 
         """
         self._files_to_delete_after_rollback.extend(files)
 
     def reset_files_state(self) -> None:
         """
-        Reset the object's state and forget all scheduled tasks for commit and or rollback.
+        Reset the object's state and forget all scheduled tasks for commit
+        and or rollback.
 
         .. warning:: Calling this method without knowing what you are doing,
                      will be caused bad result !
@@ -275,7 +292,6 @@ class StoreManager(object):
         self._files_to_delete_after_rollback = []
         self._files_orphaned = []
 
-    # noinspection PyUnusedLocal
     def on_commit(self, session) -> None:
         """
         Will be called when session commit occurred.
@@ -290,7 +306,6 @@ class StoreManager(object):
 
         self.reset_files_state()
 
-    # noinspection PyUnusedLocal
     def on_rollback(self, session, transaction):
         """
         Will be called when session rollback occurred.
@@ -300,7 +315,6 @@ class StoreManager(object):
             f.delete()
         self.reset_files_state()
 
-    # noinspection PyUnusedLocal
     def on_delete(self, session, instance):
         """
         Will be called when an model instance deleted.
@@ -314,18 +328,21 @@ class StoreManager(object):
     @classmethod
     def observe_attribute(cls, attr, collection=False):
         """
-        Attach some event handlers on sqlalchemy attribute to handle delete_orphan option.
+        Attach some event handlers on sqlalchemy attribute to handle
+        delete_orphan option.
 
         """
 
         if attr not in _observing_attributes:
             _observing_attributes.add(attr)
 
-            # noinspection PyUnusedLocal
             def on_set_attr(target, value, old_value, initiator):
-                if old_value is None or old_value in (symbol('NEVER_SET'), symbol('NO_VALUE')):
+                if old_value is None or old_value in (
+                    symbol('NEVER_SET'), symbol('NO_VALUE')
+                ):
                     return
 
+                # FIXME: Improve me!
                 store_manager = StoreManager.get_current_store_manager()
                 if store_manager.delete_orphan:
                     if value is not old_value:

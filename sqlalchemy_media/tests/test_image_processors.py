@@ -53,7 +53,9 @@ class ImageProcessorTestCase(unittest.TestCase):
         with AttachableDescriptor(self.cat_jpeg) as d:
             # Checking when not modifying stream.
             ctx = dict()
-            ImageProcessor(crop=dict(width='50%', height='50%', gravity='center')).process(d, ctx)
+            ImageProcessor(
+                crop=dict(width='50%', height='50%', gravity='center')
+            ).process(d, ctx)
             ctx = dict()
             ImageAnalyzer().process(d, ctx)
             self.assertDictEqual(

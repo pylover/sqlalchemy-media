@@ -85,7 +85,6 @@ class ImageList(MutableList):
             if isinstance(value, Iterable):
                 result = cls()
 
-                # noinspection PyTypeChecker
                 for i in value:
                     item = cls.__item_type__.coerce(index, i)
                     # item.set_parent(result)

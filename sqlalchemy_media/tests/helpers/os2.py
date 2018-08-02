@@ -1,13 +1,11 @@
-
+import contextlib
+from http.server import BaseHTTPRequestHandler, HTTPStatus
 from os import remove, makedirs
 from os.path import join, exists, split
-import contextlib
 from wsgiref.simple_server import WSGIServer
-from http.server import BaseHTTPRequestHandler, HTTPStatus
-
-from sqlalchemy_media.helpers import copy_stream
 
 from .http import simple_http_server
+from sqlalchemy_media.helpers import copy_stream
 
 
 @contextlib.contextmanager
@@ -26,7 +24,6 @@ def mockup_os2_server(temp_path, bucket, **kwargs):
                 return self.send_error(400, 'BadBucketError')
             return bucket, region
 
-        # noinspection PyPep8Naming
         def do_GET(self):
             try:
                 bucket, _ = self._validate_host()
@@ -50,7 +47,6 @@ def mockup_os2_server(temp_path, bucket, **kwargs):
                 except ConnectionResetError:
                     pass
 
-        # noinspection PyPep8Naming
         def do_PUT(self):
             try:
                 bucket, _ = self._validate_host()
@@ -74,7 +70,6 @@ def mockup_os2_server(temp_path, bucket, **kwargs):
             self.send_header('Content-Type', "text/plain")
             self.end_headers()
 
-        # noinspection PyPep8Naming
         def do_DELETE(self):
             try:
                 bucket, _ = self._validate_host()
@@ -94,6 +89,10 @@ def mockup_os2_server(temp_path, bucket, **kwargs):
 
     # Ensure bucket
     makedirs(join(temp_path, bucket), exist_ok=True)
-    with simple_http_server(OS2Handler, server_class=WSGIServer, **kwargs) as server:
+    with simple_http_server(
+        OS2Handler,
+        server_class=WSGIServer,
+        **kwargs
+    ) as server:
         url = 'http://localhost:%s' % server.server_address[1]
         yield server, url

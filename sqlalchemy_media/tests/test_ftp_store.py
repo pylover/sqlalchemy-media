@@ -68,7 +68,12 @@ class FTPStoreTestCase(SqlAlchemyTestCase):
         from sqlalchemy_media.tests.helpers.types import Json
         StoreManager.register(
             'ftp',
-            functools.partial(FTPStore, hostname=MockFTP(), root_path=self.root_path, base_url=self.base_url),
+            functools.partial(
+                FTPStore,
+                hostname=MockFTP(),
+                root_path=self.root_path,
+                base_url=self.base_url
+            ),
             default=True
         )
 
@@ -85,9 +90,11 @@ class FTPStoreTestCase(SqlAlchemyTestCase):
 
         with StoreManager(session):
             person1 = Person()
-            person1.file = File.create_from(io.BytesIO(sample_content),
-                                            content_type='text/plain',
-                                            extension='.txt')
+            person1.file = File.create_from(
+                io.BytesIO(sample_content),
+                content_type='text/plain',
+                extension='.txt'
+            )
             self.assertIsInstance(person1.file, File)
             self.assertEqual(
                 person1.file.locate(),

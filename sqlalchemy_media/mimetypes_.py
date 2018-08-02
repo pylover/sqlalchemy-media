@@ -67,7 +67,9 @@ _db = {
     'application/pgp-keys': ('.key',),
     'application/pgp-signature': ('.sig',),
     'application/pics-rules': ('.prf',),
-    'application/postscript': ('.ps', '.ai', '.eps', '.epsi', '.epsf', '.eps2', '.eps3',),
+    'application/postscript': (
+        '.ps', '.ai', '.eps', '.epsi', '.epsf', '.eps2', '.eps3',
+    ),
     'application/rar': ('.rar',),
     'application/rdf+xml': ('.rdf',),
     'application/rtf': ('.rtf',),

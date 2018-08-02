@@ -2,7 +2,6 @@ from io import BytesIO
 
 # Importing optional stuff required by http based store
 try:
-    # noinspection PyPackageRequirements
     import requests
 except ImportError:  # pragma: no cover
     requests = None
@@ -10,7 +9,6 @@ except ImportError:  # pragma: no cover
 
 # Importing optional stuff required by S3 store
 try:
-    # noinspection PyPackageRequirements
     from requests_aws4auth import AWS4Auth
 except ImportError:  # pragma: no cover
     AWS4Auth = None
@@ -40,7 +38,8 @@ class S3Store(Store):
     def __init__(self, bucket: str, access_key: str, secret_key: str,
                  region: str, max_age: int = DEFAULT_MAX_AGE,
                  prefix: str = None, base_url: str = None,
-                 cdn_url: str = None, cdn_prefix_ignore: bool = False, acl: str = 'private'):
+                 cdn_url: str = None, cdn_prefix_ignore: bool = False, 
+                 acl: str = 'private'):
         self.bucket = bucket
         self.access_key = access_key
         self.secret_key = secret_key

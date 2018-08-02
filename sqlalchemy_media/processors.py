@@ -5,10 +5,10 @@ from .descriptors import StreamDescriptor
 from .exceptions import ContentTypeValidationError, DimensionValidationError, \
     AspectRatioValidationError, AnalyzeError
 from .helpers import validate_width_height_ratio, deprecated
+from .imaginglibs import get_image_factory
 from .mimetypes_ import guess_extension
 from .optionals import magic_mime_from_buffer, ensure_wand
 from .typing_ import Dimension
-from .imaginglibs import get_image_factory
 
 
 class Processor(object):
@@ -27,12 +27,14 @@ class Processor(object):
         **[Abstract]**
 
 
-        Should be overridden in inherited class and apply the process on the file-like object.
-        The result may be inserted info ``context`` argument.
+        Should be overridden in inherited class and apply the process on the
+        file-like object. The result may be inserted info ``context`` argument.
 
-        :param descriptor: The :class:`.BaseDescriptor` instance, to read the blob info from.
-        :param context: A dictionary to put and get the info about the attachment.
-                        Which as ``content_type``, ``width``, ``height``, ``length`` and etc ...
+        :param descriptor: The :class:`.BaseDescriptor` instance, to read the
+                           blob info from.
+        :param context: A dictionary to put and get the info about the
+                        attachment. Which as ``content_type``, ``width``,
+                        ``height``, ``length`` and etc ...
 
         """
         raise NotImplementedError()  # pragma: no cover
@@ -46,7 +48,8 @@ class Analyzer(Processor):
     .. versionchanged:: 0.5
 
        - Inherited from :class:`.Processor`
-       - The ``analyze`` method renamed to ``process`` to override the parent method.
+       - The ``analyze`` method renamed to ``process`` to override the parent
+       method.
 
 
     The abstract base class for all analyzers.
@@ -55,8 +58,8 @@ class Analyzer(Processor):
 
     def process(self, descriptor: StreamDescriptor, context: dict):
         """
-        Should be overridden in inherited class and analyzes the given :class:`.BaseDescriptor`
-        instance.
+        Should be overridden in inherited class and analyzes the given
+        :class:`.BaseDescriptor` instance.
 
         .. note:: An instance of :exc:`.AnalyzeError` or sub-types may raised
 
@@ -74,12 +77,15 @@ class MagicAnalyzer(Analyzer):
     .. versionchanged:: 0.5
 
        - Inherited from :class:`.Processor`
-       - The ``analyze`` method renamed to ``process`` to override the parent method.
+       - The ``analyze`` method renamed to ``process`` to override the parent
+         method.
 
-    Analyze the file using the libmagic and it's Python wrapper: ``python-magic``.
+    Analyze the file using the libmagic and it's Python wrapper:
+    ``python-magic``.
 
-    .. warning:: You should install the ``python-magic`` in order, to use this class. otherwise, an
-                 :exc:`.OptionalPackageRequirementError` will be raised.
+    .. warning:: You should install the ``python-magic`` in order, to use this
+                 class. otherwise, an :exc:`.OptionalPackageRequirementError`
+                 will be raised.
     """
 
     def process(self, descriptor: StreamDescriptor, context: dict):
@@ -98,12 +104,14 @@ class WandAnalyzer(Analyzer):
     .. versionchanged:: 0.5
 
        - Inherited from :class:`.Analyzer`
-       - The ``analyze`` method renamed to ``process`` to override the parent method.
+       - The ``analyze`` method renamed to ``process`` to override the parent
+         method.
 
     Analyze an image using ``wand``.
 
-    .. warning:: Installing ``wand`` is required for using this class. otherwise, an
-                 :exc:`.OptionalPackageRequirementError` will be raised.
+    .. warning:: Installing ``wand`` is required for using this class.
+                 otherwise, an :exc:`.OptionalPackageRequirementError` will be
+                 raised.
 
     Use it as follow
 
@@ -141,13 +149,13 @@ class WandAnalyzer(Analyzer):
             print(me.avatar.height)
             print(me.avatar.content_type)
 
-    .. note:: This object currently selects ``width``, ``height`` and ``mimetype`` of the image.
+    .. note:: This object currently selects ``width``, ``height`` and
+              ``mimetype`` of the image.
 
     """
 
     def process(self, descriptor: StreamDescriptor, context: dict):
         ensure_wand()
-        # noinspection PyPackageRequirements
         from wand.image import Image as WandImage
         from wand.exceptions import WandException
 
@@ -155,7 +163,6 @@ class WandAnalyzer(Analyzer):
         descriptor.prepare_to_read(backend='memory')
 
         try:
-            # noinspection PyUnresolvedReferences
             with WandImage(file=descriptor)as img:
                 context.update(
                     width=img.width,
@@ -178,7 +185,8 @@ class Validator(Processor):
     .. versionchanged:: 0.5
 
        - Inherited from :class:`.Processor`
-       - The ``validate`` method renamed to ``process`` to override the parent method.
+       - The ``validate`` method renamed to ``process`` to override the parent
+         method.
 
     The abstract base class for all validators.
 
@@ -188,14 +196,17 @@ class Validator(Processor):
         """
         **[Abstract]**
 
-        Should be overridden in inherited class and validate the validate the ``context``.
+        Should be overridden in inherited class and validate the validate the
+        ``context``.
 
         .. note:: It should be appended after the :class:`.Analyzer` to
                   the :attr:`Attachment.__pre_processors__`.
 
-        .. note:: An instance of :exc:`.ValidationError` or sub-types may raised
+        .. note:: An instance of :exc:`.ValidationError` or sub-types may
+                  raised
 
-        :param descriptor: The :class:`.BaseDescriptor` instance, to read the blob info from.
+        :param descriptor: The :class:`.BaseDescriptor` instance, to read the
+                           blob info from.
         :param context: A dictionary to to validate.
 
         """
@@ -211,7 +222,8 @@ class ContentTypeValidator(Validator):
 
     :param content_types: An iterable whose items are allowed content types.
 
-    .. note:: :exc:`.ContentTypeValidationError` may be raised during validation.
+    .. note:: :exc:`.ContentTypeValidationError` may be raised during
+              validation.
 
     """
 
@@ -223,7 +235,9 @@ class ContentTypeValidator(Validator):
             raise ContentTypeValidationError()
 
         if context['content_type'] not in self.content_types:
-            raise ContentTypeValidationError(context['content_type'], self.content_types)
+            raise ContentTypeValidationError(
+                context['content_type'], self.content_types
+            )
 
 
 class ImageValidator(ContentTypeValidator):
@@ -248,7 +262,8 @@ class ImageValidator(ContentTypeValidator):
        - ``min_aspect_ratio`` and ``max_aspect_ratio``
 
 
-    .. note:: Pass ``0`` on ``None`` for disabling assertion for one of: ``(w, h)``.
+    .. note:: Pass ``0`` on ``None`` for disabling assertion for one of:
+              ``(w, h)``.
 
     .. note:: :exc:`.DimensionValidationError` may be raised during validation.
 
@@ -262,13 +277,18 @@ class ImageValidator(ContentTypeValidator):
         class ProfileImage(Image):
             __pre_processors__ = [
                 ImageAnalyzer(),
-                ImageValidator((64, 48), (128, 96), content_types=['image/jpeg', 'image/png'])
+                ImageValidator(
+                    (64, 48),
+                    (128, 96),
+                    content_types=['image/jpeg', 'image/png']
+                )
             ]
 
     """
 
-    def __init__(self, minimum: Dimension = None, maximum: Dimension = None, content_types=None,
-                 min_aspect_ratio: float = None, max_aspect_ratio: float = None):
+    def __init__(self, minimum: Dimension = None, maximum: Dimension = None,
+                 content_types=None, min_aspect_ratio: float = None,
+                 max_aspect_ratio: float = None):
         self.min_width, self.min_height = minimum if minimum else (0, 0)
         self.max_width, self.max_height = maximum if maximum else (0, 0)
         self.min_aspect_ratio = min_aspect_ratio
@@ -284,30 +304,45 @@ class ImageValidator(ContentTypeValidator):
         height = context.get('height')
 
         if not (abs(width or 0) and abs(height or 0)):
-            raise DimensionValidationError('width and height are not found in analyze_result.')
+            raise DimensionValidationError(
+                'width and height are not found in analyze_result.'
+            )
 
         if self.min_width and self.min_width > width:
             raise DimensionValidationError(
-                f'Minimum allowed width is: {self.min_width: d}, but the {width: d} is given.')
+                f'Minimum allowed width is: {self.min_width: d}, but the '
+                f'{width: d} is given.'
+            )
 
         if self.min_height and self.min_height > height:
             raise DimensionValidationError(
-                f'Minimum allowed height is: {self.min_height: d}, but the {height: d} is given.')
+                f'Minimum allowed height is: {self.min_height: d}, but the '
+                f'{height: d} is given.'
+            )
 
         if self.max_width and self.max_width < width:
             raise DimensionValidationError(
-                f'Maximum allowed width is: {self.max_width: d}, but the {width: d} is given.')
+                f'Maximum allowed width is: {self.max_width: d}, but the '
+                f'{width: d} is given.'
+            )
 
         if self.max_height and self.max_height < height:
             raise DimensionValidationError(
-                f'Maximum allowed height is: {self.max_height: d}, but the {height: d} is given.')
+                f'Maximum allowed height is: {self.max_height: d}, but the '
+                f'{height: d} is given.'
+            )
 
         aspect_ratio = width / height
-        if (self.min_aspect_ratio and self.min_aspect_ratio > aspect_ratio) or \
-                (self.max_aspect_ratio and self.max_aspect_ratio < aspect_ratio):
+        if (self.min_aspect_ratio and self.min_aspect_ratio > aspect_ratio) \
+                or (
+                    self.max_aspect_ratio \
+                    and self.max_aspect_ratio < aspect_ratio
+                ):
             raise AspectRatioValidationError(
                 f'Invalid aspect ratio {width} / {height} = {aspect_ratio},'
-                f'accepted_range: {self.min_aspect_ratio} - {self.max_aspect_ratio}')
+                f'accepted_range: '
+                f'{self.min_aspect_ratio} - {self.max_aspect_ratio}'
+            )
 
 
 class ImageProcessor(Processor):
@@ -319,13 +354,15 @@ class ImageProcessor(Processor):
 
     .. warning::
 
-       - If ``width`` or ``height`` is given with ``crop``, Cropping will be processed after the
-         resize.
-       - If you pass both ``width`` and ``height``, aspect ratio may not be preserved.
+       - If ``width`` or ``height`` is given with ``crop``, Cropping will be
+         processed after the resize.
+       - If you pass both ``width`` and ``height``, aspect ratio may not be
+         preserved.
 
-    :param fmt: This argument will be directly passing to ``Wand`` or ``Pillow``. so, for list of
-                available choices, see:
-                `ImageMagic Documentation <http://www.imagemagick.org/script/formats.php>`_
+    :param fmt: This argument will be directly passing to ``Wand`` or
+                ``Pillow``. so, for list of available choices, see:
+                `ImageMagic Documentation
+                <http://www.imagemagick.org/script/formats.php>`_
 
     :param width: The new image width.
     :param height: The new image height.
@@ -337,7 +374,8 @@ class ImageProcessor(Processor):
     `here <http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.BaseImage.crop>`_.
 
     Including you can
-    use percent ``%`` sing to automatically calculate the values from original image dimension::
+    use percent ``%`` sing to automatically calculate the values from original
+    image dimension::
 
         ImageProcessor(crop=dict(width='50%', height='50%', gravity='center'))
         ImageProcessor(crop=dict(width='10%', height='10%', gravity='south_east'))
@@ -395,7 +433,6 @@ class ImageProcessor(Processor):
         Image = get_image_factory()
         # Copy the original info
         # generating thumbnail and storing in buffer
-        # noinspection PyTypeChecker
         img = Image(file=descriptor)
 
         is_invalid_format = self.format is None or img.format == self.format
@@ -421,7 +458,8 @@ class ImageProcessor(Processor):
 
             # Changing dimension if required.
             if self.width or self.height:
-                width, height, _ = validate_width_height_ratio(self.width, self.height, None)
+                width, height, _ = \
+                    validate_width_height_ratio(self.width, self.height, None)
                 img.resize(
                     width(img.size) if callable(width) else width,
                     height(img.size) if callable(height) else height
@@ -431,11 +469,15 @@ class ImageProcessor(Processor):
             if self.crop:
                 def get_key_for_crop_item(key, value):
                     crop_width_keys = ('width', 'left', 'right')
-                    crop_keys = ('left', 'top', 'right', 'bottom', 'width', 'height')
+                    crop_keys = (
+                        'left', 'top', 'right', 'bottom', 'width', 'height'
+                    )
 
-                    if key in crop_keys and isinstance(value, str) and '%' in value:
+                    if key in crop_keys and isinstance(value, str) \
+                            and '%' in value:
                         return int(int(value[:-1]) / 100 * (
-                            img.width if key in crop_width_keys else img.height))
+                            img.width if key in crop_width_keys else img.height
+                        ))
 
                     return value
 
@@ -468,7 +510,8 @@ class ImageAnalyzer(Analyzer):
     .. warning:: If none of ``Wand`` or ``Pillow`` are installed the
                  :exc:`.OptionalPackageRequirementError` will be raised.
 
-    .. note:: This object currently selects ``width``, ``height`` and ``mimetype`` of an image.
+    .. note:: This object currently selects ``width``, ``height`` and
+              ``mimetype`` of an image.
 
     """
 
@@ -486,6 +529,6 @@ class ImageAnalyzer(Analyzer):
                 content_type=img.mimetype
             )
 
-        # prepare for next processor, calling this method is not bad and just uses the memory
-        # temporary.
+        # prepare for next processor, calling this method is not bad and just
+        # uses the memory temporary.
         descriptor.prepare_to_read(backend='memory')

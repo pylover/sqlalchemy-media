@@ -2,12 +2,12 @@ import shutil
 from os import makedirs
 from os.path import join, dirname, abspath, exists
 
-import paramiko
 import mockssh
+import paramiko
 from mockssh.server import SERVER_KEY_PATH
 
-from sqlalchemy_media.ssh import SSHClient
 from .testcases import SqlAlchemyTestCase
+from sqlalchemy_media.ssh import SSHClient
 
 
 class MockupSSHServer(mockssh.Server):
@@ -33,7 +33,8 @@ class MockupSSHServer(mockssh.Server):
 class MockupSSHTestCase(SqlAlchemyTestCase):
     def setUp(self):
         self.here = abspath(join(dirname(__file__), '..'))
-        self.relative_temp_path = join('temp', self.__class__.__name__, self._testMethodName)
+        self.relative_temp_path = \
+            join('temp', self.__class__.__name__, self._testMethodName)
         self.temp_path = join(self.here, self.relative_temp_path)
         # Remove previous files, if any! to make a clean temp directory:
         if exists(self.temp_path):  # pragma: no cover

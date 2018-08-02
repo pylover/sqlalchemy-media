@@ -3,8 +3,11 @@ import re
 from setuptools import setup, find_packages
 
 # reading the package version without loading the package.
-with open(os.path.join(os.path.dirname(__file__), 'sqlalchemy_media', '__init__.py')) as v_file:
-    package_version = re.compile(r".*__version__ = '(.*?)'", re.S).match(v_file.read()).group(1)
+with open(os.path.join(
+    os.path.dirname(__file__), 'sqlalchemy_media', '__init__.py'
+)) as v_file:
+    package_version = re.compile(
+        r".*__version__ = '(.*?)'", re.S).match(v_file.read()).group(1)
 
 dependencies = [
     'sqlalchemy >= 1.1.0b3',
@@ -30,7 +33,7 @@ setup(
     install_requires=dependencies,
     license='MIT',
     classifiers=[
-        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Topic :: Software Development :: Libraries'
     ],
 )

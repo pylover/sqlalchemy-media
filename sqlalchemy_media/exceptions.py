@@ -11,7 +11,9 @@ class MaximumLengthIsReachedError(SqlAlchemyMediaException):
     """
 
     def __init__(self, max_length: int):
-        super().__init__('Cannot store files larger than: %d bytes' % max_length)
+        super().__init__(
+            'Cannot store files larger than: %d bytes' % max_length
+        )
 
 
 class MinimumLengthIsNotReachedError(SqlAlchemyMediaException):
@@ -22,7 +24,8 @@ class MinimumLengthIsNotReachedError(SqlAlchemyMediaException):
     def __init__(self, min_length, length=None):
         super().__init__(
             f'Cannot store files smaller than: {min_length: d} bytes,'
-            f'but the file length is: {length}')
+            f'but the file length is: {length}'
+        )
 
 
 class ContextError(SqlAlchemyMediaException):
@@ -39,7 +42,9 @@ class DefaultStoreError(SqlAlchemyMediaException):
     """
 
     def __init__(self):
-        super(DefaultStoreError, self).__init__("Default store is not defined.")
+        super(DefaultStoreError, self).__init__(
+            'Default store is not defined.'
+        )
 
 
 class AnalyzeError(SqlAlchemyMediaException):
@@ -58,7 +63,8 @@ class ValidationError(SqlAlchemyMediaException):
 
 class ContentTypeValidationError(ValidationError):
     """
-    Raised by :meth:`.Validator.validate` when the content type is missing or invalid.
+    Raised by :meth:`.Validator.validate` when the content type is missing or
+    invalid.
 
     :param content_type: The invalid content type if any.
     """
@@ -78,8 +84,8 @@ class ContentTypeValidationError(ValidationError):
 
 class DescriptorError(SqlAlchemyMediaException):
     """
-    A sub-class instance of this exception may raised when an error has occurred
-    in :class:`.BaseDescriptor` and it's subtypes.
+    A sub-class instance of this exception may raised when an error has
+    occurred in :class:`.BaseDescriptor` and it's subtypes.
 
     """
 
@@ -94,8 +100,9 @@ class DescriptorOperationError(DescriptorError):
 class OptionalPackageRequirementError(SqlAlchemyMediaException):
     """
     Raised when an optional package is missing.
-    The constructor is trying to search for package name in requirements-optional.txt and find
-    the requirement and it's version criteria to inform the user.
+    The constructor is trying to search for package name in
+    requirements-optional.txt and find the requirement and it's version
+    criteria to inform the user.
 
     :param package_name: The name of the missing package.
     """
@@ -129,7 +136,8 @@ class ThumbnailIsNotAvailableError(SqlAlchemyMediaException):
 
 class DimensionValidationError(ValidationError):
     """
-    Raises when ``width`` or ``height`` of the media is not meet the limitations.
+    Raises when ``width`` or ``height`` of the media is not meet the
+    limitations.
 
     """
 

@@ -8,7 +8,6 @@ from sqlalchemy_media.stores import StoreManager, Store
 from sqlalchemy_media.exceptions import DefaultStoreError, ContextError
 
 
-# noinspection PyAbstractClass
 class DummyStore(Store):
     pass
 

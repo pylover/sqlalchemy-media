@@ -1,12 +1,8 @@
-import os
 import ftplib
+import os
 from collections import deque
 
 
-# noinspection PyMethodMayBeStatic
-# noinspection PyUnusedLocal
-# noinspection PyMissingConstructor
-# noinspection PyMethodOverriding
 class MockFTP(ftplib.FTP):  # pragma: nocover
     """ Mock FTP lib for testing """
 

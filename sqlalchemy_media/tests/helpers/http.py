@@ -1,23 +1,27 @@
-import threading
+import base64
 import contextlib
 import io
-import base64
+import threading
+from http.server import HTTPServer
 from os import urandom
 from os.path import split
-from http.server import HTTPServer
 from wsgiref.simple_server import WSGIServer
 
 from sqlalchemy_media.mimetypes_ import guess_type
 
 
 @contextlib.contextmanager
-def simple_http_server(handler_class, server_class=HTTPServer, app=None, bind=('', 0)):
+def simple_http_server(handler_class, server_class=HTTPServer, app=None, 
+                       bind=('', 0)):
     server = server_class(bind, handler_class)
     if app:
         assert issubclass(server_class, WSGIServer)
         server.set_app(app)
-    thread = threading.Thread(target=server.serve_forever, name='sa-media test server.',
-                              daemon=True)
+    thread = threading.Thread(
+        target=server.serve_forever, 
+        name='sa-media test server.',
+        daemon=True
+    )
     thread.start()
     yield server
     server.shutdown()
@@ -25,7 +29,10 @@ def simple_http_server(handler_class, server_class=HTTPServer, app=None, bind=('
 
 
 def encode_multipart_data(fields: dict = None, files: dict = None):  # pragma: no cover
-    boundary = ''.join(['-----', base64.urlsafe_b64encode(urandom(27)).decode()])
+    boundary = ''.join([
+        '-----', 
+        base64.urlsafe_b64encode(urandom(27)).decode()
+    ])
     crlf = b'\r\n'
     lines = []
 
@@ -55,7 +62,6 @@ def encode_multipart_data(fields: dict = None, files: dict = None):  # pragma: n
     body = io.BytesIO()
     length = 0
     for l in lines:
-        # noinspection PyTypeChecker
         line = (l if isinstance(l, bytes) else l.encode()) + crlf
         length += len(line)
         body.write(line)

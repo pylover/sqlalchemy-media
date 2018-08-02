@@ -1,8 +1,9 @@
-from os.path import join, dirname, basename
-from io import BytesIO
-from sqlalchemy_media.typing_ import FileLike
-from .base import Store
 from ftplib import FTP, FTP_TLS
+from io import BytesIO
+from os.path import join, dirname, basename
+
+from .base import Store
+from ..typing_ import FileLike
 
 
 class FTPStore(Store):
@@ -35,7 +36,6 @@ class FTPStore(Store):
         else:  # pragma: nocover
             if secure:
                 self.ftp_client = FTP_TLS(host=hostname, user=username, passwd=password, **kwargs)
-                # noinspection PyUnresolvedReferences
                 self.ftp_client.prot_p()
 
             else:
@@ -52,7 +52,6 @@ class FTPStore(Store):
     def _change_directory(self, remote):
         remote_dirs = remote.split('/')
         for directory in remote_dirs:
-            # noinspection PyBroadException
             try:
                 self.ftp_client.cwd(directory)
             except Exception:

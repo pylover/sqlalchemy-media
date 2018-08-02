@@ -1,24 +1,25 @@
 import io
-from os.path import splitext
-from urllib.request import urlopen
 from cgi import FieldStorage
+from os.path import splitext
 from tempfile import TemporaryFile, NamedTemporaryFile
+from urllib.request import urlopen
 
 from .constants import KB
+from .exceptions import MaximumLengthIsReachedError, \
+    MinimumLengthIsNotReachedError, DescriptorOperationError
+from .helpers import is_uri, copy_stream
 from .mimetypes_ import guess_extension, guess_type
 from .typing_ import FileLike, Attachable
-from .helpers import is_uri, copy_stream
-from .exceptions import MaximumLengthIsReachedError, MinimumLengthIsNotReachedError, \
-    DescriptorOperationError
 
 
 class BaseDescriptor(object):
     """
-    Abstract base class for all descriptors. Instance of this class is a file-like object.
+    Abstract base class for all descriptors. Instance of this class is a
+    file-like object.
 
-    Descriptors are used to get some primitive information from an attachable(file-like object,
-    filename or URI) and also allow seeking over underlying file-object. users may not be using
-    this class directly.
+    Descriptors are used to get some primitive information from an
+    attachable(file-like object, filename or URI) and also allow seeking over
+    underlying file-object. users may not be using this class directly.
 
     .. seealso:: :class:`.AttachableDescriptor` to know how to use it.
 
@@ -28,15 +29,19 @@ class BaseDescriptor(object):
 
     :param min_length: Maximum allowed file size.
     :param max_length: Maximum allowed file size.
-    :param content_type: The file's mimetype to suppress the mimetype detection.
-    :param content_length: The length of the file in bytes, if available. Some descriptors
-                           like :class:`.UrlDescriptor` are providing this keyword argument.
+    :param content_type: The file's mimetype to suppress the mimetype
+                         detection.
+    :param content_length: The length of the file in bytes, if available.
+                           Some descriptors like :class:`.UrlDescriptor` are
+                           providing this keyword argument.
     :param extension: The file's extension to suppress guessing it.
-    :param original_filename: Original filename, useful to detect `content_type`
-                              and or `extension`.
-    :param kwargs: Additional keyword arguments to set as attribute on descriptor instance.
-    :param header_buffer_size: Amount of bytes to read and buffer from underlying file-like object
-                               for analysis purpose if file-like object is not seekable.
+    :param original_filename: Original filename, useful to detect
+                              `content_type` and or `extension`.
+    :param kwargs: Additional keyword arguments to set as attribute on
+                   descriptor instance.
+    :param header_buffer_size: Amount of bytes to read and buffer from
+                               underlying file-like object for analysis purpose
+                               if file-like object is not seekable.
     :param reproducible: The reproducible of the file-like objects.
 
     """
@@ -59,9 +64,11 @@ class BaseDescriptor(object):
     #: The reproducible of the file-like objects.
     reproducible = False
 
-    def __init__(self, min_length: int = None, max_length: int = None, content_type: str = None,
-                 content_length: int = None, extension: str = None, original_filename: str = None,
-                 header_buffer_size: int = KB, reproducible: bool = False, **kwargs):
+    def __init__(self, min_length: int = None, max_length: int = None,
+                 content_type: str = None, content_length: int = None,
+                 extension: str = None, original_filename: str = None,
+                 header_buffer_size: int = KB, reproducible: bool = False,
+                 **kwargs):
 
         self.min_length = min_length
         self.max_length = max_length
@@ -122,8 +129,8 @@ class BaseDescriptor(object):
             else:
                 result = self.header.read(size)
 
-        if self.max_length is not None and source_cursor + len(result) > self.max_length:
-            # noinspection PyTypeChecker
+        if self.max_length is not None \
+                and source_cursor + len(result) > self.max_length:
             raise MaximumLengthIsReachedError(self.max_length)
 
         return result
@@ -143,9 +150,9 @@ class BaseDescriptor(object):
 
     def tell(self) -> int:
         """
-        Get the current position of the file-like object. Even if the underlying file-object
-        is not :meth:`.seekable`, this method should return the current position which
-        counted internally.
+        Get the current position of the file-like object. Even if the
+        underlying file-object is not :meth:`.seekable`, this method should
+        return the current position which counted internally.
 
         """
         source_cursor = self.tell_source()
@@ -160,8 +167,8 @@ class BaseDescriptor(object):
 
     def tell_source(self):
         """
-        Returns the underlying file-object's current position. even if the underlying file-object
-        is not :meth:`.seekable`.
+        Returns the underlying file-object's current position. even if the
+        underlying file-object is not :meth:`.seekable`.
 
         """
         if self.seekable():
@@ -182,13 +189,14 @@ class BaseDescriptor(object):
 
     def get_header_buffer(self) -> bytes:
         """
-        Returns the amount of :attr:`.header_buffer_size` from the beginning of the underlying
-        file-object. this method should be called many times before the :meth:`.read` method is
-        called on non-seekable descriptors.
+        Returns the amount of :attr:`.header_buffer_size` from the beginning
+        of the underlying file-object. this method should be called many times
+        before the :meth:`.read` method is called on non-seekable descriptors.
 
-        .. warning:: The :exc:`.DescriptorOperationError` will be raised if this method is called
-                     after calling the :meth:`.read`. This situation is only happened on
-                     non-seekable descriptors.
+        .. warning:: The :exc:`.DescriptorOperationError` will be raised if
+                     this method is called after calling the :meth:`.read`.
+                     This situation is only happened on non-seekable
+                     descriptors.
 
         .. seealso:: :meth:`.seekable`
 
@@ -211,8 +219,10 @@ class BaseDescriptor(object):
             pos = self.tell_source()
             if pos:
                 raise DescriptorOperationError(
-                    'It\'s too late to get header buffer from the descriptor. the underlying'
-                    f'file-object is not seekable and {pos: d} bytes are already fetched from.')
+                    f'It\'s too late to get header buffer from the descriptor.'
+                    f'the underlying file-object is not seekable and {pos: d} '
+                    f'bytes are already fetched from.'
+                )
 
             buffer = self.read_source(self.header_buffer_size)
             self.header = io.BytesIO(buffer)
@@ -226,8 +236,8 @@ class BaseDescriptor(object):
         Closes the underlying file-object. and check for ``min_length``.
 
         :param check_length: Check the minimum length of the stream and
-                             :class:`MinimumLengthIsNotReachedError` may be raised during close.
-                             default is `True`.
+                             :class:`MinimumLengthIsNotReachedError` may be
+                             raised during close. default is `True`.
 
         .. versionadded:: 0.8
 
@@ -243,8 +253,8 @@ class BaseDescriptor(object):
         """
         **[Abstract]**
 
-        Should be overridden in inherited class and return :data:`True` if the underlying
-        file-object is seekable.
+        Should be overridden in inherited class and return :data:`True` if
+        the underlying file-object is seekable.
 
         """
         raise NotImplementedError()  # pragma: no cover
@@ -253,8 +263,8 @@ class BaseDescriptor(object):
         """
         **[Abstract]**
 
-        Should be overridden in inherited class and return the underlying file-object's current
-        position.
+        Should be overridden in inherited class and return the underlying
+        file-object's current position.
 
         """
         raise NotImplementedError()  # pragma: no cover
@@ -263,7 +273,8 @@ class BaseDescriptor(object):
         """
         **[Abstract]**
 
-        Should be overridden in inherited class and read from underlying file-object.
+        Should be overridden in inherited class and read from underlying
+        file-object.
 
         :param size: Amount of bytes to read.
 
@@ -274,21 +285,23 @@ class BaseDescriptor(object):
         """
         Seek the file at the given position.
 
-        .. note:: The :exc:`io.UnsupportedOperation` will be raised if the underlying file-object
-        is not :meth:`.seekable`.
+        .. note:: The :exc:`io.UnsupportedOperation` will be raised if the
+                  underlying file-object is not :meth:`.seekable`.
 
         :param position: the position to seek on.
         :param whence: optional whence argument.
 
         """
-        raise NotImplementedError('Seek operation is not supported by this object: %r' % self)  # pragma: no cover
+        raise NotImplementedError(
+            'Seek operation is not supported by this object: %r' % self
+        )  # pragma: no cover
 
 
 class StreamDescriptor(BaseDescriptor):
     """
-    This class is used for describing a file-like object. so it's just a proxy for
-    file-like objects. The underlying file-object is not meant to be closed after calling
-    the :meth:`.close` method.
+    This class is used for describing a file-like object. so it's just a proxy
+    for file-like objects. The underlying file-object is not meant to be closed
+    after calling the :meth:`.close` method.
 
     :param stream: File-like object to wrap.
     :param kwargs: the same as the :class:`.BaseDescriptor`
@@ -313,7 +326,8 @@ class StreamDescriptor(BaseDescriptor):
 
     def close(self, **kw) -> None:
         """
-        We are not closing the file-like object here, because we've not opened it.
+        We are not closing the file-like object here, because we've not opened
+        it.
 
         """
         super().close(**kw)
@@ -335,23 +349,28 @@ class StreamDescriptor(BaseDescriptor):
 
         .. versionadded:: 0.5
 
-        If the underlying file-object is not seekable, tries to store the underlying non-seekable
-        file-like object as an instance of :class:`io.BytesIO`, :obj:`tempfile.NamedTemporaryFile`
-        and :obj:`tempfile.TemporaryFile`.
+        If the underlying file-object is not seekable, tries to store the
+        underlying non-seekable file-like object as an instance of
+        :class:`io.BytesIO`, :obj:`tempfile.NamedTemporaryFile` and
+        :obj:`tempfile.TemporaryFile`.
 
         .. warning:: Anyway, this method will seeks the descriptor to ``0``.
 
-        .. warning:: If any physical file is created during this operation, This will be deleted
-                     after the :meth:`.close` has been called.
+        .. warning:: If any physical file is created during this operation,
+                     This will be deleted after the :meth:`.close` has been
+                     called.
 
-        .. warning:: :exc:`.DescriptorOperationError` may be raised, if the current position is
-                     greater than zero ``0``, and also if called on a seekable instance.
+        .. warning:: :exc:`.DescriptorOperationError` may be raised, if the
+                     current position is greater than zero ``0``, and also if
+                     called on a seekable instance.
 
-        .. note:: The ``file`` option is also a temp file but file is guaranteed to have a visible
-                  name in the file system (on Unix, the directory entry is not unlinked). filename
+        .. note:: The ``file`` option is also a temp file but file is
+                  guaranteed to have a visible name in the file system (on
+                  Unix, the directory entry is not unlinked). filename
                   will be retrieved by the :attr:`.filename`.
 
-        :param backend: Available choices are: ``memory``, ``file`` and ``temp``.
+        :param backend: Available choices are: ``memory``, ``file`` and
+                        ``temp``.
 
         """
 
@@ -366,7 +385,9 @@ class StreamDescriptor(BaseDescriptor):
         elif backend == 'file':
             buffer = NamedTemporaryFile()
         else:
-            raise DescriptorOperationError('Invalid backend for descriptor: %r' % backend)
+            raise DescriptorOperationError(
+                'Invalid backend for descriptor: %r' % backend
+            )
 
         length = copy_stream(self, buffer)
         buffer.seek(0)
@@ -378,7 +399,8 @@ class StreamDescriptor(BaseDescriptor):
             original_filename=self.original_filename,
         )
 
-    def replace(self, attachable: [io.BytesIO, io.FileIO], position=None, **kwargs):
+    def replace(self, attachable: [io.BytesIO, io.FileIO], position=None,
+                **kwargs):
         """
 
         .. versionadded:: 0.5
@@ -386,8 +408,8 @@ class StreamDescriptor(BaseDescriptor):
         Replace the underlying file-object with a seekable one.
 
         :param attachable: A seekable file-object.
-        :param position: Position of the new seekable file-object. if :data:`.None`, position will
-                         be preserved.
+        :param position: Position of the new seekable file-object. if
+                         :data:`.None`, position will be preserved.
         :param kwargs: the same as the :class:`.BaseDescriptor`
         """
 
@@ -404,8 +426,9 @@ class StreamDescriptor(BaseDescriptor):
 
 class StreamCloserDescriptor(StreamDescriptor):
     """
-    The same as the :class:`.StreamDescriptor`, the only difference is that this class tries to
-    close the file-like object after calling the :meth:`.close` method.
+    The same as the :class:`.StreamDescriptor`, the only difference is that
+    this class tries to close the file-like object after calling the
+    :meth:`.close` method.
 
     """
 
@@ -425,26 +448,31 @@ class LocalFileSystemDescriptor(StreamCloserDescriptor):
     :param filename: The filename on the local storage to open for reading.
     :param kwargs: the same as the :class:`.BaseDescriptor`
 
-    .. note:: the `filename` will be passed as `original_filename` to the parent class.
+    .. note:: the `filename` will be passed as `original_filename` to the
+              parent class.
 
     """
 
     def __init__(self, filename: str, original_filename: str = None, **kwargs):
         if original_filename is None:
             original_filename = filename
-        super().__init__(open(filename, 'rb'), original_filename=original_filename, **kwargs)
+        super().__init__(
+            open(filename, 'rb'),
+            original_filename=original_filename,
+            **kwargs
+        )
 
 
 class UrlDescriptor(StreamCloserDescriptor):
     """
-    Open a remote resource with :mod:`urllib` and pass the `content_type` and `content_length` to
-    the parent class.
+    Open a remote resource with :mod:`urllib` and pass the `content_type` and
+    `content_length` to the parent class.
 
     :param uri: The uri to open.
     :param kwargs: the same as the :class:`.BaseDescriptor`
 
-    .. note:: the `uri` will be passed as `original_filename` to the parent class, if the
-              `original_filename` is :data:`None`.
+    .. note:: the `uri` will be passed as `original_filename` to the parent
+              class, if the `original_filename` is :data:`None`.
 
     """
 
@@ -456,7 +484,8 @@ class UrlDescriptor(StreamCloserDescriptor):
             content_type = response.headers.get('Content-Type')
 
         if 'Content-Length' in response.headers:
-            kwargs['content_length'] = int(response.headers.get('Content-Length'))
+            kwargs['content_length'] = \
+                int(response.headers.get('Content-Length'))
 
         if original_filename is None:
             original_filename = uri
@@ -474,7 +503,8 @@ class CgiFieldStorageDescriptor(StreamCloserDescriptor):
 
     """
 
-    def __init__(self, storage: FieldStorage, content_type: str = None, **kwargs):
+    def __init__(self, storage: FieldStorage, content_type: str = None,
+                 **kwargs):
         if content_type is None:
             content_type = storage.headers['Content-Type']
 
@@ -483,7 +513,6 @@ class CgiFieldStorageDescriptor(StreamCloserDescriptor):
         super().__init__(storage.file, content_type=content_type, **kwargs)
 
 
-# noinspection PyAbstractClass
 class AttachableDescriptor(BaseDescriptor):
     """
 
@@ -496,20 +525,22 @@ class AttachableDescriptor(BaseDescriptor):
         ...     print(type(descriptor))
         <class 'sqlalchemy_media.descriptors.LocalFileSystemDescriptor'>
 
-    So this callable, should determine the appropriate descriptor and return an instance of it.
+    So this callable, should determine the appropriate descriptor and return
+    an instance of it.
 
     :param attachable: filename, uri or file-like object
     :param kwargs: the same as the :class:`.BaseDescriptor`
 
     """
 
-    # noinspection PyInitNewSignature
     def __new__(cls, attachable: Attachable, **kwargs):
 
         if isinstance(attachable, FieldStorage):
             return_type = CgiFieldStorageDescriptor
         elif isinstance(attachable, str):
-            return_type = UrlDescriptor if is_uri(attachable) else LocalFileSystemDescriptor
+            return_type = \
+                UrlDescriptor if is_uri(attachable) \
+                else LocalFileSystemDescriptor
         else:
             return_type = StreamDescriptor
 

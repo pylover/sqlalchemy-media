@@ -1,21 +1,20 @@
-from typing import Hashable, Tuple, List, Iterable
 import copy
-import uuid
-import time
-import re
 import io
+import re
+import time
+import uuid
 from os.path import splitext
+from typing import Hashable, Tuple, List, Iterable
 
 from sqlalchemy.ext.mutable import MutableList, MutableDict
 
+from .constants import MB, KB
+from .descriptors import AttachableDescriptor
+from .exceptions import ThumbnailIsNotAvailableError
+from .helpers import validate_width_height_ratio
+from .imaginglibs import get_image_factory
 from .stores import StoreManager, Store
 from .typing_ import Attachable, Dimension
-from .descriptors import AttachableDescriptor
-from .constants import MB, KB
-from .optionals import ensure_wand
-from .helpers import validate_width_height_ratio
-from .exceptions import ThumbnailIsNotAvailableError
-from .imaginglibs import get_image_factory
 
 
 class Attachment(MutableDict):
@@ -23,8 +22,8 @@ class Attachment(MutableDict):
     The base model for an attached file.
     All attachment types will be inherited from this class.
 
-    Actually this is an instance of :class:`sqlalchemy.ext.mutable.MutableDict` which inherited
-    from :class:`dict`.
+    Actually this is an instance of :class:`sqlalchemy.ext.mutable.MutableDict`
+    which inherited from :class:`dict`.
 
     ..  doctest::
 
@@ -37,8 +36,10 @@ class Attachment(MutableDict):
 
     .. versionchanged:: 0.5
 
-       - removed ``__analyzer__`` attribute, using ``__pre_processors__`` instead.
-       - removed ``__validate__`` attribute, using ``__pre_processors__`` instead.
+       - removed ``__analyzer__`` attribute, using ``__pre_processors__``
+         instead.
+       - removed ``__validate__`` attribute, using ``__pre_processors__``
+         instead.
 
     .. versionadded:: 0.9.6
 
@@ -58,12 +59,13 @@ class Attachment(MutableDict):
     #: Limit the file's minimum size.
     __min_length__ = None
 
-    #: An instance of :class:`.Processor`, to convert, reformat & change contents before storing
-    # the attachment.
+    #: An instance of :class:`.Processor`, to convert, reformat & change
+    # contents before storing the attachment.
     __pre_processors__ = None
 
-    #: Automatically coerce `:obj:.Attachable` objects. So if True, you can set the models
-    # attribute by a `file` or `filename` or :class:`cgi.FieldStorage`.
+    #: Automatically coerce `:obj:.Attachable` objects. So if True, you can
+    # set the models attribute by a `file` or `filename` or
+    # :class:`cgi.FieldStorage`.
     __auto_coercion__ = False
 
     #: The reproducible of the file.
@@ -95,9 +97,10 @@ class Attachment(MutableDict):
             return cls.create_from(*value)
 
         raise TypeError(
-            'Value type must be subclass of %s or a tuple(file, mime, [filename]),'
-            'but it\'s: %s' % (cls, type(value))
-        )
+            'Value type must be subclass of % s or a '
+            'tuple(file, mime, [filename]), but it\'s: %s' % (
+                cls, type(value)
+            ))
 
     @classmethod
     def create_from(cls, *args, **kwargs):
@@ -123,7 +126,8 @@ class Attachment(MutableDict):
         """
         Returns the id of the store used to put this file on.
 
-        Stores must be registered with appropriate id via :meth:`.StoreManager.register`.
+        Stores must be registered with appropriate id via
+        :meth:`.StoreManager.register`.
 
         :type: str
         """
@@ -132,7 +136,8 @@ class Attachment(MutableDict):
     @property
     def key(self) -> Hashable:
         """
-        Unique key for tracking this attachment. it will be generated during attachment process in
+        Unique key for tracking this attachment. it will be generated during
+        attachment process in
         :meth:`.attach` method.
 
         :type: Hashable
@@ -146,9 +151,9 @@ class Attachment(MutableDict):
     @property
     def empty(self) -> bool:
         """
-        Check if file is attached to this object or not. Returns :const:`True` when a file is
-        loaded on this object via :meth:`.attach` method or SqlAlchemy db load mechanism,
-        else :const:`False.`
+        Check if file is attached to this object or not. Returns
+        :const:`True` when a file is loaded on this object via :meth:`.attach`
+        method or SqlAlchemy db load mechanism, else :const:`False.`
 
         :type: bool
         """
@@ -166,9 +171,11 @@ class Attachment(MutableDict):
     @property
     def filename(self) -> str:
         """
-        The filename used to store the attachment in the storage with this format::
+        The filename used to store the attachment in the storage with this
+        format::
 
-            '{self.__prefix__}-{self.key}{self.suffix}{if self.extension else ''}'
+            '{self.__prefix__}-{self.key}{self.suffix}{if self.extension
+            else ''}'
 
         :type: str
         """
@@ -178,14 +185,23 @@ class Attachment(MutableDict):
     @property
     def suffix(self) -> str:
         """
-        The same as the :meth:`sqlalchemy_media.attachments.Attachment.original_filename`
-        plus a leading minus(-) if available, else empty string ('') will be returned.
+        The same as the
+        :meth:`sqlalchemy_media.attachments.Attachment.original_filename`
+        plus a leading minus(-) if available, else empty string ('') will be
+        returned.
 
         :type: str
         """
         if self.original_filename:
-            return '-%s' % re.sub(r'[/:.?]+', '_', re.sub(r'\w+://', '',
-                                  splitext(self.original_filename)[0]))
+            return '-%s' % re.sub(
+                r'[/:.?]+',
+                '_',
+                re.sub(
+                    r'\w+://',
+                    '',
+                    splitext(self.original_filename)[0]
+                )
+            )
 
         return ''
 
@@ -274,10 +290,17 @@ class Attachment(MutableDict):
         """
         self.get_store().delete(self.path)
 
-    def attach(self, attachable: Attachable, content_type: str = None,
-               original_filename: str = None, extension: str = None, store_id: str = None,
-               overwrite: bool = False, suppress_pre_process: bool = False,
-               suppress_validation: bool = False, **kwargs) -> 'Attachment':
+    def attach(
+            self,
+            attachable: Attachable,
+            content_type: str = None,
+            original_filename: str = None,
+            extension: str = None,
+            store_id: str = None,
+            overwrite: bool = False,
+            suppress_pre_process: bool = False,
+            suppress_validation: bool = False,
+            **kwargs) -> 'Attachment':
         """
         Attach a file. if the session is rolled-back, all operations will be rolled-back.
         The old file will be deleted after commit, if any.
@@ -395,12 +418,12 @@ class Attachment(MutableDict):
                 else:
                     processors = [self.__pre_processors__]
 
-                # noinspection PyTypeChecker
                 for processor in processors:
                     processor.process(descriptor, attachment_info)
 
             # Updating the mutable dictionary
-            self.update([(k, v) for k, v in attachment_info.items() if v is not None])
+            self.update([(k, v)
+                         for k, v in attachment_info.items() if v is not None])
 
             # Putting the file on the store.
             self['length'] = self.get_store().put(self.path, descriptor)
@@ -463,8 +486,6 @@ class AttachmentCollection(object):
     @classmethod
     def _listen_on_attribute(cls, attribute, coerce, parent_cls):
         StoreManager.observe_attribute(attribute, collection=True)
-        # noinspection PyUnresolvedReferences
-        # noinspection PyProtectedMember
         super()._listen_on_attribute(attribute, coerce, parent_cls)
 
 
@@ -514,7 +535,6 @@ class AttachmentList(AttachmentCollection, MutableList):
             if isinstance(value, Iterable):
                 result = cls()
 
-                # noinspection PyTypeChecker
                 for i in value:
                     result.append(cls.__item_type__.coerce(index, i))
                 return result
@@ -753,28 +773,36 @@ class Image(BaseImage):
         """
         return self.get('thumbnails')
 
-    def generate_thumbnail(self, width: int = None, height: int = None, ratio: float = None,
-                           ratio_precision: int = 5) -> Thumbnail:
+    def generate_thumbnail(
+            self,
+            width: int = None,
+            height: int = None,
+            ratio: float = None,
+            ratio_precision: int = 5) -> Thumbnail:
         """
 
         .. versionadded:: 0.3
 
         Generates and stores a thumbnail with the given arguments.
 
-        .. warning:: If none or more than one of the ``width``, ``height`` and or ``ratio`` are
-                     given, :exc:`ValueError` will be raised.
+        .. warning:: If none or more than one of the ``width``, ``height``
+                     and or ``ratio`` are given, :exc:`ValueError` will be
+                     raised.
 
         :param width: The width of the thumbnail.
         :param height: The Height of the thumbnail.
         :param ratio: The coefficient to reduce, Must be less than ``1.0``.
-        :param ratio_precision: Number of digits after the decimal point of the ``ratio`` argument
-                                to tune thumbnail lookup precision. default: 2.
+        :param ratio_precision: Number of digits after the decimal point of
+                                the ``ratio`` argument to tune thumbnail
+                                lookup precision. default: 2.
         :return: the Newly generated :class:`.Thumbnail` instance.
 
         """
 
         # Validating parameters
-        width, height, ratio = validate_width_height_ratio(width, height, ratio)
+        width, height, ratio = validate_width_height_ratio(
+            width, height, ratio
+        )
 
         CompatibleImage = get_image_factory()
         # opening the original file
@@ -783,7 +811,6 @@ class Image(BaseImage):
         with store.open(self.path) as original_file:
 
             # generating thumbnail and storing in buffer
-            # noinspection PyTypeChecker
             img = CompatibleImage(file=original_file)
             img.format = 'jpg'
 
@@ -816,27 +843,35 @@ class Image(BaseImage):
 
         return thumbnail
 
-    def get_thumbnail(self, width: int = None, height: int = None, ratio: float = None,
-                      ratio_precision: int = 2, auto_generate: bool = False) -> Thumbnail:
+    def get_thumbnail(
+            self,
+            width: int = None,
+            height: int = None,
+            ratio: float = None,
+            ratio_precision: int = 2,
+            auto_generate: bool = False) -> Thumbnail:
         """
 
         .. versionadded:: 0.3
 
-        Search for the thumbnail with given arguments, if ``auto_generate`` is :data:`.False`, the
-        :exc:`.ThumbnailIsNotAvailableError` will be raised, else tries to call
-        the :meth:`generate_thumbnail` to create a new one.
+        Search for the thumbnail with given arguments, if ``auto_generate``
+        is :data:`.False`, the :exc:`.ThumbnailIsNotAvailableError` will be
+        raised, else tries to call the :meth:`generate_thumbnail` to create a
+        new one.
 
         :param width: Width of the thumbnail to search for.
         :param height: Height of the thumbnail to search for.
         :param ratio: Ratio of the thumbnail to search for.
-        :param ratio_precision: Number of digits after the decimal point of the ``ratio`` argument
-                                to tune thumbnail lookup precision. default: 2.
-        :param auto_generate: If :data:`.True`, tries to generate a new thumbnail.
+        :param ratio_precision: Number of digits after the decimal point of
+                                the ``ratio`` argument to tune thumbnail
+                                lookup precision. default: 2.
+        :param auto_generate: If :data:`.True`, tries to generate a new
+                              thumbnail.
 
         :return: :class:`.Thumbnail` instance.
 
-        .. warning:: if ``auto_generate`` is :data:`.True`, you have to commit the session,
-                     to store the generated thumbnails.
+        .. warning:: if ``auto_generate`` is :data:`.True`, you have to commit
+                     the session, to store the generated thumbnails.
 
         """
 
@@ -845,7 +880,8 @@ class Image(BaseImage):
 
         if self.thumbnails is not None:
             for w, h, r, t in self.thumbnails:
-                if w == width or h == height or round(r, ratio_precision) == ratio:
+                if w == width or h == height or round(
+                        r, ratio_precision) == ratio:
                     return self.__thumbnail_type__(t)
 
         # thumbnail not found
@@ -859,7 +895,8 @@ class Image(BaseImage):
 
     def get_objects_to_delete(self):
         """
-        Returns the files to be deleted, if the attachment is marked for deletion.
+        Returns the files to be deleted, if the attachment is marked for
+        deletion.
 
         """
         yield from super().get_objects_to_delete()

@@ -7,8 +7,8 @@ env:
 language: python
 
 python:
-  - 3.5
   - 3.6
+  - nightly
 
 before_install:
   - pip install -U pip setuptools wheel
@@ -18,8 +18,8 @@ install: pip install -e .
 
 script: coverage run --source sqlalchemy_media $(which nosetests)
 
-after_success: if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then travis_retry coveralls ; fi
-after_deploy: if [[ $TRAVIS_PYTHON_VERSION == '3.5' ]]; then ./travis-gh-pages.sh ; fi
+after_success: if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then travis_retry coveralls ; fi
+after_deploy: if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then ./travis-gh-pages.sh ; fi
 
 deploy:
   provider: pypi
@@ -31,4 +31,4 @@ deploy:
     tags: true
     distributions: sdist bdist_wheel
     repo: pylover/sqlalchemy-media
-    condition: $TRAVIS_PYTHON_VERSION = 3.5
+    condition: $TRAVIS_PYTHON_VERSION = 3.6

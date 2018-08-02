@@ -29,15 +29,18 @@ See the documentation_ for full description.
 
 Why ?
 -----
-Nowadays, most of the database applications are used to allow users to upload and attach files of various types to
-ORM models.
+Nowadays, most of the database applications are used to allow users to upload 
+and attach files of various types to ORM models.
 
-Handling those jobs is not simple if you have to care about Security, High-Availability, Scalability, CDN and more
-things you may have already been concerned. Accepting a file from public space, analysing, validating,
-processing(Normalizing) and making it available to public space again is the main goal of this project.
+Handling those jobs is not simple if you have to care about Security, 
+High-Availability, Scalability, CDN and more things you may have already 
+been concerned. Accepting a file from public space, analysing, validating,
+processing(Normalizing) and making it available to public space again is 
+the main goal of this project.
 
-Sql-Alchemy is the best platform for implementing this stuff. It has the SqlAlchemyMutable_ types facility to
-manipulate the objects with any type in-place. why not ?
+Sql-Alchemy is the best platform for implementing this stuff. It has 
+the SqlAlchemyMutable_ types facility to manipulate the objects with any 
+type in-place. why not ?
 
 .. note:: The main idea comes from dahlia's SQLAlchemyImageAttach_.
 
@@ -54,7 +57,6 @@ Overview
 - Extracting the file's mimetype from the backend stream if possible, using ``magic`` module.
 - Limiting file size(min, max), to prevent DOS attacks.
 - Adding timestamp in url to help caching.
-- Using python type hinting to annotate arguments. So currently python3.5 and higher is supported.
 - Auto generating thumbnails, using ``width``, ``height`` and or ``ratio``.
 - Analyzing files & images using ``magic`` and ``wand``.
 - Validating ``mimetype``, ``width``, ``height`` and image ``ratio``.
@@ -62,10 +64,6 @@ Overview
 - Thanks `@YukSeungChan <https://github.com/YukSeungChan>`_, for implementing the ``S3Store`` and ``OS2Store``.
 - SSH/SFTP Store
 
-Roadmap
--------
-
-The next two milestones which can develop simultaneously are, ``SSHStore`` and ``Video Processing.``
 
 Quick Start
 -----------
@@ -216,76 +214,13 @@ Examples
 Checkout the `examples` directory in the root of the repo.
 
 
-Changelog
----------
+Contribution
+------------
 
-Here you can see the full list of changes made on each sqlalchemy-media release.
+- Pull request into ``develop`` branch and rebase if it's behind of the head.
+- Remember the zen of Python(``import this``) before doing anything.
+- Maximum line width is: `79`.
 
-0.12.0
-  - SSH/SFTP Store
-
-0.11.0
-  - ImageList
-  - Observe ``AttachmentList`` items for change.
-
-0.10.0
-  - OS2 Store
-
-0.9.7
-  - Fixed: get_thumbnail() does not return a Thumbnail: #72
-
-0.9.6
-  - Support rrs(ReducedRedundancyStorage) and  prefix of S3Store.
-
-0.9.5
-  - BUG-FIX: #68, #69
-
-0.9.4
-  - BUG-FIX: Using ``Image.__thumbnail_type__`` for creating thumbnails, it was missed: #67
-
-0.9.0
-  - Aws S3 Store.
-
-0.8.0
-  -  Automatically coerce ``:obj:.Attachable`` objects. So if True, you can set the models attribute by a ``file``,
-     ``filename`` or ``cgi.FieldStorage``.
-
-0.6.2
-  - Fixing a bug in ``optionals`` module.
-
-0.6.1
-  - Fixing some problems in documents.
-
-0.6.0
-  - Image crop feature: #16.
-
-0.5.0
-  - #17, #55. Merge analyzers, validators and processors as processors. for simplicity.
-
-0.4.1 (2016-10-06)
-  - #54 Fixed.
-
-0.4.0 (2016-10-05)
-  - ImageDimensionValidator: #14
-  - WandAnalyzer: #52
-
-0.3.0 (2016-10-05)
-  - Thumbnail auto generation implemented: #11,  See doc.
-  - Not using python's built-in mimetype module, due the bug: https://bugs.python.org/issue4963
-
-0.2.0 (2016-10-05)
-  - Added two tutorials in documentation_.
-  - Restricting Content-type: #28
-  - MagicAnalyzer
-  - Including all requirements*.txt in distribution: #49
-  - Including test stuff in distribution: #36
-  - Descriptive error message when an optional package is missing: #48
-  - Analyser: #30
-  - Validation: #31
-  - Fixed two bugs: #42, #41
-
-0.1.1 (2016-10-03)
-  - Improving coverage
 
 .. _SqlAlchemyMutable: http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html
 .. _SqlAlchemyTypeDecorators: http://docs.sqlalchemy.org/en/latest/core/custom_types.html#typedecorator-recipes

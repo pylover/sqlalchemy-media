@@ -11,7 +11,11 @@ class OptionalPackagesTestCase(unittest.TestCase):
             str(ex).startswith('The following packages are missing')
         )
 
-        self.assertRaises(ValueError, OptionalPackageRequirementError, 'PackageThatNotFoundInRequirements-optional.txt')
+        self.assertRaises(
+            ValueError,
+            OptionalPackageRequirementError,
+            'PackageThatNotFoundInRequirements-optional.txt'
+        )
 
 
 if __name__ == '__main__':  # pragma: no cover

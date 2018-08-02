@@ -1,6 +1,6 @@
+import functools
 import re
 import warnings
-import functools
 from hashlib import md5
 
 from .constants import KB
@@ -8,8 +8,9 @@ from .typing_ import FileLike
 
 
 URI_REGEX_PATTERN = re.compile(
-    r"((?<=\()[A-Za-z][A-Za-z0-9+.\-]*://([A-Za-z0-9.\-_~:/?#\[\]@!$&'()*+,;=]|%[A-Fa-f0-9]{2})+(?=\)))|"  # noqa
-    r"([A-Za-z][A-Za-z0-9+.\-]*://([A-Za-z0-9.\-_~:/?#\[\]@!$&'()*+,;=]|%[A-Fa-f0-9]{2})+)",
+    r"((?<=\()[A-Za-z][A-Za-z0-9+.\-]*://([A-Za-z0-9.\-_~:/?#\[\]@!$&'()*+,;=]"
+    r"|%[A-Fa-f0-9]{2})+(?=\)))|([A-Za-z][A-Za-z0-9+.\-]*://([A-Za-z0-9.\-_~:/"
+    r"?#\[\]@!$&'()*+,;=]|%[A-Fa-f0-9]{2})+)",
     re.IGNORECASE
 )
 
@@ -48,21 +49,29 @@ def md5sum(f):
             file_obj.close()
 
 
-def validate_width_height_ratio(width: int = None, height: int = None, ratio: float = None):
+def validate_width_height_ratio(width: int = None, height: int = None,
+                                ratio: float = None):
 
     params = ratio, width, height
     param_count = sum(p is not None for p in params)
     if not param_count:
         raise ValueError('Pass one of: ratio, width, or height')
     elif param_count > 1:
-        raise ValueError('Pass only one argument in ratio, width, or height; these parameters are '
-                         'exclusive from each other')
+        raise ValueError(
+            'Pass only one argument in ratio, width, or height; these '
+            'parameters are exclusive from each other'
+        )
 
     if width is not None:
         if not isinstance(width, int):
-            raise TypeError('Argument width must be integer, not: %s' % type(width))
+            raise TypeError(
+                'Argument width must be integer, not: %s' % type(width)
+            )
         elif width < 1:
-            raise ValueError('Argument width must be a natural number, not: %s' % repr(width))
+            raise ValueError(
+                'Argument width must be a natural number, not: '
+                '%s' % repr(width)
+            )
 
         def height_from_width(size):
             return int(size[1] * (width / size[0]))
@@ -71,9 +80,13 @@ def validate_width_height_ratio(width: int = None, height: int = None, ratio: fl
 
     elif height is not None:
         if not isinstance(height, int):
-            raise TypeError('Argument height must be integer, not %s' % type(height))
+            raise TypeError(
+                'Argument height must be integer, not %s' % type(height)
+            )
         elif height < 1:
-            raise ValueError('Argument height must be natural number, not %s' % repr(height))
+            raise ValueError(
+                'Argument height must be natural number, not %s' % repr(height)
+            )
 
         def width_from_height(size):
             return int(size[0] * (height / size[1]))
@@ -82,7 +95,9 @@ def validate_width_height_ratio(width: int = None, height: int = None, ratio: fl
 
     elif ratio is not None:
         if not isinstance(ratio, float):
-            raise TypeError('Argument ratio must be float, not: %s' % type(ratio))
+            raise TypeError(
+                'Argument ratio must be float, not: %s' % type(ratio)
+            )
 
         if ratio > 1:
             raise ValueError('ratio must be less than `1.0` .')
@@ -102,8 +117,8 @@ def validate_width_height_ratio(width: int = None, height: int = None, ratio: fl
 
 def deprecated(func):  # pragma: no cover
     """
-    This is a decorator which can be used to mark functions as deprecated. It will result in a
-    warning being emitted when the function is used.
+    This is a decorator which can be used to mark functions as deprecated.
+    It will result in a warning being emitted when the function is used.
 
     """
 

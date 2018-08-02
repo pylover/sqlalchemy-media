@@ -61,7 +61,6 @@ Overview
  - Extracting the file's mimetype from the backend stream if possible, using ``magic`` module.
  - Limiting file size(min, max), to prevent DOS attacks.
  - Adding timestamp in url to help caching.
- - Using python type hinting to annotate arguments. So currently python3.5 and higher is supported.
  - Auto generating thumbnails, using ``width``, ``height`` and or ``ratio``.
  - Analyzing files & images using ``magic`` and ``wand``.
  - Validating ``mimetype``, ``width``, ``height`` and image ``ratio``.

@@ -3,7 +3,6 @@ import json
 from sqlalchemy import Unicode, TypeDecorator
 
 
-# noinspection PyAbstractClass
 class Json(TypeDecorator):  # pragma: no cover
     impl = Unicode
 

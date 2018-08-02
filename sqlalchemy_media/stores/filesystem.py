@@ -1,11 +1,10 @@
-
 from os import makedirs, remove
 from os.path import abspath, join, dirname, exists
 
+from .base import Store
 from sqlalchemy_media.constants import KB
 from sqlalchemy_media.helpers import copy_stream
 from sqlalchemy_media.typing_ import FileLike
-from .base import Store
 
 
 class FileSystemStore(Store):
@@ -13,12 +12,14 @@ class FileSystemStore(Store):
     Store for dealing with local file-system.
 
     :param root_path: The path to a directory to store files.
-    :param base_url: The base url path to include at the beginning of the file's path to yield the
-                     access url.
-    :param chunk_size: Length of the chunks to read/write from/to files. default: 32768 = 32 * 1024
+    :param base_url: The base url path to include at the beginning of the
+                     file's path to yield the access url.
+    :param chunk_size: Length of the chunks to read/write from/to files.
+                       default: 32768 = 32 * 1024
     """
 
-    def __init__(self, root_path: str, base_url: str, chunk_size: int = 32 * KB):
+    def __init__(self, root_path: str, base_url: str,
+                 chunk_size: int = 32 * KB):
         self.root_path = abspath(root_path)
         self.base_url = base_url.rstrip('/')
         self.chunk_size = chunk_size

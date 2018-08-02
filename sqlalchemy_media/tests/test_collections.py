@@ -5,7 +5,8 @@ from os.path import join, exists
 
 from sqlalchemy import Column, Integer
 
-from sqlalchemy_media.attachments import File, FileList, FileDict, AttachmentList, AttachmentDict
+from sqlalchemy_media.attachments import File, FileList, FileDict, \
+    AttachmentList, AttachmentDict
 from sqlalchemy_media.stores import StoreManager
 from sqlalchemy_media.tests.helpers import Json, TempStoreTestCase
 
@@ -40,7 +41,10 @@ class CollectionsTestCase(TempStoreTestCase):
                 self.assertIsInstance(f, File)
                 filename = join(self.temp_path, f.path)
                 self.assertTrue(exists(filename))
-                self.assertEqual(f.locate(), '%s/%s?_ts=%s' % (self.base_url, f.path, f.timestamp))
+                self.assertEqual(
+                    f.locate(),
+                    '%s/%s?_ts=%s' % (self.base_url, f.path, f.timestamp)
+                )
 
             # Overwriting the first file
             first_filename = join(self.temp_path, person1.files[0].path)
@@ -61,12 +65,16 @@ class CollectionsTestCase(TempStoreTestCase):
             self.assertEqual(len(person1.files), 4)
 
             # insert
-            person1.files.insert(2, File.create_from(BytesIO(b'simple text 3 # restored')))
+            person1.files.insert(
+                2,
+                File.create_from(BytesIO(b'simple text 3 # restored'))
+            )
             self.assertEqual(len(person1.files), 5)
 
             # __setitem__
             old_key = person1.files[3].key
-            person1.files[3] = File.create_from(BytesIO(b'simple text 4 # replaced'))
+            person1.files[3] = \
+                File.create_from(BytesIO(b'simple text 4 # replaced'))
             self.assertEqual(len(person1.files), 5)
             self.assertNotEqual(person1.files[3].key, old_key)
 
@@ -87,10 +95,24 @@ class CollectionsTestCase(TempStoreTestCase):
     def test_coerce(self):
 
         self.assertRaises(ValueError, AttachmentList.coerce, 'cv', 10)  # non-iterable
-        self.assertIsInstance(AttachmentList.coerce('cv', AttachmentList()), AttachmentList)  # same type
 
-        self.assertRaises(ValueError, AttachmentDict.coerce, 'cv', 10)  # non-iterable
-        self.assertIsInstance(AttachmentDict.coerce('cv', AttachmentDict()), AttachmentDict)  # same type
+        # Same type
+        self.assertIsInstance(
+            AttachmentList.coerce('cv', AttachmentList()),
+            AttachmentList
+        )
+
+        # non-iterable
+        self.assertRaises(
+            ValueError,
+            AttachmentDict.coerce, 'cv', 10
+        )
+
+        # Same type
+        self.assertIsInstance(
+            AttachmentDict.coerce('cv', AttachmentDict()),
+            AttachmentDict
+        )
 
     def test_file_dict(self):
 
@@ -104,9 +126,12 @@ class CollectionsTestCase(TempStoreTestCase):
         with StoreManager(session):
             person1 = Person()
             person1.files = FileDict()
-            person1.files['first'] = File.create_from(BytesIO(b'simple text 1'))
-            person1.files['second'] = File.create_from(BytesIO(b'simple text 2'))
-            person1.files['third'] = File.create_from(BytesIO(b'simple text 3'))
+            person1.files['first'] = \
+                File.create_from(BytesIO(b'simple text 1'))
+            person1.files['second'] = \
+                File.create_from(BytesIO(b'simple text 2'))
+            person1.files['third'] = \
+                File.create_from(BytesIO(b'simple text 3'))
             session.add(person1)
             session.commit()
 
@@ -120,13 +145,17 @@ class CollectionsTestCase(TempStoreTestCase):
             # Overwriting the first file
             first_filename = join(self.temp_path, person1.files['first'].path)
             person1.files['first'].attach(BytesIO(b'Another simple text.'))
-            first_new_filename = join(self.temp_path, person1.files['first'].path)
+            first_new_filename = \
+                join(self.temp_path, person1.files['first'].path)
             session.commit()
             self.assertFalse(exists(first_filename))
             self.assertTrue(exists(first_new_filename))
 
             # setdefault
-            person1.files.setdefault('default', File.create_from(BytesIO(b'Default file')))
+            person1.files.setdefault(
+                'default',
+                File.create_from(BytesIO(b'Default file'))
+            )
             self.assertIn('default', person1.files)
 
             # update
@@ -148,7 +177,8 @@ class CollectionsTestCase(TempStoreTestCase):
             self.assertEqual(len(person1.files), 4)
 
             # setitem
-            person1.files['setitem'] = File.create_from(BytesIO(b'setitem file'))
+            person1.files['setitem'] = \
+                File.create_from(BytesIO(b'setitem file'))
             self.assertIn('setitem', person1.files)
             self.assertEqual(len(person1.files), 5)
 

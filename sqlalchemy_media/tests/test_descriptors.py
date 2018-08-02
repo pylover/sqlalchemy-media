@@ -6,10 +6,13 @@ import cgi
 from os.path import dirname, abspath, join, split
 
 from sqlalchemy_media.helpers import copy_stream, md5sum
-from sqlalchemy_media.tests.helpers import mockup_http_static_server, encode_multipart_data
-from sqlalchemy_media.descriptors import AttachableDescriptor, LocalFileSystemDescriptor, CgiFieldStorageDescriptor, \
-    UrlDescriptor, StreamDescriptor
-from sqlalchemy_media.exceptions import MaximumLengthIsReachedError, DescriptorOperationError
+from sqlalchemy_media.tests.helpers import mockup_http_static_server, \
+    encode_multipart_data
+from sqlalchemy_media.descriptors import AttachableDescriptor, \
+    LocalFileSystemDescriptor, CgiFieldStorageDescriptor, UrlDescriptor, \
+    StreamDescriptor
+from sqlalchemy_media.exceptions import MaximumLengthIsReachedError, \
+    DescriptorOperationError
 
 
 class AttachableDescriptorsTestCase(unittest.TestCase):
@@ -23,7 +26,9 @@ class AttachableDescriptorsTestCase(unittest.TestCase):
 
     def test_stream(self):
         # guess content types from extension
-        descriptor = AttachableDescriptor(io.BytesIO(b'Simple text'), extension='.txt')
+        descriptor = AttachableDescriptor(
+            io.BytesIO(b'Simple text'), extension='.txt'
+        )
         self.assertIsInstance(descriptor, StreamDescriptor)
         self.assertEqual(descriptor.content_type, 'text/plain')
         descriptor.seek(2)
@@ -32,14 +37,23 @@ class AttachableDescriptorsTestCase(unittest.TestCase):
         self.assertEqual(descriptor.tell(), 11)
 
         # guess extension from original filename
-        descriptor = AttachableDescriptor(io.BytesIO(b'Simple text'), original_filename='letter.pdf')
+        descriptor = AttachableDescriptor(
+            io.BytesIO(b'Simple text'),
+            original_filename='letter.pdf'
+        )
         self.assertEqual(descriptor.extension, '.pdf')
 
         # guess extension from content type
-        descriptor = AttachableDescriptor(io.BytesIO(b'Simple text'), content_type='application/json')
+        descriptor = AttachableDescriptor(
+            io.BytesIO(b'Simple text'),
+            content_type='application/json'
+        )
         self.assertEqual(descriptor.extension, '.json')
 
-        self.assertRaises(DescriptorOperationError, lambda: descriptor.filename)
+        self.assertRaises(
+            DescriptorOperationError,
+            lambda: descriptor.filename
+        )
 
     def test_non_seekable(self):
 
@@ -49,9 +63,13 @@ class AttachableDescriptorsTestCase(unittest.TestCase):
                 return False
 
         inp = b'abcdefghijklmnopqrstuvwxyz'
-        descriptor = AttachableDescriptor(NonSeekableStream(inp), header_buffer_size=10)
+        descriptor = AttachableDescriptor(
+            NonSeekableStream(inp),
+            header_buffer_size=10
+        )
 
-        # fetching header, it forces to cache header_buffer_size bytes from header.
+        # Fetching header, it forces to cache header_buffer_size bytes from
+        # header.
         buffer = descriptor.get_header_buffer()
         self.assertEqual(buffer, b'abcdefghij')
 
@@ -68,15 +86,26 @@ class AttachableDescriptorsTestCase(unittest.TestCase):
         self.assertEqual(out, inp)
 
         # Max length error
-        descriptor = AttachableDescriptor(NonSeekableStream(inp), header_buffer_size=24, max_length=20)
+        descriptor = AttachableDescriptor(
+            NonSeekableStream(inp),
+            header_buffer_size=24,
+            max_length=20
+        )
         buffer = descriptor.get_header_buffer()
         self.assertEqual(buffer, b'abcdefghijklmnopqrstuvwx')
         self.assertRaises(MaximumLengthIsReachedError, descriptor.read, 1)
 
         # Test getting header buffer after read on non-seekable streams.
-        descriptor = AttachableDescriptor(NonSeekableStream(inp), header_buffer_size=10, max_length=20)
+        descriptor = AttachableDescriptor(
+            NonSeekableStream(inp),
+            header_buffer_size=10,
+            max_length=20
+        )
         self.assertEqual(descriptor.read(10), b'abcdefghij')
-        self.assertRaises(DescriptorOperationError, descriptor.get_header_buffer)
+        self.assertRaises(
+            DescriptorOperationError,
+            descriptor.get_header_buffer
+        )
 
     def test_localfs(self):
 
@@ -88,9 +117,7 @@ class AttachableDescriptorsTestCase(unittest.TestCase):
         self.assertEqual(descriptor.content_type, 'image/jpeg')
         self.assertEqual(descriptor.original_filename, self.cat_jpeg)
 
-        # noinspection PyUnresolvedReferences
         self.assertEqual(descriptor.width, 100)
-        # noinspection PyUnresolvedReferences
         self.assertEqual(descriptor.height, 80)
 
         self.assertEqual(len(descriptor.get_header_buffer()), 1024)
@@ -107,13 +134,18 @@ class AttachableDescriptorsTestCase(unittest.TestCase):
             descriptor = AttachableDescriptor(url)
 
             self.assertIsInstance(descriptor, UrlDescriptor)
-            self.assertEqual(descriptor.content_type, 'image/jpeg')  # Must be determined from response headers
-            self.assertEqual(descriptor.content_length, 70279)  # Must be determined from response headers
+
+            # Must be determined from response headers
+            self.assertEqual(descriptor.content_type, 'image/jpeg')
+
+            # Must be determined from response headers
+            self.assertEqual(descriptor.content_length, 70279)
             self.assertEqual(descriptor.original_filename, url)
 
     def test_cgi_field_storage(self):
         # encode a multipart form
-        content_type, body, content_length = encode_multipart_data(files=dict(cat=self.cat_jpeg))
+        content_type, body, content_length = \
+            encode_multipart_data(files=dict(cat=self.cat_jpeg))
         environ = {
             'REQUEST_METHOD': 'POST',
             'CONTENT_TYPE': content_type,
@@ -157,12 +189,18 @@ class AttachableDescriptorsTestCase(unittest.TestCase):
                 self.assertEqual(original_sum, md5sum(descriptor))
 
             with AttachableDescriptor(url) as descriptor:
-                self.assertRaises(DescriptorOperationError, descriptor.prepare_to_read, backend='InvalidBackend')
+                self.assertRaises(
+                    DescriptorOperationError,
+                    descriptor.prepare_to_read,
+                    backend='InvalidBackend'
+                )
 
-            with open(self.dog_jpeg, 'rb') as f, AttachableDescriptor(url) as descriptor:
+            with open(self.dog_jpeg, 'rb') as f, \
+                    AttachableDescriptor(url) as descriptor:
                 descriptor.replace(f, position=1024)
 
-            with open(self.dog_jpeg, 'rb') as f, AttachableDescriptor(url) as descriptor:
+            with open(self.dog_jpeg, 'rb') as f, \
+                    AttachableDescriptor(url) as descriptor:
                 descriptor.replace(f)
                 self.assertEqual(md5sum(descriptor), md5sum(self.dog_jpeg))
 

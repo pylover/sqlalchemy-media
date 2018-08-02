@@ -9,7 +9,8 @@ from sqlalchemy_media.attachments import File
 from sqlalchemy_media.exceptions import OS2Error
 from sqlalchemy_media.stores import OS2Store
 from sqlalchemy_media.stores import StoreManager
-from sqlalchemy_media.tests.helpers import Json, SqlAlchemyTestCase, mockup_os2_server
+from sqlalchemy_media.tests.helpers import Json, SqlAlchemyTestCase, \
+    mockup_os2_server
 
 
 TEST_BUCKET = 'sa-media-test'
@@ -19,8 +20,21 @@ TEST_REGION = 'sa-media'
 
 
 def create_os2_store(server, bucket=TEST_BUCKET, **kwargs):
-    base_headers = {'HOST': '%s.oss-%s.localhost:%s' % (bucket, TEST_REGION, server.server_address[1])}
-    return OS2Store(bucket, TEST_ACCESS_KEY, TEST_SECRET_KEY, TEST_REGION, base_headers=base_headers, **kwargs)
+    base_headers = {
+        'HOST': '%s.oss-%s.localhost:%s' % (
+            bucket,
+            TEST_REGION,
+            server.server_address[1]
+        )
+    }
+    return OS2Store(
+        bucket,
+        TEST_ACCESS_KEY,
+        TEST_SECRET_KEY,
+        TEST_REGION,
+        base_headers=base_headers,
+        **kwargs
+    )
 
 
 class OS2StoreTestCase(SqlAlchemyTestCase):
@@ -46,7 +60,11 @@ class OS2StoreTestCase(SqlAlchemyTestCase):
 
     def test_put_error(self):
         with mockup_os2_server(self.temp_path, TEST_BUCKET) as (server, url):
-            store = create_os2_store(server, bucket=TEST_BUCKET[:-2], base_url=url)
+            store = create_os2_store(
+                server,
+                bucket=TEST_BUCKET[:-2],
+                base_url=url
+            )
             target_filename = 'test_put_from_stream/file_from_stream1.txt'
             content = b'Lorem ipsum dolor sit amet'
             stream = io.BytesIO(content)
@@ -71,7 +89,11 @@ class OS2StoreTestCase(SqlAlchemyTestCase):
     def test_delete_error(self):
         with mockup_os2_server(self.temp_path, TEST_BUCKET) as (server, url):
             store = create_os2_store(server, base_url=url)
-            wrong_store = create_os2_store(server, base_url=url, bucket=TEST_BUCKET[:-2])
+            wrong_store = create_os2_store(
+                server,
+                base_url=url,
+                bucket=TEST_BUCKET[:-2]
+            )
             target_filename = 'test_delete/sample_text_file1.txt'
             with open(self.sample_text_file1, 'rb') as f:
                 length = store.put(target_filename, f)
@@ -97,7 +119,11 @@ class OS2StoreTestCase(SqlAlchemyTestCase):
 
     def test_locate(self):
         with mockup_os2_server(self.temp_path, TEST_BUCKET) as (server, url):
-            StoreManager.register('os2', functools.partial(create_os2_store, server, base_url=url), default=True)
+            StoreManager.register(
+                'os2',
+                functools.partial(create_os2_store, server, base_url=url),
+                default=True
+            )
 
             class Person(self.Base):
                 __tablename__ = 'person'
@@ -112,7 +138,11 @@ class OS2StoreTestCase(SqlAlchemyTestCase):
 
             with StoreManager(session):
                 person1 = Person()
-                person1.file = File.create_from(io.BytesIO(sample_content), content_type='text/plain', extension='.txt')
+                person1.file = File.create_from(
+                    io.BytesIO(sample_content),
+                    content_type='text/plain',
+                    extension='.txt'
+                )
                 self.assertIsInstance(person1.file, File)
                 self.assertEqual(
                     person1.file.locate(),
@@ -147,10 +177,15 @@ class OS2StoreTestCase(SqlAlchemyTestCase):
 
             with StoreManager(session):
                 person1 = Person()
-                person1.file = File.create_from(io.BytesIO(sample_content),
-                                                content_type='text/plain',
-                                                extension='.txt')
-                self.assertIsInstance(person1.file, File)
+                person1.file = File.create_from(
+                    io.BytesIO(sample_content),
+                    content_type='text/plain',
+                    extension='.txt'
+                )
+                self.assertIsInstance(
+                    person1.file,
+                    File
+                )
                 self.assertEqual(person1.file.locate(), '%s/%s/%s?_ts=%s' % (
                     url,
                     prefix,
@@ -159,8 +194,16 @@ class OS2StoreTestCase(SqlAlchemyTestCase):
                 ))
 
     def test_default_base_url(self):
-        store = OS2Store(TEST_BUCKET, TEST_ACCESS_KEY, TEST_SECRET_KEY, TEST_REGION)
-        assert store.base_url == 'https://%s.oss-%s.aliyuncs.com' % (TEST_BUCKET, TEST_REGION)
+        store = OS2Store(
+            TEST_BUCKET,
+            TEST_ACCESS_KEY,
+            TEST_SECRET_KEY,
+            TEST_REGION
+        )
+        assert store.base_url == 'https://%s.oss-%s.aliyuncs.com' % (
+            TEST_BUCKET,
+            TEST_REGION
+        )
 
     def test_public_base_url_strip(self):
         with mockup_os2_server(self.temp_path, TEST_BUCKET) as (server, url):
@@ -202,7 +245,12 @@ class OS2StoreTestCase(SqlAlchemyTestCase):
         with mockup_os2_server(self.temp_path, TEST_BUCKET) as (server, url):
             StoreManager.register(
                 'os2',
-                functools.partial(create_os2_store, server, base_url=url, cdn_url=cdn_url),
+                functools.partial(
+                    create_os2_store,
+                    server,
+                    base_url=url,
+                    cdn_url=cdn_url
+                ),
                 default=True
             )
 
@@ -237,7 +285,12 @@ class OS2StoreTestCase(SqlAlchemyTestCase):
         with mockup_os2_server(self.temp_path, TEST_BUCKET) as (server, url):
             StoreManager.register(
                 'os2',
-                functools.partial(create_os2_store, server, base_url=url, cdn_url=cdn_url),
+                functools.partial(
+                    create_os2_store,
+                    server,
+                    base_url=url,
+                    cdn_url=cdn_url
+                ),
                 default=True
             )
 
@@ -273,8 +326,13 @@ class OS2StoreTestCase(SqlAlchemyTestCase):
         with mockup_os2_server(self.temp_path, TEST_BUCKET) as (server, url):
             StoreManager.register(
                 'os2',
-                functools.partial(create_os2_store, server, prefix=prefix, base_url=url,
-                                  cdn_url=cdn_url),
+                functools.partial(
+                    create_os2_store,
+                    server,
+                    prefix=prefix,
+                    base_url=url,
+                    cdn_url=cdn_url
+                ),
                 default=True
             )
 
@@ -311,8 +369,14 @@ class OS2StoreTestCase(SqlAlchemyTestCase):
         with mockup_os2_server(self.temp_path, TEST_BUCKET) as (server, url):
             StoreManager.register(
                 'os2',
-                functools.partial(create_os2_store, server, prefix=prefix, base_url=url,
-                                  cdn_url=cdn_url, cdn_prefix_ignore=True),
+                functools.partial(
+                    create_os2_store,
+                    server,
+                    prefix=prefix,
+                    base_url=url,
+                    cdn_url=cdn_url,
+                    cdn_prefix_ignore=True
+                ),
                 default=True
             )
 

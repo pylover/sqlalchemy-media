@@ -4,7 +4,6 @@ except ImportError:  # pragma: no cover
     import _dummy_thread as _thread
 
 try:
-    # noinspection PyPackageRequirements
     import greenlet
 except ImportError:
     greenlet = None

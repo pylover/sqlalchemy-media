@@ -53,10 +53,17 @@ class ImageTestCase(TempStoreTestCase):
             person1.image = Image.create_from(self.dog_jpeg)
 
             # Getting an unavailable thumbnail.
-            self.assertRaises(ThumbnailIsNotAvailableError, person1.image.get_thumbnail, width=100)
+            self.assertRaises(
+                ThumbnailIsNotAvailableError,
+                person1.image.get_thumbnail,
+                width=100
+            )
 
             # Auto generate
-            thumbnail = person1.image.get_thumbnail(width=100, auto_generate=True)
+            thumbnail = person1.image.get_thumbnail(
+                width=100,
+                auto_generate=True
+            )
             self.assertIsInstance(thumbnail, Thumbnail)
 
             self.assertEqual(thumbnail.content_type, 'image/jpeg')
@@ -88,16 +95,55 @@ class ImageTestCase(TempStoreTestCase):
 
             # Exceptions
             self.assertRaises(ValueError, person1.image.generate_thumbnail)
-            self.assertRaises(ValueError, person1.image.generate_thumbnail, width=10, height=10)
-            self.assertRaises(ValueError, person1.image.generate_thumbnail, width=10, ratio=.1)
-            self.assertRaises(ValueError, person1.image.generate_thumbnail, height=10, ratio=.1)
-            self.assertRaises(ValueError, person1.image.generate_thumbnail, ratio=1.1)
-            self.assertRaises(ValueError, person1.image.generate_thumbnail, width=0)
-            self.assertRaises(ValueError, person1.image.generate_thumbnail, height=0)
+            self.assertRaises(
+                ValueError,
+                person1.image.generate_thumbnail,
+                width=10,
+                height=10
+            )
+            self.assertRaises(
+                ValueError,
+                person1.image.generate_thumbnail,
+                width=10,
+                ratio=.1
+            )
+            self.assertRaises(
+                ValueError,
+                person1.image.generate_thumbnail,
+                height=10,
+                ratio=.1
+            )
+            self.assertRaises(
+                ValueError,
+                person1.image.generate_thumbnail,
+                ratio=1.1
+            )
+            self.assertRaises(
+                ValueError,
+                person1.image.generate_thumbnail,
+                width=0
+            )
+            self.assertRaises(
+                ValueError,
+                person1.image.generate_thumbnail,
+                height=0
+            )
 
-            self.assertRaises(TypeError, person1.image.generate_thumbnail, width='a')
-            self.assertRaises(TypeError, person1.image.generate_thumbnail, height='a')
-            self.assertRaises(TypeError, person1.image.generate_thumbnail, ratio='a')
+            self.assertRaises(
+                TypeError,
+                person1.image.generate_thumbnail,
+                width='a'
+            )
+            self.assertRaises(
+                TypeError,
+                person1.image.generate_thumbnail,
+                height='a'
+            )
+            self.assertRaises(
+                TypeError,
+                person1.image.generate_thumbnail,
+                ratio='a'
+            )
 
         # Attaching new image must deletes all thumbnails: issue: #54
         with StoreManager(session):
@@ -125,7 +171,10 @@ class ImageTestCase(TempStoreTestCase):
             session.add(person1)
             session.commit()
 
-            thumbnail = person1.image.get_thumbnail(width=100, auto_generate=True)
+            thumbnail = person1.image.get_thumbnail(
+                width=100,
+                auto_generate=True
+            )
             self.assertIsInstance(thumbnail, Thumbnail)
 
             image_filename = join(self.temp_path, person1.image.path)
@@ -185,9 +234,13 @@ class ImageTestCase(TempStoreTestCase):
         session = self.create_all_and_get_session()
         person1 = session.query(Person).filter(Person.id == person1.id).one()
         with StoreManager(session):
-            self.assertTrue(person1.image.locate().startswith('http://static1.example.orm/images/image-'))
+            self.assertTrue(person1.image.locate().startswith(
+                    'http://static1.example.orm/images/image-'
+            ))
             thumbnail = person1.image.get_thumbnail(width=100)
-            self.assertTrue(thumbnail.locate().startswith('http://static1.example.orm/thumbnails/thumbnail-'))
+            self.assertTrue(thumbnail.locate().startswith(
+                'http://static1.example.orm/thumbnails/thumbnail-'
+            ))
 
     def test_image_list(self):
 
@@ -212,7 +265,10 @@ class ImageTestCase(TempStoreTestCase):
                 self.assertIsInstance(f, Image)
                 filename = join(self.temp_path, f.path)
                 self.assertTrue(exists(filename))
-                self.assertEqual(f.locate(), '%s/%s?_ts=%s' % (self.base_url, f.path, f.timestamp))
+                self.assertEqual(
+                    f.locate(),
+                    '%s/%s?_ts=%s' % (self.base_url, f.path, f.timestamp)
+                )
 
             # Overwriting the first image
             first_filename = join(self.temp_path, person1.images[0].path)
@@ -224,7 +280,10 @@ class ImageTestCase(TempStoreTestCase):
 
             person1 = session.query(Person).one()
             # Generating a thumbnail for the first image
-            thumbnail = person1.images[0].get_thumbnail(width=10, auto_generate=True)
+            thumbnail = person1.images[0].get_thumbnail(
+                width=10,
+                auto_generate=True
+            )
             session.commit()
             thumbnail_filename = join(self.temp_path, thumbnail.path)
             self.assertTrue(exists(thumbnail_filename))

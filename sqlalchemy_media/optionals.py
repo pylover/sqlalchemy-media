@@ -5,8 +5,9 @@ optionals Module
 
 This module is a helper for handing optional packages.
 
-Optional packages are not included in ``setup.py``. So :exc:`.OptionalPackageRequirementError`
-will be raised if requested package is not provided.
+Optional packages are not included in ``setup.py``.
+So :exc:`.OptionalPackageRequirementError` will be raised if requested package
+is not provided.
 
 """
 
@@ -16,7 +17,6 @@ from .exceptions import OptionalPackageRequirementError
 # Libmagic
 
 try:
-    # noinspection PyPackageRequirements
     import magic
 except ImportError:  # pragma: no cover
     magic = None
@@ -26,8 +26,8 @@ def magic_mime_from_buffer(buffer: bytes) -> str:
     """
     Try to detect mimetype using ``magic`` library.
 
-    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``python-magic``
-                 is not installed.
+    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if
+                 ``python-magic`` is not installed.
 
     :param buffer: buffer from header of file.
 
@@ -43,7 +43,6 @@ def magic_mime_from_buffer(buffer: bytes) -> str:
 # wand image
 
 try:
-    # noinspection PyPackageRequirements
     import wand
 except ImportError:  # pragma: no cover
     wand = None
@@ -52,8 +51,8 @@ except ImportError:  # pragma: no cover
 def ensure_wand():
     """
 
-    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``wand``
-                 is not installed.
+    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if
+                 ``wand`` is not installed.
 
     """
 
@@ -63,7 +62,6 @@ def ensure_wand():
 
 # requests-aws4auth
 try:
-    # noinspection PyPackageRequirements
     from requests_aws4auth import AWS4Auth
 except ImportError:  # pragma: no cover
     AWS4Auth = None
@@ -72,8 +70,8 @@ except ImportError:  # pragma: no cover
 def ensure_aws4auth():
     """
 
-    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``requests-aws4auth``
-                 is not installed.
+    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if
+                 ``requests-aws4auth`` is not installed.
 
     """
 
@@ -83,7 +81,6 @@ def ensure_aws4auth():
 
 # requests-aliyun
 try:
-    # noinspection PyPackageRequirements
     from aliyunauth import OssAuth as OS2Auth
 except ImportError:  # pragma: no cover
     OS2Auth = None
@@ -92,8 +89,8 @@ except ImportError:  # pragma: no cover
 def ensure_os2auth():
     """
 
-    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``requests-aliyun``
-                 is not installed.
+    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if
+                 ``requests-aliyun`` is not installed.
 
     """
 
@@ -103,7 +100,6 @@ def ensure_os2auth():
 
 # paramiko
 try:
-    # noinspection PyPackageRequirements
     import paramiko
 except ImportError:  # pragma: no cover
     paramiko = None
@@ -112,8 +108,8 @@ except ImportError:  # pragma: no cover
 def ensure_paramiko():
     """
 
-    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``paramiko``
-                 is not installed.
+    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if
+                 ``paramiko`` is not installed.
 
     """
 

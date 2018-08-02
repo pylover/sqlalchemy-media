@@ -1,8 +1,8 @@
 from os.path import join, dirname
 
-from sqlalchemy_media.optionals import ensure_paramiko
-from sqlalchemy_media.typing_ import FileLike
 from .base import Store
+from ..optionals import ensure_paramiko
+from ..typing_ import FileLike
 
 
 class SSHStore(Store):
@@ -11,19 +11,21 @@ class SSHStore(Store):
 
     .. versionadded:: 0.12.0
 
-    :param hostname: The ssh server's hostname to connect to. It will be looked-up from
-                     ssh config file to find another options if given.
-                     An instance of the :class:`paramiko.SSHClient` may be passed instead
-                     of the hostname.
+    :param hostname: The ssh server's hostname to connect to. It will be
+                     looked-up from ssh config file to find another options
+                     if given. An instance of the :class:`paramiko.SSHClient`
+                     may be passed instead of the hostname.
     :param root_path: The path to a directory on the ssh server to store files.
-    :param base_url: The base url path to include at the beginning of the file's path to yield
-                     the access url.
+    :param base_url: The base url path to include at the beginning of the
+                     file's path to yield the access url.
     :param ssh_config_file: The standard ssh config file. is not given,
                             the file `$HOME/.ssh/config` will be tried.
-    :param kwargs: Additional keyword arguments to pass to the :class:`paramiko.SSHClient`
+    :param kwargs: Additional keyword arguments to pass to the
+                   :class:`paramiko.SSHClient`
     """
 
-    def __init__(self, hostname, root_path, base_url, ssh_config_file=None, **kwargs):
+    def __init__(self, hostname, root_path, base_url, ssh_config_file=None,
+                 **kwargs):
         ensure_paramiko()
         from sqlalchemy_media.ssh import SSHClient
 
@@ -44,7 +46,9 @@ class SSHStore(Store):
     def put(self, filename: str, stream: FileLike) -> int:
         remote_filename = self._get_remote_path(filename)
         remote_directory = dirname(remote_filename)
-        self.ssh_client.exec_command(b'mkdir -p "%s"' % remote_directory.encode())
+        self.ssh_client.exec_command(
+            b'mkdir -p "%s"' % remote_directory.encode()
+        )
         result = self.ssh_client.sftp.putfo(stream, remote_filename)
         return result.st_size
 

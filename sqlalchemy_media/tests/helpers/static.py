@@ -1,11 +1,11 @@
-from typing import AnyStr
 import io
 from http.server import BaseHTTPRequestHandler, HTTPStatus
+from typing import AnyStr
 
-from sqlalchemy_media.typing_ import FileLike
+from .http import simple_http_server
 from sqlalchemy_media.helpers import copy_stream
 from sqlalchemy_media.mimetypes_ import guess_type
-from .http import simple_http_server
+from sqlalchemy_media.typing_ import FileLike
 
 
 def mockup_http_static_server(content: bytes = b'Simple file content.',
@@ -25,7 +25,10 @@ def mockup_http_static_server(content: bytes = b'Simple file content.',
 
         def serve_stream(self, stream: FileLike):
             buffer = io.BytesIO()
-            self.send_header('Content-Length', str(copy_stream(stream, buffer)))
+            self.send_header(
+                'Content-Length',
+                str(copy_stream(stream, buffer))
+            )
             self.end_headers()
             buffer.seek(0)
             try:
@@ -33,7 +36,6 @@ def mockup_http_static_server(content: bytes = b'Simple file content.',
             except ConnectionResetError:
                 pass
 
-        # noinspection PyPep8Naming
         def do_GET(self):
             self.send_response(HTTPStatus.OK)
             if isinstance(content, bytes):
@@ -42,7 +44,6 @@ def mockup_http_static_server(content: bytes = b'Simple file content.',
                 self.serve_static_file(content)
             else:
                 self.send_header('Content-Type', content_type)
-                # noinspection PyTypeChecker
                 self.serve_stream(content)
 
     return simple_http_server(StaticMockupHandler, **kwargs)
