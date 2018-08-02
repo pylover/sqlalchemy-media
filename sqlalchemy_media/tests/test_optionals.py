@@ -8,7 +8,7 @@ class OptionalPackagesTestCase(unittest.TestCase):
     def test_exception(self):
         ex = OptionalPackageRequirementError('python-magic')
         self.assertTrue(
-            str(ex).startswith('The following packages are missing. in order please install them: python-magic >= ')
+            str(ex).startswith('The following packages are missing')
         )
 
         self.assertRaises(ValueError, OptionalPackageRequirementError, 'PackageThatNotFoundInRequirements-optional.txt')
