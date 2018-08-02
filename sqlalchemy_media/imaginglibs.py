@@ -1,4 +1,3 @@
-
 from .exceptions import OptionalPackageRequirementError
 from .optionals import ensure_wand
 
@@ -13,4 +12,3 @@ def get_image_factory():
         # available, but after implementing the #97 the exception should be passed silently.
         # And should raised if the neighter PILLOW and or PIL is not installed.
         raise
-

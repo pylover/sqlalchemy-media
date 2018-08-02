@@ -1,5 +1,3 @@
-
-
 class SqlAlchemyMediaException(Exception):
     """
     The base class for all exceptions
@@ -18,11 +16,13 @@ class MaximumLengthIsReachedError(SqlAlchemyMediaException):
 
 class MinimumLengthIsNotReachedError(SqlAlchemyMediaException):
     """
-    Indicates the minimum allowed length is not \.
+    Indicates the minimum allowed length is not reached.
     """
 
     def __init__(self, min_length, length=None):
-        super().__init__('Cannot store files smaller than: %d bytes, but the file length is: %s' % (min_length, length))
+        super().__init__(
+            f'Cannot store files smaller than: {min_length: d} bytes,'
+            f'but the file length is: {length}')
 
 
 class ContextError(SqlAlchemyMediaException):
@@ -78,8 +78,8 @@ class ContentTypeValidationError(ValidationError):
 
 class DescriptorError(SqlAlchemyMediaException):
     """
-    A sub-class instance of this exception may raised when an error has occurred in :class:`.BaseDescriptor` and
-    it's subtypes.
+    A sub-class instance of this exception may raised when an error has occurred
+    in :class:`.BaseDescriptor` and it's subtypes.
 
     """
 
@@ -94,8 +94,8 @@ class DescriptorOperationError(DescriptorError):
 class OptionalPackageRequirementError(SqlAlchemyMediaException):
     """
     Raised when an optional package is missing.
-    The constructor is trying to search for package name in requirements-optional.txt and find the requirement and
-    it's version criteria to inform the user.
+    The constructor is trying to search for package name in requirements-optional.txt and find
+    the requirement and it's version criteria to inform the user.
 
     :param package_name: The name of the missing package.
     """
@@ -115,7 +115,9 @@ class OptionalPackageRequirementError(SqlAlchemyMediaException):
         if not len(packages):
             raise ValueError('Cannot find the package: %s.' % package_name)
 
-        super().__init__('The following packages are missing. in order please install them: %s' % ', '.join(packages))
+        super().__init__(
+            'The following packages are missing.'
+            f'in order please install them: {", ".join(packages)}')
 
 
 class ThumbnailIsNotAvailableError(SqlAlchemyMediaException):

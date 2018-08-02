@@ -5,12 +5,12 @@ optionals Module
 
 This module is a helper for handing optional packages.
 
-Optional packages are not included in ``setup.py``. So :exc:`.OptionalPackageRequirementError` will be raised if
-requested package is not provided.
+Optional packages are not included in ``setup.py``. So :exc:`.OptionalPackageRequirementError`
+will be raised if requested package is not provided.
 
 """
 
-from sqlalchemy_media.exceptions import OptionalPackageRequirementError
+from .exceptions import OptionalPackageRequirementError
 
 
 # Libmagic
@@ -26,7 +26,8 @@ def magic_mime_from_buffer(buffer: bytes) -> str:
     """
     Try to detect mimetype using ``magic`` library.
 
-    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``python-magic`` is not installed.
+    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``python-magic``
+                 is not installed.
 
     :param buffer: buffer from header of file.
 
@@ -51,7 +52,8 @@ except ImportError:  # pragma: no cover
 def ensure_wand():
     """
 
-    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``wand`` is not installed.
+    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``wand``
+                 is not installed.
 
     """
 
@@ -70,7 +72,8 @@ except ImportError:  # pragma: no cover
 def ensure_aws4auth():
     """
 
-    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``requests-aws4auth`` is not installed.
+    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``requests-aws4auth``
+                 is not installed.
 
     """
 
@@ -89,7 +92,8 @@ except ImportError:  # pragma: no cover
 def ensure_os2auth():
     """
 
-    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``requests-aliyun`` is not installed.
+    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``requests-aliyun``
+                 is not installed.
 
     """
 
@@ -108,7 +112,8 @@ except ImportError:  # pragma: no cover
 def ensure_paramiko():
     """
 
-    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``paramiko`` is not installed.
+    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``paramiko``
+                 is not installed.
 
     """
 

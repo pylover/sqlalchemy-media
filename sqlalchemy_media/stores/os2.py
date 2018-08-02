@@ -96,7 +96,7 @@ class OS2Store(Store):
         if not 200 <= res.status_code < 300:
             raise OS2Error(res.text)
 
-    def open(self, filename: str, mode: str='rb') -> FileLike:
+    def open(self, filename: str, mode: str = 'rb') -> FileLike:
         ensure_os2auth()
         url = self._get_os2_url(filename)
         auth = OS2Auth(self.bucket, self.access_key, self.secret_key)

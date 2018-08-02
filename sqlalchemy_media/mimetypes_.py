@@ -1,6 +1,6 @@
 """
 
-mimetypes\_ Module
+mimetypes\\_ Module
 ------------------
 
 Due the python bugs:

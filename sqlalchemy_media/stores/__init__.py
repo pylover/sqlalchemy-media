@@ -29,7 +29,8 @@ class StoreManager(object):
 
     This is an context manager.
 
-    Before using you must register at least one store factory function as default with-in store registry with
+    Before using you must register at least one store factory function as default with-in store
+    registry with
     :meth:`register` by passing `default=true` during registration.
 
     This object will call the registered factory functions to instantiate one per
@@ -43,8 +44,10 @@ class StoreManager(object):
 
         from sqlalchemy_media import StoreManager, FileSystemStore
 
-        StoreManager.register('fs', functools.partial(FileSystemStore, '/tmp/sa_temp_fs', 'http'), default=True)
-        StoreManager.register('fs2', functools.partial(FileSystemStore, '/tmp/sa_temp_fs2', 'http'))
+        StoreManager.register('fs',
+            functools.partial(FileSystemStore, '/tmp/sa_temp_fs', 'http'), default=True)
+        StoreManager.register('fs2',
+            functools.partial(FileSystemStore, '/tmp/sa_temp_fs2', 'http'))
 
         with StoreManager(Session) as store_manager:
             assert StoreManager.get_current_store_manager() == store_manager
@@ -108,7 +111,8 @@ class StoreManager(object):
     @classmethod
     def get_current_store_manager(cls) -> 'StoreManager':
         """
-        Find the current :class:`StoreManager` in context stack if any. else :exc:`.ContextError` will be raised.
+        Find the current :class:`StoreManager` in context stack if any.
+        else :exc:`.ContextError` will be raised.
         """
         try:
             return _context_stacks.setdefault(get_context_id(), [])[-1]
@@ -117,8 +121,8 @@ class StoreManager(object):
 
     def cleanup(self):
         """
-        Calls the :meth:`.Store.cleanup` for each store is :attr:`.stores` and clears the :attr:`.stores` also.
-
+        Calls the :meth:`.Store.cleanup` for each store is :attr:`.stores`
+        and clears the :attr:`.stores` also.
         """
         for store in self.stores.values():
             store.cleanup()
@@ -134,14 +138,14 @@ class StoreManager(object):
         cls._default = key
 
     @classmethod
-    def register(cls, key: str, store_factory, default: bool=False):
+    def register(cls, key: str, store_factory, default: bool = False):
         """
         Registers the store factory into stores registry, use :meth:`unregister` to remove it.
 
         :param key: The unique key for store.
         :param store_factory: A callable that returns an instance of :class:`.Store`.
-        :param default: If :data:`True` the given store will be marked as default also. in addition you can use
-                        :meth:`.make_default` to mark a store as default.
+        :param default: If :data:`True` the given store will be marked as default also. in
+                        addition you can use :meth:`.make_default` to mark a store as default.
         """
         _factories[key] = store_factory
         if default:
@@ -165,10 +169,11 @@ class StoreManager(object):
 
     def get(self, key=None) -> Store:
         """
-        Lookup the store in available instance cache, and instantiate a new one using registered factory function,
-        if not found.
+        Lookup the store in available instance cache, and instantiate a new one using registered
+        factory function, if not found.
 
-        If the key is :data:`.None`, the default store will be instantiated(if required) and returned.
+        If the key is :data:`.None`, the default store will be instantiated(if required)
+        and returned.
 
         :param key: the store unique id to lookup.
         """
@@ -210,8 +215,8 @@ class StoreManager(object):
 
     def orphaned(self, *attachments) -> None:
         """
-        Mark one or more attachment(s) orphaned, So if :attr:`delete_orphan` is :data:`.True`, the attachment(s) will
-        be deleted from store after session commit.
+        Mark one or more attachment(s) orphaned, So if :attr:`delete_orphan` is :data:`.True`,
+        the attachment(s) will be deleted from store after session commit.
 
         """
         if not self.delete_orphan:
@@ -242,7 +247,8 @@ class StoreManager(object):
     # noinspection PyUnresolvedReferences
     def register_to_delete_after_commit(self, *attachments: Iterable['Attachment']) -> None:
         """
-        Schedules one or more attachment(s) to be deleted from store just after sqlalchemy session commit.
+        Schedules one or more attachment(s) to be deleted from store just after sqlalchemy session
+        commit.
 
         """
         for attachment in attachments:
@@ -251,7 +257,8 @@ class StoreManager(object):
     # noinspection PyUnresolvedReferences
     def register_to_delete_after_rollback(self, *files: Iterable['Attachment']) -> None:
         """
-        Schedules one or more attachment(s) to be deleted from store just after sqlalchemy session rollback.
+        Schedules one or more attachment(s) to be deleted from store just after sqlalchemy session
+        rollback.
 
         """
         self._files_to_delete_after_rollback.extend(files)
@@ -260,7 +267,8 @@ class StoreManager(object):
         """
         Reset the object's state and forget all scheduled tasks for commit and or rollback.
 
-        .. warning:: Calling this method without knowing what you are doing, will be caused bad result !
+        .. warning:: Calling this method without knowing what you are doing,
+                     will be caused bad result !
 
         """
         self._files_to_delete_after_commit = []
@@ -323,7 +331,8 @@ class StoreManager(object):
                     if value is not old_value:
                         if collection:
                             if isinstance(old_value, dict):
-                                store_manager.orphaned(*(set(old_value.values()) - set(value.values())))
+                                store_manager.orphaned(
+                                    *(set(old_value.values()) - set(value.values())))
                             else:
                                 store_manager.orphaned(*(set(old_value) - set(value)))
                         else:

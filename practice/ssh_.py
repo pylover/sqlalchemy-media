@@ -54,14 +54,14 @@ try:
         data = f.read()
     sftp.open('demo_sftp_folder/demo_sftp.py', 'w').write(data)
     print('created demo_sftp_folder/ on the server')
-    
+
     # copy the README back here
     with sftp.open('demo_sftp_folder/README', 'r') as f:
         data = f.read()
     with open('README_demo_sftp', 'w') as f:
         f.write(data)
     print('copied README back here')
-    
+
     # BETTER: use the get() and put() methods
     sftp.put('demo_sftp.py', 'demo_sftp_folder/demo_sftp.py')
     sftp.get('demo_sftp_folder/README', 'README_demo_sftp')
@@ -73,6 +73,6 @@ except Exception as e:
     traceback.print_exc()
     try:
         t.close()
-    except:
+    except BaseException:
         pass
     sys.exit(1)

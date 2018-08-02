@@ -1,4 +1,3 @@
-
 from sqlalchemy_media.ssh import SSHClient
 
 if __name__ == '__main__':
@@ -15,5 +14,3 @@ if __name__ == '__main__':
 
     finally:
         ssh.sftp.close()
-
-

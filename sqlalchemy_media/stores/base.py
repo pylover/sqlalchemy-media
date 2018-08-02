@@ -22,7 +22,8 @@ class Store:
         """
         **[Abstract]**
 
-        Should be overridden in inherited class and puts the file-like object as the given filename in the store.
+        Should be overridden in inherited class and puts the file-like object as the given
+        filename in the store.
 
         .. versionchanged:: 0.5
 
@@ -46,11 +47,12 @@ class Store:
         """
         raise NotImplementedError()  # pragma: no cover
 
-    def open(self, filename: str, mode: str='rb') -> FileLike:
+    def open(self, filename: str, mode: str = 'rb') -> FileLike:
         """
         **[Abstract]**
 
-        Should be overridden in inherited class and return a file-like object representing the file in the store.
+        Should be overridden in inherited class and return a file-like object representing
+        the file in the store.
 
         .. note:: Caller of this method is responsible to close the file-like object.
 
@@ -64,7 +66,8 @@ class Store:
         """
         **[Abstract]**
 
-        If overridden in the inherited class, should locates the file's url to share in public space.
+        If overridden in the inherited class, should locates the file's url to share
+        in public space.
 
         :param attachment: The :class:`.Attachment` object to
         """

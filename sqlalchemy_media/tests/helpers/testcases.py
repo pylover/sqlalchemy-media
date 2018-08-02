@@ -47,8 +47,10 @@ class TempStoreTestCase(SqlAlchemyTestCase):
         super().setUpClass()
 
     def setUp(self):
-        self.temp_path = join(self.this_dir, 'temp', self.__class__.__name__, self._testMethodName)
-        self.sys_temp_path = join('/tmp/sa-media-tests', self.__class__.__name__, self._testMethodName)
+        self.temp_path = join(self.this_dir, 'temp', self.__class__.__name__,
+                              self._testMethodName)
+        self.sys_temp_path = join('/tmp/sa-media-tests', self.__class__.__name__,
+                                  self._testMethodName)
         self.base_url = 'http://static1.example.orm'
 
         # Remove previous files, if any! to make a clean temp directory:
@@ -57,7 +59,10 @@ class TempStoreTestCase(SqlAlchemyTestCase):
 
         makedirs(self.temp_path)
 
-        StoreManager.register('fs', functools.partial(FileSystemStore, self.temp_path, self.base_url), default=True)
+        StoreManager.register(
+            'fs',
+            functools.partial(FileSystemStore, self.temp_path, self.base_url), default=True
+        )
         StoreManager.register(
             'temp_fs',
             functools.partial(FileSystemStore, self.sys_temp_path, self.base_url)

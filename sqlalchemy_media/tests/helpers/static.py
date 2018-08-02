@@ -8,7 +8,8 @@ from sqlalchemy_media.mimetypes_ import guess_type
 from .http import simple_http_server
 
 
-def mockup_http_static_server(content: bytes = b'Simple file content.', content_type: str = None, **kwargs):
+def mockup_http_static_server(content: bytes = b'Simple file content.',
+                              content_type: str = None, **kwargs):
     class StaticMockupHandler(BaseHTTPRequestHandler):  # pragma: no cover
         def serve_text(self):
             self.send_header('Content-Type', "text/plain")
