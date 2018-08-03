@@ -12,7 +12,6 @@ from .constants import MB, KB
 from .descriptors import AttachableDescriptor
 from .exceptions import ThumbnailIsNotAvailableError
 from .helpers import validate_width_height_ratio
-from .imaginglibs import get_image_factory
 from .stores import StoreManager, Store
 from .typing_ import Attachable, Dimension
 
@@ -226,8 +225,8 @@ class Attachment(MutableDict):
     @property
     def original_filename(self) -> str:
         """
-        Original file name, it may be provided by user within :attr:`cgi.FieldStorage.filename`,
-        url or Physical filename.
+        Original file name, it may be provided by user within
+        :attr:`cgi.FieldStorage.filename`, url or Physical filename.
 
         :type: str
         """
@@ -273,7 +272,8 @@ class Attachment(MutableDict):
 
     def get_store(self) -> Store:
         """
-        Returns the :class:`sqlalchemy_media.stores.Store` instance, which this file is stored on.
+        Returns the :class:`sqlalchemy_media.stores.Store` instance, which
+        this file is stored on.
 
         """
         store_manager = StoreManager.get_current_store_manager()
@@ -283,9 +283,10 @@ class Attachment(MutableDict):
         """
         Deletes the file.
 
-        .. warning:: This operation can not be roll-backed.So if you want to delete a file,
-                     just set it to :const:`None` or set it by new :class:`.Attachment` instance,
-                     while passed ``delete_orphan=True`` in :class:`.StoreManager`.
+        .. warning:: This operation can not be roll-backed.So if you want to
+                     delete a file, just set it to :const:`None` or set it by
+                     new :class:`.Attachment` instance, while passed
+                     ``delete_orphan=True`` in :class:`.StoreManager`.
 
         """
         self.get_store().delete(self.path)
@@ -302,8 +303,8 @@ class Attachment(MutableDict):
             suppress_validation: bool = False,
             **kwargs) -> 'Attachment':
         """
-        Attach a file. if the session is rolled-back, all operations will be rolled-back.
-        The old file will be deleted after commit, if any.
+        Attach a file. if the session is rolled-back, all operations will be
+        rolled-back. The old file will be deleted after commit, if any.
 
         Workflow::
 
@@ -510,17 +511,20 @@ class AttachmentList(AttachmentCollection, MutableList):
 
     def observe_item(self, item):
         """
-        A simple monkeypatch to instruct the children to notify the parent if contents are changed:
+        A simple monkeypatch to instruct the children to notify the parent if
+        contents are changed:
 
-        From `sqlalchemy mutable documentation:
-        <http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.MutableList>`_
+        From `sqlalchemy mutable documentation: <http://docs.sqlalchemy.org/en
+        /latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.MutableLis
+        t>`_
 
-            Note that MutableList does not apply mutable tracking to the values themselves inside
-            the list. Therefore it is not a sufficient solution for the use case of tracking deep
-            changes to a recursive mutable structure, such as a JSON structure. To support this
-            use case, build a subclass of MutableList that provides appropriate coercion to the
-            values placed in the dictionary so that they too are “mutable”, and emit events up to
-            their parent structure.
+            Note that MutableList does not apply mutable tracking to the values
+            themselves inside the list. Therefore it is not a sufficient
+            solution for the use case of tracking deep changes to a recursive
+            mutable structure, such as a JSON structure. To support this
+            use case, build a subclass of MutableList that provides appropriate
+            coercion to the values placed in the dictionary so that they too
+            are “mutable”, and emit events up to their parent structure.
 
         :param item: The item to observe
         :return:
@@ -660,8 +664,8 @@ class AttachmentDict(AttachmentCollection, MutableDict):
 
 class File(Attachment):
     """
-    Representing an attached file. Normally if you want to store any file, this class is
-    the best choice.
+    Representing an attached file. Normally if you want to store any file,
+    this class is the best choice.
 
     """
 
@@ -703,8 +707,8 @@ class BaseImage(File):
 
     def attach(self, *args, dimension: Dimension = None, **kwargs):
         """
-        A new overload for :meth:`.Attachment.attach`, which accepts one additional
-        argument: ``dimension``.
+        A new overload for :meth:`.Attachment.attach`, which accepts one
+        additional argument: ``dimension``.
 
         :param args: The same as the: :meth:`.Attachment.attach`.
         :param dimension: Image (width, height).

@@ -5,7 +5,6 @@ from .descriptors import StreamDescriptor
 from .exceptions import ContentTypeValidationError, DimensionValidationError, \
     AspectRatioValidationError, AnalyzeError
 from .helpers import validate_width_height_ratio, deprecated
-from .imaginglibs import get_image_factory
 from .mimetypes_ import guess_extension
 from .optionals import magic_mime_from_buffer, ensure_wand
 from .typing_ import Dimension
@@ -428,12 +427,10 @@ class ImageProcessor(Processor):
 
     def process(self, descriptor: StreamDescriptor, context: dict):
 
-        from .imaginglibs import get_image_factory
-
-        Image = get_image_factory()
+        from PIL import Image as PilImage
         # Copy the original info
         # generating thumbnail and storing in buffer
-        img = Image(file=descriptor)
+        img = PilImage(file=descriptor)
 
         is_invalid_format = self.format is None or img.format == self.format
         is_invalid_size = (
@@ -517,12 +514,11 @@ class ImageAnalyzer(Analyzer):
 
     def process(self, descriptor: StreamDescriptor, context: dict):
 
-        Image = get_image_factory()
-
+        from PIL import Image as PilImage
         # This processor requires seekable stream.
         descriptor.prepare_to_read(backend='memory')
 
-        with Image(file=descriptor)as img:
+        with PilImage.open(descriptor)as img:
             context.update(
                 width=img.width,
                 height=img.height,
