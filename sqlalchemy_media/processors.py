@@ -1,6 +1,8 @@
 import io
 from typing import Iterable
 
+from PIL import Image as PilImage
+
 from .descriptors import StreamDescriptor
 from .exceptions import ContentTypeValidationError, DimensionValidationError, \
     AspectRatioValidationError, AnalyzeError
@@ -514,17 +516,17 @@ class ImageAnalyzer(Analyzer):
 
     def process(self, descriptor: StreamDescriptor, context: dict):
 
-        from PIL import Image as PilImage
         # This processor requires seekable stream.
         descriptor.prepare_to_read(backend='memory')
 
-        with PilImage.open(descriptor)as img:
-            context.update(
-                width=img.width,
-                height=img.height,
-                content_type=img.mimetype
-            )
+        img = PilImage.open(descriptor)
+        context.update(
+            width=img.width,
+            height=img.height,
+            content_type=img.get_format_mimetype()
+        )
 
         # prepare for next processor, calling this method is not bad and just
         # uses the memory temporary.
         descriptor.prepare_to_read(backend='memory')
+
