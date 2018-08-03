@@ -429,10 +429,11 @@ class ImageProcessor(Processor):
 
     def process(self, descriptor: StreamDescriptor, context: dict):
 
-        from PIL import Image as PilImage
+        # FIXME: rewrite this method
+        import pudb; pudb.set_trace()  # XXX BREAKPOINT
         # Copy the original info
         # generating thumbnail and storing in buffer
-        img = PilImage(file=descriptor)
+        img = PilImage.open(descriptor)
 
         is_invalid_format = self.format is None or img.format == self.format
         is_invalid_size = (
@@ -450,49 +451,47 @@ class ImageProcessor(Processor):
 
         # opening the original file
         output_buffer = io.BytesIO()
-        with img:
-            # Changing format if required.
-            if self.format and img.format != self.format:
-                img.format = self.format
 
-            # Changing dimension if required.
-            if self.width or self.height:
-                width, height, _ = \
-                    validate_width_height_ratio(self.width, self.height, None)
-                img.resize(
-                    width(img.size) if callable(width) else width,
-                    height(img.size) if callable(height) else height
+        # Changing dimension if required.
+        if self.width or self.height:
+            width, height, _ = \
+                validate_width_height_ratio(self.width, self.height, None)
+            img.resize((
+                width(img.size) if callable(width) else width,
+                height(img.size) if callable(height) else height
+            ))
+
+        # Cropping
+        if self.crop:
+            def get_key_for_crop_item(key, value):
+                crop_width_keys = ('width', 'left', 'right')
+                crop_keys = (
+                    'left', 'top', 'right', 'bottom', 'width', 'height'
                 )
 
-            # Cropping
-            if self.crop:
-                def get_key_for_crop_item(key, value):
-                    crop_width_keys = ('width', 'left', 'right')
-                    crop_keys = (
-                        'left', 'top', 'right', 'bottom', 'width', 'height'
-                    )
+                if key in crop_keys and isinstance(value, str) \
+                        and '%' in value:
+                    return int(int(value[:-1]) / 100 * (
+                        img.width if key in crop_width_keys else img.height
+                    ))
 
-                    if key in crop_keys and isinstance(value, str) \
-                            and '%' in value:
-                        return int(int(value[:-1]) / 100 * (
-                            img.width if key in crop_width_keys else img.height
-                        ))
+                return value
 
-                    return value
+            img.crop(**{
+                key: get_key_for_crop_item(key, value)
+                for key, value in self.crop.items()
+            })
 
-                img.crop(**{
-                    key: get_key_for_crop_item(key, value)
-                    for key, value in self.crop.items()
-                })
+        img.save(output_buffer, format=self.format)
 
-            img.save(file=output_buffer)
+        mimetype = img.get_format_mimetype()
 
-            context.update(
-                content_type=img.mimetype,
-                width=img.width,
-                height=img.height,
-                extension=guess_extension(img.mimetype)
-            )
+        context.update(
+            content_type=mimetype,
+            width=img.width,
+            height=img.height,
+            extension=guess_extension(mimetype)
+        )
 
         output_buffer.seek(0)
         descriptor.replace(output_buffer, position=0, **context)
