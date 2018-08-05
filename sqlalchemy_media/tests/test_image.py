@@ -51,6 +51,7 @@ class ImageTestCase(TempStoreTestCase):
 
         with StoreManager(session):
             person1.image = Image.create_from(self.dog_jpeg)
+            session.add(person1)
 
             # Getting an unavailable thumbnail.
             self.assertRaises(
@@ -144,6 +145,13 @@ class ImageTestCase(TempStoreTestCase):
                 person1.image.generate_thumbnail,
                 ratio='a'
             )
+            session.commit()
+
+            # Issue 94, Cannot reproduce
+            same_person = session.query(Person) \
+                .filter(Person.id == person1.id) \
+                .one()
+            self.assertEqual(3, len(same_person.image['thumbnails']))
 
         # Attaching new image must deletes all thumbnails: issue: #54
         with StoreManager(session):

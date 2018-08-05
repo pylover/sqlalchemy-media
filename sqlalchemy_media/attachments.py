@@ -856,8 +856,6 @@ class Image(BaseImage):
             auto_generate: bool = False) -> Thumbnail:
         """
 
-        .. versionadded:: 0.3
-
         Search for the thumbnail with given arguments, if ``auto_generate``
         is :data:`.False`, the :exc:`.ThumbnailIsNotAvailableError` will be
         raised, else tries to call the :meth:`generate_thumbnail` to create a
