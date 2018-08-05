@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Playing with Analyzers and Validators &mdash; sqlalchemy-media 0.16.0 documentation</title>
+  <title>Playing with Analyzers and Validators &mdash; sqlalchemy-media 0.17.0 documentation</title>
   
 
   
@@ -26,28 +26,19 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../genindex.html"/>
-        <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.16.0 documentation" href="../index.html"/>
-        <link rel="up" title="Tutorials" href="index.html"/>
-        <link rel="next" title="API Reference" href="../api.html"/>
-        <link rel="prev" title="Image &amp; Thumbnails" href="image.html"/> 
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API Reference" href="../api.html" />
+    <link rel="prev" title="Image &amp; Thumbnails" href="image.html" /> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -69,7 +60,7 @@
             
             
               <div class="version">
-                0.16
+                0.17
               </div>
             
           
@@ -119,7 +110,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">sqlalchemy-media</a>
@@ -127,9 +118,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -257,8 +249,7 @@ This is an optional package.</p>
 <h2>4. Submitting files<a class="headerlink" href="#submitting-files" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">io</span>
 
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.exceptions</span> <span class="kn">import</span> <span class="n">ContentTypeValidationError</span><span class="p">,</span> \
-    <span class="n">MinimumLengthIsNotReachedError</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_media.exceptions</span> <span class="kn">import</span> <span class="n">ContentTypeValidationError</span>
 
 <span class="n">person1</span> <span class="o">=</span> <span class="n">Person</span><span class="p">(</span><span class="n">cv</span><span class="o">=</span><span class="n">CV</span><span class="p">())</span>
 <span class="k">with</span> <span class="n">StoreManager</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
@@ -266,7 +257,7 @@ This is an optional package.</p>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">person1</span><span class="o">.</span><span class="n">cv</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Plain text&#39;</span><span class="p">))</span>
-    <span class="k">except</span> <span class="p">(</span><span class="n">ContentTypeValidationError</span><span class="p">,</span> <span class="n">MinimumLengthIsNotReachedError</span><span class="p">):</span>
+    <span class="k">except</span> <span class="n">ContentTypeValidationError</span><span class="p">:</span>
         <span class="k">print</span><span class="p">(</span><span class="s2">&quot;ContentTypeValidationError is raised. It&#39;s so bad!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -282,9 +273,7 @@ This is an optional package.</p>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -306,7 +295,7 @@ This is an optional package.</p>
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -324,7 +313,8 @@ This is an optional package.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.16.0',
+            VERSION:'0.17.0',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -337,19 +327,13 @@ This is an optional package.</p>
 
   
 
-  
-  
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

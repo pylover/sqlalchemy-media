@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.stores.base &mdash; sqlalchemy-media 0.16.0 documentation</title>
+  <title>sqlalchemy_media.stores.base &mdash; sqlalchemy-media 0.17.0 documentation</title>
   
 
   
@@ -26,26 +26,17 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../../../genindex.html"/>
-        <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.16.0 documentation" href="../../../index.html"/>
-        <link rel="up" title="sqlalchemy_media.stores" href="../stores.html"/> 
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
 
   
   <script src="../../../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -67,7 +58,7 @@
             
             
               <div class="version">
-                0.16
+                0.17
               </div>
             
           
@@ -106,7 +97,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../../index.html">sqlalchemy-media</a>
@@ -114,9 +105,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -148,8 +140,6 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
-        
       </li>
     
   </ul>
@@ -170,11 +160,10 @@
 <span class="sd">    The abstract base class for all stores.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># noinspection PyMethodMayBeStatic</span>
 <div class="viewcode-block" id="Store.cleanup"><a class="viewcode-back" href="../../../api.html#sqlalchemy_media.stores.Store.cleanup">[docs]</a>    <span class="k">def</span> <span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        In derived class should cleanup all dirty stuff created while storing and deleting file.</span>
-<span class="sd">        If not overridden, no error will be raised.</span>
+<span class="sd">        In derived class should cleanup all dirty stuff created while storing</span>
+<span class="sd">        and deleting file. If not overridden, no error will be raised.</span>
 
 <span class="sd">        .. seealso:: :meth:`.StoreManager.cleanup`</span>
 
@@ -185,7 +174,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **[Abstract]**</span>
 
-<span class="sd">        Should be overridden in inherited class and puts the file-like object as the given filename in the store.</span>
+<span class="sd">        Should be overridden in inherited class and puts the file-like object</span>
+<span class="sd">        as the given filename in the store.</span>
 
 <span class="sd">        .. versionchanged:: 0.5</span>
 
@@ -209,13 +199,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>  <span class="c1"># pragma: no cover</span></div>
 
-<div class="viewcode-block" id="Store.open"><a class="viewcode-back" href="../../../api.html#sqlalchemy_media.stores.Store.open">[docs]</a>    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileLike</span><span class="p">:</span>
+<div class="viewcode-block" id="Store.open"><a class="viewcode-back" href="../../../api.html#sqlalchemy_media.stores.Store.open">[docs]</a>    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileLike</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **[Abstract]**</span>
 
-<span class="sd">        Should be overridden in inherited class and return a file-like object representing the file in the store.</span>
+<span class="sd">        Should be overridden in inherited class and return a file-like object</span>
+<span class="sd">        representing the file in the store.</span>
 
-<span class="sd">        .. note:: Caller of this method is responsible to close the file-like object.</span>
+<span class="sd">        .. note:: Caller of this method is responsible to close the</span>
+<span class="sd">                  file-like object.</span>
 
 <span class="sd">        :param filename: The filename to open.</span>
 <span class="sd">        :param mode: same as the `mode` in famous :func:`.open` function.</span>
@@ -227,7 +219,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **[Abstract]**</span>
 
-<span class="sd">        If overridden in the inherited class, should locates the file&#39;s url to share in public space.</span>
+<span class="sd">        If overridden in the inherited class, should locates the file&#39;s url</span>
+<span class="sd">        to share in public space.</span>
 
 <span class="sd">        :param attachment: The :class:`.Attachment` object to</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -235,9 +228,7 @@
 </pre></div>
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -250,7 +241,7 @@
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -268,7 +259,8 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.16.0',
+            VERSION:'0.17.0',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -281,19 +273,13 @@
 
   
 
-  
-  
-    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

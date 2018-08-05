@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.stores.ssh &mdash; sqlalchemy-media 0.16.0 documentation</title>
+  <title>sqlalchemy_media.stores.ssh &mdash; sqlalchemy-media 0.17.0 documentation</title>
   
 
   
@@ -26,26 +26,17 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../../../genindex.html"/>
-        <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.16.0 documentation" href="../../../index.html"/>
-        <link rel="up" title="sqlalchemy_media.stores" href="../stores.html"/> 
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
 
   
   <script src="../../../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -67,7 +58,7 @@
             
             
               <div class="version">
-                0.16
+                0.17
               </div>
             
           
@@ -106,7 +97,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../../index.html">sqlalchemy-media</a>
@@ -114,9 +105,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -148,8 +140,6 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
-        
       </li>
     
   </ul>
@@ -163,9 +153,9 @@
   <h1>Source code for sqlalchemy_media.stores.ssh</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">join</span><span class="p">,</span> <span class="n">dirname</span>
 
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.optionals</span> <span class="k">import</span> <span class="n">ensure_paramiko</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.typing_</span> <span class="k">import</span> <span class="n">FileLike</span>
 <span class="kn">from</span> <span class="nn">.base</span> <span class="k">import</span> <span class="n">Store</span>
+<span class="kn">from</span> <span class="nn">..optionals</span> <span class="k">import</span> <span class="n">ensure_paramiko</span>
+<span class="kn">from</span> <span class="nn">..typing_</span> <span class="k">import</span> <span class="n">FileLike</span>
 
 
 <div class="viewcode-block" id="SSHStore"><a class="viewcode-back" href="../../../api.html#sqlalchemy_media.stores.SSHStore">[docs]</a><span class="k">class</span> <span class="nc">SSHStore</span><span class="p">(</span><span class="n">Store</span><span class="p">):</span>
@@ -174,16 +164,21 @@
 
 <span class="sd">    .. versionadded:: 0.12.0</span>
 
-<span class="sd">    :param hostname: The ssh server&#39;s hostname to connect to. It will be looked-up from ssh config file to find</span>
-<span class="sd">                     another options if given.</span>
-<span class="sd">                     An instance of the :class:`paramiko.SSHClient` may be passed instead of the hostname.</span>
+<span class="sd">    :param hostname: The ssh server&#39;s hostname to connect to. It will be</span>
+<span class="sd">                     looked-up from ssh config file to find another options</span>
+<span class="sd">                     if given. An instance of the :class:`paramiko.SSHClient`</span>
+<span class="sd">                     may be passed instead of the hostname.</span>
 <span class="sd">    :param root_path: The path to a directory on the ssh server to store files.</span>
-<span class="sd">    :param base_url: The base url path to include at the beginning of the file&#39;s path to yield the access url.</span>
-<span class="sd">    :param ssh_config_file: The standard ssh config file. is not given, the file `$HOME/.ssh/config` will be tried.</span>
-<span class="sd">    :param kwargs: Additional keyword arguments to pass to the :class:`paramiko.SSHClient`</span>
+<span class="sd">    :param base_url: The base url path to include at the beginning of the</span>
+<span class="sd">                     file&#39;s path to yield the access url.</span>
+<span class="sd">    :param ssh_config_file: The standard ssh config file. is not given,</span>
+<span class="sd">                            the file `$HOME/.ssh/config` will be tried.</span>
+<span class="sd">    :param kwargs: Additional keyword arguments to pass to the</span>
+<span class="sd">                   :class:`paramiko.SSHClient`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hostname</span><span class="p">,</span> <span class="n">root_path</span><span class="p">,</span> <span class="n">base_url</span><span class="p">,</span> <span class="n">ssh_config_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hostname</span><span class="p">,</span> <span class="n">root_path</span><span class="p">,</span> <span class="n">base_url</span><span class="p">,</span> <span class="n">ssh_config_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">ensure_paramiko</span><span class="p">()</span>
         <span class="kn">from</span> <span class="nn">sqlalchemy_media.ssh</span> <span class="k">import</span> <span class="n">SSHClient</span>
 
@@ -204,7 +199,9 @@
 <div class="viewcode-block" id="SSHStore.put"><a class="viewcode-back" href="../../../api.html#sqlalchemy_media.stores.SSHStore.put">[docs]</a>    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">FileLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="n">remote_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_remote_path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="n">remote_directory</span> <span class="o">=</span> <span class="n">dirname</span><span class="p">(</span><span class="n">remote_filename</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ssh_client</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;mkdir -p &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="n">remote_directory</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ssh_client</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span>
+            <span class="sa">b</span><span class="s1">&#39;mkdir -p &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="n">remote_directory</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+        <span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ssh_client</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">putfo</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">remote_filename</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">st_size</span></div>
 
@@ -212,7 +209,7 @@
         <span class="n">remote_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_remote_path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ssh_client</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">remote_filename</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="SSHStore.open"><a class="viewcode-back" href="../../../api.html#sqlalchemy_media.stores.SSHStore.open">[docs]</a>    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="SSHStore.open"><a class="viewcode-back" href="../../../api.html#sqlalchemy_media.stores.SSHStore.open">[docs]</a>    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;rb&#39;</span><span class="p">):</span>
         <span class="n">remote_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_remote_path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ssh_client</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">remote_filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span></div>
 
@@ -221,9 +218,7 @@
 </pre></div>
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -236,7 +231,7 @@
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -254,7 +249,8 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.16.0',
+            VERSION:'0.17.0',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -267,19 +263,13 @@
 
   
 
-  
-  
-    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

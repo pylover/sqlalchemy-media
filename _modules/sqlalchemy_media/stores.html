@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.stores &mdash; sqlalchemy-media 0.16.0 documentation</title>
+  <title>sqlalchemy_media.stores &mdash; sqlalchemy-media 0.17.0 documentation</title>
   
 
   
@@ -26,26 +26,17 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../../genindex.html"/>
-        <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.16.0 documentation" href="../../index.html"/>
-        <link rel="up" title="Module code" href="../index.html"/> 
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
 
   
   <script src="../../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -67,7 +58,7 @@
             
             
               <div class="version">
-                0.16
+                0.17
               </div>
             
           
@@ -106,7 +97,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">sqlalchemy-media</a>
@@ -114,9 +105,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -145,8 +137,6 @@
     
     
       <li class="wy-breadcrumbs-aside">
-        
-            
         
       </li>
     
@@ -190,11 +180,12 @@
 
 <span class="sd">    This is an context manager.</span>
 
-<span class="sd">    Before using you must register at least one store factory function as default with-in store registry with</span>
-<span class="sd">    :meth:`register` by passing `default=true` during registration.</span>
+<span class="sd">    Before using you must register at least one store factory function as</span>
+<span class="sd">    default with-in store registry with :meth:`register` by passing</span>
+<span class="sd">    `default=true` during registration.</span>
 
-<span class="sd">    This object will call the registered factory functions to instantiate one per</span>
-<span class="sd">    :func:`sqlalchemy_media.context.get_id`.</span>
+<span class="sd">    This object will call the registered factory functions to instantiate one</span>
+<span class="sd">    per :func:`sqlalchemy_media.context.get_id`.</span>
 
 <span class="sd">    .. testcode::</span>
 
@@ -204,8 +195,15 @@
 
 <span class="sd">        from sqlalchemy_media import StoreManager, FileSystemStore</span>
 
-<span class="sd">        StoreManager.register(&#39;fs&#39;, functools.partial(FileSystemStore, &#39;/tmp/sa_temp_fs&#39;, &#39;http&#39;), default=True)</span>
-<span class="sd">        StoreManager.register(&#39;fs2&#39;, functools.partial(FileSystemStore, &#39;/tmp/sa_temp_fs2&#39;, &#39;http&#39;))</span>
+<span class="sd">        StoreManager.register(</span>
+<span class="sd">            &#39;fs&#39;,</span>
+<span class="sd">            functools.partial(FileSystemStore, &#39;/tmp/sa_temp_fs&#39;, &#39;http&#39;),</span>
+<span class="sd">            default=True</span>
+<span class="sd">        )</span>
+<span class="sd">        StoreManager.register(</span>
+<span class="sd">            &#39;fs2&#39;,</span>
+<span class="sd">            functools.partial(FileSystemStore, &#39;/tmp/sa_temp_fs2&#39;, &#39;http&#39;)</span>
+<span class="sd">        )</span>
 
 <span class="sd">        with StoreManager(Session) as store_manager:</span>
 <span class="sd">            assert StoreManager.get_current_store_manager() == store_manager</span>
@@ -228,7 +226,8 @@
     <span class="n">_files_to_delete_after_rollback</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">_files_orphaned</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="c1">#: If :data:`.True` the orphaned attachments will be gathered and deleted after session commit.</span>
+    <span class="c1">#: If :data:`.True` the orphaned attachments will be gathered and deleted</span>
+    <span class="c1">#  after session commit.</span>
     <span class="n">delete_orphan</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">delete_orphan</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -248,7 +247,8 @@
 
 <div class="viewcode-block" id="StoreManager.__exit__"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.__exit__">[docs]</a>    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Destroy the context, pop itself from context stack and unbind all events.</span>
+<span class="sd">        Destroy the context, pop itself from context stack and unbind all</span>
+<span class="sd">        events.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_context_stacks</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">get_context_id</span><span class="p">(),</span> <span class="p">[])</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">unbind_events</span><span class="p">()</span>
@@ -263,13 +263,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stores</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_stores</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="c1"># noinspection PyTypeChecker</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stores</span>
 
 <div class="viewcode-block" id="StoreManager.get_current_store_manager"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.get_current_store_manager">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_current_store_manager</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;StoreManager&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Find the current :class:`StoreManager` in context stack if any. else :exc:`.ContextError` will be raised.</span>
+<span class="sd">        Find the current :class:`StoreManager` in context stack if any.</span>
+<span class="sd">        else :exc:`.ContextError` will be raised.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_context_stacks</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">get_context_id</span><span class="p">(),</span> <span class="p">[])[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -278,8 +278,8 @@
 
 <div class="viewcode-block" id="StoreManager.cleanup"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.cleanup">[docs]</a>    <span class="k">def</span> <span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calls the :meth:`.Store.cleanup` for each store is :attr:`.stores` and clears the :attr:`.stores` also.</span>
-
+<span class="sd">        Calls the :meth:`.Store.cleanup` for each store is :attr:`.stores`</span>
+<span class="sd">        and clears the :attr:`.stores` also.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">store</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stores</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="n">store</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
@@ -295,13 +295,16 @@
         <span class="bp">cls</span><span class="o">.</span><span class="n">_default</span> <span class="o">=</span> <span class="n">key</span></div>
 
 <div class="viewcode-block" id="StoreManager.register"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.register">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">store_factory</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">store_factory</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Registers the store factory into stores registry, use :meth:`unregister` to remove it.</span>
+<span class="sd">        Registers the store factory into stores registry, use</span>
+<span class="sd">        :meth:`unregister` to remove it.</span>
 
 <span class="sd">        :param key: The unique key for store.</span>
-<span class="sd">        :param store_factory: A callable that returns an instance of :class:`.Store`.</span>
-<span class="sd">        :param default: If :data:`True` the given store will be marked as default also. in addition you can use</span>
+<span class="sd">        :param store_factory: A callable that returns an instance of</span>
+<span class="sd">                              :class:`.Store`.</span>
+<span class="sd">        :param default: If :data:`True` the given store will be marked as</span>
+<span class="sd">                        default also. in addition you can use</span>
 <span class="sd">                        :meth:`.make_default` to mark a store as default.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_factories</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">store_factory</span>
@@ -311,7 +314,8 @@
 <div class="viewcode-block" id="StoreManager.unregister"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.unregister">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">unregister</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Store</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Opposite of :meth:`.register`. :exc:`.KeyError` may raised if key not found in registry.</span>
+<span class="sd">        Opposite of :meth:`.register`. :exc:`.KeyError` may raised if key not</span>
+<span class="sd">        found in registry.</span>
 
 <span class="sd">        :param key: The store key to remove from stores registry.</span>
 
@@ -326,10 +330,11 @@
 
 <div class="viewcode-block" id="StoreManager.get"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Store</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Lookup the store in available instance cache, and instantiate a new one using registered factory function,</span>
-<span class="sd">        if not found.</span>
+<span class="sd">        Lookup the store in available instance cache, and instantiate a new</span>
+<span class="sd">        one using registered factory function, if not found.</span>
 
-<span class="sd">        If the key is :data:`.None`, the default store will be instantiated(if required) and returned.</span>
+<span class="sd">        If the key is :data:`.None`, the default store will be</span>
+<span class="sd">        instantiated(if required) and returned.</span>
 
 <span class="sd">        :param key: the store unique id to lookup.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -353,7 +358,8 @@
 
 <div class="viewcode-block" id="StoreManager.bind_events"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.bind_events">[docs]</a>    <span class="k">def</span> <span class="nf">bind_events</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Binds the required event on sqlalchemy session. to handle commit &amp; rollback.</span>
+<span class="sd">        Binds the required event on sqlalchemy session. to handle</span>
+<span class="sd">        commit &amp; rollback.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">event</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">,</span> <span class="s1">&#39;after_commit&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_commit</span><span class="p">)</span>
@@ -371,8 +377,9 @@
 
 <div class="viewcode-block" id="StoreManager.orphaned"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.orphaned">[docs]</a>    <span class="k">def</span> <span class="nf">orphaned</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">attachments</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Mark one or more attachment(s) orphaned, So if :attr:`delete_orphan` is :data:`.True`, the attachment(s) will</span>
-<span class="sd">        be deleted from store after session commit.</span>
+<span class="sd">        Mark one or more attachment(s) orphaned, So if :attr:`delete_orphan`</span>
+<span class="sd">        is :data:`.True`, the attachment(s) will be deleted from store after</span>
+<span class="sd">        session commit.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">delete_orphan</span><span class="p">:</span>
@@ -400,35 +407,42 @@
             <span class="k">if</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files_orphaned</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_files_orphaned</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></div>
 
-    <span class="c1"># noinspection PyUnresolvedReferences</span>
-<div class="viewcode-block" id="StoreManager.register_to_delete_after_commit"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.register_to_delete_after_commit">[docs]</a>    <span class="k">def</span> <span class="nf">register_to_delete_after_commit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">attachments</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="s1">&#39;Attachment&#39;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="StoreManager.register_to_delete_after_commit"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.register_to_delete_after_commit">[docs]</a>    <span class="k">def</span> <span class="nf">register_to_delete_after_commit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                        <span class="o">*</span><span class="n">attachments</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="s1">&#39;Attachment&#39;</span><span class="p">]</span>
+                                        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Schedules one or more attachment(s) to be deleted from store just after sqlalchemy session commit.</span>
+<span class="sd">        Schedules one or more attachment(s) to be deleted from store just</span>
+<span class="sd">        after sqlalchemy session commit.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">attachment</span> <span class="ow">in</span> <span class="n">attachments</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_files_to_delete_after_commit</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">attachment</span><span class="o">.</span><span class="n">get_objects_to_delete</span><span class="p">())</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_files_to_delete_after_commit</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                <span class="n">attachment</span><span class="o">.</span><span class="n">get_objects_to_delete</span><span class="p">()</span>
+            <span class="p">)</span></div>
 
-    <span class="c1"># noinspection PyUnresolvedReferences</span>
-<div class="viewcode-block" id="StoreManager.register_to_delete_after_rollback"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.register_to_delete_after_rollback">[docs]</a>    <span class="k">def</span> <span class="nf">register_to_delete_after_rollback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">files</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="s1">&#39;Attachment&#39;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="StoreManager.register_to_delete_after_rollback"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.register_to_delete_after_rollback">[docs]</a>    <span class="k">def</span> <span class="nf">register_to_delete_after_rollback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                          <span class="o">*</span><span class="n">files</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="s1">&#39;Attachment&#39;</span><span class="p">]</span>
+                                          <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Schedules one or more attachment(s) to be deleted from store just after sqlalchemy session rollback.</span>
+<span class="sd">        Schedules one or more attachment(s) to be deleted from store just after</span>
+<span class="sd">        sqlalchemy session rollback.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_files_to_delete_after_rollback</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">files</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="StoreManager.reset_files_state"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.reset_files_state">[docs]</a>    <span class="k">def</span> <span class="nf">reset_files_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Reset the object&#39;s state and forget all scheduled tasks for commit and or rollback.</span>
+<span class="sd">        Reset the object&#39;s state and forget all scheduled tasks for commit</span>
+<span class="sd">        and or rollback.</span>
 
-<span class="sd">        .. warning:: Calling this method without knowing what you are doing, will be caused bad result !</span>
+<span class="sd">        .. warning:: Calling this method without knowing what you are doing,</span>
+<span class="sd">                     will be caused bad result !</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_files_to_delete_after_commit</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_files_to_delete_after_rollback</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_files_orphaned</span> <span class="o">=</span> <span class="p">[]</span></div>
 
-    <span class="c1"># noinspection PyUnusedLocal</span>
 <div class="viewcode-block" id="StoreManager.on_commit"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.on_commit">[docs]</a>    <span class="k">def</span> <span class="nf">on_commit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Will be called when session commit occurred.</span>
@@ -443,7 +457,6 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">reset_files_state</span><span class="p">()</span></div>
 
-    <span class="c1"># noinspection PyUnusedLocal</span>
 <div class="viewcode-block" id="StoreManager.on_rollback"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.on_rollback">[docs]</a>    <span class="k">def</span> <span class="nf">on_rollback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">transaction</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Will be called when session rollback occurred.</span>
@@ -453,7 +466,6 @@
             <span class="n">f</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset_files_state</span><span class="p">()</span></div>
 
-    <span class="c1"># noinspection PyUnusedLocal</span>
 <div class="viewcode-block" id="StoreManager.on_delete"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.on_delete">[docs]</a>    <span class="k">def</span> <span class="nf">on_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Will be called when an model instance deleted.</span>
@@ -467,24 +479,28 @@
 <div class="viewcode-block" id="StoreManager.observe_attribute"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.stores.StoreManager.observe_attribute">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">observe_attribute</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">collection</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Attach some event handlers on sqlalchemy attribute to handle delete_orphan option.</span>
+<span class="sd">        Attach some event handlers on sqlalchemy attribute to handle</span>
+<span class="sd">        delete_orphan option.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">attr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_observing_attributes</span><span class="p">:</span>
             <span class="n">_observing_attributes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
 
-            <span class="c1"># noinspection PyUnusedLocal</span>
             <span class="k">def</span> <span class="nf">on_set_attr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">old_value</span><span class="p">,</span> <span class="n">initiator</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">old_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">old_value</span> <span class="ow">in</span> <span class="p">(</span><span class="n">symbol</span><span class="p">(</span><span class="s1">&#39;NEVER_SET&#39;</span><span class="p">),</span> <span class="n">symbol</span><span class="p">(</span><span class="s1">&#39;NO_VALUE&#39;</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">old_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">old_value</span> <span class="ow">in</span> <span class="p">(</span>
+                    <span class="n">symbol</span><span class="p">(</span><span class="s1">&#39;NEVER_SET&#39;</span><span class="p">),</span> <span class="n">symbol</span><span class="p">(</span><span class="s1">&#39;NO_VALUE&#39;</span><span class="p">)</span>
+                <span class="p">):</span>
                     <span class="k">return</span>
 
+                <span class="c1"># FIXME: Improve me!</span>
                 <span class="n">store_manager</span> <span class="o">=</span> <span class="n">StoreManager</span><span class="o">.</span><span class="n">get_current_store_manager</span><span class="p">()</span>
                 <span class="k">if</span> <span class="n">store_manager</span><span class="o">.</span><span class="n">delete_orphan</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">old_value</span><span class="p">:</span>
                         <span class="k">if</span> <span class="n">collection</span><span class="p">:</span>
                             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">old_value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-                                <span class="n">store_manager</span><span class="o">.</span><span class="n">orphaned</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">old_value</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">values</span><span class="p">())))</span>
+                                <span class="n">store_manager</span><span class="o">.</span><span class="n">orphaned</span><span class="p">(</span>
+                                    <span class="o">*</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">old_value</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">values</span><span class="p">())))</span>
                             <span class="k">else</span><span class="p">:</span>
                                 <span class="n">store_manager</span><span class="o">.</span><span class="n">orphaned</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">old_value</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
                         <span class="k">else</span><span class="p">:</span>
@@ -508,9 +524,7 @@
 </pre></div>
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -523,7 +537,7 @@
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -541,7 +555,8 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.16.0',
+            VERSION:'0.17.0',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -554,19 +569,13 @@
 
   
 
-  
-  
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

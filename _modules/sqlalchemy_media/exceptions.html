@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.exceptions &mdash; sqlalchemy-media 0.16.0 documentation</title>
+  <title>sqlalchemy_media.exceptions &mdash; sqlalchemy-media 0.17.0 documentation</title>
   
 
   
@@ -26,26 +26,17 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../../genindex.html"/>
-        <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.16.0 documentation" href="../../index.html"/>
-        <link rel="up" title="Module code" href="../index.html"/> 
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
 
   
   <script src="../../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -67,7 +58,7 @@
             
             
               <div class="version">
-                0.16
+                0.17
               </div>
             
           
@@ -106,7 +97,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">sqlalchemy-media</a>
@@ -114,9 +105,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -146,8 +138,6 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
-        
       </li>
     
   </ul>
@@ -159,9 +149,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for sqlalchemy_media.exceptions</h1><div class="highlight"><pre>
-<span></span>
-
-<div class="viewcode-block" id="SqlAlchemyMediaException"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.exceptions.SqlAlchemyMediaException">[docs]</a><span class="k">class</span> <span class="nc">SqlAlchemyMediaException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="SqlAlchemyMediaException"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.exceptions.SqlAlchemyMediaException">[docs]</a><span></span><span class="k">class</span> <span class="nc">SqlAlchemyMediaException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The base class for all exceptions</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -174,16 +162,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_length</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;Cannot store files larger than: </span><span class="si">%d</span><span class="s1"> bytes&#39;</span> <span class="o">%</span> <span class="n">max_length</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="MinimumLengthIsNotReachedError"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.exceptions.MinimumLengthIsNotReachedError">[docs]</a><span class="k">class</span> <span class="nc">MinimumLengthIsNotReachedError</span><span class="p">(</span><span class="n">SqlAlchemyMediaException</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Indicates the minimum allowed length is not \.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_length</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;Cannot store files smaller than: </span><span class="si">%d</span><span class="s1"> bytes, but the file length is: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">min_length</span><span class="p">,</span> <span class="n">length</span><span class="p">))</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="s1">&#39;Cannot store files larger than: </span><span class="si">%d</span><span class="s1"> bytes&#39;</span> <span class="o">%</span> <span class="n">max_length</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ContextError"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.exceptions.ContextError">[docs]</a><span class="k">class</span> <span class="nc">ContextError</span><span class="p">(</span><span class="n">SqlAlchemyMediaException</span><span class="p">):</span>
@@ -200,7 +181,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">DefaultStoreError</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;Default store is not defined.&quot;</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DefaultStoreError</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="s1">&#39;Default store is not defined.&#39;</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="AnalyzeError"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.exceptions.AnalyzeError">[docs]</a><span class="k">class</span> <span class="nc">AnalyzeError</span><span class="p">(</span><span class="n">SqlAlchemyMediaException</span><span class="p">):</span>
@@ -219,7 +202,8 @@
 
 <div class="viewcode-block" id="ContentTypeValidationError"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.exceptions.ContentTypeValidationError">[docs]</a><span class="k">class</span> <span class="nc">ContentTypeValidationError</span><span class="p">(</span><span class="n">ValidationError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Raised by :meth:`.Validator.validate` when the content type is missing or invalid.</span>
+<span class="sd">    Raised by :meth:`.Validator.validate` when the content type is missing or</span>
+<span class="sd">    invalid.</span>
 
 <span class="sd">    :param content_type: The invalid content type if any.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -239,8 +223,8 @@
 
 <div class="viewcode-block" id="DescriptorError"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.exceptions.DescriptorError">[docs]</a><span class="k">class</span> <span class="nc">DescriptorError</span><span class="p">(</span><span class="n">SqlAlchemyMediaException</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A sub-class instance of this exception may raised when an error has occurred in :class:`.BaseDescriptor` and</span>
-<span class="sd">    it&#39;s subtypes.</span>
+<span class="sd">    A sub-class instance of this exception may raised when an error has</span>
+<span class="sd">    occurred in :class:`.BaseDescriptor` and it&#39;s subtypes.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span></div>
 
@@ -255,15 +239,15 @@
 <div class="viewcode-block" id="OptionalPackageRequirementError"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.exceptions.OptionalPackageRequirementError">[docs]</a><span class="k">class</span> <span class="nc">OptionalPackageRequirementError</span><span class="p">(</span><span class="n">SqlAlchemyMediaException</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Raised when an optional package is missing.</span>
-<span class="sd">    The constructor is trying to search for package name in requirements-optional.txt and find the requirement and</span>
-<span class="sd">    it&#39;s version criteria to inform the user.</span>
+<span class="sd">    The constructor is trying to search for package name in</span>
+<span class="sd">    requirements-optional.txt and find the requirement and it&#39;s version</span>
+<span class="sd">    criteria to inform the user.</span>
 
 <span class="sd">    :param package_name: The name of the missing package.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">__optional_packages__</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s1">&#39;python-magic &gt;= 0.4.12&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;wand &gt;= 0.4.3&#39;</span><span class="p">,</span>
         <span class="s1">&#39;requests-aws4auth &gt;= 0.9&#39;</span><span class="p">,</span>
         <span class="s1">&#39;requests-aliyun &gt;= 0.2.5&#39;</span>
     <span class="p">]</span>
@@ -276,7 +260,9 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">packages</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Cannot find the package: </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="n">package_name</span><span class="p">)</span>
 
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;The following packages are missing. in order please install them: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">packages</span><span class="p">))</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="s1">&#39;The following packages are missing.&#39;</span>
+            <span class="n">f</span><span class="s1">&#39;in order please install them: {&quot;, &quot;.join(packages)}&#39;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ThumbnailIsNotAvailableError"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.exceptions.ThumbnailIsNotAvailableError">[docs]</a><span class="k">class</span> <span class="nc">ThumbnailIsNotAvailableError</span><span class="p">(</span><span class="n">SqlAlchemyMediaException</span><span class="p">):</span>
@@ -288,7 +274,8 @@
 
 <div class="viewcode-block" id="DimensionValidationError"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.exceptions.DimensionValidationError">[docs]</a><span class="k">class</span> <span class="nc">DimensionValidationError</span><span class="p">(</span><span class="n">ValidationError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Raises when ``width`` or ``height`` of the media is not meet the limitations.</span>
+<span class="sd">    Raises when ``width`` or ``height`` of the media is not meet the</span>
+<span class="sd">    limitations.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span></div>
 
@@ -321,9 +308,7 @@
 </pre></div>
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -336,7 +321,7 @@
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -354,7 +339,8 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.16.0',
+            VERSION:'0.17.0',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -367,19 +353,13 @@
 
   
 
-  
-  
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

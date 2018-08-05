@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.optionals &mdash; sqlalchemy-media 0.16.0 documentation</title>
+  <title>sqlalchemy_media.optionals &mdash; sqlalchemy-media 0.17.0 documentation</title>
   
 
   
@@ -26,26 +26,17 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../../genindex.html"/>
-        <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.16.0 documentation" href="../../index.html"/>
-        <link rel="up" title="Module code" href="../index.html"/> 
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
 
   
   <script src="../../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -67,7 +58,7 @@
             
             
               <div class="version">
-                0.16
+                0.17
               </div>
             
           
@@ -106,7 +97,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">sqlalchemy-media</a>
@@ -114,9 +105,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -146,8 +138,6 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
-        
       </li>
     
   </ul>
@@ -166,63 +156,18 @@
 
 <span class="sd">This module is a helper for handing optional packages.</span>
 
-<span class="sd">Optional packages are not included in ``setup.py``. So :exc:`.OptionalPackageRequirementError` will be raised if</span>
-<span class="sd">requested package is not provided.</span>
+<span class="sd">Optional packages are not included in ``setup.py``.</span>
+<span class="sd">So :exc:`.OptionalPackageRequirementError` will be raised if requested package</span>
+<span class="sd">is not provided.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.exceptions</span> <span class="k">import</span> <span class="n">OptionalPackageRequirementError</span>
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="k">import</span> <span class="n">OptionalPackageRequirementError</span>
 
-
-<span class="c1"># Libmagic</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="c1"># noinspection PyPackageRequirements</span>
-    <span class="kn">import</span> <span class="nn">magic</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
-    <span class="n">magic</span> <span class="o">=</span> <span class="kc">None</span>
-
-
-<div class="viewcode-block" id="magic_mime_from_buffer"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.optionals.magic_mime_from_buffer">[docs]</a><span class="k">def</span> <span class="nf">magic_mime_from_buffer</span><span class="p">(</span><span class="n">buffer</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Try to detect mimetype using ``magic`` library.</span>
-
-<span class="sd">    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``python-magic`` is not installed.</span>
-
-<span class="sd">    :param buffer: buffer from header of file.</span>
-
-<span class="sd">    :return: The mimetype</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="n">magic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
-        <span class="k">raise</span> <span class="n">OptionalPackageRequirementError</span><span class="p">(</span><span class="s1">&#39;python-magic&#39;</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">magic</span><span class="o">.</span><span class="n">from_buffer</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">mime</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
-
-
-<span class="c1"># wand image</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="c1"># noinspection PyPackageRequirements</span>
-    <span class="kn">import</span> <span class="nn">wand</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
-    <span class="n">wand</span> <span class="o">=</span> <span class="kc">None</span>
-
-
-<div class="viewcode-block" id="ensure_wand"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.optionals.ensure_wand">[docs]</a><span class="k">def</span> <span class="nf">ensure_wand</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-
-<span class="sd">    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``wand`` is not installed.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="n">wand</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
-        <span class="k">raise</span> <span class="n">OptionalPackageRequirementError</span><span class="p">(</span><span class="s1">&#39;wand&#39;</span><span class="p">)</span></div>
 
 
 <span class="c1"># requests-aws4auth</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="c1"># noinspection PyPackageRequirements</span>
     <span class="kn">from</span> <span class="nn">requests_aws4auth</span> <span class="k">import</span> <span class="n">AWS4Auth</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
     <span class="n">AWS4Auth</span> <span class="o">=</span> <span class="kc">None</span>
@@ -231,7 +176,8 @@
 <div class="viewcode-block" id="ensure_aws4auth"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.optionals.ensure_aws4auth">[docs]</a><span class="k">def</span> <span class="nf">ensure_aws4auth</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd">    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``requests-aws4auth`` is not installed.</span>
+<span class="sd">    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if</span>
+<span class="sd">                 ``requests-aws4auth`` is not installed.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -241,7 +187,6 @@
 
 <span class="c1"># requests-aliyun</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="c1"># noinspection PyPackageRequirements</span>
     <span class="kn">from</span> <span class="nn">aliyunauth</span> <span class="k">import</span> <span class="n">OssAuth</span> <span class="k">as</span> <span class="n">OS2Auth</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
     <span class="n">OS2Auth</span> <span class="o">=</span> <span class="kc">None</span>
@@ -250,7 +195,8 @@
 <div class="viewcode-block" id="ensure_os2auth"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.optionals.ensure_os2auth">[docs]</a><span class="k">def</span> <span class="nf">ensure_os2auth</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd">    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``requests-aliyun`` is not installed.</span>
+<span class="sd">    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if</span>
+<span class="sd">                 ``requests-aliyun`` is not installed.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -260,7 +206,6 @@
 
 <span class="c1"># paramiko</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="c1"># noinspection PyPackageRequirements</span>
     <span class="kn">import</span> <span class="nn">paramiko</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
     <span class="n">paramiko</span> <span class="o">=</span> <span class="kc">None</span>
@@ -269,7 +214,8 @@
 <div class="viewcode-block" id="ensure_paramiko"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.optionals.ensure_paramiko">[docs]</a><span class="k">def</span> <span class="nf">ensure_paramiko</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd">    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if ``paramiko`` is not installed.</span>
+<span class="sd">    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if</span>
+<span class="sd">                 ``paramiko`` is not installed.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -278,9 +224,7 @@
 </pre></div>
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -293,7 +237,7 @@
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -311,7 +255,8 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.16.0',
+            VERSION:'0.17.0',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -324,19 +269,13 @@
 
   
 
-  
-  
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

@@ -203,12 +203,6 @@ MagicAnalyzer
 .. autoclass:: MagicAnalyzer
 
 
-WandAnalyzer
-^^^^^^^^^^^^
-
-.. autoclass:: WandAnalyzer
-
-
 Validator
 ^^^^^^^^^
 
@@ -240,8 +234,6 @@ exceptions Module
 .. autoexception:: SqlAlchemyMediaException
 
 .. autoexception:: MaximumLengthIsReachedError
-
-.. autoexception:: MinimumLengthIsNotReachedError
 
 .. autoexception:: ContextError
 

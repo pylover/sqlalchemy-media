@@ -28,9 +28,11 @@ or
 Optional packages
 -----------------
 
-Some optional packages are required when using some features, such as: ``wand`` and or ``python-magic``.
+Some optional packages are required when using some features, such as: 
+``requests-aws4auth`` and or ``requests-aliyun``.
 
 
 ..  code-block:: console
 
-    $ pip install wand python-magic
+    $ pip install requests-aws4auth
+

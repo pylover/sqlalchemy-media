@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy-media &mdash; sqlalchemy-media 0.16.0 documentation</title>
+  <title>sqlalchemy-media &mdash; sqlalchemy-media 0.17.0 documentation</title>
   
 
   
@@ -26,26 +26,18 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.16.0 documentation" href="#"/>
-        <link rel="next" title="Installing" href="install.html"/> 
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installing" href="install.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -67,7 +59,7 @@
             
             
               <div class="version">
-                0.16
+                0.17
               </div>
             
           
@@ -106,7 +98,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="#">sqlalchemy-media</a>
@@ -114,9 +106,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -196,9 +189,8 @@ collections, or objects leaved in memory alone! by setting it’s last pointer t
 <li>Extracting the file’s mimetype from the backend stream if possible, using <code class="docutils literal notranslate"><span class="pre">magic</span></code> module.</li>
 <li>Limiting file size(min, max), to prevent DOS attacks.</li>
 <li>Adding timestamp in url to help caching.</li>
-<li>Using python type hinting to annotate arguments. So currently python3.5 and higher is supported.</li>
 <li>Auto generating thumbnails, using <code class="docutils literal notranslate"><span class="pre">width</span></code>, <code class="docutils literal notranslate"><span class="pre">height</span></code> and or <code class="docutils literal notranslate"><span class="pre">ratio</span></code>.</li>
-<li>Analyzing files &amp; images using <code class="docutils literal notranslate"><span class="pre">magic</span></code> and <code class="docutils literal notranslate"><span class="pre">wand</span></code>.</li>
+<li>Analyzing files &amp; images using <code class="docutils literal notranslate"><span class="pre">magic</span></code> and <code class="docutils literal notranslate"><span class="pre">PIL</span></code>.</li>
 <li>Validating <code class="docutils literal notranslate"><span class="pre">mimetype</span></code>, <code class="docutils literal notranslate"><span class="pre">width</span></code>, <code class="docutils literal notranslate"><span class="pre">height</span></code> and image <code class="docutils literal notranslate"><span class="pre">ratio</span></code>.</li>
 <li>Automatically resize &amp; reformat images before store.</li>
 </ul>
@@ -276,7 +268,6 @@ collections, or objects leaved in memory alone! by setting it’s last pointer t
 <li class="toctree-l3"><a class="reference internal" href="api.html#processor">Processor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#analyzer">Analyzer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#magicanalyzer">MagicAnalyzer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#wandanalyzer">WandAnalyzer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#validator">Validator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#contenttypevalidator">ContentTypeValidator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#imagevalidator">ImageValidator</a></li>
@@ -307,9 +298,7 @@ collections, or objects leaved in memory alone! by setting it’s last pointer t
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -329,7 +318,7 @@ collections, or objects leaved in memory alone! by setting it’s last pointer t
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -347,7 +336,8 @@ collections, or objects leaved in memory alone! by setting it’s last pointer t
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.16.0',
+            VERSION:'0.17.0',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -360,19 +350,13 @@ collections, or objects leaved in memory alone! by setting it’s last pointer t
 
   
 
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

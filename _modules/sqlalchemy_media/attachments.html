@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.attachments &mdash; sqlalchemy-media 0.16.0 documentation</title>
+  <title>sqlalchemy_media.attachments &mdash; sqlalchemy-media 0.17.0 documentation</title>
   
 
   
@@ -26,26 +26,17 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../../genindex.html"/>
-        <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="sqlalchemy-media 0.16.0 documentation" href="../../index.html"/>
-        <link rel="up" title="Module code" href="../index.html"/> 
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
 
   
   <script src="../../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -67,7 +58,7 @@
             
             
               <div class="version">
-                0.16
+                0.17
               </div>
             
           
@@ -106,7 +97,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">sqlalchemy-media</a>
@@ -114,9 +105,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -146,8 +138,6 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
-        
       </li>
     
   </ul>
@@ -159,24 +149,23 @@
            <div itemprop="articleBody">
             
   <h1>Source code for sqlalchemy_media.attachments</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Hashable</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Iterable</span>
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">uuid</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">re</span>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
 <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">splitext</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Hashable</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Iterable</span>
 
 <span class="kn">from</span> <span class="nn">sqlalchemy.ext.mutable</span> <span class="k">import</span> <span class="n">MutableList</span><span class="p">,</span> <span class="n">MutableDict</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="k">import</span> <span class="n">Image</span> <span class="k">as</span> <span class="n">PilImage</span>
 
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.stores</span> <span class="k">import</span> <span class="n">StoreManager</span><span class="p">,</span> <span class="n">Store</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.typing_</span> <span class="k">import</span> <span class="n">Attachable</span><span class="p">,</span> <span class="n">Dimension</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.descriptors</span> <span class="k">import</span> <span class="n">AttachableDescriptor</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.constants</span> <span class="k">import</span> <span class="n">MB</span><span class="p">,</span> <span class="n">KB</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.optionals</span> <span class="k">import</span> <span class="n">ensure_wand</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.helpers</span> <span class="k">import</span> <span class="n">validate_width_height_ratio</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.exceptions</span> <span class="k">import</span> <span class="n">ThumbnailIsNotAvailableError</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy_media.imaginglibs</span> <span class="k">import</span> <span class="n">get_image_factory</span>
+<span class="kn">from</span> <span class="nn">.constants</span> <span class="k">import</span> <span class="n">MB</span><span class="p">,</span> <span class="n">KB</span>
+<span class="kn">from</span> <span class="nn">.descriptors</span> <span class="k">import</span> <span class="n">AttachableDescriptor</span>
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="k">import</span> <span class="n">ThumbnailIsNotAvailableError</span>
+<span class="kn">from</span> <span class="nn">.helpers</span> <span class="k">import</span> <span class="n">validate_width_height_ratio</span>
+<span class="kn">from</span> <span class="nn">.stores</span> <span class="k">import</span> <span class="n">StoreManager</span><span class="p">,</span> <span class="n">Store</span>
+<span class="kn">from</span> <span class="nn">.typing_</span> <span class="k">import</span> <span class="n">Attachable</span><span class="p">,</span> <span class="n">Dimension</span>
 
 
 <div class="viewcode-block" id="Attachment"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Attachment">[docs]</a><span class="k">class</span> <span class="nc">Attachment</span><span class="p">(</span><span class="n">MutableDict</span><span class="p">):</span>
@@ -184,7 +173,8 @@
 <span class="sd">    The base model for an attached file.</span>
 <span class="sd">    All attachment types will be inherited from this class.</span>
 
-<span class="sd">    Actually this is an instance of :class:`sqlalchemy.ext.mutable.MutableDict` which inherited from :class:`dict`.</span>
+<span class="sd">    Actually this is an instance of :class:`sqlalchemy.ext.mutable.MutableDict`</span>
+<span class="sd">    which inherited from :class:`dict`.</span>
 
 <span class="sd">    ..  doctest::</span>
 
@@ -197,8 +187,10 @@
 
 <span class="sd">    .. versionchanged:: 0.5</span>
 
-<span class="sd">       - removed ``__analyzer__`` attribute, using ``__pre_processors__`` instead.</span>
-<span class="sd">       - removed ``__validate__`` attribute, using ``__pre_processors__`` instead.</span>
+<span class="sd">       - removed ``__analyzer__`` attribute, using ``__pre_processors__``</span>
+<span class="sd">         instead.</span>
+<span class="sd">       - removed ``__validate__`` attribute, using ``__pre_processors__``</span>
+<span class="sd">         instead.</span>
 
 <span class="sd">    .. versionadded:: 0.9.6</span>
 
@@ -218,11 +210,13 @@
     <span class="c1">#: Limit the file&#39;s minimum size.</span>
     <span class="n">__min_length__</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="c1">#: An instance of :class:`.Processor`, to convert, reformat &amp; change contents before storing the attachment.</span>
+    <span class="c1">#: An instance of :class:`.Processor`, to convert, reformat &amp; change</span>
+    <span class="c1"># contents before storing the attachment.</span>
     <span class="n">__pre_processors__</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="c1">#: Automatically coerce `:obj:.Attachable` objects. So if True, you can set the models attribute by a `file` or</span>
-    <span class="c1"># `filename` or :class:`cgi.FieldStorage`.</span>
+    <span class="c1">#: Automatically coerce `:obj:.Attachable` objects. So if True, you can</span>
+    <span class="c1"># set the models attribute by a `file` or `filename` or</span>
+    <span class="c1"># :class:`cgi.FieldStorage`.</span>
     <span class="n">__auto_coercion__</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="c1">#: The reproducible of the file.</span>
@@ -254,9 +248,10 @@
             <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create_from</span><span class="p">(</span><span class="o">*</span><span class="n">value</span><span class="p">)</span>
 
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="s1">&#39;Value type must be subclass of </span><span class="si">%s</span><span class="s1"> or a tuple(file, mime, [filename]),&#39;</span>
-            <span class="s1">&#39;but it</span><span class="se">\&#39;</span><span class="s1">s: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
-        <span class="p">)</span></div>
+            <span class="s1">&#39;Value type must be subclass of </span><span class="si">% s</span><span class="s1"> or a &#39;</span>
+            <span class="s1">&#39;tuple(file, mime, [filename]), but it</span><span class="se">\&#39;</span><span class="s1">s: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="p">))</span></div>
 
 <div class="viewcode-block" id="Attachment.create_from"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Attachment.create_from">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_from</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -282,7 +277,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the id of the store used to put this file on.</span>
 
-<span class="sd">        Stores must be registered with appropriate id via :meth:`.StoreManager.register`.</span>
+<span class="sd">        Stores must be registered with appropriate id via</span>
+<span class="sd">        :meth:`.StoreManager.register`.</span>
 
 <span class="sd">        :type: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -291,7 +287,8 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">key</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Hashable</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Unique key for tracking this attachment. it will be generated during attachment process in</span>
+<span class="sd">        Unique key for tracking this attachment. it will be generated during</span>
+<span class="sd">        attachment process in</span>
 <span class="sd">        :meth:`.attach` method.</span>
 
 <span class="sd">        :type: Hashable</span>
@@ -305,8 +302,9 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check if file is attached to this object or not. Returns :const:`True` when a file is loaded on this object via</span>
-<span class="sd">        :meth:`.attach` method or SqlAlchemy db load mechanism, else :const:`False.`</span>
+<span class="sd">        Check if file is attached to this object or not. Returns</span>
+<span class="sd">        :const:`True` when a file is loaded on this object via :meth:`.attach`</span>
+<span class="sd">        method or SqlAlchemy db load mechanism, else :const:`False.`</span>
 
 <span class="sd">        :type: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -324,24 +322,37 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">filename</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The filename used to store the attachment in the storage with this format::</span>
+<span class="sd">        The filename used to store the attachment in the storage with this</span>
+<span class="sd">        format::</span>
 
-<span class="sd">            &#39;{self.__prefix__}-{self.key}{self.suffix}{if self.extension else &#39;&#39;}&#39;</span>
+<span class="sd">            &#39;{self.__prefix__}-{self.key}{self.suffix}{if self.extension</span>
+<span class="sd">            else &#39;&#39;}&#39;</span>
 
 <span class="sd">        :type: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">-</span><span class="si">%s%s%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__prefix__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">extension</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">extension</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">-</span><span class="si">%s%s%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__prefix__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="p">,</span>
+                              <span class="bp">self</span><span class="o">.</span><span class="n">extension</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">extension</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The same as the :meth:`sqlalchemy_media.attachments.Attachment.original_filename` plus a leading minus(-)</span>
-<span class="sd">        If available, else empty string (&#39;&#39;) will be returned.</span>
+<span class="sd">        The same as the</span>
+<span class="sd">        :meth:`sqlalchemy_media.attachments.Attachment.original_filename`</span>
+<span class="sd">        plus a leading minus(-) if available, else empty string (&#39;&#39;) will be</span>
+<span class="sd">        returned.</span>
 
 <span class="sd">        :type: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_filename</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;-</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;[/:.?]+&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;\w+://&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">splitext</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="k">return</span> <span class="s1">&#39;-</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span>
+                <span class="sa">r</span><span class="s1">&#39;[/:.?]+&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;_&#39;</span><span class="p">,</span>
+                <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span>
+                    <span class="sa">r</span><span class="s1">&#39;\w+://&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                    <span class="n">splitext</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
 
         <span class="k">return</span> <span class="s1">&#39;&#39;</span>
 
@@ -366,8 +377,8 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">original_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Original file name, it may be provided by user within :attr:`cgi.FieldStorage.filename`, url or Physical</span>
-<span class="sd">        filename.</span>
+<span class="sd">        Original file name, it may be provided by user within</span>
+<span class="sd">        :attr:`cgi.FieldStorage.filename`, url or Physical filename.</span>
 
 <span class="sd">        :type: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -413,7 +424,8 @@
 
 <div class="viewcode-block" id="Attachment.get_store"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Attachment.get_store">[docs]</a>    <span class="k">def</span> <span class="nf">get_store</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Store</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the :class:`sqlalchemy_media.stores.Store` instance, which this file is stored on.</span>
+<span class="sd">        Returns the :class:`sqlalchemy_media.stores.Store` instance, which</span>
+<span class="sd">        this file is stored on.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">store_manager</span> <span class="o">=</span> <span class="n">StoreManager</span><span class="o">.</span><span class="n">get_current_store_manager</span><span class="p">()</span>
@@ -423,19 +435,28 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Deletes the file.</span>
 
-<span class="sd">        .. warning:: This operation can not be roll-backed.So if you want to delete a file, just set it to</span>
-<span class="sd">                     :const:`None` or set it by new :class:`.Attachment` instance, while passed ``delete_orphan=True``</span>
-<span class="sd">                     in :class:`.StoreManager`.</span>
+<span class="sd">        .. warning:: This operation can not be roll-backed.So if you want to</span>
+<span class="sd">                     delete a file, just set it to :const:`None` or set it by</span>
+<span class="sd">                     new :class:`.Attachment` instance, while passed</span>
+<span class="sd">                     ``delete_orphan=True`` in :class:`.StoreManager`.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">get_store</span><span class="p">()</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Attachment.attach"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Attachment.attach">[docs]</a>    <span class="k">def</span> <span class="nf">attach</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attachable</span><span class="p">:</span> <span class="n">Attachable</span><span class="p">,</span> <span class="n">content_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">original_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">store_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">suppress_pre_process</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-               <span class="n">suppress_validation</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Attachment&#39;</span><span class="p">:</span>
+<div class="viewcode-block" id="Attachment.attach"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Attachment.attach">[docs]</a>    <span class="k">def</span> <span class="nf">attach</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">attachable</span><span class="p">:</span> <span class="n">Attachable</span><span class="p">,</span>
+            <span class="n">content_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">original_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">store_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">suppress_pre_process</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">suppress_validation</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Attachment&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Attach a file. if the session is rolled-back, all operations will be rolled-back.</span>
-<span class="sd">        The old file will be deleted after commit, if any.</span>
+<span class="sd">        Attach a file. if the session is rolled-back, all operations will be</span>
+<span class="sd">        rolled-back. The old file will be deleted after commit, if any.</span>
 
 <span class="sd">        Workflow::</span>
 
@@ -476,26 +497,33 @@
 
 <span class="sd">        :param attachable: file-like object, filename or URL to attach.</span>
 <span class="sd">        :param content_type: If given, the content-detection is suppressed.</span>
-<span class="sd">        :param original_filename: Original name of the file, if available, to append to the end of the the filename,</span>
-<span class="sd">                                  useful for SEO, and readability.</span>
-<span class="sd">        :param extension: The file&#39;s extension, is available.else, tries to guess it by content_type</span>
-<span class="sd">        :param store_id: The store id to store this file on. Stores must be registered with appropriate id via</span>
-<span class="sd">                         :meth:`sqlalchemy_media.stores.StoreManager.register`.</span>
-<span class="sd">        :param overwrite: Overwrites the file without changing it&#39;s unique-key and name, useful to prevent broken links.</span>
-<span class="sd">                          Currently, when using this option, Rollback function is not available, because the old file</span>
-<span class="sd">                          will be overwritten by the given new one.</span>
-<span class="sd">        :param suppress_pre_process: When is :data:`.True`, ignores the pre-processing phase, during attachment.</span>
-<span class="sd">        :param suppress_validation: When is :data:`.True`, ignores the validation phase, during attachment.</span>
+<span class="sd">        :param original_filename: Original name of the file, if available, to append to the end of</span>
+<span class="sd">                                  the the filename, useful for SEO, and readability.</span>
+<span class="sd">        :param extension: The file&#39;s extension, is available.else, tries to guess it by</span>
+<span class="sd">                          content_type</span>
+<span class="sd">        :param store_id: The store id to store this file on. Stores must be registered with</span>
+<span class="sd">                         appropriate id via :meth:`sqlalchemy_media.stores.StoreManager.register`.</span>
+<span class="sd">        :param overwrite: Overwrites the file without changing it&#39;s unique-key and name, useful to</span>
+<span class="sd">                          prevent broken links.</span>
+<span class="sd">                          Currently, when using this option, Rollback function is not available,</span>
+<span class="sd">                          because the old file will be overwritten by the given new one.</span>
+<span class="sd">        :param suppress_pre_process: When is :data:`.True`, ignores the pre-processing phase,</span>
+<span class="sd">                                     during attachment.</span>
+<span class="sd">        :param suppress_validation: When is :data:`.True`, ignores the validation phase,</span>
+<span class="sd">                                    during attachment.</span>
 <span class="sd">        :param kwargs: Additional metadata to be stored in backend.</span>
 
-<span class="sd">        .. note:: :exc:`.MaximumLengthIsReachedError` and or :exc:`.MinimumLengthIsNotReachedError` may be raised.</span>
+<span class="sd">        .. note:: :exc:`.MaximumLengthIsReachedError` and or :exc:`.MinimumLengthIsNotReachedError`</span>
+<span class="sd">                  may be raised.</span>
 
 <span class="sd">        .. warning:: This operation can not be rolled-back, if ``overwrite=True`` given.</span>
 
 <span class="sd">        .. versionchanged:: 0.1</span>
 
-<span class="sd">            - This method will return the self. it&#39;s useful to chain method calls on the object within a single line.</span>
-<span class="sd">            - Additional ``kwargs`` are accepted to be stored in database alongside the file&#39;s metadata.</span>
+<span class="sd">            - This method will return the self. it&#39;s useful to chain method calls on the object</span>
+<span class="sd">              within a single line.</span>
+<span class="sd">            - Additional ``kwargs`` are accepted to be stored in database alongside the file&#39;s</span>
+<span class="sd">              metadata.</span>
 
 <span class="sd">        .. versionchanged:: 0.5</span>
 
@@ -538,15 +566,17 @@
 
             <span class="c1"># Pre-processing</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__pre_processors__</span><span class="p">:</span>
-                <span class="n">processors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__pre_processors__</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__pre_processors__</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span> \
-                    <span class="k">else</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__pre_processors__</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__pre_processors__</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+                    <span class="n">processors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__pre_processors__</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">processors</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__pre_processors__</span><span class="p">]</span>
 
-                <span class="c1"># noinspection PyTypeChecker</span>
                 <span class="k">for</span> <span class="n">processor</span> <span class="ow">in</span> <span class="n">processors</span><span class="p">:</span>
                     <span class="n">processor</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">descriptor</span><span class="p">,</span> <span class="n">attachment_info</span><span class="p">)</span>
 
             <span class="c1"># Updating the mutable dictionary</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">attachment_info</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+                         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">attachment_info</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">])</span>
 
             <span class="c1"># Putting the file on the store.</span>
             <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_store</span><span class="p">()</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">)</span>
@@ -560,7 +590,7 @@
                 <span class="n">store_manager</span><span class="o">.</span><span class="n">register_to_delete_after_commit</span><span class="p">(</span><span class="n">old_attachment</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;thumbnails&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-        <span class="k">except</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
             <span class="n">descriptor</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">check_length</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
             <span class="k">raise</span>
 
@@ -585,9 +615,10 @@
 
 <div class="viewcode-block" id="Attachment.get_orphaned_objects"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Attachment.get_orphaned_objects">[docs]</a>    <span class="k">def</span> <span class="nf">get_orphaned_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        this method will be always called by the store when adding the ``self`` to the orphaned list. so subclasses</span>
-<span class="sd">        of the :class:`.Attachment` has a chance to add other related objects into the orphaned list and schedule it</span>
-<span class="sd">        for delete. for example the :class:`.Image` class can schedule it&#39;s thumbnails for deletion also.</span>
+<span class="sd">        this method will be always called by the store when adding the ``self`` to the orphaned</span>
+<span class="sd">        list. so subclasses of the :class:`.Attachment` has a chance to add other related objects</span>
+<span class="sd">        into the orphaned list and schedule it for delete. for example the :class:`.Image` class</span>
+<span class="sd">        can schedule it&#39;s thumbnails for deletion also.</span>
 <span class="sd">        :return: An iterable of :class:`.Attachment` to mark as orphan.</span>
 
 <span class="sd">        .. versionadded:: 0.11.0</span>
@@ -608,8 +639,6 @@
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_listen_on_attribute</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">coerce</span><span class="p">,</span> <span class="n">parent_cls</span><span class="p">):</span>
         <span class="n">StoreManager</span><span class="o">.</span><span class="n">observe_attribute</span><span class="p">(</span><span class="n">attribute</span><span class="p">,</span> <span class="n">collection</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="c1"># noinspection PyUnresolvedReferences</span>
-        <span class="c1"># noinspection PyProtectedMember</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_listen_on_attribute</span><span class="p">(</span><span class="n">attribute</span><span class="p">,</span> <span class="n">coerce</span><span class="p">,</span> <span class="n">parent_cls</span><span class="p">)</span></div>
 
 
@@ -634,16 +663,20 @@
 
 <div class="viewcode-block" id="AttachmentList.observe_item"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.AttachmentList.observe_item">[docs]</a>    <span class="k">def</span> <span class="nf">observe_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        A simple monkeypatch to instruct the children to notify the parent if contents are changed:</span>
+<span class="sd">        A simple monkeypatch to instruct the children to notify the parent if</span>
+<span class="sd">        contents are changed:</span>
 
-<span class="sd">        From `sqlalchemy mutable documentation:</span>
-<span class="sd">        &lt;http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.MutableList&gt;`_</span>
+<span class="sd">        From `sqlalchemy mutable documentation: &lt;http://docs.sqlalchemy.org/en</span>
+<span class="sd">        /latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.MutableLis</span>
+<span class="sd">        t&gt;`_</span>
 
-<span class="sd">            Note that MutableList does not apply mutable tracking to the values themselves inside the list. Therefore</span>
-<span class="sd">            it is not a sufficient solution for the use case of tracking deep changes to a recursive mutable structure,</span>
-<span class="sd">            such as a JSON structure. To support this use case, build a subclass of MutableList that provides</span>
-<span class="sd">            appropriate coercion to the values placed in the dictionary so that they too are “mutable”, and emit events</span>
-<span class="sd">            up to their parent structure.</span>
+<span class="sd">            Note that MutableList does not apply mutable tracking to the values</span>
+<span class="sd">            themselves inside the list. Therefore it is not a sufficient</span>
+<span class="sd">            solution for the use case of tracking deep changes to a recursive</span>
+<span class="sd">            mutable structure, such as a JSON structure. To support this</span>
+<span class="sd">            use case, build a subclass of MutableList that provides appropriate</span>
+<span class="sd">            coercion to the values placed in the dictionary so that they too</span>
+<span class="sd">            are “mutable”, and emit events up to their parent structure.</span>
 
 <span class="sd">        :param item: The item to observe</span>
 <span class="sd">        :return:</span>
@@ -658,7 +691,6 @@
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
                 <span class="n">result</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
 
-                <span class="c1"># noinspection PyTypeChecker</span>
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
                     <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__item_type__</span><span class="o">.</span><span class="n">coerce</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
                 <span class="k">return</span> <span class="n">result</span>
@@ -784,7 +816,8 @@
 
 <div class="viewcode-block" id="File"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.File">[docs]</a><span class="k">class</span> <span class="nc">File</span><span class="p">(</span><span class="n">Attachment</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Representing an attached file. Normally if you want to store any file, this class is the best choice.</span>
+<span class="sd">    Representing an attached file. Normally if you want to store any file,</span>
+<span class="sd">    this class is the best choice.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -824,9 +857,10 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="BaseImage.attach"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.BaseImage.attach">[docs]</a>    <span class="k">def</span> <span class="nf">attach</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">dimension</span><span class="p">:</span> <span class="n">Dimension</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseImage.attach"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.BaseImage.attach">[docs]</a>    <span class="k">def</span> <span class="nf">attach</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">dimension</span><span class="p">:</span> <span class="n">Dimension</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        A new overload for :meth:`.Attachment.attach`, which accepts one additional argument: ``dimension``.</span>
+<span class="sd">        A new overload for :meth:`.Attachment.attach`, which accepts one</span>
+<span class="sd">        additional argument: ``dimension``.</span>
 
 <span class="sd">        :param args: The same as the: :meth:`.Attachment.attach`.</span>
 <span class="sd">        :param dimension: Image (width, height).</span>
@@ -853,7 +887,8 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Representing an image thumbnail.</span>
 
-<span class="sd">    You may use :meth:`.generate_thumbnail` and or :meth:`.get_thumbnail` with ``auto_generate=True`` to get one.</span>
+<span class="sd">    You may use :meth:`.generate_thumbnail` and or :meth:`.get_thumbnail`</span>
+<span class="sd">    with ``auto_generate=True`` to get one.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -888,44 +923,51 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A ``List[Tuple[int, int, float, Thumbnail]]``, to hold thumbnails.</span>
 
-<span class="sd">        You may use :meth:`.generate_thumbnail` and or :meth:`.get_thumbnail` with ``auto_generate=True`` to fill it.</span>
+<span class="sd">        You may use :meth:`.generate_thumbnail` and or :meth:`.get_thumbnail`</span>
+<span class="sd">        with ``auto_generate=True`` to fill it.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;thumbnails&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Image.generate_thumbnail"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Image.generate_thumbnail">[docs]</a>    <span class="k">def</span> <span class="nf">generate_thumbnail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ratio</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ratio_precision</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span> \
-            <span class="o">-&gt;</span> <span class="n">Thumbnail</span><span class="p">:</span>
+<div class="viewcode-block" id="Image.generate_thumbnail"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Image.generate_thumbnail">[docs]</a>    <span class="k">def</span> <span class="nf">generate_thumbnail</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">ratio_precision</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Thumbnail</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        .. versionadded:: 0.3</span>
 
 <span class="sd">        Generates and stores a thumbnail with the given arguments.</span>
 
-<span class="sd">        .. warning:: If none or more than one of the ``width``, ``height`` and or ``ratio`` are given, :exc:`ValueError`</span>
-<span class="sd">                     will be raised.</span>
+<span class="sd">        .. warning:: If none or more than one of the ``width``, ``height``</span>
+<span class="sd">                     and or ``ratio`` are given, :exc:`ValueError` will be</span>
+<span class="sd">                     raised.</span>
 
 <span class="sd">        :param width: The width of the thumbnail.</span>
 <span class="sd">        :param height: The Height of the thumbnail.</span>
 <span class="sd">        :param ratio: The coefficient to reduce, Must be less than ``1.0``.</span>
-<span class="sd">        :param ratio_precision: Number of digits after the decimal point of the ``ratio`` argument to tune thumbnail</span>
+<span class="sd">        :param ratio_precision: Number of digits after the decimal point of</span>
+<span class="sd">                                the ``ratio`` argument to tune thumbnail</span>
 <span class="sd">                                lookup precision. default: 2.</span>
 <span class="sd">        :return: the Newly generated :class:`.Thumbnail` instance.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Validating parameters</span>
-        <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">ratio</span> <span class="o">=</span> <span class="n">validate_width_height_ratio</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">ratio</span><span class="p">)</span>
+        <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">ratio</span> <span class="o">=</span> <span class="n">validate_width_height_ratio</span><span class="p">(</span>
+            <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">ratio</span>
+        <span class="p">)</span>
 
-        <span class="n">CompatibleImage</span> <span class="o">=</span> <span class="n">get_image_factory</span><span class="p">()</span>
         <span class="c1"># opening the original file</span>
         <span class="n">thumbnail_buffer</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
         <span class="n">store</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_store</span><span class="p">()</span>
+        <span class="n">format_</span> <span class="o">=</span> <span class="s1">&#39;jpeg&#39;</span>
         <span class="k">with</span> <span class="n">store</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">original_file</span><span class="p">:</span>
 
             <span class="c1"># generating thumbnail and storing in buffer</span>
-            <span class="c1"># noinspection PyTypeChecker</span>
-            <span class="n">img</span> <span class="o">=</span> <span class="n">CompatibleImage</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">original_file</span><span class="p">)</span>
-            <span class="n">img</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="s1">&#39;jpg&#39;</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">PilImage</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">original_file</span><span class="p">)</span>
 
             <span class="k">with</span> <span class="n">img</span><span class="p">:</span>
                 <span class="n">original_size</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">size</span>
@@ -938,8 +980,8 @@
                 <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
                 <span class="n">height</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">height</span><span class="p">)</span>
 
-                <span class="n">img</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
-                <span class="n">img</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">thumbnail_buffer</span><span class="p">)</span>
+                <span class="n">thumbnail_image</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">))</span>
+                <span class="n">thumbnail_image</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">thumbnail_buffer</span><span class="p">,</span> <span class="n">format_</span><span class="p">)</span>
 
         <span class="n">thumbnail_buffer</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">thumbnails</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -956,27 +998,33 @@
 
         <span class="k">return</span> <span class="n">thumbnail</span></div>
 
-<div class="viewcode-block" id="Image.get_thumbnail"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Image.get_thumbnail">[docs]</a>    <span class="k">def</span> <span class="nf">get_thumbnail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ratio</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ratio_precision</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-                      <span class="n">auto_generate</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Thumbnail</span><span class="p">:</span>
+<div class="viewcode-block" id="Image.get_thumbnail"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Image.get_thumbnail">[docs]</a>    <span class="k">def</span> <span class="nf">get_thumbnail</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">ratio_precision</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">auto_generate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Thumbnail</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd">        .. versionadded:: 0.3</span>
-
-<span class="sd">        Search for the thumbnail with given arguments, if ``auto_generate`` is :data:`.False`, the</span>
-<span class="sd">        :exc:`.ThumbnailIsNotAvailableError` will be raised, else tries to call the :meth:`generate_thumbnail` to create</span>
-<span class="sd">        a new one.</span>
+<span class="sd">        Search for the thumbnail with given arguments, if ``auto_generate``</span>
+<span class="sd">        is :data:`.False`, the :exc:`.ThumbnailIsNotAvailableError` will be</span>
+<span class="sd">        raised, else tries to call the :meth:`generate_thumbnail` to create a</span>
+<span class="sd">        new one.</span>
 
 <span class="sd">        :param width: Width of the thumbnail to search for.</span>
 <span class="sd">        :param height: Height of the thumbnail to search for.</span>
 <span class="sd">        :param ratio: Ratio of the thumbnail to search for.</span>
-<span class="sd">        :param ratio_precision: Number of digits after the decimal point of the ``ratio`` argument to tune thumbnail</span>
+<span class="sd">        :param ratio_precision: Number of digits after the decimal point of</span>
+<span class="sd">                                the ``ratio`` argument to tune thumbnail</span>
 <span class="sd">                                lookup precision. default: 2.</span>
-<span class="sd">        :param auto_generate: If :data:`.True`, tries to generate a new thumbnail.</span>
+<span class="sd">        :param auto_generate: If :data:`.True`, tries to generate a new</span>
+<span class="sd">                              thumbnail.</span>
 
 <span class="sd">        :return: :class:`.Thumbnail` instance.</span>
 
-<span class="sd">        .. warning:: if ``auto_generate`` is :data:`.True`, you have to commit the session, to store the generated</span>
-<span class="sd">                     thumbnails.</span>
+<span class="sd">        .. warning:: if ``auto_generate`` is :data:`.True`, you have to commit</span>
+<span class="sd">                     the session, to store the generated thumbnails.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -985,7 +1033,8 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">thumbnails</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">thumbnails</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">w</span> <span class="o">==</span> <span class="n">width</span> <span class="ow">or</span> <span class="n">h</span> <span class="o">==</span> <span class="n">height</span> <span class="ow">or</span> <span class="nb">round</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">ratio_precision</span><span class="p">)</span> <span class="o">==</span> <span class="n">ratio</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">w</span> <span class="o">==</span> <span class="n">width</span> <span class="ow">or</span> <span class="n">h</span> <span class="o">==</span> <span class="n">height</span> <span class="ow">or</span> <span class="nb">round</span><span class="p">(</span>
+                        <span class="n">r</span><span class="p">,</span> <span class="n">ratio_precision</span><span class="p">)</span> <span class="o">==</span> <span class="n">ratio</span><span class="p">:</span>
                     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__thumbnail_type__</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 
         <span class="c1"># thumbnail not found</span>
@@ -993,12 +1042,14 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_thumbnail</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">ratio</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">ThumbnailIsNotAvailableError</span><span class="p">(</span>
-                <span class="s1">&#39;Thumbnail is not available with these criteria: width=</span><span class="si">%s</span><span class="s1"> height=</span><span class="si">%s</span><span class="s1"> ration=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">ratio</span><span class="p">)</span>
+                <span class="n">f</span><span class="s1">&#39;Thumbnail is not available with these criteria:&#39;</span>
+                <span class="n">f</span><span class="s1">&#39;width=</span><span class="si">{width}</span><span class="s1"> height=</span><span class="si">{height}</span><span class="s1"> ratio=</span><span class="si">{ratio}</span><span class="s1">&#39;</span>
             <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Image.get_objects_to_delete"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.Image.get_objects_to_delete">[docs]</a>    <span class="k">def</span> <span class="nf">get_objects_to_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the files to be deleted, if the attachment is marked for deletion.</span>
+<span class="sd">        Returns the files to be deleted, if the attachment is marked for</span>
+<span class="sd">        deletion.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">yield from</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_objects_to_delete</span><span class="p">()</span>
@@ -1011,21 +1062,18 @@
 <span class="sd">        Mark thumbnails for deletion when the :class:`.Image` is being deleted.</span>
 <span class="sd">        :return: An iterable of :class:`.Thumbnail` to mark as orphan.</span>
 
-<span class="sd">        .. versionadded:: 0.11.0</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">thumbnails</span><span class="p">:</span>
             <span class="k">return</span>
 
-        <span class="k">for</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">thumbnail</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">thumbnails</span><span class="p">:</span>
-            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">__thumbnail_type__</span><span class="p">(</span><span class="n">thumbnail</span><span class="p">)</span></div></div>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">thumbnails</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">__thumbnail_type__</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span></div></div>
 
 
 <div class="viewcode-block" id="ImageList"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.ImageList">[docs]</a><span class="k">class</span> <span class="nc">ImageList</span><span class="p">(</span><span class="n">AttachmentList</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Used to create a collection of :class:`.Image`es</span>
+<span class="sd">    Used to create a collection of :class:`.Image`.</span>
 
-<span class="sd">    .. versionadded:: 0.11.0</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">__item_type__</span> <span class="o">=</span> <span class="n">Image</span></div>
@@ -1033,9 +1081,7 @@
 </pre></div>
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -1048,7 +1094,7 @@
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -1066,7 +1112,8 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.16.0',
+            VERSION:'0.17.0',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -1079,19 +1126,13 @@
 
   
 
-  
-  
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

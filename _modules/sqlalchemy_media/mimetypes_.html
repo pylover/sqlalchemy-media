@@ -1,0 +1,678 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sqlalchemy_media.mimetypes_ &mdash; sqlalchemy-media 0.17.0 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> sqlalchemy-media
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.17
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">sqlalchemy-media</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>sqlalchemy_media.mimetypes_</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for sqlalchemy_media.mimetypes_</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">mimetypes\\_ Module</span>
+<span class="sd">------------------</span>
+
+<span class="sd">Due the python bugs:</span>
+
+<span class="sd">- https://bugs.python.org/issue4963</span>
+<span class="sd">- https://bugs.python.org/issue1043134</span>
+<span class="sd">- https://bugs.python.org/issue6626#msg91205</span>
+
+<span class="sd">The database was hardcoded here.</span>
+
+<span class="sd">.. versionadded:: 0.3</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">splitext</span>
+<span class="kn">import</span> <span class="nn">magic</span>
+
+
+<span class="c1"># Libmagic</span>
+<div class="viewcode-block" id="magic_mime_from_buffer"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.mimetypes_.magic_mime_from_buffer">[docs]</a><span class="k">def</span> <span class="nf">magic_mime_from_buffer</span><span class="p">(</span><span class="n">buffer</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Try to detect mimetype using ``magic`` library.</span>
+
+<span class="sd">    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if</span>
+<span class="sd">                 ``python-magic`` is not installed.</span>
+
+<span class="sd">    :param buffer: buffer from header of file.</span>
+
+<span class="sd">    :return: The mimetype</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">magic</span><span class="o">.</span><span class="n">from_buffer</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">mime</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">guess_extension</span><span class="p">(</span><span class="n">mimetype</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">_db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">mimetype</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">guess_type</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">_db_reverse</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">splitext</span><span class="p">(</span><span class="n">url</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+
+
+<span class="n">_db</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;application/andrew-inset&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ez&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/annodex&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.anx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/atom+xml&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.atom&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/atomcat+xml&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.atomcat&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/atomserv+xml&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.atomsrv&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/bbolin&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.lin&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/cu-seeme&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.cu&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/davmount+xml&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.davmount&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/dicom&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.dcm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/dsptype&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.tsp&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/ecmascript&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.es&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/font-sfnt&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.otf&#39;</span><span class="p">,</span> <span class="s1">&#39;.ttf&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/font-tdpfr&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.pfr&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/font-woff&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.woff&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/futuresplash&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.spl&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/gzip&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.gz&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/hta&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.hta&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/java-archive&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.jar&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/java-serialized-object&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ser&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/java-vm&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.class&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/javascript&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.js&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/json&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.json&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/m3g&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.m3g&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/mac-binhex40&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.hqx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/mac-compactpro&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.cpt&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/mathematica&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.nb&#39;</span><span class="p">,</span> <span class="s1">&#39;.nbp&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/mbox&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.mbox&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/msaccess&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.mdb&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/msword&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.doc&#39;</span><span class="p">,</span> <span class="s1">&#39;.dot&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/mxf&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.mxf&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/octet-stream&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.bin&#39;</span><span class="p">,</span> <span class="s1">&#39;.deploy&#39;</span><span class="p">,</span> <span class="s1">&#39;.msu&#39;</span><span class="p">,</span> <span class="s1">&#39;.msp&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/oda&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.oda&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/oebps-package+xml&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.opf&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/ogg&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ogx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/onenote&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.one&#39;</span><span class="p">,</span> <span class="s1">&#39;.onetoc2&#39;</span><span class="p">,</span> <span class="s1">&#39;.onetmp&#39;</span><span class="p">,</span> <span class="s1">&#39;.onepkg&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/pdf&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.pdf&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/pgp-encrypted&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.pgp&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/pgp-keys&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.key&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/pgp-signature&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sig&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/pics-rules&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.prf&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/postscript&#39;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s1">&#39;.ps&#39;</span><span class="p">,</span> <span class="s1">&#39;.ai&#39;</span><span class="p">,</span> <span class="s1">&#39;.eps&#39;</span><span class="p">,</span> <span class="s1">&#39;.epsi&#39;</span><span class="p">,</span> <span class="s1">&#39;.epsf&#39;</span><span class="p">,</span> <span class="s1">&#39;.eps2&#39;</span><span class="p">,</span> <span class="s1">&#39;.eps3&#39;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;application/rar&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.rar&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/rdf+xml&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.rdf&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/rtf&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.rtf&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/sla&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.stl&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/smil+xml&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.smi&#39;</span><span class="p">,</span> <span class="s1">&#39;.smil&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/xhtml+xml&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.xhtml&#39;</span><span class="p">,</span> <span class="s1">&#39;.xht&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/xml&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.xml&#39;</span><span class="p">,</span> <span class="s1">&#39;.xsd&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/xslt+xml&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.xsl&#39;</span><span class="p">,</span> <span class="s1">&#39;.xslt&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/xspf+xml&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.xspf&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/zip&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.zip&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.android.package-archive&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.apk&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.cinderella&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.cdy&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.debian.binary-package&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.deb&#39;</span><span class="p">,</span> <span class="s1">&#39;.ddeb&#39;</span><span class="p">,</span> <span class="s1">&#39;.udeb&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.font-fontforge-sfd&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sfd&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.google-earth.kml+xml&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.kml&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.google-earth.kmz&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.kmz&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.mozilla.xul+xml&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.xul&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.ms-excel&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.xls&#39;</span><span class="p">,</span> <span class="s1">&#39;.xlb&#39;</span><span class="p">,</span> <span class="s1">&#39;.xlt&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.ms-excel.addin.macroEnabled.12&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.xlam&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.ms-excel.sheet.binary.macroEnabled.12&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.xlsb&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.ms-excel.sheet.macroEnabled.12&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.xlsm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.ms-excel.template.macroEnabled.12&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.xltm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.ms-fontobject&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.eot&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.ms-officetheme&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.thmx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.ms-pki.seccat&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.cat&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.ms-powerpoint&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ppt&#39;</span><span class="p">,</span> <span class="s1">&#39;.pps&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.ms-powerpoint.addin.macroEnabled.12&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ppam&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.ms-powerpoint.presentation.macroEnabled.12&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.pptm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.ms-powerpoint.slide.macroEnabled.12&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sldm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.ms-powerpoint.slideshow.macroEnabled.12&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ppsm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.ms-powerpoint.template.macroEnabled.12&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.potm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.ms-word.document.macroEnabled.12&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.docm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.ms-word.template.macroEnabled.12&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.dotm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.oasis.opendocument.chart&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.odc&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.oasis.opendocument.database&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.odb&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.oasis.opendocument.formula&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.odf&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.oasis.opendocument.graphics&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.odg&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.oasis.opendocument.graphics-template&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.otg&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.oasis.opendocument.image&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.odi&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.oasis.opendocument.presentation&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.odp&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.oasis.opendocument.presentation-template&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.otp&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.oasis.opendocument.spreadsheet&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ods&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.oasis.opendocument.spreadsheet-template&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ots&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.oasis.opendocument.text&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.odt&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.oasis.opendocument.text-master&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.odm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.oasis.opendocument.text-template&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ott&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.oasis.opendocument.text-web&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.oth&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.openxmlformats-officedocument.presentationml.presentation&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.pptx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.openxmlformats-officedocument.presentationml.slide&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sldx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.openxmlformats-officedocument.presentationml.slideshow&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ppsx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.openxmlformats-officedocument.presentationml.template&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.potx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.xlsx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.openxmlformats-officedocument.spreadsheetml.template&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.xltx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.openxmlformats-officedocument.wordprocessingml.document&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.docx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.openxmlformats-officedocument.wordprocessingml.template&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.dotx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.rim.cod&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.cod&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.smaf&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.mmf&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.stardivision.calc&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sdc&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.stardivision.chart&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sds&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.stardivision.draw&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sda&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.stardivision.impress&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sdd&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.stardivision.math&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sdf&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.stardivision.writer&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sdw&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.stardivision.writer-global&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sgl&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.sun.xml.calc&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sxc&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.sun.xml.calc.template&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.stc&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.sun.xml.draw&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sxd&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.sun.xml.draw.template&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.std&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.sun.xml.impress&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sxi&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.sun.xml.impress.template&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sti&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.sun.xml.math&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sxm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.sun.xml.writer&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sxw&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.sun.xml.writer.global&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sxg&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.sun.xml.writer.template&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.stw&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.symbian.install&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sis&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.tcpdump.pcap&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.cap&#39;</span><span class="p">,</span> <span class="s1">&#39;.pcap&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.visio&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.vsd&#39;</span><span class="p">,</span> <span class="s1">&#39;.vst&#39;</span><span class="p">,</span> <span class="s1">&#39;.vsw&#39;</span><span class="p">,</span> <span class="s1">&#39;.vss&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.wap.wbxml&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.wbxml&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.wap.wmlc&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.wmlc&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.wap.wmlscriptc&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.wmlsc&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.wordperfect&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.wpd&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/vnd.wordperfect5.1&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.wp5&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-123&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.wk&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-7z-compressed&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.7z&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-abiword&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.abw&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-apple-diskimage&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.dmg&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-bcpio&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.bcpio&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-bittorrent&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.torrent&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-cab&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.cab&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-cbr&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.cbr&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-cbz&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.cbz&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-cdf&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.cdf&#39;</span><span class="p">,</span> <span class="s1">&#39;.cda&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-cdlink&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.vcd&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-chess-pgn&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.pgn&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-comsol&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.mph&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-cpio&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.cpio&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-csh&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.csh&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-debian-package&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.deb&#39;</span><span class="p">,</span> <span class="s1">&#39;.udeb&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-director&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.dcr&#39;</span><span class="p">,</span> <span class="s1">&#39;.dir&#39;</span><span class="p">,</span> <span class="s1">&#39;.dxr&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-dms&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.dms&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-doom&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.wad&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-dvi&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.dvi&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-font&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.pfa&#39;</span><span class="p">,</span> <span class="s1">&#39;.pfb&#39;</span><span class="p">,</span> <span class="s1">&#39;.gsf&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-font-pcf&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.pcf&#39;</span><span class="p">,</span> <span class="s1">&#39;.pcf.Z&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-freemind&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.mm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-futuresplash&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.spl&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-ganttproject&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.gan&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-gnumeric&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.gnumeric&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-go-sgf&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sgf&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-graphing-calculator&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.gcf&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-gtar&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.gtar&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-gtar-compressed&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.tgz&#39;</span><span class="p">,</span> <span class="s1">&#39;.taz&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-hdf&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.hdf&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-hwp&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.hwp&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-ica&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ica&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-info&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.info&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-internet-signup&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ins&#39;</span><span class="p">,</span> <span class="s1">&#39;.isp&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-iphone&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.iii&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-iso9660-image&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.iso&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-jam&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.jam&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-java-jnlp-file&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.jnlp&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-jmol&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.jmz&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-kchart&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.chrt&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-killustrator&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.kil&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-koan&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.skp&#39;</span><span class="p">,</span> <span class="s1">&#39;.skd&#39;</span><span class="p">,</span> <span class="s1">&#39;.skt&#39;</span><span class="p">,</span> <span class="s1">&#39;.skm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-kpresenter&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.kpr&#39;</span><span class="p">,</span> <span class="s1">&#39;.kpt&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-kspread&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ksp&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-kword&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.kwd&#39;</span><span class="p">,</span> <span class="s1">&#39;.kwt&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-latex&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.latex&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-lha&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.lha&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-lyx&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.lyx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-lzh&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.lzh&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-lzx&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.lzx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-maker&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.frm&#39;</span><span class="p">,</span> <span class="s1">&#39;.maker&#39;</span><span class="p">,</span> <span class="s1">&#39;.frame&#39;</span><span class="p">,</span> <span class="s1">&#39;.fm&#39;</span><span class="p">,</span> <span class="s1">&#39;.fb&#39;</span><span class="p">,</span> <span class="s1">&#39;.book&#39;</span><span class="p">,</span> <span class="s1">&#39;.fbdoc&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-mif&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.mif&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-mpegURL&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.m3u8&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-ms-application&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.application&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-ms-manifest&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.manifest&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-ms-wmd&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.wmd&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-ms-wmz&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.wmz&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-msdos-program&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.com&#39;</span><span class="p">,</span> <span class="s1">&#39;.exe&#39;</span><span class="p">,</span> <span class="s1">&#39;.bat&#39;</span><span class="p">,</span> <span class="s1">&#39;.dll&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-msi&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.msi&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-netcdf&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.nc&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-ns-proxy-autoconfig&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.pac&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-nwc&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.nwc&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-object&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.o&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-oz-application&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.oza&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-pkcs7-certreqresp&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.p7r&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-pkcs7-crl&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.crl&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-python-code&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.pyc&#39;</span><span class="p">,</span> <span class="s1">&#39;.pyo&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-qgis&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.qgs&#39;</span><span class="p">,</span> <span class="s1">&#39;.shp&#39;</span><span class="p">,</span> <span class="s1">&#39;.shx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-quicktimeplayer&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.qtl&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-rdp&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.rdp&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-redhat-package-manager&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.rpm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-rss+xml&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.rss&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-ruby&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.rb&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-scilab&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sci&#39;</span><span class="p">,</span> <span class="s1">&#39;.sce&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-scilab-xcos&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.xcos&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-sh&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sh&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-shar&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.shar&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-shockwave-flash&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.swf&#39;</span><span class="p">,</span> <span class="s1">&#39;.swfl&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-silverlight&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.scr&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-sql&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sql&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-stuffit&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sit&#39;</span><span class="p">,</span> <span class="s1">&#39;.sitx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-sv4cpio&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sv4cpio&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-sv4crc&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sv4crc&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-tar&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.tar&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-tcl&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.tcl&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-tex-gf&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.gf&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-tex-pk&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.pk&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-texinfo&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.texinfo&#39;</span><span class="p">,</span> <span class="s1">&#39;.texi&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-trash&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.~&#39;</span><span class="p">,</span> <span class="s1">&#39;.%&#39;</span><span class="p">,</span> <span class="s1">&#39;.bak&#39;</span><span class="p">,</span> <span class="s1">&#39;.old&#39;</span><span class="p">,</span> <span class="s1">&#39;.sik&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-troff&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.t&#39;</span><span class="p">,</span> <span class="s1">&#39;.tr&#39;</span><span class="p">,</span> <span class="s1">&#39;.roff&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-troff-man&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.man&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-troff-me&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.me&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-troff-ms&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ms&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-ustar&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ustar&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-wais-source&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.src&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-wingz&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.wz&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-x509-ca-cert&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.crt&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-xcf&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.xcf&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-xfig&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.fig&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-xpinstall&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.xpi&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;application/x-xz&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.xz&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;audio/amr&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.amr&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;audio/amr-wb&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.awb&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;audio/annodex&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.axa&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;audio/basic&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.au&#39;</span><span class="p">,</span> <span class="s1">&#39;.snd&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;audio/csound&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.csd&#39;</span><span class="p">,</span> <span class="s1">&#39;.orc&#39;</span><span class="p">,</span> <span class="s1">&#39;.sco&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;audio/flac&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.flac&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;audio/midi&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.mid&#39;</span><span class="p">,</span> <span class="s1">&#39;.midi&#39;</span><span class="p">,</span> <span class="s1">&#39;.kar&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;audio/mpeg&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.mpga&#39;</span><span class="p">,</span> <span class="s1">&#39;.mpega&#39;</span><span class="p">,</span> <span class="s1">&#39;.mp2&#39;</span><span class="p">,</span> <span class="s1">&#39;.mp3&#39;</span><span class="p">,</span> <span class="s1">&#39;.m4a&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;audio/mpegurl&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.m3u&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;audio/ogg&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.oga&#39;</span><span class="p">,</span> <span class="s1">&#39;.ogg&#39;</span><span class="p">,</span> <span class="s1">&#39;.opus&#39;</span><span class="p">,</span> <span class="s1">&#39;.spx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;audio/prs.sid&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sid&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;audio/x-aiff&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.aif&#39;</span><span class="p">,</span> <span class="s1">&#39;.aiff&#39;</span><span class="p">,</span> <span class="s1">&#39;.aifc&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;audio/x-gsm&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.gsm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;audio/x-mpegurl&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.m3u&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;audio/x-ms-wma&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.wma&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;audio/x-ms-wax&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.wax&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;audio/x-pn-realaudio&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ra&#39;</span><span class="p">,</span> <span class="s1">&#39;.rm&#39;</span><span class="p">,</span> <span class="s1">&#39;.ram&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;audio/x-realaudio&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ra&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;audio/x-scpls&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.pls&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;audio/x-sd2&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sd2&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;audio/x-wav&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.wav&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-alchemy&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.alc&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-cache&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.cac&#39;</span><span class="p">,</span> <span class="s1">&#39;.cache&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-cache-csf&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.csf&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-cactvs-binary&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.cbin&#39;</span><span class="p">,</span> <span class="s1">&#39;.cascii&#39;</span><span class="p">,</span> <span class="s1">&#39;.ctab&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-cdx&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.cdx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-cerius&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.cer&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-chem3d&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.c3d&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-chemdraw&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.chm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-cif&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.cif&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-cmdf&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.cmdf&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-cml&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.cml&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-compass&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.cpa&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-crossfire&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.bsd&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-csml&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.csml&#39;</span><span class="p">,</span> <span class="s1">&#39;.csm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-ctx&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ctx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-cxf&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.cxf&#39;</span><span class="p">,</span> <span class="s1">&#39;.cef&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-embl-dl-nucleotide&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.emb&#39;</span><span class="p">,</span> <span class="s1">&#39;.embl&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-galactic-spc&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.spc&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-gamess-input&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.inp&#39;</span><span class="p">,</span> <span class="s1">&#39;.gam&#39;</span><span class="p">,</span> <span class="s1">&#39;.gamin&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-gaussian-checkpoint&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.fch&#39;</span><span class="p">,</span> <span class="s1">&#39;.fchk&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-gaussian-cube&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.cub&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-gaussian-input&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.gau&#39;</span><span class="p">,</span> <span class="s1">&#39;.gjc&#39;</span><span class="p">,</span> <span class="s1">&#39;.gjf&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-gaussian-log&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.gal&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-gcg8-sequence&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.gcg&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-genbank&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.gen&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-hin&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.hin&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-isostar&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.istr&#39;</span><span class="p">,</span> <span class="s1">&#39;.ist&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-jcamp-dx&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.jdx&#39;</span><span class="p">,</span> <span class="s1">&#39;.dx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-kinemage&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.kin&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-macmolecule&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.mcm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-macromodel-input&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.mmd&#39;</span><span class="p">,</span> <span class="s1">&#39;.mmod&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-mdl-molfile&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.mol&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-mdl-rdfile&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.rd&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-mdl-rxnfile&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.rxn&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-mdl-sdfile&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sd&#39;</span><span class="p">,</span> <span class="s1">&#39;.sdf&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-mdl-tgf&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.tgf&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-mmcif&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.mcif&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-mol2&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.mol2&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-molconn-Z&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.b&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-mopac-graph&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.gpt&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-mopac-input&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.mop&#39;</span><span class="p">,</span> <span class="s1">&#39;.mopcrt&#39;</span><span class="p">,</span> <span class="s1">&#39;.mpc&#39;</span><span class="p">,</span> <span class="s1">&#39;.zmt&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-mopac-out&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.moo&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-mopac-vib&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.mvb&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-ncbi-asn1&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.asn&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-ncbi-asn1-ascii&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.prt&#39;</span><span class="p">,</span> <span class="s1">&#39;.ent&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-ncbi-asn1-binary&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.val&#39;</span><span class="p">,</span> <span class="s1">&#39;.aso&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-ncbi-asn1-spec&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.asn&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-pdb&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.pdb&#39;</span><span class="p">,</span> <span class="s1">&#39;.ent&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-rosdal&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ros&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-swissprot&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sw&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-vamas-iso14976&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.vms&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-vmd&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.vmd&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-xtel&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.xtel&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;chemical/x-xyz&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.xyz&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/gif&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.gif&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/ief&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ief&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/jp2&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.jp2&#39;</span><span class="p">,</span> <span class="s1">&#39;.jpg2&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/jpeg&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.jpg&#39;</span><span class="p">,</span> <span class="s1">&#39;.jpeg&#39;</span><span class="p">,</span> <span class="s1">&#39;.jpe&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/jpm&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.jpm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/jpx&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.jpx&#39;</span><span class="p">,</span> <span class="s1">&#39;.jpf&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/pcx&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.pcx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/png&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.png&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/svg+xml&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.svg&#39;</span><span class="p">,</span> <span class="s1">&#39;.svgz&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/tiff&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.tiff&#39;</span><span class="p">,</span> <span class="s1">&#39;.tif&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/vnd.djvu&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.djvu&#39;</span><span class="p">,</span> <span class="s1">&#39;.djv&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/vnd.microsoft.icon&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ico&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/vnd.wap.wbmp&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.wbmp&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/x-canon-cr2&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.cr2&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/x-canon-crw&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.crw&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/x-cmu-raster&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ras&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/x-coreldraw&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.cdr&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/x-coreldrawpattern&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.pat&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/x-coreldrawtemplate&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.cdt&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/x-corelphotopaint&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.cpt&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/x-epson-erf&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.erf&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/x-jg&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.art&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/x-jng&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.jng&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/x-ms-bmp&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.bmp&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/x-nikon-nef&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.nef&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/x-olympus-orf&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.orf&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/x-photoshop&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.psd&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/x-portable-anymap&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.pnm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/x-portable-bitmap&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.pbm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/x-portable-graymap&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.pgm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/x-portable-pixmap&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ppm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/x-rgb&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.rgb&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/x-xbitmap&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.xbm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/x-xpixmap&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.xpm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;image/x-xwindowdump&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.xwd&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;message/rfc822&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.eml&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;model/iges&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.igs&#39;</span><span class="p">,</span> <span class="s1">&#39;.iges&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;model/mesh&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.msh&#39;</span><span class="p">,</span> <span class="s1">&#39;.mesh&#39;</span><span class="p">,</span> <span class="s1">&#39;.silo&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;model/vrml&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.wrl&#39;</span><span class="p">,</span> <span class="s1">&#39;.vrml&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;model/x3d+vrml&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.x3dv&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;model/x3d+xml&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.x3d&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;model/x3d+binary&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.x3db&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/cache-manifest&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.appcache&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/calendar&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ics&#39;</span><span class="p">,</span> <span class="s1">&#39;.icz&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/css&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.css&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/csv&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.csv&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/h323&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.323&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/html&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.html&#39;</span><span class="p">,</span> <span class="s1">&#39;.htm&#39;</span><span class="p">,</span> <span class="s1">&#39;.shtml&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/iuls&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.uls&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/mathml&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.mml&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/plain&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;.text&#39;</span><span class="p">,</span> <span class="s1">&#39;.asc&#39;</span><span class="p">,</span> <span class="s1">&#39;.pot&#39;</span><span class="p">,</span> <span class="s1">&#39;.brf&#39;</span><span class="p">,</span> <span class="s1">&#39;.srt&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/richtext&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.rtx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/scriptlet&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sct&#39;</span><span class="p">,</span> <span class="s1">&#39;.wsc&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/texmacs&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.tm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/tab-separated-values&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.tsv&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/turtle&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ttl&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/vcard&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.vcf&#39;</span><span class="p">,</span> <span class="s1">&#39;.vcard&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/vnd.sun.j2me.app-descriptor&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.jad&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/vnd.wap.wml&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.wml&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/vnd.wap.wmlscript&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.wmls&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-bibtex&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.bib&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-boo&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.boo&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-c++hdr&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.h++&#39;</span><span class="p">,</span> <span class="s1">&#39;.hpp&#39;</span><span class="p">,</span> <span class="s1">&#39;.hxx&#39;</span><span class="p">,</span> <span class="s1">&#39;.hh&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-c++src&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.c++&#39;</span><span class="p">,</span> <span class="s1">&#39;.cpp&#39;</span><span class="p">,</span> <span class="s1">&#39;.cxx&#39;</span><span class="p">,</span> <span class="s1">&#39;.cc&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-chdr&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.h&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-component&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.htc&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-csh&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.csh&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-csrc&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.c&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-dsrc&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.d&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-diff&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.diff&#39;</span><span class="p">,</span> <span class="s1">&#39;.patch&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-haskell&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.hs&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-java&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.java&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-lilypond&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ly&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-literate-haskell&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.lhs&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-moc&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.moc&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-pascal&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.p&#39;</span><span class="p">,</span> <span class="s1">&#39;.pas&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-pcs-gcd&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.gcd&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-perl&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.pl&#39;</span><span class="p">,</span> <span class="s1">&#39;.pm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-python&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.py&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-scala&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.scala&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-setext&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.etx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-sfv&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sfv&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-sh&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sh&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-tcl&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.tcl&#39;</span><span class="p">,</span> <span class="s1">&#39;.tk&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-tex&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.tex&#39;</span><span class="p">,</span> <span class="s1">&#39;.ltx&#39;</span><span class="p">,</span> <span class="s1">&#39;.sty&#39;</span><span class="p">,</span> <span class="s1">&#39;.cls&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;text/x-vcalendar&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.vcs&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;video/3gpp&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.3gp&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;video/annodex&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.axv&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;video/dl&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.dl&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;video/dv&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.dif&#39;</span><span class="p">,</span> <span class="s1">&#39;.dv&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;video/fli&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.fli&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;video/gl&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.gl&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;video/mpeg&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.mpeg&#39;</span><span class="p">,</span> <span class="s1">&#39;.mpg&#39;</span><span class="p">,</span> <span class="s1">&#39;.mpe&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;video/MP2T&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ts&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;video/mp4&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.mp4&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;video/quicktime&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.qt&#39;</span><span class="p">,</span> <span class="s1">&#39;.mov&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;video/ogg&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ogv&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;video/webm&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.webm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;video/vnd.mpegurl&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.mxu&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;video/x-flv&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.flv&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;video/x-la-asf&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.lsf&#39;</span><span class="p">,</span> <span class="s1">&#39;.lsx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;video/x-mng&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.mng&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;video/x-ms-asf&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.asf&#39;</span><span class="p">,</span> <span class="s1">&#39;.asx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;video/x-ms-wm&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.wm&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;video/x-ms-wmv&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.wmv&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;video/x-ms-wmx&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.wmx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;video/x-ms-wvx&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.wvx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;video/x-msvideo&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.avi&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;video/x-sgi-movie&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.movie&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;video/x-matroska&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.mpv&#39;</span><span class="p">,</span> <span class="s1">&#39;.mkv&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;x-conference/x-cooltalk&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.ice&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;x-epoc/x-sisx-app&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.sisx&#39;</span><span class="p">,),</span>
+    <span class="s1">&#39;x-world/x-vrml&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;.vrm&#39;</span><span class="p">,</span> <span class="s1">&#39;.vrml&#39;</span><span class="p">,</span> <span class="s1">&#39;.wrl&#39;</span><span class="p">,),</span>
+<span class="p">}</span>
+
+<span class="n">_db_reverse</span> <span class="o">=</span> <span class="p">{</span><span class="n">e</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_db</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">v</span><span class="p">}</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">guess_extension</span><span class="p">(</span><span class="s1">&#39;image/jpeg&#39;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">guess_type</span><span class="p">(</span><span class="s1">&#39;a&#39;</span> <span class="o">+</span> <span class="n">guess_extension</span><span class="p">(</span><span class="s1">&#39;image/jpeg&#39;</span><span class="p">)))</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Vahid Mardani.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.17.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

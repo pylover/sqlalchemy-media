@@ -6,12 +6,9 @@ This is how to attach image file to sqlalchemy model using the :class:`.FileSyst
 0. Prerequisites
 ----------------
 
-Thumbnail generation required the ``wand``, and content type detection required ``magic`` package.
-These are optional packages. so you have to install them:
-
 .. code-block:: console
 
-   $ pip install wand python-magic
+   $ pip install sqlalchemy-media
 
 
 1. Creating workbench
@@ -89,11 +86,11 @@ the ``as_mutable`` method is used to make a type mutable.
 
     from sqlalchemy import Column, Integer
 
-    from sqlalchemy_media import Image, ImageAnalizer, ImageValidator, ImageProcessor
+    from sqlalchemy_media import Image, ImageAnalyzer, ImageValidator, ImageProcessor
 
     class ProfileImage(Image):
         __pre_processors__ = [
-            ImageAnalizer(),
+            ImageAnalyzer(),
             ImageValidator(
                 minimum=(80, 80),
                 maximum=(800, 600),
