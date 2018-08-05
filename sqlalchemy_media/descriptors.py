@@ -6,7 +6,7 @@ from urllib.request import urlopen
 
 from .constants import KB
 from .exceptions import MaximumLengthIsReachedError, \
-    MinimumLengthIsNotReachedError, DescriptorOperationError
+    DescriptorOperationError
 from .helpers import is_uri, copy_stream
 from .mimetypes_ import guess_extension, guess_type
 from .typing_ import FileLike, Attachable
@@ -233,21 +233,9 @@ class BaseDescriptor(object):
 
     def close(self, check_length=True) -> None:
         """
-        Closes the underlying file-object. and check for ``min_length``.
-
-        :param check_length: Check the minimum length of the stream and
-                             :class:`MinimumLengthIsNotReachedError` may be
-                             raised during close. default is `True`.
-
-        .. versionadded:: 0.8
-
-            - `check_length`
-
+        Do nothing here.
         """
-        if check_length:
-            pos = self.tell()
-            if self.min_length and self.min_length > pos:
-                raise MinimumLengthIsNotReachedError(self.min_length, pos)
+        pass
 
     def seekable(self) -> bool:
         """

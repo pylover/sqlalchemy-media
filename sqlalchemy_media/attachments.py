@@ -7,6 +7,7 @@ from os.path import splitext
 from typing import Hashable, Tuple, List, Iterable
 
 from sqlalchemy.ext.mutable import MutableList, MutableDict
+from PIL import Image as PilImage
 
 from .constants import MB, KB
 from .descriptors import AttachableDescriptor
@@ -808,15 +809,14 @@ class Image(BaseImage):
             width, height, ratio
         )
 
-        CompatibleImage = get_image_factory()
         # opening the original file
         thumbnail_buffer = io.BytesIO()
         store = self.get_store()
+        format_ = 'jpeg'
         with store.open(self.path) as original_file:
 
             # generating thumbnail and storing in buffer
-            img = CompatibleImage(file=original_file)
-            img.format = 'jpg'
+            img = PilImage.open(original_file)
 
             with img:
                 original_size = img.size
@@ -829,8 +829,8 @@ class Image(BaseImage):
                 width = int(width)
                 height = int(height)
 
-                img.resize(width, height)
-                img.save(file=thumbnail_buffer)
+                thumbnail_image = img.resize((width, height))
+                thumbnail_image.save(thumbnail_buffer, format_)
 
         thumbnail_buffer.seek(0)
         if self.thumbnails is None:

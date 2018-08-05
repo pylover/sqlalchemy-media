@@ -16,18 +16,6 @@ class MaximumLengthIsReachedError(SqlAlchemyMediaException):
         )
 
 
-class MinimumLengthIsNotReachedError(SqlAlchemyMediaException):
-    """
-    Indicates the minimum allowed length is not reached.
-    """
-
-    def __init__(self, min_length, length=None):
-        super().__init__(
-            f'Cannot store files smaller than: {min_length: d} bytes,'
-            f'but the file length is: {length}'
-        )
-
-
 class ContextError(SqlAlchemyMediaException):
     """
     Exception related to :class:`.StoreManager`.

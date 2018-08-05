@@ -7,7 +7,7 @@ from .descriptors import StreamDescriptor
 from .exceptions import ContentTypeValidationError, DimensionValidationError, \
     AspectRatioValidationError, AnalyzeError
 from .helpers import validate_width_height_ratio, deprecated
-from .mimetypes_ import guess_extension
+from .mimetypes_ import guess_extension, guess_type
 from .optionals import magic_mime_from_buffer, ensure_wand
 from .typing_ import Dimension
 
@@ -427,24 +427,34 @@ class ImageProcessor(Processor):
         #   k: v if isinstance(v, str) else str(v) for k, v in crop.items()
         # }
 
+    def _update_context(self, img: PilImage, format_, context: dict):
+        mimetype = guess_type(f'a.{format_}'.lower())
+        context.update(
+            content_type=mimetype,
+            width=img.width,
+            height=img.height,
+            extension=guess_extension(mimetype)
+        )
+
     def process(self, descriptor: StreamDescriptor, context: dict):
 
-        # FIXME: rewrite this method
-        import pudb; pudb.set_trace()  # XXX BREAKPOINT
         # Copy the original info
         # generating thumbnail and storing in buffer
         img = PilImage.open(descriptor)
 
-        is_invalid_format = self.format is None or img.format == self.format
-        is_invalid_size = (
+        format_unchanged = self.format is None or img.format == self.format
+        size_unchanged = (
             (self.width is None or img.width == self.width) and
             (self.height is None or img.height == self.height)
         )
 
-        if self.crop is None and is_invalid_format and is_invalid_size:
-            img.close()
+        if self.crop is None and format_unchanged and size_unchanged:
+            self._update_context(img, img.format, context)
             descriptor.prepare_to_read(backend='memory')
             return
+
+        # Preserving format
+        format_ = self.format or img.format
 
         if 'length' in context:
             del context['length']
@@ -453,46 +463,20 @@ class ImageProcessor(Processor):
         output_buffer = io.BytesIO()
 
         # Changing dimension if required.
-        if self.width or self.height:
+        if not size_unchanged:
             width, height, _ = \
                 validate_width_height_ratio(self.width, self.height, None)
-            img.resize((
+            img = img.resize((
                 width(img.size) if callable(width) else width,
                 height(img.size) if callable(height) else height
             ))
 
         # Cropping
         if self.crop:
-            def get_key_for_crop_item(key, value):
-                crop_width_keys = ('width', 'left', 'right')
-                crop_keys = (
-                    'left', 'top', 'right', 'bottom', 'width', 'height'
-                )
+            img = img.crop(self.crop)
 
-                if key in crop_keys and isinstance(value, str) \
-                        and '%' in value:
-                    return int(int(value[:-1]) / 100 * (
-                        img.width if key in crop_width_keys else img.height
-                    ))
-
-                return value
-
-            img.crop(**{
-                key: get_key_for_crop_item(key, value)
-                for key, value in self.crop.items()
-            })
-
-        img.save(output_buffer, format=self.format)
-
-        mimetype = img.get_format_mimetype()
-
-        context.update(
-            content_type=mimetype,
-            width=img.width,
-            height=img.height,
-            extension=guess_extension(mimetype)
-        )
-
+        img.save(output_buffer, format=format_)
+        self._update_context(img, format_, context)
         output_buffer.seek(0)
         descriptor.replace(output_buffer, position=0, **context)
 

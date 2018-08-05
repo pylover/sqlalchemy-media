@@ -7,7 +7,7 @@ from sqlalchemy import Column, Integer
 from sqlalchemy_media import File, StoreManager, ContentTypeValidator, \
     MagicAnalyzer
 from sqlalchemy_media.exceptions import MaximumLengthIsReachedError, \
-    MinimumLengthIsNotReachedError, ContentTypeValidationError
+    ContentTypeValidationError
 from sqlalchemy_media.tests.helpers import Json, TempStoreTestCase
 
 
@@ -162,12 +162,6 @@ class FileTestCase(TempStoreTestCase):
         person1.cv = LimitedFile()
 
         with StoreManager(session):
-
-            # MaximumLengthIsReachedError, MinimumLengthIsNotReachedError
-            self.assertRaises(
-                MinimumLengthIsNotReachedError,
-                person1.cv.attach, BytesIO(b'less than 20 chars!')
-            )
             self.assertRaises(
                 MaximumLengthIsReachedError,
                 person1.cv.attach,

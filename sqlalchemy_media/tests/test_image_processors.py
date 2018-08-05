@@ -37,25 +37,57 @@ class ImageProcessorTestCase(unittest.TestCase):
             # Checking when not modifying stream.
             ctx = dict()
             ImageProcessor().process(d, ctx)
-            self.assertFalse(len(ctx))
+            self.assertEqual(
+                {
+                    'content_type': 'image/jpeg',
+                    'width': 640,
+                    'height': 480,
+                    'extension': '.jpg'
+                }.items(),
+                ctx.items()
+            )
 
             # Checking when not modifying stream.
             ImageProcessor(fmt='jpeg').process(d, ctx)
-            self.assertFalse(len(ctx))
+            self.assertEqual(
+                {
+                    'content_type': 'image/jpeg',
+                    'width': 640,
+                    'height': 480,
+                    'extension': '.jpg'
+                }.items(),
+                ctx.items()
+            )
 
             ImageProcessor(fmt='jpeg', width=640).process(d, ctx)
-            self.assertFalse(len(ctx))
+            self.assertEqual(
+                {
+                    'content_type': 'image/jpeg',
+                    'width': 640,
+                    'height': 480,
+                    'extension': '.jpg'
+                }.items(),
+                ctx.items()
+            )
+
 
             ImageProcessor(fmt='jpeg', height=480).process(d, ctx)
-            self.assertFalse(len(ctx))
+            self.assertEqual(
+                {
+                    'content_type': 'image/jpeg',
+                    'width': 640,
+                    'height': 480,
+                    'extension': '.jpg'
+                }.items(),
+                ctx.items()
+            )
 
-"""
     def test_crop(self):
         with AttachableDescriptor(self.cat_jpeg) as d:
             # Checking when not modifying stream.
             ctx = dict()
             ImageProcessor(
-                crop=dict(width='50%', height='50%', gravity='center')
+                crop=(160, 120, 480, 360)
             ).process(d, ctx)
             ctx = dict()
             ImageAnalyzer().process(d, ctx)
@@ -68,22 +100,6 @@ class ImageProcessorTestCase(unittest.TestCase):
                 }
             )
 
-        # With integer values
-        with AttachableDescriptor(self.cat_jpeg) as d:
-            # Checking when not modifying stream.
-            ctx = dict()
-            ImageProcessor(crop=dict(width=100)).process(d, ctx)
-            ctx = dict()
-            ImageAnalyzer().process(d, ctx)
-            self.assertDictEqual(
-                ctx,
-                {
-                    'content_type': 'image/jpeg',
-                    'width': 100,
-                    'height': 480,
-                }
-            )
 
-"""
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
