@@ -7,8 +7,7 @@ from .descriptors import StreamDescriptor
 from .exceptions import ContentTypeValidationError, DimensionValidationError, \
     AspectRatioValidationError, AnalyzeError
 from .helpers import validate_width_height_ratio, deprecated
-from .mimetypes_ import guess_extension, guess_type
-from .optionals import magic_mime_from_buffer
+from .mimetypes_ import guess_extension, guess_type, magic_mime_from_buffer
 from .typing_ import Dimension
 
 

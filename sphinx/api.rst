@@ -203,12 +203,6 @@ MagicAnalyzer
 .. autoclass:: MagicAnalyzer
 
 
-WandAnalyzer
-^^^^^^^^^^^^
-
-.. autoclass:: WandAnalyzer
-
-
 Validator
 ^^^^^^^^^
 

@@ -12,6 +12,7 @@ with open(os.path.join(
 dependencies = [
     'sqlalchemy >= 1.1.0b3',
     'pillow',
+    'python-magic >= 0.4.12'
 ]
 
 

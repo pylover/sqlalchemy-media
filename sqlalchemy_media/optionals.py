@@ -14,31 +14,6 @@ is not provided.
 from .exceptions import OptionalPackageRequirementError
 
 
-# Libmagic
-
-try:
-    import magic
-except ImportError:  # pragma: no cover
-    magic = None
-
-
-def magic_mime_from_buffer(buffer: bytes) -> str:
-    """
-    Try to detect mimetype using ``magic`` library.
-
-    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if
-                 ``python-magic`` is not installed.
-
-    :param buffer: buffer from header of file.
-
-    :return: The mimetype
-    """
-
-    if magic is None:  # pragma: no cover
-        raise OptionalPackageRequirementError('python-magic')
-
-    return magic.from_buffer(buffer, mime=True)
-
 
 # requests-aws4auth
 try:

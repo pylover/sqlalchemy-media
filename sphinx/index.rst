@@ -62,7 +62,7 @@ Overview
  - Limiting file size(min, max), to prevent DOS attacks.
  - Adding timestamp in url to help caching.
  - Auto generating thumbnails, using ``width``, ``height`` and or ``ratio``.
- - Analyzing files & images using ``magic`` and ``wand``.
+ - Analyzing files & images using ``magic`` and ``PIL``.
  - Validating ``mimetype``, ``width``, ``height`` and image ``ratio``.
  - Automatically resize & reformat images before store.
 

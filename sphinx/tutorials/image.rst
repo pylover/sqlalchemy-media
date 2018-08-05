@@ -6,12 +6,9 @@ This is how to attach image file to sqlalchemy model using the :class:`.FileSyst
 0. Prerequisites
 ----------------
 
-Thumbnail generation required the ``wand``, and content type detection required ``magic`` package.
-These are optional packages. so you have to install them:
-
 .. code-block:: console
 
-   $ pip install wand python-magic
+   $ pip install sqlalchemy-media
 
 
 1. Creating workbench

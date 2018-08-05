@@ -16,6 +16,23 @@ The database was hardcoded here.
 """
 
 from os.path import splitext
+import magic
+
+
+# Libmagic
+def magic_mime_from_buffer(buffer: bytes) -> str:
+    """
+    Try to detect mimetype using ``magic`` library.
+
+    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if
+                 ``python-magic`` is not installed.
+
+    :param buffer: buffer from header of file.
+
+    :return: The mimetype
+    """
+    return magic.from_buffer(buffer, mime=True)
+
 
 
 def guess_extension(mimetype: str) -> str:

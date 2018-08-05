@@ -1,5 +1,3 @@
-python-magic >= 0.4.12
-pillow
 requests
 Werkzeug
 requests-aws4auth >= 0.9
