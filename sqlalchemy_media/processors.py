@@ -8,7 +8,7 @@ from .exceptions import ContentTypeValidationError, DimensionValidationError, \
     AspectRatioValidationError, AnalyzeError
 from .helpers import validate_width_height_ratio, deprecated
 from .mimetypes_ import guess_extension, guess_type
-from .optionals import magic_mime_from_buffer, ensure_wand
+from .optionals import magic_mime_from_buffer
 from .typing_ import Dimension
 
 
@@ -93,89 +93,6 @@ class MagicAnalyzer(Analyzer):
         context.update(
             content_type=magic_mime_from_buffer(descriptor.get_header_buffer())
         )
-
-
-@deprecated
-class WandAnalyzer(Analyzer):
-    """
-    .. deprecated:: 0.16
-
-    .. versionadded:: 0.4
-
-    .. versionchanged:: 0.5
-
-       - Inherited from :class:`.Analyzer`
-       - The ``analyze`` method renamed to ``process`` to override the parent
-         method.
-
-    Analyze an image using ``wand``.
-
-    .. warning:: Installing ``wand`` is required for using this class.
-                 otherwise, an :exc:`.OptionalPackageRequirementError` will be
-                 raised.
-
-    Use it as follow
-
-    ..  testcode::
-
-        from sqlalchemy import TypeDecorator, Unicode, Column, Integer
-        from sqlalchemy.ext.declarative import declarative_base
-        from sqlalchemy.dialects.postgresql import JSONB
-
-        from sqlalchemy_media import Image, WandAnalyzer
-
-
-        class ProfileImage(Image):
-           __pre_processors__ = WandAnalyzer()
-
-        Base = declarative_base()
-
-        class Member(Base):
-            __tablename__ = 'person'
-
-            id = Column(Integer, primary_key=True)
-            avatar = Column(ProfileImage.as_mutable(JSONB))
-
-    The use it inside :class:`.ContextManager` context:
-
-    ::
-
-        from sqlalchemy_media import ContextManager
-
-        session = <....>
-
-        with ContextManager(session):
-            me = Member(avatar=ProfileImage.create_from('donkey.jpg'))
-            print(me.avatar.width)
-            print(me.avatar.height)
-            print(me.avatar.content_type)
-
-    .. note:: This object currently selects ``width``, ``height`` and
-              ``mimetype`` of the image.
-
-    """
-
-    def process(self, descriptor: StreamDescriptor, context: dict):
-        ensure_wand()
-        from wand.image import Image as WandImage
-        from wand.exceptions import WandException
-
-        # This processor requires seekable stream.
-        descriptor.prepare_to_read(backend='memory')
-
-        try:
-            with WandImage(file=descriptor)as img:
-                context.update(
-                    width=img.width,
-                    height=img.height,
-                    content_type=img.mimetype
-                )
-
-        except WandException:
-            raise AnalyzeError(str(WandException))
-
-        # prepare for next processor, calling this method is not bad.
-        descriptor.prepare_to_read(backend='memory')
 
 
 class Validator(Processor):
@@ -360,39 +277,16 @@ class ImageProcessor(Processor):
        - If you pass both ``width`` and ``height``, aspect ratio may not be
          preserved.
 
-    :param fmt: This argument will be directly passing to ``Wand`` or
-                ``Pillow``. so, for list of available choices, see:
-                `ImageMagic Documentation
-                <http://www.imagemagick.org/script/formats.php>`_
-
+    :param format: The image format. i.e jpeg, gif, png
     :param width: The new image width.
     :param height: The new image height.
     :param crop: Used to crop the image.
 
     .. versionadded:: 0.6
 
-    The crop dimension as a dictionary containing the keys described
-    `here <http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.BaseImage.crop>`_.
+    The crop argument is 4-tuple of (left, top, right, bottom)
 
-    Including you can
-    use percent ``%`` sing to automatically calculate the values from original
-    image dimension::
-
-        ImageProcessor(crop=dict(width='50%', height='50%', gravity='center'))
-        ImageProcessor(crop=dict(width='10%', height='10%', gravity='south_east'))
-
-    Or::
-
-        ImageProcessor(crop=dict(
-        top='10%',
-        bottom='10%',
-        left='10%',
-        right='10%',
-        width='80%',
-        height='80%'
-        ))
-
-    Included from wand documentation::
+        ImageProcessor(crop=(10, 10, 120, 230))
 
         +--------------------------------------------------+
         |              ^                         ^         |
@@ -409,12 +303,6 @@ class ImageProcessor(Processor):
         |              +-------------------+     v         |
         | <--------------- right ---------->               |
         +--------------------------------------------------+
-
-    .. seealso::
-
-       - ``crop`` `method <http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.BaseImage.crop>`_.  # noqa
-       - ``gravity`` `argument <http://docs.wand-py.org/en/0.4.1/wand/image.html#wand.image.GRAVITY_TYPES>`_.
-       - `Wand <http://docs.wand-py.org/>`_
 
     """
 
@@ -488,9 +376,6 @@ class ImageAnalyzer(Analyzer):
 
     Analyze an image using available image library by calling the
     :classmethod:`.imaging.ImagingLibrary.get_available()
-
-    .. warning:: If none of ``Wand`` or ``Pillow`` are installed the
-                 :exc:`.OptionalPackageRequirementError` will be raised.
 
     .. note:: This object currently selects ``width``, ``height`` and
               ``mimetype`` of an image.

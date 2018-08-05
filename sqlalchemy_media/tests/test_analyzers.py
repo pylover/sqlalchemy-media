@@ -3,7 +3,7 @@ import unittest
 import io
 from os.path import dirname, abspath, join
 
-from sqlalchemy_media.processors import MagicAnalyzer, WandAnalyzer
+from sqlalchemy_media.processors import MagicAnalyzer
 from sqlalchemy_media.descriptors import AttachableDescriptor
 
 
@@ -35,17 +35,6 @@ class AnalyzerTestCase(unittest.TestCase):
             ctx = {}
             analyzer.process(d, ctx)
             self.assertEqual(ctx['content_type'], 'image/png')
-
-    def test_wand(self):
-        analyzer = WandAnalyzer()
-        with AttachableDescriptor(self.cat_jpeg) as d:
-            ctx = {}
-            analyzer.process(d, ctx)
-            self.assertDictEqual(ctx, {
-                'width': 640,
-                'height': 480,
-                'content_type': 'image/jpeg'
-            })
 
 
 if __name__ == '__main__':  # pragma: no cover

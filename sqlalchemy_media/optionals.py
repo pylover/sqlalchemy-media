@@ -40,26 +40,6 @@ def magic_mime_from_buffer(buffer: bytes) -> str:
     return magic.from_buffer(buffer, mime=True)
 
 
-# wand image
-
-try:
-    import wand
-except ImportError:  # pragma: no cover
-    wand = None
-
-
-def ensure_wand():
-    """
-
-    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if
-                 ``wand`` is not installed.
-
-    """
-
-    if wand is None:  # pragma: no cover
-        raise OptionalPackageRequirementError('wand')
-
-
 # requests-aws4auth
 try:
     from requests_aws4auth import AWS4Auth
