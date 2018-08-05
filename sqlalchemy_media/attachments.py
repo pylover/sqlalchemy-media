@@ -913,8 +913,6 @@ class Image(BaseImage):
         Mark thumbnails for deletion when the :class:`.Image` is being deleted.
         :return: An iterable of :class:`.Thumbnail` to mark as orphan.
 
-        .. versionadded:: 0.11.0
-
         """
         if not self.thumbnails:
             return
@@ -925,9 +923,9 @@ class Image(BaseImage):
 
 class ImageList(AttachmentList):
     """
-    Used to create a collection of :class:`.Image`es
+    Used to create a collection of :class:`.Image`.
 
-    .. versionadded:: 0.11.0
     """
 
     __item_type__ = Image
+

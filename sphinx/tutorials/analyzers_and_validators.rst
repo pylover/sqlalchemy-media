@@ -97,8 +97,7 @@ For the first, let to create a type called ``CV``
 
     import io
 
-    from sqlalchemy_media.exceptions import ContentTypeValidationError, \
-        MinimumLengthIsNotReachedError
+    from sqlalchemy_media.exceptions import ContentTypeValidationError
 
     person1 = Person(cv=CV())
     with StoreManager(session):
@@ -106,7 +105,7 @@ For the first, let to create a type called ``CV``
 
         try:
             person1.cv.attach(io.BytesIO(b'Plain text'))
-        except (ContentTypeValidationError, MinimumLengthIsNotReachedError):
+        except ContentTypeValidationError:
             print("ContentTypeValidationError is raised. It's so bad!")
 
 ..  testoutput:: content_type

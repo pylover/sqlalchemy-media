@@ -42,18 +42,7 @@ class Processor(object):
 
 class Analyzer(Processor):
     """
-
-    .. versionadded:: 0.2
-
-    .. versionchanged:: 0.5
-
-       - Inherited from :class:`.Processor`
-       - The ``analyze`` method renamed to ``process`` to override the parent
-       method.
-
-
     The abstract base class for all analyzers.
-
     """
 
     def process(self, descriptor: StreamDescriptor, context: dict):
@@ -264,9 +253,6 @@ class ImageValidator(ContentTypeValidator):
 
 class ImageProcessor(Processor):
     """
-
-    .. versionadded:: 0.5
-
     Used to re-sampling, resizing, reformatting bitmaps.
 
     .. warning::
@@ -276,32 +262,16 @@ class ImageProcessor(Processor):
        - If you pass both ``width`` and ``height``, aspect ratio may not be
          preserved.
 
-    :param format: The image format. i.e jpeg, gif, png
+
+    :param format: The image format. i.e jpeg, gif, png.
     :param width: The new image width.
     :param height: The new image height.
     :param crop: Used to crop the image.
 
-    .. versionadded:: 0.6
-
     The crop argument is 4-tuple of (left, top, right, bottom)
 
-        ImageProcessor(crop=(10, 10, 120, 230))
 
-        +--------------------------------------------------+
-        |              ^                         ^         |
-        |              |                         |         |
-        |             top                        |         |
-        |              |                         |         |
-        |              v                         |         |
-        | <-- left --> +-------------------+  bottom       |
-        |              |             ^     |     |         |
-        |              | <-- width --|---> |     |         |
-        |              |           height  |     |         |
-        |              |             |     |     |         |
-        |              |             v     |     |         |
-        |              +-------------------+     v         |
-        | <--------------- right ---------->               |
-        +--------------------------------------------------+
+        ImageProcessor(crop=(10, 10, 120, 230))
 
     """
 

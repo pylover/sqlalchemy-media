@@ -235,8 +235,6 @@ exceptions Module
 
 .. autoexception:: MaximumLengthIsReachedError
 
-.. autoexception:: MinimumLengthIsNotReachedError
-
 .. autoexception:: ContextError
 
 .. autoexception:: DefaultStoreError
