@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; sqlalchemy-media 0.17.0 documentation</title>
+  <title>API Reference &mdash; sqlalchemy-media 0.17.1 documentation</title>
   
 
   
@@ -287,7 +287,7 @@ instead.</p>
 
 <dl class="method">
 <dt id="sqlalchemy_media.attachments.Attachment.attach">
-<code class="descname">attach</code><span class="sig-paren">(</span><em>attachable: Union[str, dict, typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper, typing.Iterable[typing.Iterable[typing.Any]]], content_type: str = None, original_filename: str = None, extension: str = None, store_id: str = None, overwrite: bool = False, suppress_pre_process: bool = False, suppress_validation: bool = False, **kwargs</em><span class="sig-paren">)</span> &#x2192; sqlalchemy_media.attachments.Attachment<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Attachment.attach"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.attach" title="Permalink to this definition">¶</a></dt>
+<code class="descname">attach</code><span class="sig-paren">(</span><em>attachable: Union[str, dict, IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper, Iterable[Iterable[Any]]], content_type: str = None, original_filename: str = None, extension: str = None, store_id: str = None, overwrite: bool = False, suppress_pre_process: bool = False, suppress_validation: bool = False, **kwargs</em><span class="sig-paren">)</span> &#x2192; sqlalchemy_media.attachments.Attachment<a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Attachment.attach"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment.attach" title="Permalink to this definition">¶</a></dt>
 <dd><p>Attach a file. if the session is rolled-back, all operations will be
 rolled-back. The old file will be deleted after commit, if any.</p>
 <p>Workflow:</p>
@@ -401,7 +401,7 @@ metadata.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">str</td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)">str</a></td>
 </tr>
 </tbody>
 </table>
@@ -457,7 +457,7 @@ method or SqlAlchemy db load mechanism, else <code class="xref py py-const docut
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">bool</td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/functions.html#bool" title="(in Python v3.6)">bool</a></td>
 </tr>
 </tbody>
 </table>
@@ -471,7 +471,7 @@ method or SqlAlchemy db load mechanism, else <code class="xref py py-const docut
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">str</td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)">str</a></td>
 </tr>
 </tbody>
 </table>
@@ -490,7 +490,7 @@ format:</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">str</td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)">str</a></td>
 </tr>
 </tbody>
 </table>
@@ -546,7 +546,7 @@ attachment process in
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">int</td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)">int</a></td>
 </tr>
 </tbody>
 </table>
@@ -567,7 +567,7 @@ attachment process in
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">str</td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)">str</a></td>
 </tr>
 </tbody>
 </table>
@@ -581,7 +581,7 @@ attachment process in
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">str</td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)">str</a></td>
 </tr>
 </tbody>
 </table>
@@ -595,7 +595,7 @@ attachment process in
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">bool</td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/functions.html#bool" title="(in Python v3.6)">bool</a></td>
 </tr>
 </tbody>
 </table>
@@ -611,7 +611,7 @@ attachment process in
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">str</td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)">str</a></td>
 </tr>
 </tbody>
 </table>
@@ -628,7 +628,7 @@ returned.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">str</td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)">str</a></td>
 </tr>
 </tbody>
 </table>
@@ -642,7 +642,7 @@ returned.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">str</td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)">str</a></td>
 </tr>
 </tbody>
 </table>
@@ -1287,7 +1287,7 @@ underlying file-object is not <a class="reference internal" href="#sqlalchemy_me
 <h3>StreamDescriptor<a class="headerlink" href="#streamdescriptor" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="sqlalchemy_media.descriptors.StreamDescriptor">
-<em class="property">class </em><code class="descclassname">sqlalchemy_media.descriptors.</code><code class="descname">StreamDescriptor</code><span class="sig-paren">(</span><em>stream: Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper], **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#StreamDescriptor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.StreamDescriptor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.descriptors.</code><code class="descname">StreamDescriptor</code><span class="sig-paren">(</span><em>stream: Union[IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper], **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#StreamDescriptor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.StreamDescriptor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.descriptors.BaseDescriptor" title="sqlalchemy_media.descriptors.BaseDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy_media.descriptors.BaseDescriptor</span></code></a></p>
 <p>This class is used for describing a file-like object. so it’s just a proxy
 for file-like objects. The underlying file-object is not meant to be closed
@@ -1422,7 +1422,7 @@ the underlying file-object is seekable.</p>
 <h3>StreamCloserDescriptor<a class="headerlink" href="#streamcloserdescriptor" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="sqlalchemy_media.descriptors.StreamCloserDescriptor">
-<em class="property">class </em><code class="descclassname">sqlalchemy_media.descriptors.</code><code class="descname">StreamCloserDescriptor</code><span class="sig-paren">(</span><em>stream: Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper], **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#StreamCloserDescriptor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.StreamCloserDescriptor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">sqlalchemy_media.descriptors.</code><code class="descname">StreamCloserDescriptor</code><span class="sig-paren">(</span><em>stream: Union[IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper], **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#StreamCloserDescriptor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.StreamCloserDescriptor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.descriptors.StreamDescriptor" title="sqlalchemy_media.descriptors.StreamDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy_media.descriptors.StreamDescriptor</span></code></a></p>
 <p>The same as the <a class="reference internal" href="#sqlalchemy_media.descriptors.StreamDescriptor" title="sqlalchemy_media.descriptors.StreamDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">StreamDescriptor</span></code></a>, the only difference is that
 this class tries to close the file-like object after calling the
@@ -1597,7 +1597,7 @@ to share in public space.</p>
 
 <dl class="method">
 <dt id="sqlalchemy_media.stores.Store.open">
-<code class="descname">open</code><span class="sig-paren">(</span><em>filename: str</em>, <em>mode: str = 'rb'</em><span class="sig-paren">)</span> &#x2192; Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]<a class="reference internal" href="_modules/sqlalchemy_media/stores/base.html#Store.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.open" title="Permalink to this definition">¶</a></dt>
+<code class="descname">open</code><span class="sig-paren">(</span><em>filename: str</em>, <em>mode: str = 'rb'</em><span class="sig-paren">)</span> &#x2192; Union[IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]<a class="reference internal" href="_modules/sqlalchemy_media/stores/base.html#Store.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.open" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>[Abstract]</strong></p>
 <p>Should be overridden in inherited class and return a file-like object
 representing the file in the store.</p>
@@ -1622,7 +1622,7 @@ file-like object.</p>
 
 <dl class="method">
 <dt id="sqlalchemy_media.stores.Store.put">
-<code class="descname">put</code><span class="sig-paren">(</span><em>filename: str, stream: Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]</em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/sqlalchemy_media/stores/base.html#Store.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.put" title="Permalink to this definition">¶</a></dt>
+<code class="descname">put</code><span class="sig-paren">(</span><em>filename: str, stream: Union[IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]</em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/sqlalchemy_media/stores/base.html#Store.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.Store.put" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>[Abstract]</strong></p>
 <p>Should be overridden in inherited class and puts the file-like object
 as the given filename in the store.</p>
@@ -1709,7 +1709,7 @@ to share in public space.</p>
 
 <dl class="method">
 <dt id="sqlalchemy_media.stores.FileSystemStore.open">
-<code class="descname">open</code><span class="sig-paren">(</span><em>filename: str</em>, <em>mode: str = 'rb'</em><span class="sig-paren">)</span> &#x2192; Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]<a class="reference internal" href="_modules/sqlalchemy_media/stores/filesystem.html#FileSystemStore.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.FileSystemStore.open" title="Permalink to this definition">¶</a></dt>
+<code class="descname">open</code><span class="sig-paren">(</span><em>filename: str</em>, <em>mode: str = 'rb'</em><span class="sig-paren">)</span> &#x2192; Union[IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]<a class="reference internal" href="_modules/sqlalchemy_media/stores/filesystem.html#FileSystemStore.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.FileSystemStore.open" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>[Abstract]</strong></p>
 <p>Should be overridden in inherited class and return a file-like object
 representing the file in the store.</p>
@@ -1734,7 +1734,7 @@ file-like object.</p>
 
 <dl class="method">
 <dt id="sqlalchemy_media.stores.FileSystemStore.put">
-<code class="descname">put</code><span class="sig-paren">(</span><em>filename: str, stream: Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores/filesystem.html#FileSystemStore.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.FileSystemStore.put" title="Permalink to this definition">¶</a></dt>
+<code class="descname">put</code><span class="sig-paren">(</span><em>filename: str, stream: Union[IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores/filesystem.html#FileSystemStore.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.FileSystemStore.put" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>[Abstract]</strong></p>
 <p>Should be overridden in inherited class and puts the file-like object
 as the given filename in the store.</p>
@@ -1815,7 +1815,7 @@ to share in public space.</p>
 
 <dl class="method">
 <dt id="sqlalchemy_media.stores.S3Store.open">
-<code class="descname">open</code><span class="sig-paren">(</span><em>filename: str</em>, <em>mode: str = 'rb'</em><span class="sig-paren">)</span> &#x2192; Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]<a class="reference internal" href="_modules/sqlalchemy_media/stores/s3.html#S3Store.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.S3Store.open" title="Permalink to this definition">¶</a></dt>
+<code class="descname">open</code><span class="sig-paren">(</span><em>filename: str</em>, <em>mode: str = 'rb'</em><span class="sig-paren">)</span> &#x2192; Union[IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]<a class="reference internal" href="_modules/sqlalchemy_media/stores/s3.html#S3Store.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.S3Store.open" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>[Abstract]</strong></p>
 <p>Should be overridden in inherited class and return a file-like object
 representing the file in the store.</p>
@@ -1840,7 +1840,7 @@ file-like object.</p>
 
 <dl class="method">
 <dt id="sqlalchemy_media.stores.S3Store.put">
-<code class="descname">put</code><span class="sig-paren">(</span><em>filename: str, stream: Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores/s3.html#S3Store.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.S3Store.put" title="Permalink to this definition">¶</a></dt>
+<code class="descname">put</code><span class="sig-paren">(</span><em>filename: str, stream: Union[IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores/s3.html#S3Store.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.S3Store.put" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>[Abstract]</strong></p>
 <p>Should be overridden in inherited class and puts the file-like object
 as the given filename in the store.</p>
@@ -1912,7 +1912,7 @@ to share in public space.</p>
 
 <dl class="method">
 <dt id="sqlalchemy_media.stores.OS2Store.open">
-<code class="descname">open</code><span class="sig-paren">(</span><em>filename: str</em>, <em>mode: str = 'rb'</em><span class="sig-paren">)</span> &#x2192; Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]<a class="reference internal" href="_modules/sqlalchemy_media/stores/os2.html#OS2Store.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.OS2Store.open" title="Permalink to this definition">¶</a></dt>
+<code class="descname">open</code><span class="sig-paren">(</span><em>filename: str</em>, <em>mode: str = 'rb'</em><span class="sig-paren">)</span> &#x2192; Union[IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]<a class="reference internal" href="_modules/sqlalchemy_media/stores/os2.html#OS2Store.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.OS2Store.open" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>[Abstract]</strong></p>
 <p>Should be overridden in inherited class and return a file-like object
 representing the file in the store.</p>
@@ -1937,7 +1937,7 @@ file-like object.</p>
 
 <dl class="method">
 <dt id="sqlalchemy_media.stores.OS2Store.put">
-<code class="descname">put</code><span class="sig-paren">(</span><em>filename: str, stream: Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores/os2.html#OS2Store.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.OS2Store.put" title="Permalink to this definition">¶</a></dt>
+<code class="descname">put</code><span class="sig-paren">(</span><em>filename: str, stream: Union[IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/stores/os2.html#OS2Store.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.OS2Store.put" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>[Abstract]</strong></p>
 <p>Should be overridden in inherited class and puts the file-like object
 as the given filename in the store.</p>
@@ -2058,7 +2058,7 @@ file-like object.</p>
 
 <dl class="method">
 <dt id="sqlalchemy_media.stores.SSHStore.put">
-<code class="descname">put</code><span class="sig-paren">(</span><em>filename: str, stream: Union[typing.IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]</em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/sqlalchemy_media/stores/ssh.html#SSHStore.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.SSHStore.put" title="Permalink to this definition">¶</a></dt>
+<code class="descname">put</code><span class="sig-paren">(</span><em>filename: str, stream: Union[IO[_io.BytesIO], _io.BytesIO, _io.FileIO, _io.TextIOWrapper]</em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/sqlalchemy_media/stores/ssh.html#SSHStore.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.stores.SSHStore.put" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>[Abstract]</strong></p>
 <p>Should be overridden in inherited class and puts the file-like object
 as the given filename in the store.</p>
@@ -2305,7 +2305,7 @@ will be caused bad result !</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">dict[str] -&gt; callable</td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#dict" title="(in Python v3.6)">dict</a>[<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)">str</a>] -&gt; callable</td>
 </tr>
 </tbody>
 </table>
@@ -2945,7 +2945,7 @@ is not provided.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.17.0',
+            VERSION:'0.17.1',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
@@ -2956,6 +2956,7 @@ is not provided.</p>
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
