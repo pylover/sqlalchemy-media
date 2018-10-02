@@ -217,7 +217,6 @@ Checkout the `examples` directory in the root of the repo.
 Contribution
 ------------
 
-- Pull request into ``develop`` branch and rebase if it's behind of the head.
 - Remember the zen of Python(``import this``) before doing anything.
 - Maximum line width is: `79`.
 
