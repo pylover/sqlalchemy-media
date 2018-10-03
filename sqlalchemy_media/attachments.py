@@ -813,10 +813,16 @@ class Image(BaseImage):
         thumbnail_buffer = io.BytesIO()
         store = self.get_store()
         format_ = 'jpeg'
+        extension = '.jpg'
         with store.open(self.path) as original_file:
 
             # generating thumbnail and storing in buffer
             img = PilImage.open(original_file)
+
+            # JPEG does not handle Alpha channel, switch to PNG
+            if img.mode == 'RGBA':
+                format_ = 'png'
+                extension = '.png'
 
             with img:
                 original_size = img.size
@@ -839,8 +845,8 @@ class Image(BaseImage):
         ratio = round(width / original_size[0], ratio_precision)
         thumbnail = self.__thumbnail_type__.create_from(
             thumbnail_buffer,
-            content_type='image/jpeg',
-            extension='.jpg',
+            content_type=f'image/{format_}',
+            extension=extension,
             dimension=(width, height)
         )
         self.thumbnails.append((width, height, ratio, thumbnail))
