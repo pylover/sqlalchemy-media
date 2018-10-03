@@ -213,6 +213,12 @@ Examples
 
 Checkout the `examples` directory in the root of the repo.
 
+Branching
+---------
+
+A new branching model is applied to this repository, which consists of a 
+master branch and release branches.
+
 
 Contribution
 ------------
