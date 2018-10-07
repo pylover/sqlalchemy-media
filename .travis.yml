@@ -32,3 +32,6 @@ deploy:
     distributions: sdist bdist_wheel
     repo: pylover/sqlalchemy-media
     condition: $TRAVIS_PYTHON_VERSION = 3.6
+
+# Required to solve bug: https://github.com/boto/boto/issues/3717
+sudo: false
