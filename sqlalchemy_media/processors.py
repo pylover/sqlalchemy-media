@@ -6,7 +6,7 @@ from PIL import Image as PilImage
 from .descriptors import StreamDescriptor
 from .exceptions import ContentTypeValidationError, DimensionValidationError, \
     AspectRatioValidationError, AnalyzeError
-from .helpers import validate_width_height_ratio, deprecated
+from .helpers import validate_width_height_ratio
 from .mimetypes_ import guess_extension, guess_type, magic_mime_from_buffer
 from .typing_ import Dimension
 
@@ -356,7 +356,11 @@ class ImageAnalyzer(Analyzer):
         # This processor requires seekable stream.
         descriptor.prepare_to_read(backend='memory')
 
-        img = PilImage.open(descriptor)
+        try:
+            img = PilImage.open(descriptor)
+        except OSError:
+            raise AnalyzeError('Cannot identify image file')
+
         context.update(
             width=img.width,
             height=img.height,
