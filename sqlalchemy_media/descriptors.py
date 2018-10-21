@@ -451,6 +451,9 @@ class LocalFileSystemDescriptor(StreamCloserDescriptor):
         )
 
     def readline(self):
+        """
+        Just to be compatible with underlying file-like object.
+        """
         return self._file.readline()
 
 

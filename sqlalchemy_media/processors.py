@@ -359,7 +359,7 @@ class ImageAnalyzer(Analyzer):
         try:
             img = PilImage.open(descriptor)
         except OSError:
-            raise AnalyzeError('Cannot identify image file')
+            raise AnalyzeError('Cannot identify the requested image file')
 
         context.update(
             width=img.width,
