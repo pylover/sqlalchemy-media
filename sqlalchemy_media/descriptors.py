@@ -6,7 +6,7 @@ from urllib.request import urlopen
 
 from .constants import KB
 from .exceptions import MaximumLengthIsReachedError, \
-    DescriptorOperationError
+    DescriptorOperationError, AnalyzeError
 from .helpers import is_uri, copy_stream
 from .mimetypes_ import guess_extension, guess_type
 from .typing_ import FileLike, Attachable
@@ -449,6 +449,12 @@ class LocalFileSystemDescriptor(StreamCloserDescriptor):
             original_filename=original_filename,
             **kwargs
         )
+
+    def readline(self):
+        """
+        Just to be compatible with underlying file-like object.
+        """
+        return self._file.readline()
 
 
 class UrlDescriptor(StreamCloserDescriptor):
