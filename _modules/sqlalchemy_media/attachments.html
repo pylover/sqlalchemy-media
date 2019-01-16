@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.attachments &mdash; sqlalchemy-media 0.17.1 documentation</title>
+  <title>sqlalchemy_media.attachments &mdash; sqlalchemy-media 0.17.4 documentation</title>
   
 
   
@@ -964,10 +964,16 @@
         <span class="n">thumbnail_buffer</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
         <span class="n">store</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_store</span><span class="p">()</span>
         <span class="n">format_</span> <span class="o">=</span> <span class="s1">&#39;jpeg&#39;</span>
+        <span class="n">extension</span> <span class="o">=</span> <span class="s1">&#39;.jpg&#39;</span>
         <span class="k">with</span> <span class="n">store</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">original_file</span><span class="p">:</span>
 
             <span class="c1"># generating thumbnail and storing in buffer</span>
             <span class="n">img</span> <span class="o">=</span> <span class="n">PilImage</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">original_file</span><span class="p">)</span>
+
+            <span class="c1"># JPEG does not handle Alpha channel, switch to PNG</span>
+            <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;RGBA&#39;</span><span class="p">:</span>
+                <span class="n">format_</span> <span class="o">=</span> <span class="s1">&#39;png&#39;</span>
+                <span class="n">extension</span> <span class="o">=</span> <span class="s1">&#39;.png&#39;</span>
 
             <span class="k">with</span> <span class="n">img</span><span class="p">:</span>
                 <span class="n">original_size</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">size</span>
@@ -990,8 +996,8 @@
         <span class="n">ratio</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">width</span> <span class="o">/</span> <span class="n">original_size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ratio_precision</span><span class="p">)</span>
         <span class="n">thumbnail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__thumbnail_type__</span><span class="o">.</span><span class="n">create_from</span><span class="p">(</span>
             <span class="n">thumbnail_buffer</span><span class="p">,</span>
-            <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;image/jpeg&#39;</span><span class="p">,</span>
-            <span class="n">extension</span><span class="o">=</span><span class="s1">&#39;.jpg&#39;</span><span class="p">,</span>
+            <span class="n">content_type</span><span class="o">=</span><span class="n">f</span><span class="s1">&#39;image/</span><span class="si">{format_}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="n">extension</span><span class="o">=</span><span class="n">extension</span><span class="p">,</span>
             <span class="n">dimension</span><span class="o">=</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">thumbnails</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">thumbnail</span><span class="p">))</span>
@@ -1090,7 +1096,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Vahid Mardani.
+        &copy; Copyright 2019, Vahid Mardani
 
     </p>
   </div>
@@ -1109,21 +1115,14 @@
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../',
-            VERSION:'0.17.1',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
 
   
 

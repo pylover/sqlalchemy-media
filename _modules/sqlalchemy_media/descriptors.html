@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sqlalchemy_media.descriptors &mdash; sqlalchemy-media 0.17.1 documentation</title>
+  <title>sqlalchemy_media.descriptors &mdash; sqlalchemy-media 0.17.4 documentation</title>
   
 
   
@@ -157,7 +157,7 @@
 
 <span class="kn">from</span> <span class="nn">.constants</span> <span class="k">import</span> <span class="n">KB</span>
 <span class="kn">from</span> <span class="nn">.exceptions</span> <span class="k">import</span> <span class="n">MaximumLengthIsReachedError</span><span class="p">,</span> \
-    <span class="n">DescriptorOperationError</span>
+    <span class="n">DescriptorOperationError</span><span class="p">,</span> <span class="n">AnalyzeError</span>
 <span class="kn">from</span> <span class="nn">.helpers</span> <span class="k">import</span> <span class="n">is_uri</span><span class="p">,</span> <span class="n">copy_stream</span>
 <span class="kn">from</span> <span class="nn">.mimetypes_</span> <span class="k">import</span> <span class="n">guess_extension</span><span class="p">,</span> <span class="n">guess_type</span>
 <span class="kn">from</span> <span class="nn">.typing_</span> <span class="k">import</span> <span class="n">FileLike</span><span class="p">,</span> <span class="n">Attachable</span>
@@ -599,7 +599,13 @@
             <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">),</span>
             <span class="n">original_filename</span><span class="o">=</span><span class="n">original_filename</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="LocalFileSystemDescriptor.readline"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.LocalFileSystemDescriptor.readline">[docs]</a>    <span class="k">def</span> <span class="nf">readline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Just to be compatible with underlying file-like object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span></div></div>
 
 
 <div class="viewcode-block" id="UrlDescriptor"><a class="viewcode-back" href="../../api.html#sqlalchemy_media.attachments.UrlDescriptor">[docs]</a><span class="k">class</span> <span class="nc">UrlDescriptor</span><span class="p">(</span><span class="n">StreamCloserDescriptor</span><span class="p">):</span>
@@ -696,7 +702,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Vahid Mardani.
+        &copy; Copyright 2019, Vahid Mardani
 
     </p>
   </div>
@@ -715,21 +721,14 @@
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../',
-            VERSION:'0.17.1',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
 
   
 

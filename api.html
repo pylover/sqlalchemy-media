@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; sqlalchemy-media 0.17.1 documentation</title>
+  <title>API Reference &mdash; sqlalchemy-media 0.17.4 documentation</title>
   
 
   
@@ -212,10 +212,10 @@
 <dl class="class">
 <dt id="sqlalchemy_media.attachments.Attachment">
 <em class="property">class </em><code class="descclassname">sqlalchemy_media.attachments.</code><code class="descname">Attachment</code><a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#Attachment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.Attachment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.MutableDict" title="(in SQLAlchemy v1.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.mutable.MutableDict</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.MutableDict" title="(in SQLAlchemy v1.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.mutable.MutableDict</span></code></a></p>
 <p>The base model for an attached file.
 All attachment types will be inherited from this class.</p>
-<p>Actually this is an instance of <a class="reference external" href="http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.MutableDict" title="(in SQLAlchemy v1.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.mutable.MutableDict</span></code></a>
+<p>Actually this is an instance of <a class="reference external" href="https://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.MutableDict" title="(in SQLAlchemy v1.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.mutable.MutableDict</span></code></a>
 which inherited from <a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#dict" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>.</p>
 <div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sqlalchemy_media</span> <span class="kn">import</span> <span class="n">Attachment</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">Attachment</span><span class="p">(</span><span class="n">key1</span><span class="o">=</span><span class="s1">&#39;Value1&#39;</span><span class="p">))</span>
@@ -389,7 +389,7 @@ metadata.</p>
 <dd><p>Converts plain dictionary to instance of this class.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference external" href="http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.MutableDict.coerce" title="(in SQLAlchemy v1.2)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sqlalchemy.ext.mutable.MutableDict.coerce()</span></code></a></p>
+<p class="last"><a class="reference external" href="https://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.MutableDict.coerce" title="(in SQLAlchemy v1.3)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sqlalchemy.ext.mutable.MutableDict.coerce()</span></code></a></p>
 </div>
 </dd></dl>
 
@@ -672,7 +672,7 @@ returned.</p>
 <dl class="class">
 <dt id="sqlalchemy_media.attachments.AttachmentList">
 <em class="property">class </em><code class="descclassname">sqlalchemy_media.attachments.</code><code class="descname">AttachmentList</code><a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#AttachmentList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.AttachmentList" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.attachments.AttachmentCollection" title="sqlalchemy_media.attachments.AttachmentCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy_media.attachments.AttachmentCollection</span></code></a>, <a class="reference external" href="http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.MutableList" title="(in SQLAlchemy v1.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.mutable.MutableList</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.attachments.AttachmentCollection" title="sqlalchemy_media.attachments.AttachmentCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy_media.attachments.AttachmentCollection</span></code></a>, <a class="reference external" href="https://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.MutableList" title="(in SQLAlchemy v1.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.mutable.MutableList</span></code></a></p>
 <p>Used to create a collection of <a class="reference internal" href="#sqlalchemy_media.attachments.Attachment" title="sqlalchemy_media.attachments.Attachment"><code class="xref py py-class docutils literal notranslate"><span class="pre">Attachment</span></code></a></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyList</span><span class="p">(</span><span class="n">AttachmentList</span><span class="p">):</span>
     <span class="n">__item_type__</span> <span class="o">=</span> <span class="n">MyAttachment</span>
@@ -760,7 +760,7 @@ are “mutable”, and emit events up to their parent structure.</div></blockquo
 <dl class="class">
 <dt id="sqlalchemy_media.attachments.AttachmentDict">
 <em class="property">class </em><code class="descclassname">sqlalchemy_media.attachments.</code><code class="descname">AttachmentDict</code><a class="reference internal" href="_modules/sqlalchemy_media/attachments.html#AttachmentDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.attachments.AttachmentDict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.attachments.AttachmentCollection" title="sqlalchemy_media.attachments.AttachmentCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy_media.attachments.AttachmentCollection</span></code></a>, <a class="reference external" href="http://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.MutableDict" title="(in SQLAlchemy v1.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.mutable.MutableDict</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy_media.attachments.AttachmentCollection" title="sqlalchemy_media.attachments.AttachmentCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy_media.attachments.AttachmentCollection</span></code></a>, <a class="reference external" href="https://docs.sqlalchemy.org/en/latest/orm/extensions/mutable.html#sqlalchemy.ext.mutable.MutableDict" title="(in SQLAlchemy v1.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.mutable.MutableDict</span></code></a></p>
 <p>Used to create a dictionary of <a class="reference internal" href="#sqlalchemy_media.attachments.Attachment" title="sqlalchemy_media.attachments.Attachment"><code class="xref py py-class docutils literal notranslate"><span class="pre">Attachment</span></code></a></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyDict</span><span class="p">(</span><span class="n">AttachmentDict</span><span class="p">):</span>
     <span class="n">__item_type__</span> <span class="o">=</span> <span class="n">MyAttachment</span>
@@ -1460,6 +1460,12 @@ this class tries to close the file-like object after calling the
 <p class="last">the <cite>filename</cite> will be passed as <cite>original_filename</cite> to the
 parent class.</p>
 </div>
+<dl class="method">
+<dt id="sqlalchemy_media.descriptors.LocalFileSystemDescriptor.readline">
+<code class="descname">readline</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sqlalchemy_media/descriptors.html#LocalFileSystemDescriptor.readline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sqlalchemy_media.descriptors.LocalFileSystemDescriptor.readline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Just to be compatible with underlying file-like object.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -2923,7 +2929,7 @@ is not provided.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Vahid Mardani.
+        &copy; Copyright 2019, Vahid Mardani
 
     </p>
   </div>
@@ -2942,21 +2948,14 @@ is not provided.</p>
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'0.17.1',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
 
   
 
