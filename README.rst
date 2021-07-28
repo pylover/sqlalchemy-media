@@ -1,6 +1,8 @@
 sqlalchemy-media
 ================
 
+**This project is not maintained anymore, But any new maintainer and or PR will be appreciated.**
+
 
 .. image:: http://img.shields.io/pypi/v/sqlalchemy-media.svg
      :target: https://pypi.python.org/pypi/sqlalchemy-media
@@ -21,8 +23,6 @@ sqlalchemy-media
 .. image:: https://img.shields.io/gitter/room/pylover/sqlalchemy-media.svg
      :target: https://gitter.im/pylover/sqlalchemy-media
 
-
-**This project is not maintained anymore. But any new maintainer and or PR will be appretiated**
 
 Documentation
 -------------
