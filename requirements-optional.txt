@@ -1,5 +1,5 @@
-requests
-Werkzeug
+httpx
+paramiko
 requests-aws4auth >= 0.9
 requests-aliyun >= 0.2.5
-paramiko
+Werkzeug
