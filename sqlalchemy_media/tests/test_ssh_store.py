@@ -12,7 +12,7 @@ from sqlalchemy_media.tests.helpers import MockupSSHTestCase
 class SSHStoreTestCase(MockupSSHTestCase):
     def setUp(self):
         super().setUp()
-        self.base_url = 'http://static1.example.orm'
+        self.base_url = 'http://localhost:9000'
         self.stuff_path = join(self.here, 'stuff')
         self.sample_text_file1 = join(self.stuff_path, 'sample_text_file1.txt')
 
