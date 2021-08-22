@@ -54,7 +54,7 @@ class TempStoreTestCase(SqlAlchemyTestCase):
             self.__class__.__name__,
             self._testMethodName
         )
-        self.base_url = 'http://static1.example.orm'
+        self.base_url = 'http://localhost:9000'
 
         # Remove previous files, if any! to make a clean temp directory:
         if exists(self.temp_path):  # pragma: no cover
