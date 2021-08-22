@@ -243,11 +243,11 @@ class ImageTestCase(TempStoreTestCase):
         person1 = session.query(Person).filter(Person.id == person1.id).one()
         with StoreManager(session):
             self.assertTrue(person1.image.locate().startswith(
-                    'http://static1.example.orm/images/image-'
+                'http://localhost:9000/images/image-'
             ))
             thumbnail = person1.image.get_thumbnail(width=100)
             self.assertTrue(thumbnail.locate().startswith(
-                'http://static1.example.orm/thumbnails/thumbnail-'
+                'http://localhost:9000/thumbnails/thumbnail-'
             ))
 
     def test_image_list(self):
