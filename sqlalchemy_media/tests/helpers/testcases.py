@@ -26,7 +26,7 @@ class SqlAlchemyTestCase(unittest.TestCase):
             bind=self.engine,
             autoflush=False,
             autocommit=False,
-            expire_on_commit=False,
+            expire_on_commit=True,
             twophase=False
         )
         return self.session_factory()
@@ -54,7 +54,7 @@ class TempStoreTestCase(SqlAlchemyTestCase):
             self.__class__.__name__,
             self._testMethodName
         )
-        self.base_url = 'http://localhost:9000'
+        self.base_url = 'http://static1.example.orm'
 
         # Remove previous files, if any! to make a clean temp directory:
         if exists(self.temp_path):  # pragma: no cover
