@@ -1,7 +1,7 @@
 import contextlib
 from wsgiref.simple_server import WSGIRequestHandler, WSGIServer
 
-import requests
+import httpx
 
 from .http import simple_http_server
 
@@ -20,6 +20,6 @@ def mockup_s3_server(bucket, **kwargs):
         url = 'http://localhost:%s' % server.server_address[1]
         # Create the bucket
         bucket_uri = '%s/%s' % (url, bucket)
-        res = requests.put(bucket_uri)
+        res = httpx.put(bucket_uri)
         assert res.status_code == 200
         yield server, bucket_uri
