@@ -20,13 +20,13 @@ class SqlAlchemyTestCase(unittest.TestCase):
         self.Base = declarative_base()
         self.engine = create_engine(self.db_uri, echo=False)
 
-    def create_all_and_get_session(self):
+    def create_all_and_get_session(self, **options):
         self.Base.metadata.create_all(self.engine, checkfirst=True)
         self.session_factory = sessionmaker(
             bind=self.engine,
             autoflush=False,
             autocommit=False,
-            expire_on_commit=True,
+            expire_on_commit=options.get('expire_on_commit', False),
             twophase=False
         )
         return self.session_factory()
