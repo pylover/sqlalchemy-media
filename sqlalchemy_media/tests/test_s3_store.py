@@ -7,30 +7,18 @@ from sqlalchemy import Column, Integer
 
 from sqlalchemy_media.attachments import File, Image as BaseImage, \
     Thumbnail as BaseThumbnail
+from sqlalchemy_media.stores import StoreManager, S3Store
 from sqlalchemy_media.exceptions import S3Error
-from sqlalchemy_media.stores import S3Store
-from sqlalchemy_media.stores import StoreManager
-from sqlalchemy_media.tests.helpers import Json, SqlAlchemyTestCase, \
-    mockup_s3_server
+from sqlalchemy_media.tests.helpers import (
+    TEST_BUCKET,
+    Json,
+    S3TestCase,
+    SqlAlchemyTestCase,
+    create_s3_store,
+)
 
 
-TEST_BUCKET = 'test-bucket'
-TEST_ACCESS_KEY = 'test_access_key'
-TEST_SECRET_KEY = 'test_secret_key'
-TEST_REGION = 'ap-northeast-2'
-
-
-def create_s3_store(bucket=TEST_BUCKET, **kwargs):
-    return S3Store(
-        bucket,
-        TEST_ACCESS_KEY,
-        TEST_SECRET_KEY,
-        TEST_REGION,
-        **kwargs
-    )
-
-
-class S3StoreTestCase(SqlAlchemyTestCase):
+class S3StoreTestCase(SqlAlchemyTestCase, S3TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -38,17 +26,15 @@ class S3StoreTestCase(SqlAlchemyTestCase):
         cls.this_dir = abspath(dirname(__file__))
         cls.stuff_path = join(cls.this_dir, 'stuff')
         cls.dog_jpeg = join(cls.stuff_path, 'dog.jpg')
-        cls.base_url = 'http://localhost:9000/test-bucket'
         cls.sample_text_file1 = join(cls.stuff_path, 'sample_text_file1.txt')
 
     def test_put_from_stream(self):
-        store = create_s3_store(base_url=self.base_url)
         target_filename = 'test_put_from_stream/file_from_stream1.txt'
         content = b'Lorem ipsum dolor sit amet'
         stream = io.BytesIO(content)
-        length = store.put(target_filename, stream)
+        length = self.storage.put(target_filename, stream)
         self.assertEqual(length, len(content))
-        self.assertIsInstance(store.open(target_filename), io.BytesIO)
+        self.assertIsInstance(self.storage.open(target_filename), io.BytesIO)
 
     def test_put_error(self):
         store = create_s3_store(base_url=self.base_url[:-2])
@@ -95,40 +81,37 @@ class S3StoreTestCase(SqlAlchemyTestCase):
             self.assertTrue(thumbnail.reproducible, True)
 
     def test_delete(self):
-        store = create_s3_store(base_url=self.base_url)
         target_filename = 'test_delete/sample_text_file1.txt'
         with open(self.sample_text_file1, 'rb') as f:
-            length = store.put(target_filename, f)
+            length = self.storage.put(target_filename, f)
         self.assertEqual(length, getsize(self.sample_text_file1))
-        self.assertIsInstance(store.open(target_filename), io.BytesIO)
+        self.assertIsInstance(self.storage.open(target_filename), io.BytesIO)
 
-        store.delete(target_filename)
+        self.storage.delete(target_filename)
 
         with self.assertRaises(S3Error):
-            store.open(target_filename)
+            self.storage.open(target_filename)
 
     def test_delete_error(self):
-        store = create_s3_store(base_url=self.base_url)
         wrong_store = create_s3_store(base_url=self.base_url[:-2])
         target_filename = 'test_delete/sample_text_file1.txt'
         with open(self.sample_text_file1, 'rb') as f:
-            length = store.put(target_filename, f)
+            length = self.storage.put(target_filename, f)
         self.assertEqual(length, getsize(self.sample_text_file1))
-        self.assertIsInstance(store.open(target_filename), io.BytesIO)
+        self.assertIsInstance(self.storage.open(target_filename), io.BytesIO)
 
         with self.assertRaises(S3Error):
             wrong_store.delete(target_filename)
 
     def test_open(self):
-        store = create_s3_store(base_url=self.base_url)
         target_filename = 'test_delete/sample_text_file1.txt'
         with open(self.sample_text_file1, 'rb') as f:
-            length = store.put(target_filename, f)
+            length = self.storage.put(target_filename, f)
         self.assertEqual(length, getsize(self.sample_text_file1))
-        self.assertIsInstance(store.open(target_filename), io.BytesIO)
+        self.assertIsInstance(self.storage.open(target_filename), io.BytesIO)
 
         # Reading
-        with store.open(target_filename, mode='rb') as stored_file, \
+        with self.storage.open(target_filename, mode='rb') as stored_file, \
                 open(self.sample_text_file1, mode='rb') as original_file:
             self.assertEqual(stored_file.read(), original_file.read())
 
@@ -198,12 +181,7 @@ class S3StoreTestCase(SqlAlchemyTestCase):
             )
 
     def test_default_base_url(self):
-        store = S3Store(
-            TEST_BUCKET,
-            TEST_ACCESS_KEY,
-            TEST_SECRET_KEY,
-            TEST_REGION
-        )
+        store = create_s3_store()
         assert store.base_url == 'https://%s.s3.amazonaws.com' % TEST_BUCKET
 
     def test_public_base_url_strip(self):
