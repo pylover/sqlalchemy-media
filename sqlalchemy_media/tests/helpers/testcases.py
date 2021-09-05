@@ -10,6 +10,9 @@ from sqlalchemy.orm import sessionmaker
 
 from sqlalchemy_media import StoreManager, FileSystemStore
 
+from .config import TEST_BUCKET
+from .s3 import mockup_s3_server, create_s3_store
+
 
 class SqlAlchemyTestCase(unittest.TestCase):
     @classmethod
@@ -20,16 +23,34 @@ class SqlAlchemyTestCase(unittest.TestCase):
         self.Base = declarative_base()
         self.engine = create_engine(self.db_uri, echo=False)
 
-    def create_all_and_get_session(self, **options):
+    def create_all_and_get_session(self, expire_on_commit: bool = False):
+        """
+        A factory method for making a SQLAlchemy session factory object.
+        :param expire_on_commit: @see: https://docs.sqlalchemy.org/en/14/orm/session_api.html?highlight=expire_on_commit#sqlalchemy.orm.Session.params.expire_on_commit
+        """
         self.Base.metadata.create_all(self.engine, checkfirst=True)
         self.session_factory = sessionmaker(
             bind=self.engine,
             autoflush=False,
             autocommit=False,
-            expire_on_commit=options.get('expire_on_commit', False),
+            expire_on_commit=expire_on_commit,
             twophase=False
         )
         return self.session_factory()
+
+
+class S3TestCase(unittest.TestCase):
+    """Mixin for runnning the S3 server"""
+
+    def run(self, result):
+        with mockup_s3_server(bucket=TEST_BUCKET) as (server, bucket_uri):
+            self.storage = create_s3_store(
+                bucket=TEST_BUCKET, base_url=bucket_uri
+            )
+            self.bucket_name = TEST_BUCKET
+            self.server = server
+            self.base_url = bucket_uri
+            super(S3TestCase, self).run(result)
 
 
 class TempStoreTestCase(SqlAlchemyTestCase):
