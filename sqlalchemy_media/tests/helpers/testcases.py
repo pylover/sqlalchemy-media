@@ -39,20 +39,6 @@ class SqlAlchemyTestCase(unittest.TestCase):
         return self.session_factory()
 
 
-class S3TestCase(unittest.TestCase):
-    """Mixin for runnning the S3 server"""
-
-    def run(self, result):
-        with mockup_s3_server(bucket=TEST_BUCKET) as (server, bucket_uri):
-            self.storage = create_s3_store(
-                bucket=TEST_BUCKET, base_url=bucket_uri
-            )
-            self.bucket_name = TEST_BUCKET
-            self.server = server
-            self.base_url = bucket_uri
-            super(S3TestCase, self).run(result)
-
-
 class TempStoreTestCase(SqlAlchemyTestCase):
     @classmethod
     def setUpClass(cls):
