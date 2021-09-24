@@ -4,6 +4,11 @@ from os.path import splitext
 from tempfile import TemporaryFile, NamedTemporaryFile
 from urllib.request import urlopen
 
+try:
+    from werkzeug.datastructures import FileStorage as WerkzeugFileStorage
+except ImportError:
+    WerkzeugFileStorage = None
+
 from .constants import KB
 from .exceptions import MaximumLengthIsReachedError, \
     DescriptorOperationError, AnalyzeError
@@ -412,6 +417,19 @@ class StreamDescriptor(BaseDescriptor):
         self.seek(position)
 
 
+class WerkzeugStreamDescriptor(StreamDescriptor):
+    def __init__(self, stream: WerkzeugFileStorage, **kwargs):
+        self._file = stream
+        super().__init__(stream,
+                         original_filename=kwargs.get('original_filename') or stream.filename,
+                         content_type=kwargs.get('content_type') or stream.content_type,
+                         content_length=kwargs.get('content_length') or stream.content_length)
+
+    @property
+    def filename(self):
+        return self._file.filename
+
+
 class StreamCloserDescriptor(StreamDescriptor):
     """
     The same as the :class:`.StreamDescriptor`, the only difference is that
@@ -535,6 +553,8 @@ class AttachableDescriptor(BaseDescriptor):
             return_type = \
                 UrlDescriptor if is_uri(attachable) \
                 else LocalFileSystemDescriptor
+        elif WerkzeugFileStorage and isinstance(attachable, WerkzeugFileStorage):
+            return_type = WerkzeugStreamDescriptor
         else:
             return_type = StreamDescriptor
 

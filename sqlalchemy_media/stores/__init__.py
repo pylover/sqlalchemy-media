@@ -84,24 +84,34 @@ class StoreManager(object):
         self.delete_orphan = delete_orphan
         self.reset_files_state()
 
+    @classmethod
+    def push_new(cls, session, delete_orphan=False):
+        return cls(session, delete_orphan=delete_orphan).push()
+
+    def push(self):
+        self.bind_events()
+        _context_stacks.setdefault(get_context_id(), []).append(self)
+        return self
+
+    def pop(self):
+        _context_stacks.setdefault(get_context_id(), []).pop()
+        self.unbind_events()
+        self.cleanup()
+
     def __enter__(self):
         """
         Enters the context: bind events and push itself into context stack.
 
         :return: self
         """
-        self.bind_events()
-        _context_stacks.setdefault(get_context_id(), []).append(self)
-        return self
+        return self.push()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """
         Destroy the context, pop itself from context stack and unbind all
         events.
         """
-        _context_stacks.setdefault(get_context_id(), []).pop()
-        self.unbind_events()
-        self.cleanup()
+        self.pop()
 
     @property
     def stores(self) -> dict:
