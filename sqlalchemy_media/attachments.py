@@ -1,5 +1,4 @@
 import copy
-import io
 import re
 import time
 import uuid
@@ -7,12 +6,10 @@ from os.path import splitext
 from typing import Hashable, Tuple, List, Iterable
 
 from sqlalchemy.ext.mutable import MutableList, MutableDict
-from PIL import Image as PilImage
 
 from .constants import MB, KB
 from .descriptors import AttachableDescriptor
 from .exceptions import ThumbnailIsNotAvailableError
-from .helpers import validate_width_height_ratio
 from .stores import StoreManager, Store
 from .typing_ import Attachable, Dimension
 
@@ -803,54 +800,20 @@ class Image(BaseImage):
         :return: the Newly generated :class:`.Thumbnail` instance.
 
         """
+        from .thumbnails import generate_thumbnail  # avoid circular import
 
-        # Validating parameters
-        width, height, ratio = validate_width_height_ratio(
-            width, height, ratio
-        )
-
-        # opening the original file
-        thumbnail_buffer = io.BytesIO()
         store = self.get_store()
-        format_ = 'jpeg'
-        extension = '.jpg'
         with store.open(self.path) as original_file:
+            width, height, ratio, thumbnail = generate_thumbnail(
+                original_file,
+                width,
+                height,
+                ratio,
+                ratio_precision,
+                self.__thumbnail_type__,
+            )
 
-            # generating thumbnail and storing in buffer
-            img = PilImage.open(original_file)
-
-            # JPEG does not handle Alpha channel, switch to PNG
-            if img.mode == 'RGBA':
-                format_ = 'png'
-                extension = '.png'
-
-            with img:
-                original_size = img.size
-
-                if callable(width):
-                    width = width(original_size)
-                if callable(height):
-                    height = height(original_size)
-
-                width = int(width)
-                height = int(height)
-
-                thumbnail_image = img.resize((width, height))
-                thumbnail_image.save(thumbnail_buffer, format_)
-
-        thumbnail_buffer.seek(0)
-        if self.thumbnails is None:
-            self['thumbnails'] = []
-
-        ratio = round(width / original_size[0], ratio_precision)
-        thumbnail = self.__thumbnail_type__.create_from(
-            thumbnail_buffer,
-            content_type=f'image/{format_}',
-            extension=extension,
-            dimension=(width, height)
-        )
         self.thumbnails.append((width, height, ratio, thumbnail))
-
         return thumbnail
 
     def get_thumbnail(
