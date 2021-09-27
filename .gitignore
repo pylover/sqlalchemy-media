@@ -76,10 +76,8 @@ docs/doctest
 docs/doctrees
 docs/html
 htmlcov
-/examples/cherrypy-demo/avatars
-/examples/cherrypy-demo/demo.db
-/examples/flask/demo.db
-/examples/flask/static/avatars/
+/examples/**/demo.db
+/examples/**/static/avatars/
 
 .ropeproject
 

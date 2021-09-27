@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Flask SQLAlchemy-Media Demo</title>
+  </head>
+
+  <body>
+    <h1>Flask SQLAlchemy-Media Demo</h1>
+
+    <h2>Avatars</h2>
+    {% if not people %}
+      <p>No avatars have been added yet, add one below!</p>
+    {% else %}
+      <ul>
+        {% for person in people %}
+          <li>
+            <h3>{{ person.name }}</h3>
+            <img src="{{ person.avatar.locate() }}" alt="{{ person.name }}">
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <hr />
+    <h2>Add Avatar</h2>
+    <form method="POST" action="/" enctype="multipart/form-data">
+      {{ form.hidden_tag() }}
+      <p>{{ form.avatar() }}</p>
+      <p>{{ form.name() }}</p>
+      <p>{{ form.submit() }}</p>
+    </form>
+  </body>
+</html>
