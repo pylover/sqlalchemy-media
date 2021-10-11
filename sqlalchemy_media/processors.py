@@ -1,13 +1,15 @@
 import io
-from typing import Iterable
+from typing import Iterable, Type
 
-from PIL import Image as PilImage
+from PIL import Image as PilImage, ImageOps as PilImageOps
 
+from .attachments import Thumbnail
 from .descriptors import StreamDescriptor
 from .exceptions import ContentTypeValidationError, DimensionValidationError, \
     AspectRatioValidationError, AnalyzeError
 from .helpers import validate_width_height_ratio
 from .mimetypes_ import guess_extension, guess_type, magic_mime_from_buffer
+from .thumbnails import generate_thumbnail
 from .typing_ import Dimension
 
 
@@ -251,6 +253,67 @@ class ImageValidator(ContentTypeValidator):
             )
 
 
+class ExifTransposeProcessor(Processor):
+    """
+    Rotates the image so that it's always oriented correctly.
+
+    NOTE: this function may strip EXIF data from the stored image.
+    """
+    def process(self, descriptor: StreamDescriptor, context: dict) -> None:
+        img = PilImage.open(descriptor)
+        transposed = PilImageOps.exif_transpose(img)
+        context.update(height=transposed.height, width=transposed.width)
+
+        output_buffer = io.BytesIO()
+        transposed.save(output_buffer, format=img.format)
+        output_buffer.seek(0)
+        descriptor.replace(output_buffer, position=0, **context)
+
+
+class ThumbnailProcessor(Processor):
+    """
+    Generates a thumbnail of the image.
+
+    NOTE: Only pass one of `width`, `height`, or `ratio`.
+
+    Example usage to generate three different thumbnails::
+
+        class YourImage(Image):
+            __pre_processors__ = [
+                ExifTransposeProcessor(),
+                ThumbnailProcessor(height=100),
+                ThumbnailProcessor(width=200),
+                ThumbnailProcessor(ratio=0.5),
+            ]
+    """
+    def __init__(self,
+                 width: int = None,
+                 height: int = None,
+                 ratio: float = None,
+                 ratio_precision: int = 5,
+                 thumbnail_type: Type[Thumbnail] = Thumbnail):
+        self.width = width
+        self.height = height
+        self.ratio = ratio
+        self.ratio_precision = ratio_precision
+        self.thumbnail_type = thumbnail_type
+
+    def process(self, descriptor: StreamDescriptor, context: dict) -> None:
+        thumbnails = context.setdefault('thumbnails', [])
+        thumbnails.append(generate_thumbnail(
+            descriptor,
+            self.width,
+            self.height,
+            self.ratio,
+            self.ratio_precision,
+            self.thumbnail_type,
+        ))
+
+        # prepare for next processor, calling this method is not bad and just
+        # uses the memory temporary.
+        descriptor.prepare_to_read(backend='memory')
+
+
 class ImageProcessor(Processor):
     """
     Used to re-sampling, resizing, reformatting bitmaps.
@@ -263,7 +326,7 @@ class ImageProcessor(Processor):
          preserved.
 
 
-    :param format: The image format. i.e jpeg, gif, png.
+    :param fmt: The image format. i.e jpeg, gif, png.
     :param width: The new image width.
     :param height: The new image height.
     :param crop: Used to crop the image.
