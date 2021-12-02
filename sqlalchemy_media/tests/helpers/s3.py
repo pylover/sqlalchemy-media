@@ -1,8 +1,12 @@
+import unittest
 import contextlib
 from wsgiref.simple_server import WSGIRequestHandler, WSGIServer
 
-import requests
+import httpx
 
+from sqlalchemy_media.stores import S3Store
+
+from .config import TEST_ACCESS_KEY, TEST_BUCKET, TEST_REGION, TEST_SECRET_KEY
 from .http import simple_http_server
 
 
@@ -13,13 +17,37 @@ def mockup_s3_server(bucket, **kwargs):
     mock_app.debug = False
     with simple_http_server(
         WSGIRequestHandler,
-        server_class=WSGIServer, 
-        app=mock_app, 
+        server_class=WSGIServer,
+        app=mock_app,
         **kwargs
     ) as server:
         url = 'http://localhost:%s' % server.server_address[1]
         # Create the bucket
         bucket_uri = '%s/%s' % (url, bucket)
-        res = requests.put(bucket_uri)
+        res = httpx.put(bucket_uri)
         assert res.status_code == 200
         yield server, bucket_uri
+
+
+def create_s3_store(bucket=TEST_BUCKET, **kwargs):
+    return S3Store(
+        bucket,
+        TEST_ACCESS_KEY,
+        TEST_SECRET_KEY,
+        TEST_REGION,
+        **kwargs
+    )
+
+
+class S3TestCase(unittest.TestCase):
+    """Mixin for runnning the S3 server"""
+
+    def run(self, result):
+        with mockup_s3_server(bucket=TEST_BUCKET) as (server, bucket_uri):
+            self.storage = create_s3_store(
+                bucket=TEST_BUCKET, base_url=bucket_uri
+            )
+            self.bucket_name = TEST_BUCKET
+            self.server = server
+            self.base_url = bucket_uri
+            super(S3TestCase, self).run(result)

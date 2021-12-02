@@ -1,5 +1,5 @@
-requests
-Werkzeug
-requests-aws4auth >= 0.9
-requests-aliyun >= 0.2.5
+httpx
 paramiko
+git+https://github.com/tedder/requests-aws4auth.git@master
+requests-aliyun >= 0.2.5
+Werkzeug

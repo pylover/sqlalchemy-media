@@ -2,9 +2,9 @@ from io import BytesIO
 
 # Importing optional stuff required by http based store
 try:
-    import requests
+    import httpx
 except ImportError:  # pragma: no cover
-    requests = None
+    httpx = None
 
 
 # Importing optional stuff required by S3 store
@@ -38,7 +38,7 @@ class S3Store(Store):
     def __init__(self, bucket: str, access_key: str, secret_key: str,
                  region: str, max_age: int = DEFAULT_MAX_AGE,
                  prefix: str = None, base_url: str = None,
-                 cdn_url: str = None, cdn_prefix_ignore: bool = False, 
+                 cdn_url: str = None, cdn_prefix_ignore: bool = False,
                  acl: str = 'private'):
         self.bucket = bucket
         self.access_key = access_key
@@ -68,7 +68,7 @@ class S3Store(Store):
     def _get_s3_url(self, filename: str):
         return '{0}/{1}'.format(self.base_url, filename)
 
-    def _upload_file(self, url: str, data: str, content_type: str,
+    def _upload_file(self, url: str, content: str, content_type: str,
                      rrs: bool = False):
         ensure_aws4auth()
 
@@ -84,23 +84,23 @@ class S3Store(Store):
         }
         if content_type:
             headers['Content-Type'] = content_type
-        res = requests.put(url, auth=auth, data=data, headers=headers)
+        res = httpx.put(url, auth=auth, content=content, headers=headers)
         if not 200 <= res.status_code < 300:
             raise S3Error(res.text)
 
     def put(self, filename: str, stream: FileLike):
         url = self._get_s3_url(filename)
-        data = stream.read()
+        content = stream.read()
         content_type = getattr(stream, 'content_type', None)
         rrs = getattr(stream, 'reproducible', False)
-        self._upload_file(url, data, content_type, rrs=rrs)
-        return len(data)
+        self._upload_file(url, content, content_type, rrs=rrs)
+        return len(content)
 
     def delete(self, filename: str):
         ensure_aws4auth()
         url = self._get_s3_url(filename)
         auth = AWS4Auth(self.access_key, self.secret_key, self.region, 's3')
-        res = requests.delete(url, auth=auth)
+        res = httpx.delete(url, auth=auth)
         if not 200 <= res.status_code < 300:
             raise S3Error(res.text)
 
@@ -108,7 +108,7 @@ class S3Store(Store):
         ensure_aws4auth()
         url = self._get_s3_url(filename)
         auth = AWS4Auth(self.access_key, self.secret_key, self.region, 's3')
-        res = requests.get(url, auth=auth)
+        res = httpx.get(url, auth=auth)
         if not 200 <= res.status_code < 300:
             raise S3Error(res.text)
         return BytesIO(res.content)
