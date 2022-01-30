@@ -18,6 +18,12 @@ class GCPStore(Store):
     """
 
     def __init__(self, bucket: str, service_account_json: str, acl: str = 'private'):
+        """
+        Initialize GCPStore
+        :param bucket: bucket name
+        :param service_account_json: service account json file(credential)
+        :param acl: public or private
+        """
         self.bucket = bucket
         self._storage_client = storage.Client.from_service_account_json(service_account_json)
         self.acl = acl
