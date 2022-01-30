@@ -70,7 +70,7 @@ def ensure_paramiko():
         raise OptionalPackageRequirementError('paramiko')
 
 
-# paramiko
+# google-cloud-storage
 try:
     import google.cloud.storage
 except ImportError:  # pragma: no cover
