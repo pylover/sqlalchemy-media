@@ -12,14 +12,14 @@ from .base import Store
 from ..typing_ import FileLike
 
 
-class GCPStore(Store):
+class GoogleCloudStorge(Store):
     """
     Google Cloud Storage Implements Store base.
     """
 
     def __init__(self, bucket: str, service_account_json: str, acl: str = 'private'):
         """
-        Initialize GCPStore
+        Initialize GoogleCloudStorge
         :param bucket: bucket name
         :param service_account_json: service account json file(credential)
         :param acl: public or private
