@@ -12,7 +12,7 @@ from .base import Store
 from ..typing_ import FileLike
 
 
-class GoogleCloudStorge(Store):
+class GoogleCloudStorage(Store):
     """
     Google Cloud Storage Implements Store base.
     """
@@ -73,7 +73,7 @@ class GoogleCloudStorge(Store):
         try:
             bucket = self._get_or_create_bucket()
             blob = bucket.blob(filename)
-            file_byte = blob.download_to_filename()
+            file_byte = blob.download_as_bytes()
             return BytesIO(bytes(file_byte))
         except Exception as e:
             raise GCPError(e)

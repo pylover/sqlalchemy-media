@@ -4,7 +4,7 @@ from unittest.mock import Mock
 
 from google.cloud import storage
 
-from sqlalchemy_media.stores.GoogleCloudStorge import GoogleCloudStorge
+from sqlalchemy_media.stores.GoogleCloudStorage import GoogleCloudStorge
 from sqlalchemy_media.tests.helpers import SqlAlchemyTestCase
 
 FAKE_BUCKET = 'fake-bucket'
