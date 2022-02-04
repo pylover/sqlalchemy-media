@@ -64,7 +64,8 @@ Overview
 - Analyzing files & images using ``magic`` and ``wand``.
 - Validating ``mimetype``, ``width``, ``height`` and image ``ratio``.
 - Automatically resize & reformat images before store.
-- Thanks `@YukSeungChan <https://github.com/YukSeungChan>`_, for implementing the ``S3Store`` and ``OS2Store``.
+- Thanks to `@YukSeungChan <https://github.com/YukSeungChan>`_, for implementing the ``S3Store`` and ``OS2Store``.
+- Thanks to `@ribrea <https://github.com/ribrea>`_, for Google cloud storage support.
 - SSH/SFTP Store
 
 
