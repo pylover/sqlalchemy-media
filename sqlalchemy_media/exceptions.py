@@ -102,7 +102,6 @@ class OptionalPackageRequirementError(SqlAlchemyMediaException):
     ]
 
     def __init__(self, package_name: str):
-
         # Searching for package name in requirements-optional.txt
         packages = [l for l in self.__optional_packages__ if package_name in l]
 
@@ -153,4 +152,10 @@ class OS2Error(SqlAlchemyMediaException):
 class SSHError(SqlAlchemyMediaException):
     """
     Raises when the ssh command is failed.
+    """
+
+
+class GCPError(SqlAlchemyMediaException):
+    """
+    Raises when the gcp command is failed.
     """

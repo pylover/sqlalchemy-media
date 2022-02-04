@@ -13,8 +13,6 @@ is not provided.
 
 from .exceptions import OptionalPackageRequirementError
 
-
-
 # requests-aws4auth
 try:
     from requests_aws4auth import AWS4Auth
@@ -70,3 +68,22 @@ def ensure_paramiko():
 
     if paramiko is None:  # pragma: no cover
         raise OptionalPackageRequirementError('paramiko')
+
+
+# google-cloud-storage
+try:
+    import google.cloud.storage
+except ImportError:  # pragma: no cover
+    google.cloud.storage = None
+
+
+def ensure_gcs():
+    """
+
+    .. warning:: :exc:`.OptionalPackageRequirementError` will be raised if
+                 ``google-cloud-storage`` is not installed.
+
+    """
+
+    if google.cloud.storage is None:  # pragma: no cover
+        raise OptionalPackageRequirementError('google-cloud-storage')
