@@ -3,13 +3,8 @@ sqlalchemy-media
 
 **This project is not maintained anymore, But any new maintainer and or PR will be appreciated.**
 
-
 .. image:: http://img.shields.io/pypi/v/sqlalchemy-media.svg
      :target: https://pypi.python.org/pypi/sqlalchemy-media
-
-.. image:: https://requires.io/github/pylover/sqlalchemy-media/requirements.svg?branch=master
-     :target: https://requires.io/github/pylover/sqlalchemy-media/requirements/?branch=master
-     :alt: Requirements Status
 
 .. image:: https://travis-ci.org/pylover/sqlalchemy-media.svg?branch=master
      :target: https://travis-ci.org/pylover/sqlalchemy-media
@@ -22,6 +17,16 @@ sqlalchemy-media
 
 .. image:: https://img.shields.io/gitter/room/pylover/sqlalchemy-media.svg
      :target: https://gitter.im/pylover/sqlalchemy-media
+
+.. image:: https://pepy.tech/badge/sqlalchemy-media
+     :target https://pepy.tech/project/sqlalchemy-media
+
+.. image:: https://pepy.tech/badge/sqlalchemy-media/month
+     :target https://pepy.tech/project/sqlalchemy-media
+
+.. image:: https://pepy.tech/badge/sqlalchemy-media/week
+     :target https://pepy.tech/project/sqlalchemy-media
+
 
 
 Documentation
