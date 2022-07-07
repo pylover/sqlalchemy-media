@@ -19,13 +19,13 @@ sqlalchemy-media
      :target: https://gitter.im/pylover/sqlalchemy-media
 
 .. image:: https://pepy.tech/badge/sqlalchemy-media
-     :target https://pepy.tech/project/sqlalchemy-media
+     :target: https://pepy.tech/project/sqlalchemy-media
 
 .. image:: https://pepy.tech/badge/sqlalchemy-media/month
-     :target https://pepy.tech/project/sqlalchemy-media
+     :target: https://pepy.tech/project/sqlalchemy-media
 
 .. image:: https://pepy.tech/badge/sqlalchemy-media/week
-     :target https://pepy.tech/project/sqlalchemy-media
+     :target: https://pepy.tech/project/sqlalchemy-media
 
 
 
