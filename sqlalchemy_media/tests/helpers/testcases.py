@@ -49,6 +49,8 @@ class TempStoreTestCase(SqlAlchemyTestCase):
     def setUp(self):
         self.temp_path = join(self.this_dir, 'temp', self.__class__.__name__,
                               self._testMethodName)
+        self.db_uri = 'sqlite:///' + self.temp_path + '/database.db'
+
         self.sys_temp_path = join(
             '/tmp/sa-media-tests',
             self.__class__.__name__,
