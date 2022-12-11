@@ -394,9 +394,13 @@ class ImageProcessor(Processor):
         # Cropping
         if self.crop:
             img = img.crop(self.crop)
-        if img.mode in ("RGBA", "P"):
-            img = img.convert("RGB")
-        img.save(output_buffer, format=format_)
+        try:
+            img.save(output_buffer, format=format_)
+        except (OSError):
+            if img.mode in ("RGBA", "P"):
+                img = img.convert("RGB")
+            img.save(output_buffer, format=format_)
+            
         self._update_context(img, format_, context)
         output_buffer.seek(0)
         descriptor.replace(output_buffer, position=0, **context)
