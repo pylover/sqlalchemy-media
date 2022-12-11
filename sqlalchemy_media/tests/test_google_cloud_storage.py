@@ -12,7 +12,7 @@ FAKE_CREDENTIALS = 'fake-credentials'
 FAKE_REGION = 'fake-region'
 
 
-class TestGoogleCloudStorgeObject(SqlAlchemyTestCase):
+class TestGoogleCloudStorageObject(SqlAlchemyTestCase):
     @mock.patch('sqlalchemy_media.stores.GoogleCloudStorage.storage')
     def test_upload_file(self, mock_storage: storage):
         mock_storage.Client.return_value = Mock()
