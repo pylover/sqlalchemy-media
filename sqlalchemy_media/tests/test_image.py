@@ -245,10 +245,18 @@ class ImageTestCase(TempStoreTestCase):
 
             session.add(person1)
             session.commit()
+            # save the id of this person so we can query it in a new session later.
+            # failing to do so forces us to use `person1` after this `with` statement
+            # is over and the session is closed, resulting in the error from
+            # https://docs.sqlalchemy.org/en/14/errors.html#parent-instance-x-is-not-bound-to-a-session-lazy-load-deferred-load-refresh-etc-operation-cannot-proceed
+            # while the with statements could be combined, this preserves the unit existing tests as much as possible 
 
-        session = self.create_all_and_get_session()
-        person1 = session.query(Person).filter(Person.id == person1.id).one()
+            person1id = person1.id
+
+        session = self.get_session()
         with StoreManager(session):
+
+            person1 = session.query(Person).filter(Person.id == person1id).one()
             self.assertTrue(person1.image.locate().startswith(
                     'http://static1.example.orm/images/image-'
             ))
