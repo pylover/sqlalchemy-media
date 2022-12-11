@@ -59,12 +59,15 @@ class ImageTestCase(TempStoreTestCase):
                 person1.image.get_thumbnail,
                 width=100
             )
+            self.assertEqual(0, len(person1.image.thumbnails))
 
             # Auto generate
             thumbnail = person1.image.get_thumbnail(
                 width=100,
                 auto_generate=True
             )
+            self.assertEqual(1, len(person1.image.thumbnails))
+
             self.assertIsInstance(thumbnail, Thumbnail)
 
             self.assertEqual(thumbnail.content_type, 'image/jpeg')
@@ -78,6 +81,8 @@ class ImageTestCase(TempStoreTestCase):
 
             # Generate thumbnail with height
             thumbnail = person1.image.generate_thumbnail(height=20)
+            self.assertEqual(2, len(person1.image.thumbnails))
+
             self.assertEqual(thumbnail.width, 26)
             second_thumbnail_filename = join(self.temp_path, thumbnail.path)
             self.assertTrue(exists(second_thumbnail_filename))
@@ -86,6 +91,8 @@ class ImageTestCase(TempStoreTestCase):
 
             # Generate thumbnail with ratio
             thumbnail = person1.image.generate_thumbnail(ratio=1 / 3)
+            self.assertEqual(3, len(person1.image.thumbnails))
+
             self.assertEqual(thumbnail.width, 213)
             self.assertEqual(thumbnail.height, 160)
             third_thumbnail_filename = join(self.temp_path, thumbnail.path)
@@ -238,14 +245,22 @@ class ImageTestCase(TempStoreTestCase):
 
             session.add(person1)
             session.commit()
+            # save the id of this person so we can query it in a new session later.
+            # failing to do so forces us to use `person1` after this `with` statement
+            # is over and the session is closed, resulting in the error from
+            # https://docs.sqlalchemy.org/en/14/errors.html#parent-instance-x-is-not-bound-to-a-session-lazy-load-deferred-load-refresh-etc-operation-cannot-proceed
+            # while the with statements could be combined, this preserves the unit existing tests as much as possible 
 
-        session = self.create_all_and_get_session()
-        person1 = session.query(Person).filter(Person.id == person1.id).one()
+            person1id = person1.id
+
+        session = self.get_session()
         with StoreManager(session):
-            self.assertTrue(person1.image.locate().startswith(
+
+            person1_retrieved = session.query(Person).filter(Person.id == person1id).one()
+            self.assertTrue(person1_retrieved.image.locate().startswith(
                     'http://static1.example.orm/images/image-'
             ))
-            thumbnail = person1.image.get_thumbnail(width=100)
+            thumbnail = person1_retrieved.image.get_thumbnail(width=100)
             self.assertTrue(thumbnail.locate().startswith(
                 'http://static1.example.orm/thumbnails/thumbnail-'
             ))
