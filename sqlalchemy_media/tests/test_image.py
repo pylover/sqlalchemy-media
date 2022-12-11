@@ -59,12 +59,15 @@ class ImageTestCase(TempStoreTestCase):
                 person1.image.get_thumbnail,
                 width=100
             )
+            self.assertEqual(0, len(person1.image.thumbnails))
 
             # Auto generate
             thumbnail = person1.image.get_thumbnail(
                 width=100,
                 auto_generate=True
             )
+            self.assertEqual(1, len(person1.image.thumbnails))
+
             self.assertIsInstance(thumbnail, Thumbnail)
 
             self.assertEqual(thumbnail.content_type, 'image/jpeg')
@@ -78,6 +81,8 @@ class ImageTestCase(TempStoreTestCase):
 
             # Generate thumbnail with height
             thumbnail = person1.image.generate_thumbnail(height=20)
+            self.assertEqual(2, len(person1.image.thumbnails))
+
             self.assertEqual(thumbnail.width, 26)
             second_thumbnail_filename = join(self.temp_path, thumbnail.path)
             self.assertTrue(exists(second_thumbnail_filename))
@@ -86,6 +91,8 @@ class ImageTestCase(TempStoreTestCase):
 
             # Generate thumbnail with ratio
             thumbnail = person1.image.generate_thumbnail(ratio=1 / 3)
+            self.assertEqual(3, len(person1.image.thumbnails))
+
             self.assertEqual(thumbnail.width, 213)
             self.assertEqual(thumbnail.height, 160)
             third_thumbnail_filename = join(self.temp_path, thumbnail.path)
