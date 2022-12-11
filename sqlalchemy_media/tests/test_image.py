@@ -256,11 +256,11 @@ class ImageTestCase(TempStoreTestCase):
         session = self.get_session()
         with StoreManager(session):
 
-            person1 = session.query(Person).filter(Person.id == person1id).one()
-            self.assertTrue(person1.image.locate().startswith(
+            person1_retrieved = session.query(Person).filter(Person.id == person1id).one()
+            self.assertTrue(person1_retrieved.image.locate().startswith(
                     'http://static1.example.orm/images/image-'
             ))
-            thumbnail = person1.image.get_thumbnail(width=100)
+            thumbnail = person1_retrieved.image.get_thumbnail(width=100)
             self.assertTrue(thumbnail.locate().startswith(
                 'http://static1.example.orm/thumbnails/thumbnail-'
             ))
