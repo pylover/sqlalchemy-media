@@ -773,7 +773,11 @@ class Image(BaseImage):
         with ``auto_generate=True`` to fill it.
 
         """
-        return self.get('thumbnails')
+        return self.get('thumbnails', [])
+
+    @thumbnails.setter
+    def thumbnails(self, value):
+        self['thumbnails'] = value
 
     def generate_thumbnail(
             self,
@@ -813,7 +817,7 @@ class Image(BaseImage):
                 self.__thumbnail_type__,
             )
 
-        self.thumbnails.append((width, height, ratio, thumbnail))
+        self.thumbnails = self.thumbnails + [(width, height, ratio, thumbnail)]
         return thumbnail
 
     def get_thumbnail(
