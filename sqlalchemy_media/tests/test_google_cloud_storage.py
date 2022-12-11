@@ -1,6 +1,7 @@
 import unittest
 from unittest import mock
 from unittest.mock import Mock
+from os.path import dirname, abspath, join
 
 from google.cloud import storage
 
@@ -13,6 +14,16 @@ FAKE_REGION = 'fake-region'
 
 
 class TestGoogleCloudStorageObject(SqlAlchemyTestCase):
+    
+    @classmethod
+    def setUpClass(cls):
+        cls.this_dir = abspath(dirname(__file__))
+        cls.stuff_path = join(cls.this_dir, 'stuff')
+        cls.cat_jpeg = join(cls.stuff_path, 'cat.jpg')
+        cls.cat_png = join(cls.stuff_path, 'cat.png')
+        cls.cat_txt = join(cls.stuff_path, 'sample_text_file1.txt')
+        super().setUpClass()
+
     @mock.patch('sqlalchemy_media.stores.GoogleCloudStorage.storage')
     def test_upload_file(self, mock_storage: storage):
         mock_storage.Client.return_value = Mock()
@@ -21,7 +32,7 @@ class TestGoogleCloudStorageObject(SqlAlchemyTestCase):
 
         gcs = GoogleCloudStorage(bucket=FAKE_BUCKET, service_account_json=FAKE_CREDENTIALS)
 
-        with open('stuff/cat.jpg', 'rb') as f:
+        with open(self.cat_jpeg, 'rb') as f:
             length = gcs.put(filename='cat.jpg', stream=f)
 
             self.assertEqual(length, 70279)
