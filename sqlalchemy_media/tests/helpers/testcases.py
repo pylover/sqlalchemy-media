@@ -19,9 +19,8 @@ class SqlAlchemyTestCase(unittest.TestCase):
     def setUp(self):
         self.Base = declarative_base()
         self.engine = create_engine(self.db_uri, echo=False)
-
-    def create_all_and_get_session(self):
-        self.Base.metadata.create_all(self.engine, checkfirst=True)
+    
+    def get_session(self):
         self.session_factory = sessionmaker(
             bind=self.engine,
             autoflush=False,
@@ -31,6 +30,9 @@ class SqlAlchemyTestCase(unittest.TestCase):
         )
         return self.session_factory()
 
+    def create_all_and_get_session(self):
+        self.Base.metadata.create_all(self.engine, checkfirst=True)
+        return self.get_session()
 
 class TempStoreTestCase(SqlAlchemyTestCase):
     @classmethod
