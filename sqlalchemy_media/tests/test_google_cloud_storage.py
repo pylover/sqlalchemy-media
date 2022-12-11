@@ -4,7 +4,7 @@ from unittest.mock import Mock
 
 from google.cloud import storage
 
-from sqlalchemy_media.stores.GoogleCloudStorage import GoogleCloudStorge
+from sqlalchemy_media.stores.GoogleCloudStorage import GoogleCloudStorage
 from sqlalchemy_media.tests.helpers import SqlAlchemyTestCase
 
 FAKE_BUCKET = 'fake-bucket'
@@ -19,7 +19,7 @@ class TestGoogleCloudStorgeObject(SqlAlchemyTestCase):
         mock_storage.Client.return_value.get_bucket.return_value = Mock()
         mock_storage.Client.return_value.get_bucket.return_value.blob.return_value = Mock()
 
-        gcs = GoogleCloudStorge(bucket=FAKE_BUCKET, service_account_json=FAKE_CREDENTIALS)
+        gcs = GoogleCloudStorage(bucket=FAKE_BUCKET, service_account_json=FAKE_CREDENTIALS)
 
         with open('stuff/cat.jpg', 'rb') as f:
             length = gcs.put(filename='cat.jpg', stream=f)
@@ -41,7 +41,7 @@ class TestGoogleCloudStorgeObject(SqlAlchemyTestCase):
         mock_storage.Client.return_value.get_bucket.return_value = Mock()
         mock_storage.Client.return_value.get_bucket.return_value.blob.return_value = Mock()
 
-        gcs = GoogleCloudStorge(bucket=FAKE_BUCKET, service_account_json=FAKE_CREDENTIALS)
+        gcs = GoogleCloudStorage(bucket=FAKE_BUCKET, service_account_json=FAKE_CREDENTIALS)
         gcs.locate('cat.jpg')
 
         mock_storage.Client.from_service_account_json.assert_called_once()
@@ -58,7 +58,7 @@ class TestGoogleCloudStorgeObject(SqlAlchemyTestCase):
         mock_storage.Client.return_value.get_bucket.return_value = Mock()
         mock_storage.Client.return_value.get_bucket.return_value.blob.return_value = Mock()
 
-        gcs = GoogleCloudStorge(bucket=FAKE_BUCKET, service_account_json=FAKE_CREDENTIALS)
+        gcs = GoogleCloudStorage(bucket=FAKE_BUCKET, service_account_json=FAKE_CREDENTIALS)
         gcs.open('cat.jpg')
 
         mock_storage.Client.from_service_account_json.assert_called_once()
@@ -75,7 +75,7 @@ class TestGoogleCloudStorgeObject(SqlAlchemyTestCase):
         mock_storage.Client.return_value.get_bucket.return_value = Mock()
         mock_storage.Client.return_value.get_bucket.return_value.blob.return_value = Mock()
 
-        gcs = GoogleCloudStorge(bucket=FAKE_BUCKET, service_account_json=FAKE_CREDENTIALS)
+        gcs = GoogleCloudStorage(bucket=FAKE_BUCKET, service_account_json=FAKE_CREDENTIALS)
         gcs.delete('cat.jpg')
 
         mock_storage.Client.from_service_account_json.assert_called_once()
