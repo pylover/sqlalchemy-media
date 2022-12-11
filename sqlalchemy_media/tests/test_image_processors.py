@@ -14,12 +14,27 @@ class ImageProcessorTestCase(unittest.TestCase):
         cls.stuff_path = join(cls.this_dir, 'stuff')
         cls.cat_jpeg = join(cls.stuff_path, 'cat.jpg')
         cls.cat_png = join(cls.stuff_path, 'cat.png')
+        cls.cat_png_alpha = join(cls.stuff_path, 'rgba-cat.png')
         cls.dog_jpg = join(cls.stuff_path, 'dog_213X160.jpg')
 
     def test_resize_reformat(self):
         # guess content types from extension
 
         with AttachableDescriptor(self.cat_png) as d:
+            ctx = dict(
+                length=100000,
+                extension='.jpg',
+            )
+            ImageProcessor(fmt='jpeg', width=200).process(d, ctx)
+
+            self.assertDictEqual(ctx, {
+                'content_type': 'image/jpeg',
+                'width': 200,
+                'height': 150,
+                'extension': '.jpg'
+            })
+        
+        with AttachableDescriptor(self.cat_png_alpha) as d:
             ctx = dict(
                 length=100000,
                 extension='.jpg',
